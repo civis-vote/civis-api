@@ -1,5 +1,5 @@
 class GraphqlController < ApplicationController
-  before_action :authenticate!, unless: :public_query
+  # before_action :authenticate!, unless: :public_query
 
   def execute
     variables = ensure_hash(params[:variables])
