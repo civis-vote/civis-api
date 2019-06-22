@@ -1,5 +1,5 @@
 class GraphqlController < ApplicationController
-  # before_action :authenticate!, unless: :public_query
+  before_action :authenticate!, unless: :public_query
 
   def execute
     variables = ensure_hash(params[:variables])
@@ -16,6 +16,22 @@ class GraphqlController < ApplicationController
   rescue => e
     raise e unless Rails.env.development?
     handle_error_in_development e
+  end
+
+  rescue_from ActiveRecord::RecordNotFound do |e|
+    render json: {error: 'RecordNotFound', message: e.message }, status: 404
+  end
+
+  rescue_from ActiveRecord::RecordInvalid do |e|
+    render json: {error: 'RecordInvalid', message: e.message }, status: 422
+  end
+
+  rescue_from ActiveRecord::StatementInvalid do |e|
+    render json: {error: 'StatementInvalid', message: e.message }, status: 422
+  end
+
+  rescue_from ActiveRecord::RecordNotUnique do |e|
+    render json: {error: 'RecordNotUnique', message: e.message }, status: 422
   end
 
   def authenticate!

@@ -22,6 +22,8 @@ gem 'jbuilder', '~> 2.5'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+gem 'postmark-rails'
+
 gem 'devise'
 gem 'omniauth'
 
