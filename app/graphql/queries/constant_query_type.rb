@@ -4,18 +4,10 @@ Queries::ConstantQueryType = GraphQL::InterfaceType.define do
 	field :constantByType, 							types[Types::Objects::ConstantType] do
 		is_public true
 	  description "Search for constants by supplying a type"
-	  argument :type,							!types.String
+	  argument :constant_type,							!types.String
 	  resolve ->(_, args, _) {
-	  	Constant.where(type_id: args[:type])
+	  	Constant.where(constant_type: args[:constant_type])
 	  }
-	end
-
-	field :constantHashMap,							Types::Objects::JsonType do 
-		is_public true
-		description "Returns a hash map for all constants on the system"
-		resolve -> (_, _, _){
-			Constant.hash_map
-		}
 	end
 
 	field :constantVersion,								types.Int do 
