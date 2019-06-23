@@ -11,7 +11,7 @@ class User < ApplicationRecord
 
   # callbacks
   before_create :generate_confirmation_token
-  after_commit :generate_api_key, on: :create
+  after_commit :generate_api_key, :send_email_verification, on: :create
 
   def find_or_generate_api_key
     self.live_api_key ? self.live_api_key : self.generate_api_key
@@ -32,5 +32,9 @@ class User < ApplicationRecord
   def confirmation_url
   	confirmation_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{confirmation_token}"}))
   	confirmation_url.to_s
+  end
+
+  def send_email_verification
+  	VerifyUserEmailJob.perform_later(self)
   end
 end

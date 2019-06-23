@@ -8,7 +8,6 @@ Mutations::AuthMutationQueryType = GraphQL::InterfaceType.define do
     resolve ->(_, args, _) {
       user = User.new args[:auth].to_h
       user.save!
-      VerifyUserEmailJob.perform_later(user)
       return user.live_api_key
     }
   end
