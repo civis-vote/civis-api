@@ -19,8 +19,9 @@ class GraphqlController < ApplicationController
   end
 
   def authenticate!
-    # TODO move the error into a library
-    render json: {error: 'Unauthorized request'}, status: 401 unless current_user
+    unless current_user
+      render json: {error: 'Access Denied'}, status: 401
+    end
   end
 
   private
@@ -31,7 +32,7 @@ class GraphqlController < ApplicationController
       api_key = ApiKey.verify(request.headers['Authorization'])
       return false unless api_key.present?
       @current_user = api_key.user
-      @current_user.update_last_login unless @current_user.was_active_in_last_six_hours?
+      @current_user.update_last_activity unless @current_user.was_active_today?
       @current_user
     else
       false
