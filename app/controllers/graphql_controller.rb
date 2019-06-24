@@ -18,22 +18,6 @@ class GraphqlController < ApplicationController
     handle_error_in_development e
   end
 
-  rescue_from ActiveRecord::RecordNotFound do |e|
-    render json: {error: 'RecordNotFound', message: e.message }, status: 404
-  end
-
-  rescue_from ActiveRecord::RecordInvalid do |e|
-    render json: {error: 'RecordInvalid', message: e.message }, status: 422
-  end
-
-  rescue_from ActiveRecord::StatementInvalid do |e|
-    render json: {error: 'StatementInvalid', message: e.message }, status: 422
-  end
-
-  rescue_from ActiveRecord::RecordNotUnique do |e|
-    render json: {error: 'RecordNotUnique', message: e.message }, status: 422
-  end
-
   def authenticate!
     # TODO move the error into a library
     render json: {error: 'Unauthorized request'}, status: 401 unless current_user

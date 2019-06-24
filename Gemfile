@@ -28,6 +28,7 @@ gem 'devise'
 gem 'omniauth'
 
 gem 'graphql'
+gem 'graphql-errors'
 
 gem 'sidekiq'
 

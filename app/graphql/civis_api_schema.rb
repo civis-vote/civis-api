@@ -8,5 +8,18 @@ CivisApiSchema = GraphQL::Schema.define do
     return obj.class.graphql_type
     raise(NotImplementedError)
   }
+end
 
+GraphQL::Errors.configure(CivisApiSchema) do
+  rescue_from ActiveRecord::RecordNotFound do |exception|
+    nil
+  end
+
+  rescue_from ActiveRecord::RecordInvalid do |exception|
+    GraphQL::ExecutionError.new(exception.record.errors.full_messages.join("\n"), extensions: {code: :unprocessable_entity, sub_code: :record_invalid})
+  end
+
+  rescue_from StandardError do |exception|
+    GraphQL::ExecutionError.new("Please try to execute the query for this field later")
+  end
 end
