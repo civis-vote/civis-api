@@ -22,10 +22,15 @@ gem 'jbuilder', '~> 2.5'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+gem 'postmark-rails'
+
 gem 'devise'
 gem 'omniauth'
 
 gem 'graphql'
+gem 'graphql-errors'
+
+gem 'sidekiq'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
