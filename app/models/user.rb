@@ -37,4 +37,12 @@ class User < ApplicationRecord
   def send_email_verification
   	VerifyUserEmailJob.perform_later(self)
   end
+
+  def update_last_activity
+    update last_login: Date.today
+  end
+
+  def was_active_today?
+    last_activity_at.today?
+  end
 end
