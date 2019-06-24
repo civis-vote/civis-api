@@ -7,30 +7,44 @@ Mutations::AuthMutationQueryType = GraphQL::InterfaceType.define do
     argument :auth,                       Types::Inputs::Auth::CreateUserInput
     resolve ->(_, args, _) {
       user = User.new args[:auth].to_h
+      user.skip_confirmation_notification!
       user.save!
       return user.live_api_key
     }
   end
 
 
-  # field :login,                           Types::Objects::ApiKeyType do
-  #   is_public true
-  #   description "Existing user signs in with email"
-  #   argument :auth,                       Types::Inputs::AuthInput
-  # resolve ->(_, argsc, _){
-  #     user = User.find_by(email: args[:auth][:email])
-  #     if user
-  #       if user.valid_password?(args[:auth][:password])
-  #         user.find_or_generate_api_key
-  #         user.live_api_key
-  #       else
-  #         return GraphQL::ExecutionError.new("incorrect password") 
-  #       end
-  #     else
-  #       return GraphQL::ExecutionError.new("incorrect email") 
-  #     end
-  #   } 
-  # end
+  field :login,                           Types::Objects::ApiKeyType do
+    is_public true
+    description "Existing user signs in with email"
+    argument :auth,                       Types::Inputs::Auth::LoginInput
+    resolve ->(_, args, _){
+      user = User.find_by(email: args[:auth][:email])
+      if user && user.valid_password?(args[:auth][:password])
+        user.find_or_generate_api_key
+        user.live_api_key
+      else
+        raise CivisApi::Exceptions::FailedLogin
+      end
+    } 
+  end
+
+
+  field :confirmEmail,                    Types::Objects::ApiKeyType do 
+    is_public true
+    description "Confirm an email for a user"
+    argument :confirmation_token,         types.String
+    resolve ->(_, args, _){
+      user = User.find_by(confirmation_token: args[:confirmation_token])
+      if user
+        user.confirm
+        user.find_or_generate_api_key
+        user.live_api_key
+      else
+        raise CivisApi::Exceptions::Unauthorized
+      end
+    }
+  end
 
   # field :generateResetPasswordToken,      types.String do 
   #   is_public true
