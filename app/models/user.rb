@@ -10,7 +10,6 @@ class User < ApplicationRecord
 	validates :first_name, :last_name, :city_id,  presence: true
 
   # callbacks
-  # before_create :generate_confirmation_token
   after_commit :generate_api_key, :send_email_verification, on: :create
 
   def find_or_generate_api_key
@@ -24,10 +23,6 @@ class User < ApplicationRecord
   def generate_api_key
   	api_keys.create
   end
-
-  # def generate_confirmation_token
-  # 	self.confirmation_token = SecureRandom.uuid
-  # end
 
   def confirmation_url
   	confirmation_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{self.confirmation_token}"}))
