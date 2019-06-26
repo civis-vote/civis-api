@@ -12,6 +12,8 @@ class User < ApplicationRecord
   # callbacks
   after_commit :generate_api_key, :send_email_verification, on: :create
 
+  store_accessor :notification_settings, :notify_for_new_consultation
+
   def find_or_generate_api_key
     self.live_api_key ? self.live_api_key : self.generate_api_key
   end
