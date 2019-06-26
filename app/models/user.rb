@@ -36,7 +36,7 @@ class User < ApplicationRecord
   end
 
   def update_last_activity
-    update last_login: Date.today
+    update last_activity_at: Date.today
   end
 
   def was_active_today?
