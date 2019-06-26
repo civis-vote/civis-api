@@ -91,6 +91,8 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: ENV['CLIENT_HOST'], protocol: 'https' }
 
+  Rails.application.routes.default_url_options[:host] = ENV['HOST']
+
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector
   # middleware. The `delay` is used to determine how long to wait after a write
