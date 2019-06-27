@@ -1,13 +1,11 @@
-GraphQL::Field.accepts_definitions is_public: GraphQL::Define.assign_metadata_key(:is_public)
-CivisApiSchema = GraphQL::Schema.define do
+class CivisApiSchema < GraphQL::Schema
+	query_analyzer GraphQL::Authorization::Analyzer
   mutation(Types::MutationType)
   query(Types::QueryType)
 
-  # Object Resolution
-  resolve_type -> (type, obj, ctx) {
-    return obj.class.graphql_type
-    raise(NotImplementedError)
-  }
+  def self.unauthorized_object(error)
+    raise GraphQL::ExecutionError, "Permissions configuration do not allow the object you requested, of type #{error.type.graphql_name}"
+  end
 end
 
 GraphQL::Errors.configure(CivisApiSchema) do
