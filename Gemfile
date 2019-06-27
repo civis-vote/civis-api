@@ -29,7 +29,6 @@ gem 'omniauth'
 
 gem 'graphql'
 gem 'graphql-errors'
-gem "graphiql-rails"
 
 gem 'sidekiq'
 
