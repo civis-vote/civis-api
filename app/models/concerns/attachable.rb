@@ -30,10 +30,10 @@ module Attachable
           arr << self.send("#{attachment_type}_file")
         end
           arr.each do |x|
-            content_type = x["content"][/(image\/[a-z]{3,4})|(application\/[a-z]{3,4})/][/\b(?!.*\/).*/]
-            contents = x["content"].sub /data:((image|application)\/.{3,}),/, ''
+            content_type = x[:content][/(image\/[a-z]{3,4})|(application\/[a-z]{3,4})/][/\b(?!.*\/).*/]
+            contents = x[:content].sub /data:((image|application)\/.{3,}),/, ''
             decoded_data = Base64.decode64(contents)
-            filename = x["filename"]
+            filename = x[:filename]
             File.open("#{Rails.root}/tmp/#{filename}", 'wb') do |f|
               f.write(decoded_data)
             end
