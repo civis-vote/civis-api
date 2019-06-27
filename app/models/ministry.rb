@@ -7,7 +7,7 @@ class Ministry < ApplicationRecord
 	# enums
   enum level: [:national, :state, :local]
 
-  belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User'
+  belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User', optional: true
   has_one_attached :logo
   has_one_attached :cover_photo
 
