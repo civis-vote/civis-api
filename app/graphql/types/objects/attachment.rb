@@ -15,7 +15,7 @@ module Types
 
 			def filename
 				if object.class.eql?(ActiveStorage::Variant)
-	        object.blob.filename.to_s + "-" +object.variation.transformations[:resize]
+	        object.blob.filename.to_s + "-" + object.variation.transformations[:resize]
 	      else
 	        object.filename.to_s
 	      end
