@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
 
 	belongs_to :city, class_name: 'Location', foreign_key: 'city_id'
@@ -10,8 +10,9 @@ class User < ApplicationRecord
 	validates :first_name, :last_name, :city_id,  presence: true
 
   # callbacks
-  before_create :generate_confirmation_token
   after_commit :generate_api_key, :send_email_verification, on: :create
+
+  store_accessor :notification_settings, :notify_for_new_consultation
 
   def find_or_generate_api_key
     self.live_api_key ? self.live_api_key : self.generate_api_key
@@ -25,12 +26,8 @@ class User < ApplicationRecord
   	api_keys.create
   end
 
-  def generate_confirmation_token
-  	self.confirmation_token = SecureRandom.uuid
-  end
-
   def confirmation_url
-  	confirmation_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{confirmation_token}"}))
+  	confirmation_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{self.confirmation_token}"}))
   	confirmation_url.to_s
   end
 
@@ -39,7 +36,7 @@ class User < ApplicationRecord
   end
 
   def update_last_activity
-    update last_login: Date.today
+    update last_activity_at: Date.today
   end
 
   def was_active_today?

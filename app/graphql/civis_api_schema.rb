@@ -1,13 +1,11 @@
-GraphQL::Field.accepts_definitions is_public: GraphQL::Define.assign_metadata_key(:is_public)
-CivisApiSchema = GraphQL::Schema.define do
+class CivisApiSchema < GraphQL::Schema
+	query_analyzer GraphQL::Authorization::Analyzer
   mutation(Types::MutationType)
   query(Types::QueryType)
 
-  # Object Resolution
-  resolve_type -> (type, obj, ctx) {
-    return obj.class.graphql_type
-    raise(NotImplementedError)
-  }
+  def self.unauthorized_object(error)
+    raise GraphQL::ExecutionError, "Permissions configuration do not allow the object you requested, of type #{error.type.graphql_name}"
+  end
 end
 
 GraphQL::Errors.configure(CivisApiSchema) do
@@ -19,11 +17,17 @@ GraphQL::Errors.configure(CivisApiSchema) do
   	GraphQL::ExecutionError.new(exception.message, extensions: {code: :unauthorized, sub_code: :unauthorized})
   end
 
+  rescue_from CivisApi::Exceptions::FailedLogin do |exception|
+  	GraphQL::ExecutionError.new(exception.message, extensions: {code: :unauthorized, sub_code: :unauthorized})
+  end
+
   rescue_from ActiveRecord::RecordInvalid do |exception|
     GraphQL::ExecutionError.new(exception.record.errors.full_messages.join("\n"), extensions: {code: :unprocessable_entity, sub_code: :record_invalid})
   end
 
-  rescue_from StandardError do |exception|
-    GraphQL::ExecutionError.new("Please try to execute the query for this field later")
-  end
+  unless Rails.env.development?
+	  rescue_from StandardError do |exception|
+	    GraphQL::ExecutionError.new("Please try to execute the query for this field later")
+	  end
+	end
 end

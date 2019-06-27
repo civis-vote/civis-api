@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  category_id: 1
+  level: 1
+  poc_email: MyString
+
+two:
+  name: MyString
+  category_id: 1
+  level: 1
+  poc_email: MyString
