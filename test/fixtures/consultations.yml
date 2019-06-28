@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  url: MyString
+  response_deadline: 2019-06-28 14:17:04
+  ministry: one
+  status: 1
+
+two:
+  title: MyString
+  url: MyString
+  response_deadline: 2019-06-28 14:17:04
+  ministry: two
+  status: 1

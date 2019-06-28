@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_26_010245) do
+ActiveRecord::Schema.define(version: 2019_06_28_084704) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,6 +51,18 @@ ActiveRecord::Schema.define(version: 2019_06_26_010245) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "parent_id"
+  end
+
+  create_table "consultations", force: :cascade do |t|
+    t.string "title"
+    t.string "url"
+    t.datetime "response_deadline"
+    t.bigint "ministry_id", null: false
+    t.integer "status"
+    t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -114,5 +126,6 @@ ActiveRecord::Schema.define(version: 2019_06_26_010245) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "consultations", "ministries"
   add_foreign_key "notification_settings", "users"
 end
