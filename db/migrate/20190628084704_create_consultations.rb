@@ -5,7 +5,7 @@ class CreateConsultations < ActiveRecord::Migration[6.0]
       t.string :url
       t.datetime :response_deadline
       t.references :ministry, null: false, foreign_key: true
-      t.integer :status
+      t.integer :status, default: 0
       t.integer :created_by_id
 
       t.timestamps

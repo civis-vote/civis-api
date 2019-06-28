@@ -9,6 +9,9 @@ class User < ApplicationRecord
 
 	validates :first_name, :last_name, :city_id,  presence: true
 
+  # enums
+  enum role: [:citizen, :admin]
+
   # callbacks
   after_commit :generate_api_key, :send_email_verification, on: :create
 
