@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  consultation: one
+  satisfaction_rating: 1
+  response_text: MyText
+  is_anonymous: false
+
+two:
+  user: two
+  consultation: two
+  satisfaction_rating: 1
+  response_text: MyText
+  is_anonymous: false

@@ -48,3 +48,9 @@ Consultation.where(status: :published).order('RANDOM()').limit(10).each do |cons
 	consultation.expire
 end
 
+puts "---> Responding to some consultations"
+Consultation.where(status: [:published, :rejected]).each do |consultation|
+	response_count = [0, 1, 2, 3, 4, 5].sample
+	Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id)
+end
+
