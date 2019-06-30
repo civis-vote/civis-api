@@ -28,7 +28,23 @@ puts "---> Fabricating 50 users"
 Fabricate.times(50, :user)
 
 puts "---> Fabricating API Team"
-Fabricate(:user, email: "mkv@commuatus.com")
+Fabricate(:user, email: "mkv@commutatus.com")
 
 puts "---> Fabricating 10 consultations"
-Fabricate.times(10, :consultation)
+Fabricate.times(50, :consultation)
+
+puts "---> Publish some consultations"
+Consultation.where(status: :submitted).order('RANDOM()').limit(30).each do |consultation|
+	consultation.publish
+end
+
+puts "---> Reject some consultations"
+Consultation.where(status: :submitted).order('RANDOM()').limit(10).each do |consultation|
+	consultation.reject
+end
+
+puts "---> Expire some consultations"
+Consultation.where(status: :published).order('RANDOM()').limit(10).each do |consultation|
+	consultation.expire
+end
+
