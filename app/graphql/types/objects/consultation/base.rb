@@ -10,6 +10,7 @@ module Types
 				field :ministry,					Types::Objects::Ministry, nil, null: false
 				field :response_deadline, Types::Objects::DateTime, "Deadline to submit responses.", null: false
 				field :status,						Types::Enums::ConsultationStatuses, nil, null: false
+				field :summary,						String, nil, null: true
 				field :title,							String, nil, null: false
 				field :url,								String, nil, null: false
 			end
