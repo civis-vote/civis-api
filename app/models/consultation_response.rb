@@ -4,5 +4,5 @@ class ConsultationResponse < ApplicationRecord
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
-  enum visibility: [:shared, :anonymous]
+  enum visibility: { shared: 0, anonymous: 1 }
 end
