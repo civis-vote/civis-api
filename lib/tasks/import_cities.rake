@@ -7,7 +7,6 @@ namespace :import_records_from_csv do
 			if csv_city['City'].present?
 				state = Location.states.where(name: csv_city['State']).first_or_create
 				city = state.children.cities.where(name: csv_city['City']).first_or_create
-				puts "added #{city.name} to #{state.name}"
 			end
 		end
 	end
