@@ -1,8 +1,11 @@
 class Consultation < ApplicationRecord
 	include Paginator
-	
+
   belongs_to :ministry
   belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User', optional: true
+  has_many :responses, class_name: "ConsultationResponse"
+  has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
+  has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
 
   enum status: [:submitted, :published, :rejected, :expired]
 

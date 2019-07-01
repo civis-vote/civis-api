@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_30_115931) do
+ActiveRecord::Schema.define(version: 2019_07_01_060907) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -58,9 +58,9 @@ ActiveRecord::Schema.define(version: 2019_06_30_115931) do
     t.bigint "consultation_id", null: false
     t.integer "satisfaction_rating"
     t.text "response_text"
-    t.boolean "is_anonymous"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "visibility", default: 1
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 2019_06_30_115931) do
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "published_at"
     t.text "summary"
-    t.integer "consultation_responses_count"
+    t.integer "consultation_responses_count", default: 0
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
