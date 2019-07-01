@@ -1,7 +1,7 @@
 class CreateConsultations < ActiveRecord::Migration[6.0]
   def change
     create_table :consultations do |t|
-      t.string :title
+      t.string :title, null: false
       t.string :url
       t.datetime :response_deadline
       t.references :ministry, null: false, foreign_key: true
