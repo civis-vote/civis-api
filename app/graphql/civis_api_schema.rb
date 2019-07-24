@@ -9,7 +9,6 @@ class CivisApiSchema < GraphQL::Schema
 end
 
 GraphQL::Relay::ConnectionType.bidirectional_pagination = true
-
 GraphQL::Errors.configure(CivisApiSchema) do
   rescue_from ActiveRecord::RecordNotFound do |exception|
     nil
