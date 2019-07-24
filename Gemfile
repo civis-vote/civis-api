@@ -35,16 +35,6 @@ gem 'graphql-errors'
 
 gem 'sidekiq'
 
-gem 'postmark-rails'
-
-gem 'devise'
-gem 'omniauth'
-
-gem 'graphql'
-gem 'graphql-errors'
-
-gem 'sidekiq'
-
 # Use Active Storage variant
 gem 'image_processing'
 gem 'mini_magick'
