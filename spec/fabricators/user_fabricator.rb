@@ -6,5 +6,6 @@ Fabricator(:user) do
   city_id   											{ Location.cities.order('RANDOM()').first.id }
   notify_for_new_consultation 		{ [true, false].sample }
   role														{ User.roles.to_a.sample.first }
+  phone_number										{ rand(10 ** 10) }
   after_build											{ |user, transients| user.skip_confirmation_notification! }
 end

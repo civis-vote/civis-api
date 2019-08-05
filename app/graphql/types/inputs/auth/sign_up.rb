@@ -10,6 +10,7 @@ module Types
 				argument :last_name, 										String, 	nil, 	required: true
 				argument :notify_for_new_consultation, 	Boolean,	nil,	required: false
 				argument :password, 										String, 	nil, 	required: true
+				argument :phone_number,									String,		nil, 	required: false
 			end
 		end
 	end
