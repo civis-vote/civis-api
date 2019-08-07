@@ -91,7 +91,7 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: ENV['CLIENT_HOST'], protocol: 'https' }
 
-  Rails.application.routes.default_url_options[:host] = ENV['HOST']
+  Rails.application.routes.default_url_options = { host: ENV['HOST'], protocol: 'https' }
 
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector

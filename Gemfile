@@ -23,15 +23,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'bcrypt', '~> 3.1.7'
 gem 'kaminari'
 
-gem 'postmark-rails'
-
-gem 'devise'
-gem 'omniauth'
-
-gem 'graphql'
-gem 'graphql-errors'
-
-gem 'sidekiq'
+gem 'rack-cors'
 
 gem 'postmark-rails'
 
