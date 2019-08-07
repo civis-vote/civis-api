@@ -7,6 +7,7 @@ module Types
   	field :consultation_list,			     resolver: Queries::Consultation::List
     field :consultation_response_list, resolver: Queries::ConsultationResponse::List
   	field :consultation_profile,		   resolver: Queries::Consultation::Profile
+    field :impact_stats,               resolver: Queries::Stats::Impact
   	field :location_list, 				     resolver: Queries::Location::List
   	field :location_autocomplete,      resolver: Queries::Location::Autocomplete
   	field :ministry_autocomplete,      resolver: Queries::Ministry::Autocomplete
