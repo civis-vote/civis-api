@@ -39,4 +39,8 @@ class Consultation < ApplicationRecord
     return user_response.created_at
   end
 
+  def satisfaction_rating_distribution
+    self.responses.group(:satisfaction_rating).distinct.count(:satisfaction_rating)
+  end
+
 end
