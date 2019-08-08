@@ -33,4 +33,10 @@ class Consultation < ApplicationRecord
   	self.update(status: :expired)
   end
 
+  def responded_on(user = Current.user)
+    user_response = self.responses.find_by(user: user)
+    return nil if user_response.nil?
+    return user_response.created_at
+  end
+
 end

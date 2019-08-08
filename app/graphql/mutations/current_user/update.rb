@@ -11,7 +11,7 @@ module Mutations
         return current_user
       end
 
-      def self.accessible?(context)
+      def self.authorized?(object, context)
         context[:current_user].present?
       end
     end

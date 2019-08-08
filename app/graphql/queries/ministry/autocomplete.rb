@@ -9,7 +9,7 @@ module Queries
 	    	::Ministry.search(q).approved.alphabetical
 	    end
 
-	    def self.accessible?(context)
+	    def self.authorized?(object, context)
         context[:current_user].present?
       end
 		end
