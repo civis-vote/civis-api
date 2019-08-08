@@ -7,6 +7,15 @@ module Types
 				field :anonymous_responses,					Types::Connections::ConsultationResponse, nil, null: true
 				field :created_at,									Types::Objects::DateTime, nil, null: false
 				field :created_by,									Types::Objects::User::Base, nil, null: false
+				field :responded_on,								Types::Objects::DateTime, nil, null: true do 
+					def resolve(object, context)
+						object.responded_on(context[:current_user])
+					end
+
+					def visible?(context)
+						super && context[:current_user].present?
+					end
+				end
 				field :ministry,										Types::Objects::Ministry, nil, null: false
 				field :response_count,							Int, nil, null: false
 				field :response_deadline, 					Types::Objects::DateTime, "Deadline to submit responses.", null: false
