@@ -10,7 +10,7 @@ class OauthController < ApplicationController
     end
   end
 
-  def callback_controller
+  def callback
     if request.env["omniauth.auth"]["info"]
       user = User.find_by(email: request.env["omniauth.auth"]["info"][:email])
       unless user
