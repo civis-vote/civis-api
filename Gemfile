@@ -33,6 +33,8 @@ gem 'omniauth'
 gem 'graphql'
 gem 'graphql-errors'
 
+gem 'rollbar'
+
 gem 'sidekiq'
 
 # Use Active Storage variant
