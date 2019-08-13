@@ -16,11 +16,9 @@ class Admin::UsersController < ApplicationController
 	end
 
 	def show
-		@user = User.find(params[:id])
 	end
 
 	def update
-		@user = User.find(params[:id])
 		if @user.update_attributes(secure_params)
 			redirect_to users_path, :notice => "User updated."
 		else
@@ -29,24 +27,9 @@ class Admin::UsersController < ApplicationController
 	end
 
 	def destroy
-		user = User.find(params[:id])
-		user.destroy
+		@user.destroy
 		redirect_to users_path, :notice => "User deleted."
 	end
-
-  def logs
-  	@logs_without_pagination = @user.logs.order(created_at: :desc)
-  	@logs = @logs_without_pagination.page(params[:page]).per(24)
-    get_facets
-    respond_to do |format|
-      if request.xhr?
-      	@user = User.find(params[:user])
-        format.html {render partial: 'table.html', locals: {logs: @logs, facets: @facets}}
-      else
-        format.html
-      end
-    end
-  end
 
 	private
 
