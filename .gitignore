@@ -33,3 +33,4 @@ yarn-debug.log*
 /config/credentials/development.key
 
 /config/credentials/staging.key
+config/environments/_add_gem_paths.js
