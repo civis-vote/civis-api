@@ -8,4 +8,7 @@ Rails.application.routes.draw do
   get 'users/auth/failure' => 'oauth#failure'
   post "/graphql", to: "graphql#execute"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  namespace :admin do
+    resources :users
+  end
 end

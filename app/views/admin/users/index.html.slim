@@ -1,0 +1,21 @@
+.container-custom
+  br
+    .row
+      .row
+        .filters data-filter-url="/admin/users" data-replacement-class="users-container"
+          .container.promotion-filter
+            .row
+              .col-md-12.no-padding
+                .col-md-4.no-padding
+                  input#users_search.filter-order name="search_term" placeholder="Search" type="text" required="required"  data-behaviour="filter" data-scope="search_query" data-type="input-filter"
+                .col-md-2
+                  = select_tag 'date_filter', options_for_select([["Last 5 Days", 5],["Last 30 Days", 30]], (params[:date].present?) ? params[:date] : ''), class: "top-margin form-control chosen-select wishlist-created-date-filter", data: { behaviour: 'filter', scope: 'date_filter', type: 'select-filter', placeholder: 'Date Filter' }, include_blank: true
+                .col-md-3
+                  input.filter-order name="daterange" data-input='daterangepicker' placeholder="Custom Date Range" data-behaviour="filter" data-scope="created_between" data-type="select-filter"
+
+  br
+  br
+
+    .row
+      .left-bar.center.container.users-container.users-table-parent.no-padding
+        == render 'table'

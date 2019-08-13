@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include SpotlightSearch
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
@@ -21,6 +22,20 @@ class User < ApplicationRecord
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation
 
+  scope :search_query, lambda { |query|
+		return nil if query.blank?
+		terms = query.downcase.split(/\s+/)
+		terms = terms.map { |e|
+			(e.gsub('*', '%').prepend('%') + '%').gsub(/%+/, '%')
+		}
+		num_or_conds = 1
+		where(
+			terms.map { |term|
+				"(LOWER(users.first_name) LIKE ?)"
+			}.join(' AND '),
+			*terms.map { |e| [e] * num_or_conds }.flatten
+		)
+	}
   def find_or_generate_api_key
     self.live_api_key ? self.live_api_key : self.generate_api_key
   end

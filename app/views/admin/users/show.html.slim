@@ -1,0 +1,12 @@
+p#notice = notice
+
+p
+  strong Product:
+  = @wishlist.product
+p
+  strong Client:
+  = @wishlist.client
+
+=> link_to 'Edit', edit_wishlist_path(@wishlist)
+'|
+=< link_to 'Back', wishlists_path
