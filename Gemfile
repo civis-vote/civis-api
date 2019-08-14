@@ -33,6 +33,8 @@ gem 'omniauth'
 gem 'graphql'
 gem 'graphql-errors'
 
+gem 'rollbar'
+
 gem 'sidekiq'
 
 # Use Active Storage variant
@@ -42,6 +44,12 @@ gem "google-cloud-storage"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
+
+# oauth gems
+gem 'omniauth'
+gem 'omniauth-google-oauth2'
+gem 'omniauth-linkedin-oauth2'
+gem 'omniauth-facebook'
 
 group :development, :test, :staging do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

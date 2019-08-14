@@ -19,6 +19,11 @@ class Consultation < ApplicationRecord
     where(ministry_id: ministry_id)
   }
 
+  scope :featured_filter, lambda { |featured|
+    return all unless featured.present?
+    where(is_featured: featured)
+  }
+
   def publish
   	self.status = :published
   	self.published_at = DateTime.now
@@ -31,6 +36,16 @@ class Consultation < ApplicationRecord
 
   def expire
   	self.update(status: :expired)
+  end
+
+  def responded_on(user = Current.user)
+    user_response = self.responses.find_by(user: user)
+    return nil if user_response.nil?
+    return user_response.created_at
+  end
+
+  def satisfaction_rating_distribution
+    self.responses.group(:satisfaction_rating).distinct.count(:satisfaction_rating)
   end
 
 end
