@@ -3,6 +3,7 @@ class ConsultationResponse < ApplicationRecord
   
   belongs_to :user
   belongs_to :consultation, counter_cache: true
+  belongs_to :template, class_name: "ConsultationResponse"
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 

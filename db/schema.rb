@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_11_132355) do
+ActiveRecord::Schema.define(version: 2019_08_14_143038) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -61,12 +61,13 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "visibility", default: 1
+    t.integer "template_id"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title"
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -109,6 +110,14 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
   end
 
+  create_table "point_scales", force: :cascade do |t|
+    t.integer "upper_limit"
+    t.integer "action"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.float "points"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -132,7 +141,7 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role"
     t.string "phone_number"
