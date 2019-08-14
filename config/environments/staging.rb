@@ -75,6 +75,7 @@ Rails.application.configure do
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
+  config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 1, 1024.megabytes)
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
@@ -90,6 +91,8 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.action_mailer.default_url_options = { host: ENV['CLIENT_HOST'], protocol: 'https' }
+
+  config.client_url = { host: ENV['CLIENT_HOST'], protocol: :https }
 
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector

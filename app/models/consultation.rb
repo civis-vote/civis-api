@@ -19,6 +19,11 @@ class Consultation < ApplicationRecord
     where(ministry_id: ministry_id)
   }
 
+  scope :featured_filter, lambda { |featured|
+    return all unless featured.present?
+    where(is_featured: featured)
+  }
+
   def publish
   	self.status = :published
   	self.published_at = DateTime.now

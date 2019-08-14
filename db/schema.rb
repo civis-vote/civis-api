@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_11_062326) do
+ActiveRecord::Schema.define(version: 2019_08_11_132355) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -77,6 +77,7 @@ ActiveRecord::Schema.define(version: 2019_08_11_062326) do
     t.datetime "published_at"
     t.text "summary"
     t.integer "consultation_responses_count", default: 0
+    t.boolean "is_featured", default: false
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
