@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include SpotlightSearch
+  include Scorable::User
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
@@ -7,6 +8,7 @@ class User < ApplicationRecord
 
 	belongs_to :city, class_name: 'Location', foreign_key: 'city_id', optional: true
 	has_many :api_keys
+  has_many :point_events
 
 	validates :first_name, :last_name,  presence: true
 

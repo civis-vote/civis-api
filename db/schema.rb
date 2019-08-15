@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_14_143038) do
+ActiveRecord::Schema.define(version: 2019_08_15_082739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,16 @@ ActiveRecord::Schema.define(version: 2019_08_14_143038) do
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
   end
 
+  create_table "point_events", force: :cascade do |t|
+    t.bigint "point_scale_id", null: false
+    t.bigint "user_id", null: false
+    t.float "points"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["point_scale_id"], name: "index_point_events_on_point_scale_id"
+    t.index ["user_id"], name: "index_point_events_on_user_id"
+  end
+
   create_table "point_scales", force: :cascade do |t|
     t.integer "upper_limit"
     t.integer "action"
@@ -147,6 +157,7 @@ ActiveRecord::Schema.define(version: 2019_08_14_143038) do
     t.string "phone_number"
     t.string "provider"
     t.string "uid"
+    t.float "points", default: 0.0
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -159,4 +170,6 @@ ActiveRecord::Schema.define(version: 2019_08_14_143038) do
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
   add_foreign_key "notification_settings", "users"
+  add_foreign_key "point_events", "point_scales"
+  add_foreign_key "point_events", "users"
 end
