@@ -37,6 +37,10 @@ gem 'rollbar'
 
 gem 'sidekiq'
 
+gem 'simple_form'
+
+gem 'local_time', '~> 2.1'
+
 # Use Active Storage variant
 gem 'image_processing'
 gem 'mini_magick'
