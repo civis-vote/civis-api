@@ -1,38 +1,22 @@
-.row
-  .col-md-3
-    .table-data-f14.mb-8
-      / =# pluralize(@filtered_result.facets.total_count, 'user item') + ' found'
-table.table.table.client-orders-table
-  thead.strong
-    tr.table-header.client-cart.table-style
-      th.table-data-f12.w200.pl30 Name
-      th.table-data-f12.w200 Email
-      th.table-data-f12 
-      th.table-data-f12
-      th.table-data-f12.w200.align-right.pr-40 
-
-  tbody
-    - @users.each do |user|
-        tr.inventory-border.client-user.table-style
-          td.w200.pl30.f14
-            = user.first_name
-          td.order-datetime.f14.w200
-            = user.email
-          td.v-align-baseline.pl-24.f15
-            = user.last_name
-          td.f14
-          td.f14.w200.align-right.pr-40
-             
-/ Pagination
-ul.pagination.pull-right
-  - if @filtered_result.facets.try(:previous_page) != false
-    li
-      a.btn aria-label="Previous" data-behaviour="previous-page"
-        span aria-hidden="true"  Previous
-  li
-    a#current_page.btn.current data-behaviour="current-page" data-page="#{@filtered_result.facets.try(:current_page)}" Showing #{@filtered_result.facets.try(:current_page)} of #{@filtered_result.facets.try(:total_pages)} pages
-
-  - if @filtered_result.facets.try(:next_page) != false
-    li
-      a.btn data-behaviour="next-page" aria-label="Next" 
-        span aria-hidden="true"  Next
+.admin-index-records-found
+  = total_no_of_records_found(@users, "users", "facets")
+table.table
+      thead
+        tr
+          th Name
+          th Email
+          th Joining date
+          th.text-center Action button
+      tbody
+        - @users.data.each do |user|
+          tr
+            td
+              = user.full_name
+            td
+              = user&.email
+            td 
+              = user&.created_at&.localtime.try(:strftime, '%e %b %Y')
+            td.text-center
+              = link_to "View", admin_user_path(user), class: "action-btn"
+.pagination-parent
+  = cm_paginate(@users.facets)

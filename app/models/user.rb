@@ -36,6 +36,11 @@ class User < ApplicationRecord
 			*terms.map { |e| [e] * num_or_conds }.flatten
 		)
 	}
+
+  def full_name 
+    "#{first_name}" + " #{last_name}"
+  end
+  
   def find_or_generate_api_key
     self.live_api_key ? self.live_api_key : self.generate_api_key
   end
