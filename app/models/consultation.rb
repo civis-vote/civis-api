@@ -1,4 +1,5 @@
 class Consultation < ApplicationRecord
+  include SpotlightSearch
 	include Paginator
 
   belongs_to :ministry
@@ -22,6 +23,11 @@ class Consultation < ApplicationRecord
   scope :featured_filter, lambda { |featured|
     return all unless featured.present?
     where(is_featured: featured)
+  }
+
+  scope :search_query, lambda { |query = nil|
+    return nil unless query
+    where('title ILIKE (?)', "%#{query}%")
   }
 
   def publish
