@@ -5,7 +5,7 @@ def default_assets_path
 end
 
 def output_path
-  Webpacker.config.send(:data)[:resolved_gems_output_path] || 'config/environments/_add_gem_paths.js'
+  Webpacker.config.send(:data)[:resolved_gems_output_path] || '/tmp/_add_gem_paths.js'
 end
 
 def resolve_gem_path(gem)
