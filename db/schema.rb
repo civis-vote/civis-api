@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_15_082739) do
+ActiveRecord::Schema.define(version: 2019_08_15_112500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -80,6 +80,16 @@ ActiveRecord::Schema.define(version: 2019_08_15_082739) do
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
+  end
+
+  create_table "game_actions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "action"
+    t.bigint "point_event_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["point_event_id"], name: "index_game_actions_on_point_event_id"
+    t.index ["user_id"], name: "index_game_actions_on_user_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -169,6 +179,8 @@ ActiveRecord::Schema.define(version: 2019_08_15_082739) do
   add_foreign_key "consultation_responses", "consultations"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
+  add_foreign_key "game_actions", "point_events"
+  add_foreign_key "game_actions", "users"
   add_foreign_key "notification_settings", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"

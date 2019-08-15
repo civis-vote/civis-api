@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  include Attachable
+  include ImageResizer
   include SpotlightSearch
   include Scorable::User
   # Include default devise modules. Others available are:
@@ -8,6 +10,7 @@ class User < ApplicationRecord
 
 	belongs_to :city, class_name: 'Location', foreign_key: 'city_id', optional: true
 	has_many :api_keys
+  has_many :game_actions
   has_many :point_events
 
 	validates :first_name, :last_name,  presence: true

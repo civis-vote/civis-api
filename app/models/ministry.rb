@@ -1,6 +1,7 @@
 class Ministry < ApplicationRecord
 	include Attachable
 	include ImageResizer
+  include Scorable::Ministry
 
 	validates :name, :level,  presence: true
 
