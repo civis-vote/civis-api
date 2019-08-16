@@ -8,10 +8,14 @@ class ConsultationResponse < ApplicationRecord
   has_many :template_children, class_name: 'ConsultationResponse', foreign_key: 'template_id'
   has_many :up_votes, -> { up }, class_name: 'ConsultationResponseVote'
   has_many :down_votes, -> { down }, class_name: 'ConsultationResponseVote'
+  has_many :votes, class_name: 'ConsultationResponseVote'
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
   enum visibility: { shared: 0, anonymous: 1 }
+
+  # validations
+  validates_uniqueness_of :consultation_id, scope: :user_id  
 
   # scopes
   scope :consultation_filter, lambda { |consultation_id|
@@ -30,5 +34,12 @@ class ConsultationResponse < ApplicationRecord
   def down_vote_count
     return down_votes.size
   end
+
+  def voted_as(user = Current.user)
+    user_vote = self.votes.find_by(user: user)
+    return nil if user_vote.nil?
+    return user_vote
+  end
+
 
 end

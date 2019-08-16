@@ -16,6 +16,15 @@ module Types
 				field :templates_count,										Integer, "Count of responses that used this response as a template", null: false
 				field :up_vote_count,											Integer, "Count of users that up-voted this response", null: false
 				field :visibility,												Types::Enums::ConsultationResponseVisibilities, nil, null: false
+				field :voted_as,													Types::Objects::Vote, nil, null: true do 
+					def resolve(object, context)
+						object.voted_as(context[:current_user])
+					end
+
+					def visible?(context)
+						super && context[:current_user].present?
+					end			
+				end
 			end
 		end
 	end
