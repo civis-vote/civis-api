@@ -1,11 +1,11 @@
 class Admin::UsersController < ApplicationController
-	# before_action :authenticate_user!
-	before_action :set_user, only: [:update, :show, :destroy, :logs]
+	layout 'admin_panel_sidenav'
+  before_action :authenticate_user!
+	before_action :require_admin, only: [:index, :update, :edit, :show]
+	before_action :set_user, only: [:edit, :update, :show]
 
 	def index
-    @filtered_result = User.filter_by(params[:page], filter_params.to_h, sort_params.to_h)
-    @object_without_pagination = @filtered_result.data.distinct('users.id')
-    @users = @object_without_pagination.page(params[:page]).per(30)
+    @users = User.all.order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
         format.html {render partial: 'admin/users/table', locals: {users: @users}}

@@ -12,7 +12,7 @@ default: &default
   # Additional paths webpack should lookup modules
   # ['app/assets', 'engine/foo/app/assets']
   resolved_paths: []
-  resolved_gems_output_path: 'config/environments/_add_gem_paths.js'
+  resolved_gems_output_path: '/tmp/_add_gem_paths.js'
   resolved_gems: [
     'spotlight_search'
   ]
@@ -37,6 +37,8 @@ default: &default
     - .woff2
 
   extensions:
+    - .erb
+    - .coffee
     - .mjs
     - .js
     - .sass

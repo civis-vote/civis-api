@@ -1,0 +1,8 @@
+.admin-header-navbar#admin-navbar
+	.navbar-header
+      .avatar-circle data-toggle="collapse" data-target="#admin-dropdown-li"
+      	span.initials #{(current_user.first_name+ " " + current_user.last_name).split.map(&:first).join.upcase}
+      	li.dropdown#admin-profile-dropdown
+			ul.dropdown-menu#admin-dropdown-li
+		        li
+		          = link_to 'Logout', destroy_user_session_path, :method => :delete
