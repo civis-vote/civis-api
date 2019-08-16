@@ -10,7 +10,8 @@ module Scorable
 	    end
 
 	    def add_points
-	    	self.user.add_points(self.action)
+	    	point_event = self.user.add_points(self.action)
+	    	self.update(point_event: point_event)
 	    end
 	  end
   end

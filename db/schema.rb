@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 2019_08_15_112500) do
   create_table "game_actions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "action"
-    t.bigint "point_event_id", null: false
+    t.bigint "point_event_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["point_event_id"], name: "index_game_actions_on_point_event_id"

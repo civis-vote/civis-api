@@ -1,5 +1,5 @@
 module Mutations
-  module Ministry
+  module GameAction
     class Create < Mutations::BaseMutation
       type Types::Objects::GameAction, null: false
 

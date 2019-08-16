@@ -1,4 +1,7 @@
 class GameAction < ApplicationRecord
+
+	include Scorable::GameAction
+
   belongs_to :user
   belongs_to :point_event, optional: true
 
