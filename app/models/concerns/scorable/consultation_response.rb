@@ -18,6 +18,7 @@ module Scorable
 	    		points_to_add += point_event.points
 	    	end
 	    	self.update(points: points_to_add)
+	    	self.template.user.add_points(:response_used) if self.template.present?
 	    end
 	  end
   end
