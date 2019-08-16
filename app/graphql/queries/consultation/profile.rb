@@ -1,7 +1,7 @@
 module Queries
 	module Consultation
 		class Profile < Queries::BaseQuery
-	    description "Get a list of consultations"
+	    description "Get a single consultation"
 	    argument :id,		Int,		required: true
 
 	    type Types::Objects::Consultation::Base, null: true
