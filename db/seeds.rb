@@ -24,6 +24,10 @@ puts "---> Importing Locations"
 Rake::Task["import_records_from_csv:locations"].invoke("")
 Rake::Task["import_records_from_csv:locations"].reenable
 
+puts "---> Importing Point Scale"
+Rake::Task["import_records_from_csv:point_scale"].invoke("")
+Rake::Task["import_records_from_csv:point_scale"].reenable
+
 puts "---> Fabricating 50 users"
 Fabricate.times(50, :user)
 

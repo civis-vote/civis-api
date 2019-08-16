@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  point_scale: one
+  user: one
+  points: 1.5
+
+two:
+  point_scale: two
+  user: two
+  points: 1.5
