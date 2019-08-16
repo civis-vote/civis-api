@@ -176,4 +176,32 @@ SimpleForm.setup do |config|
   # Defines validation classes to the input_field. By default it's nil.
   # config.input_field_valid_class = 'is-valid'
   # config.input_field_error_class = 'is-invalid'
+
+  config.wrappers :form_input_group, class: "row form-group" do |sub_wrapper|
+    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 form-label-group' do |input|
+      input.use :html5
+      input.use :placeholder
+      input.use :input, class: "w-100"
+      input.use :label
+    end
+  end
+
+  config.wrappers :form_select_group, class: "row form-group" do |sub_wrapper|
+    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 mb-3 form-select-label-group' do |input|
+      input.use :html5
+      input.use :placeholder
+      input.use :input, class: "form-control select2"
+      input.use :label, class: "d-none"
+    end
+  end
+
+  config.wrappers :form_select_group_with_ajax, class: "row form-group" do |sub_wrapper|
+    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 mb-3 form-select-label-group' do |input|
+      input.use :html5
+      input.use :placeholder
+      input.use :input, class: "form-control select2_with_ajax"
+      input.use :label, class: "d-none"
+    end
+  end
+  
 end

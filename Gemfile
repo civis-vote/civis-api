@@ -63,6 +63,8 @@ group :development, :test, :staging do
   gem 'fabrication'
   gem 'faker'
   gem 'database_cleaner'
+  gem 'better_errors'
+  gem "binding_of_caller"
 end
 
 group :development do
