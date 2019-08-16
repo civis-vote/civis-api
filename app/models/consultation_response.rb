@@ -4,7 +4,10 @@ class ConsultationResponse < ApplicationRecord
   
   belongs_to :user
   belongs_to :consultation, counter_cache: true
-  belongs_to :template, class_name: "ConsultationResponse", optional: true
+  belongs_to :template, class_name: 'ConsultationResponse', optional: true, counter_cache: :templates_count
+  has_many :template_children, class_name: 'ConsultationResponse', foreign_key: 'template_id'
+  has_many :up_votes, -> { up }, class_name: 'ConsultationResponseVote'
+  has_many :down_votes, -> { down }, class_name: 'ConsultationResponseVote'
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -19,5 +22,13 @@ class ConsultationResponse < ApplicationRecord
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
   	order("#{sort} #{sort_direction}")
   }
+
+  def up_vote_count
+    return up_votes.size
+  end
+
+  def down_vote_count
+    return down_votes.size
+  end
 
 end
