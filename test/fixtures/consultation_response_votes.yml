@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  consultation_response: one
+  vote_direction: 1
+  user: one
+
+two:
+  consultation_response: two
+  vote_direction: 1
+  user: two
