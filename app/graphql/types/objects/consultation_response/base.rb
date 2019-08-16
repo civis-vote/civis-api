@@ -8,6 +8,7 @@ module Types
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
 				field :user,															Types::Objects::User::Base, nil, null: false
 				field :consultation,											Types::Objects::Consultation::Base, nil, null: false
+				field :points,														Float, "Points earned by submitting this response", nil, null: false
 				field :satisfaction_rating,								Types::Enums::ConsultationResponseSatisfactionRatings, nil, null: false
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true
 				field :response_text,											String, nil, null: false
