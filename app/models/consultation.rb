@@ -1,6 +1,7 @@
 class Consultation < ApplicationRecord
   include SpotlightSearch
 	include Paginator
+  include Scorable::Consultation
 
   belongs_to :ministry
   belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User', optional: true
