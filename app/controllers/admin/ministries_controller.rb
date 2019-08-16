@@ -32,12 +32,12 @@ class Admin::MinistriesController < ApplicationController
 	end
 
 	def approve
-		@ministry.update_attributes(is_approved: true)
+		@ministry.approve
 		redirect_back fallback_location: root_path,  flash_success_info: 'Ministry was successfully approved.'
 	end
 
 	def reject
-		@ministry.update_attributes(is_approved: false)
+		@ministry.reject
 		redirect_back fallback_location: root_path,  flash_success_info: 'Ministry was successfully rejected.'
 	end
 

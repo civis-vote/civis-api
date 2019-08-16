@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_16_023731) do
+ActiveRecord::Schema.define(version: 2019_08_16_151759) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,6 +110,7 @@ ActiveRecord::Schema.define(version: 2019_08_16_023731) do
     t.string "poc_email_primary"
     t.string "poc_email_secondary"
     t.integer "created_by_id"
+    t.jsonb "meta"
   end
 
   create_table "notification_settings", force: :cascade do |t|

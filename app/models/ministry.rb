@@ -14,6 +14,7 @@ class Ministry < ApplicationRecord
   has_one_attached :logo
   has_one_attached :cover_photo
 
+  store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
   class << self
 
@@ -56,6 +57,20 @@ class Ministry < ApplicationRecord
     else
       "media/application/images/user_profile_picture.png"
     end
+  end
+
+  def approve
+    self.approved_by_id = Current.user.id
+    self.is_approved = true
+    self.approved_at = DateTime.now
+    self.save!
+  end
+
+  def reject
+    self.rejected_by_id = Current.user.id
+    self.is_approved = false
+    self.rejected_at = DateTime.now
+    self.save!
   end
 
 end
