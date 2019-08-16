@@ -27,6 +27,12 @@ class User < ApplicationRecord
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation
 
+  module ClassMethods
+    def attachment_types
+      ['profile_picture']
+    end
+  end
+
   scope :search_query, lambda { |query|
 		return nil if query.blank?
 		terms = query.downcase.split(/\s+/)

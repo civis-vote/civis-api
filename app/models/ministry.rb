@@ -13,7 +13,7 @@ class Ministry < ApplicationRecord
   has_one_attached :cover_photo
 
 
-  class << self 
+  module ClassMethods
 
     def attachment_types
       ['logo', 'cover_photo']
