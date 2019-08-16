@@ -8,5 +8,6 @@ module Types
     field :current_user_update,						resolver: Mutations::CurrentUser::Update
     field :game_action_create,						resolver: Mutations::GameAction::Create
     field :ministry_create,								resolver: Mutations::Ministry::Create
+    field :vote_create,										resolver: Mutations::ConsultationResponseVote::Create
   end
 end
