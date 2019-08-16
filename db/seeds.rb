@@ -16,10 +16,6 @@ puts "---> Importing Ministry Categories"
 Rake::Task["import_records_from_array:ministry_categories"].invoke("")
 Rake::Task["import_records_from_array:ministry_categories"].reenable
 
-puts "---> Importing Ministries"
-Rake::Task["import_records_from_csv:ministries"].invoke("")
-Rake::Task["import_records_from_csv:ministries"].reenable
-
 puts "---> Importing Locations"
 Rake::Task["import_records_from_csv:locations"].invoke("")
 Rake::Task["import_records_from_csv:locations"].reenable
@@ -28,11 +24,19 @@ puts "---> Importing Point Scale"
 Rake::Task["import_records_from_csv:point_scale"].invoke("")
 Rake::Task["import_records_from_csv:point_scale"].reenable
 
+puts "---> Fabricating API Team"
+Fabricate(:user, email: "mkv@commutatus.com")
+Fabricate(:user, email: "balaji@commutatus.com")
+
+puts "---> Importing Ministries"
+Rake::Task["import_records_from_csv:ministries"].invoke("")
+Rake::Task["import_records_from_csv:ministries"].reenable
+
+
+
 puts "---> Fabricating 50 users"
 Fabricate.times(50, :user)
 
-puts "---> Fabricating API Team"
-Fabricate(:user, email: "mkv@commutatus.com")
 
 puts "---> Fabricating 10 consultations"
 Fabricate.times(50, :consultation)
