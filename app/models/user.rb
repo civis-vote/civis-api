@@ -27,7 +27,7 @@ class User < ApplicationRecord
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation
 
-  module ClassMethods
+  class << self
     def attachment_types
       ['profile_picture']
     end
