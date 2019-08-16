@@ -12,6 +12,8 @@ class User < ApplicationRecord
 	has_many :api_keys
   has_many :game_actions
   has_many :point_events
+  has_many :responses, class_name: 'ConsultationResponse'
+  has_many :votes, class_name: 'ConsultationResponseVote'
 
 	validates :first_name, :last_name,  presence: true
 

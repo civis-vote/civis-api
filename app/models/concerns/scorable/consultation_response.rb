@@ -10,8 +10,15 @@ module Scorable
 	    end
 
 	    def add_response_created_points
-	    	self.user.add_points(:response_submitted)
-	    	self.user.add_points(:public_response_submitted) if self.shared?
+	    	points_to_add = 0.0
+	    	point_event = self.user.add_points(:response_submitted)
+	    	points_to_add += point_event.points
+	    	if self.shared?
+	    		point_event = self.user.add_points(:public_response_submitted)
+	    		points_to_add += point_event.points
+	    	end
+	    	self.update(points: points_to_add)
+	    	self.template.user.add_points(:response_used) if self.template.present?
 	    end
 	  end
   end
