@@ -18,7 +18,7 @@ module Types
 					end
 				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
-				field :response_count,										Int, nil, null: false
+				field :consultation_responses_count,			Integer,nil, null: false
 				field :response_deadline, 								Types::Objects::DateTime, "Deadline to submit responses.", null: false
 				field :responses,													Types::Connections::ConsultationResponse, nil, null: true
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true
