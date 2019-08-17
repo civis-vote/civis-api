@@ -20,6 +20,7 @@ class User < ApplicationRecord
 
   # enums
   enum role: { citizen: 0, admin: 1 }
+  enum best_rank_type: { national: 0, state: 1, city: 2 }
 
   # callbacks
   after_commit :generate_api_key, :send_email_verification, on: :create
