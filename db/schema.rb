@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_17_104723) do
+ActiveRecord::Schema.define(version: 2019_08_17_131929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,9 +182,11 @@ ActiveRecord::Schema.define(version: 2019_08_17_104723) do
     t.string "provider"
     t.string "uid"
     t.float "points", default: 0.0
-    t.integer "rank", default: 0
-    t.integer "state_rank", default: 0
-    t.integer "city_rank", default: 0
+    t.integer "rank"
+    t.integer "state_rank"
+    t.integer "city_rank"
+    t.integer "best_rank"
+    t.integer "best_rank_type"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
