@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include Attachable
   include ImageResizer
   include SpotlightSearch
+  include Paginator
   include Scorable::User
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -49,6 +50,22 @@ class User < ApplicationRecord
 			*terms.map { |e| [e] * num_or_conds }.flatten
 		)
 	}
+
+  scope :role_filter, lambda {|role|
+    return nil unless role.present?
+    where(role: role)
+  }
+
+  scope :location_filter, lambda {|location|
+    return nil unless location.present?
+    location_scope = [location]
+    location_scope << Location.find(location).child_ids
+    where(city_id: location_scope.flatten)
+  }
+
+  scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
+    order("#{sort} #{sort_direction}")
+  }
 
   def full_name 
     "#{first_name}" + " #{last_name}"
