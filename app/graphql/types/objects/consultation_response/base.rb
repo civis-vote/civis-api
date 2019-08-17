@@ -7,7 +7,7 @@ module Types
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :down_vote_count,										Integer, "Count of users that down-votes this response", null: false
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
-				field :user,															Types::Objects::User::Base, nil, null: false
+				field :user,															Types::Objects::User::Base, nil, null: true
 				field :consultation,											Types::Objects::Consultation::Base, nil, null: false
 				field :points,														Float, "Points earned by submitting this response", null: false
 				field :satisfaction_rating,								Types::Enums::ConsultationResponseSatisfactionRatings, nil, null: false
@@ -29,7 +29,7 @@ module Types
 				def user
 					return object.user if object.shared?
 					return object.user if object.user == context[:current_user]
-					raise CivisApi::Exceptions::Unauthorized
+					return nil
 				end
 			end
 		end
