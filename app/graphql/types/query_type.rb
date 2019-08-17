@@ -13,5 +13,6 @@ module Types
   	field :location_autocomplete,              resolver: Queries::Location::Autocomplete
   	field :ministry_autocomplete,              resolver: Queries::Ministry::Autocomplete
   	field :user_current,					             resolver: Queries::User::CurrentUser
+    field :user_list,                          resolver: Queries::User::List
   end
 end
