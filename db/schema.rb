@@ -12,6 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2019_08_17_065932) do
 
+
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -122,6 +123,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_065932) do
     t.string "poc_email_primary"
     t.string "poc_email_secondary"
     t.integer "created_by_id"
+    t.jsonb "meta"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -173,7 +175,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_065932) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"

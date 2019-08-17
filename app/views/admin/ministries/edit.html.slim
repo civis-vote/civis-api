@@ -1,0 +1,30 @@
+- navigation_add 'Ministries', admin_ministries_path
+- navigation_add "#{@ministry&.name}", edit_admin_ministry_path(@ministry)
+= render_navigation
+- flash.each do |key, value|
+	- if (key == "flash_info" || key == "flash_success_info")
+		div class=("alert #{key}") = value
+.admin-content-wrapper
+	.admin-filter-bg
+		.admin-filter-parent
+			.admin-filter-child.width-75
+				.admin-filter-child-field
+					.admin-index-title DETAILS
+	.admin-list-bg
+		= simple_form_for(@ministry, as: :ministry, url: admin_ministry_path(@ministry), html: { method: :patch, class: "edit_ministry_detail" })do |f|
+			.p-4
+				.admin-header-text
+					| Basic Information
+				.admin-details-box
+					= f.input :logo, placeholder: "Ministry logo", required: false, wrapper: :form_input_group, input_html: { class: "d-none", id: "imageUpload", capture: "", type: "file" }
+					#profile-container
+						- if @ministry.logo.attached?
+							= image_tag @ministry.logo_url, class: "pointer", id: "profileImage"
+						- else
+							= image_pack_tag @ministry.logo_url, class: "pointer", id: "profileImage"
+					= f.input :name, placeholder: "Organisation name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "organisation_name" }
+					= f.input :level, as: :select, collection: Ministry.levels.map { |level| [Ministry.formatted_enum_name(:level, level[0]), level[0]] }, selected: @ministry.level, label: 'Select ministry level', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry level', id: "#{@ministry.id}" } }
+					= f.input :poc_email_primary, placeholder: "Primary email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "ministry_poc_email_primary" }
+					= f.input :poc_email_secondary, placeholder: "Secondary email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "ministry_poc_email_secondary" }
+				.admin-update-button-position
+					= f.button :submit, "Update"
