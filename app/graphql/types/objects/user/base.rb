@@ -9,7 +9,7 @@ module Types
 				field :city_rank,					Integer,										"City rank in the system", null: false
 				field :first_name, 				String, 										nil, null: false
 				field :points,						Float,											nil, null: false
-				field :profile_picture,		Types::Objects::Attachment, nil, null: false do
+				field :profile_picture,		Types::Objects::Attachment, nil, null: true do
 					argument :resolution, String, required: false, default_value: nil
 				end
 				field :rank,							Integer,										"Overall rank in the system", null: false
