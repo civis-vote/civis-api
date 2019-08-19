@@ -13,11 +13,11 @@
     "popper.js": "^1.15.0",
     "rails-erb-loader": "^5.5.2",
     "select2": "^4.0.8",
-    "turbolinks": "^5.2.0"
+    "turbolinks": "^5.2.0",
+    "@fortawesome/fontawesome-free": "^5.10.1"
   },
   "version": "0.1.0",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.10.1",
     "webpack-dev-server": "^3.8.0"
   }
 }
