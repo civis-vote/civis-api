@@ -7,3 +7,12 @@ staging: # Environment
       - snippet: cloud66/yarn # Hook type
         target: rails # Hook fields
         execute: true
+production: # Environment
+    first_thing: # Hook point
+      - snippet: cloud66/node_7 # Hook type
+        target: rails # Hook fields
+        execute: true
+    after_bundle:
+      - snippet: cloud66/yarn # Hook type
+        target: rails # Hook fields
+        execute: true
