@@ -34,6 +34,7 @@ class Consultation < ApplicationRecord
 
   def publish
   	self.status = :published
+    self.response_token = SecureRandom.uuid
   	self.published_at = DateTime.now
   	self.save!
   end

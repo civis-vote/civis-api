@@ -35,3 +35,5 @@ yarn-debug.log*
 /config/credentials/staging.key
 config/environments/_add_gem_paths.js
 config/environments/_add_gem_paths.js
+
+/config/credentials/production.key

@@ -101,6 +101,7 @@ ActiveRecord::Schema.define(version: 2019_08_19_102501) do
     t.text "summary"
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
+    t.uuid "response_token"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
@@ -184,16 +185,18 @@ ActiveRecord::Schema.define(version: 2019_08_19_102501) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
     t.jsonb "notification_settings"
-    t.integer "role"
+    t.integer "role", default: 0
     t.string "phone_number"
     t.string "provider"
     t.string "uid"
     t.float "points", default: 0.0
-    t.integer "rank", default: 0
-    t.integer "state_rank", default: 0
-    t.integer "city_rank", default: 0
+    t.integer "rank"
+    t.integer "state_rank"
+    t.integer "city_rank"
+    t.integer "best_rank"
+    t.integer "best_rank_type"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

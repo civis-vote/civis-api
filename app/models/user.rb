@@ -2,6 +2,7 @@ class User < ApplicationRecord
   include Attachable
   include ImageResizer
   include SpotlightSearch
+  include Paginator
   include Scorable::User
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -13,12 +14,14 @@ class User < ApplicationRecord
   has_many :game_actions
   has_many :point_events
   has_many :responses, class_name: 'ConsultationResponse'
+  has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
 
 	validates :first_name, :last_name,  presence: true
 
   # enums
   enum role: { citizen: 0, admin: 1 }
+  enum best_rank_type: { national: 0, state: 1, city: 2 }
 
   # callbacks
   after_commit :generate_api_key, :send_email_verification, on: :create
@@ -49,6 +52,22 @@ class User < ApplicationRecord
 			*terms.map { |e| [e] * num_or_conds }.flatten
 		)
 	}
+
+  scope :role_filter, lambda {|role|
+    return nil unless role.present?
+    where(role: role)
+  }
+
+  scope :location_filter, lambda {|location|
+    return nil unless location.present?
+    location_scope = [location]
+    location_scope << Location.find(location).child_ids
+    where(city_id: location_scope.flatten)
+  }
+
+  scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
+    order("#{sort} #{sort_direction}")
+  }
 
   def full_name 
     "#{first_name}" + " #{last_name}"
