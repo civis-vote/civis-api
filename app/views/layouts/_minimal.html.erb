@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title><%= [@title, app_name].compact.join(" - ") %></title>
+    <%= csrf_meta_tags %>
+
+    <!-- Ensure devices display responsive pages properly -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Lato" %>
+    <!-- Le styles -->
+    <%= stylesheet_pack_tag "application", :media => "all" %>
+    <%= yield :styles %>
+
+    <!-- Le fav and touch icons -->
+    <%#= favicon_link_tag 'Favicon.png' %>
+    <%# favicon_link_tag "apple-touch-icon.png", :rel => "apple-touch-icon" %>
+    <%= javascript_pack_tag "application" %>
+    <%#= javascript_include_tag "highcharts" %>
+    <%= yield :javascript %>
+    <%= yield :head %>
+  </head>
+  <body class="<%= yield (:body_class) %>">
+    <div class='container'>
+      <%= yield :navbar %>
+    </div>
+    <div id="main" class="container-fluid">
+      <div class="row">
+        <%= yield %>
+      </div> <!-- /.container -->
+    </div> <!-- /#main -->
+  </body>

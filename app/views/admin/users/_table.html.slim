@@ -1,0 +1,22 @@
+.admin-index-records-found
+  = total_no_of_records_found(@users, "users", "facets")
+table.table
+      thead
+        tr
+          th Name
+          th Email
+          th Joining date
+          th.text-center Action button
+      tbody
+        - @users.data.each do |user|
+          tr
+            td
+              = user.full_name
+            td
+              = user&.email
+            td 
+              = user&.created_at&.localtime.try(:strftime, '%e %b %Y')
+            td.text-center
+              = link_to "View", admin_user_path(user), class: "action-btn"
+.pagination-parent
+  = cm_paginate(@users.facets)

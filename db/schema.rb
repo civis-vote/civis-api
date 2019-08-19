@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_11_132355) do
+ActiveRecord::Schema.define(version: 2019_08_17_131929) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -53,6 +53,16 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.integer "parent_id"
   end
 
+  create_table "consultation_response_votes", force: :cascade do |t|
+    t.bigint "consultation_response_id", null: false
+    t.integer "vote_direction"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
+    t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
+  end
+
   create_table "consultation_responses", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "consultation_id", null: false
@@ -61,6 +71,9 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "visibility", default: 1
+    t.integer "template_id"
+    t.float "points", default: 0.0
+    t.integer "templates_count", default: 0
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
@@ -78,7 +91,18 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.text "summary"
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
+    t.uuid "response_token"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
+  end
+
+  create_table "game_actions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "action"
+    t.bigint "point_event_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["point_event_id"], name: "index_game_actions_on_point_event_id"
+    t.index ["user_id"], name: "index_game_actions_on_user_id"
   end
 
   create_table "locations", force: :cascade do |t|
@@ -99,6 +123,7 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.string "poc_email_primary"
     t.string "poc_email_secondary"
     t.integer "created_by_id"
+    t.jsonb "meta"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -107,6 +132,24 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
+  end
+
+  create_table "point_events", force: :cascade do |t|
+    t.bigint "point_scale_id", null: false
+    t.bigint "user_id", null: false
+    t.float "points"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["point_scale_id"], name: "index_point_events_on_point_scale_id"
+    t.index ["user_id"], name: "index_point_events_on_user_id"
+  end
+
+  create_table "point_scales", force: :cascade do |t|
+    t.integer "upper_limit"
+    t.integer "action"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.float "points"
   end
 
   create_table "users", force: :cascade do |t|
@@ -134,10 +177,16 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
     t.integer "city_id"
     t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
     t.jsonb "notification_settings"
-    t.integer "role"
+    t.integer "role", default: 0
     t.string "phone_number"
     t.string "provider"
     t.string "uid"
+    t.float "points", default: 0.0
+    t.integer "rank"
+    t.integer "state_rank"
+    t.integer "city_rank"
+    t.integer "best_rank"
+    t.integer "best_rank_type"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -146,8 +195,14 @@ ActiveRecord::Schema.define(version: 2019_08_11_132355) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "consultation_response_votes", "consultation_responses"
+  add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
+  add_foreign_key "game_actions", "point_events"
+  add_foreign_key "game_actions", "users"
   add_foreign_key "notification_settings", "users"
+  add_foreign_key "point_events", "point_scales"
+  add_foreign_key "point_events", "users"
 end

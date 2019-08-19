@@ -31,3 +31,16 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    attributes:
+      consultation:
+        statuses:
+          submitted: "Submitted"
+          published: "Published"
+          rejected: "Rejected"
+          expired: "Expired"
+      ministry:
+        levels:
+          national: "National"
+          state: "State"
+          local: "Local"

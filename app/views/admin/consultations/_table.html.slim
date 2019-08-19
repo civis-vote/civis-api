@@ -1,0 +1,25 @@
+.admin-index-records-found
+  = total_no_of_records_found(@consultations, "users", "facets")
+table.table
+      thead
+        tr
+          th.width-35 Consultation Name
+          th Ministry name
+          th Submission deadline
+          th Uploaded by
+          th.text-center
+      tbody
+        - @consultations.data.each do |consultation|
+          tr
+            td
+              = consultation&.title
+            td
+              = consultation&.ministry&.name
+            td
+              = consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y')
+            td
+              = consultation&.created_by&.full_name
+            td.text-center
+              = link_to "View", admin_consultation_path(consultation), class: "action-btn"
+.pagination-parent
+  = cm_paginate(@consultations.facets)

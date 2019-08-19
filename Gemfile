@@ -37,6 +37,10 @@ gem 'rollbar'
 
 gem 'sidekiq'
 
+gem 'simple_form'
+
+gem 'local_time', '~> 2.1'
+
 # Use Active Storage variant
 gem 'image_processing'
 gem 'mini_magick'
@@ -45,6 +49,8 @@ gem "google-cloud-storage"
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
+gem 'spotlight_search'
+gem 'slim-rails'
 # oauth gems
 gem 'omniauth'
 gem 'omniauth-google-oauth2'
@@ -57,6 +63,8 @@ group :development, :test, :staging do
   gem 'fabrication'
   gem 'faker'
   gem 'database_cleaner'
+  gem 'better_errors'
+  gem "binding_of_caller"
 end
 
 group :development do

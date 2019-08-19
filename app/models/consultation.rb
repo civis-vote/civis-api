@@ -1,5 +1,7 @@
 class Consultation < ApplicationRecord
+  include SpotlightSearch
 	include Paginator
+  include Scorable::Consultation
 
   belongs_to :ministry
   belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User', optional: true
@@ -24,8 +26,14 @@ class Consultation < ApplicationRecord
     where(is_featured: featured)
   }
 
+  scope :search_query, lambda { |query = nil|
+    return nil unless query
+    where('title ILIKE (?)', "%#{query}%")
+  }
+
   def publish
   	self.status = :published
+    self.response_token = SecureRandom.uuid
   	self.published_at = DateTime.now
   	self.save!
   end

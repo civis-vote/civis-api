@@ -1,6 +1,9 @@
 class Ministry < ApplicationRecord
 	include Attachable
 	include ImageResizer
+  include Scorable::Ministry
+  include SpotlightSearch
+  include Paginator
 
 	validates :name, :level,  presence: true
 
@@ -11,8 +14,9 @@ class Ministry < ApplicationRecord
   has_one_attached :logo
   has_one_attached :cover_photo
 
+  store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
-  class << self 
+  class << self
 
     def attachment_types
       ['logo', 'cover_photo']
@@ -22,8 +26,12 @@ class Ministry < ApplicationRecord
 
   scope :approved, -> { where(is_approved: true) }
   scope :alphabetical, -> { order(name: :asc) }
+  scope :status_filter, lambda { |status|
+    return all unless status.present?
+    where(is_approved: status)
+  }
 
-  scope :search, lambda { |query|
+  scope :search_query, lambda { |query|
     return nil  if query.blank?
     terms = query.downcase.split(/\s+/)
     # replace "*" with "%" for wildcard searches,
@@ -42,4 +50,27 @@ class Ministry < ApplicationRecord
       *terms.map { |e| [e] * num_or_conds }.flatten
     )
   }
+
+  def logo_url
+    if self.logo.attached?
+      self.logo
+    else
+      "media/application/images/user_profile_picture.png"
+    end
+  end
+
+  def approve
+    self.approved_by_id = Current.user.id
+    self.is_approved = true
+    self.approved_at = DateTime.now
+    self.save!
+  end
+
+  def reject
+    self.rejected_by_id = Current.user.id
+    self.is_approved = false
+    self.rejected_at = DateTime.now
+    self.save!
+  end
+
 end

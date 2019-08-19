@@ -1,0 +1,302 @@
+@import "variables";
+@for $i from 1 through 20 {
+  $base: 5;
+  $width: $base * $i;
+  .width-#{$width} {
+      width: $width + 0%;
+      }
+}
+
+.submit-btn {
+  background-color: #008080;
+  font-size: 16px;
+  font-weight: 600;
+  border: 1px solid #008080;
+  min-width: 10rem;
+  height: 36px;
+  color: #fff;
+}
+
+.admin-bg-color {
+  background-color: #F4F5F7;
+}
+
+.breadcrumb {
+  color: $breadcrumb-color;
+  font-size: 16px;
+  line-height: 25px;
+  padding-left: 34px;
+  margin: 0px auto;
+  display: flex;
+  position: fixed;
+  top: 10px;
+  z-index: 99999;
+  align-items: baseline;
+  background-color: #242536 !important;
+
+  a:link{color:$breadcrumb-color}
+	a:visited	{
+		color:inherit
+			.active {
+				color: white;
+			}
+	}
+	a+a:before {
+    margin-left: 5px;
+    color: $breadcrumb-color;
+    content: "/\00a0";
+	}
+  a, a:hover {
+    color: #9e9e9e;
+    text-decoration: none;
+  }
+	.active {
+		color: white !important;
+		font-weight: 600;
+	}
+
+}
+
+.admin-table {
+  td {
+   color: #172B4D !important;
+   font-size: 16px !important;
+  }
+  tbody tr {
+   height: 60px;
+   background-color: white;
+   box-shadow: inset 0 1px 0 0 #EBECF0;
+  }
+  thead > tr > th {
+   background-color: #FAFBFC !important;
+   box-shadow: inset 0 1px 0 0 #EBECF0 !important;
+   color: #172B4D !important;
+   font-weight: 600 !important;
+   font-size: 16px !important;
+   border-bottom: none;
+   height: 40px;
+  }
+
+  table {
+  margin-top: 12px;
+  box-shadow: inset 0 1px 0 0 #EBECF0;
+    td {
+      color: #172B4D !important;
+      font-size: 16px !important;
+    }
+
+    tbody tr {
+      height: 60px;
+      background-color: white;
+      box-shadow: inset 0 1px 0 0 #EBECF0;
+    }
+    thead > tr > th {
+      background-color: #FAFBFC !important;
+      box-shadow: inset 0 1px 0 0 #EBECF0 !important;
+      color: #172B4D !important;
+      font-weight: 600 !important;
+      font-size: 16px !important;
+      border-bottom: none;
+      height: 40px;
+    }
+    .table-date-width {
+      width: 13%;
+    }
+  }
+  th .asc:before {
+    content: "";
+  }
+  th .desc:before{
+    content: "";
+  }
+  th .asc:after {
+    font-family: FontAwesome;
+    content: " \f0de";
+    position: relative;
+    top: 5px;
+  }
+  th .desc:after{
+    font-family: FontAwesome;
+    content: " \f0dd";
+    position: relative;
+    top: -1px;
+  }
+}
+
+.admin-index-records-found {
+  opacity: 0.5;
+  color: #31383D;
+  font-size: 16px;
+  line-height: 19px;
+  padding: 5px 15px;
+}
+
+.admin-filters-wrap {
+  width: 100%;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 1px 0 0 rgba(0,0,0,0.06);
+  margin-top: 40px;
+  overflow-x: scroll;
+}
+
+.admin-index-title {
+  color: #172B4D;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 19px;
+}
+
+.admin-content-wrapper {
+  padding: 35px 15px 0;
+}
+
+.table th, .table td {
+  vertical-align: middle !important;
+}
+
+.pagination-parent .pagination {
+  margin: 0 auto;
+}
+
+.admin-list-bg {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #EBECF0;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 0 2px 0 rgba(0,0,0,0.1);
+  margin-top: 55px;
+  min-height: -webkit-fill-available;
+}
+
+.admin-header-text {
+  color: #1D2129;
+  font-size: 30px;
+  line-height: 38px;
+}
+
+.admin-details-box {
+  margin: 16px 0px;
+  padding: 15px 15px 0px 15px;
+  box-sizing: border-box;
+  min-height: 145px;
+  border: 1px solid #EBECF0;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 4px 9px 0 rgba(0,0,0,0.02);
+}
+
+.admin-details-box-connection-interests {
+  margin: 16px 0px;
+  padding: 15px;
+  min-height: 60px;
+  box-sizing: border-box;
+  border: 1px solid #EBECF0;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 4px 9px 0 rgba(0,0,0,0.02);
+}
+
+.parent-toggle {
+  margin-left: 20px;
+}
+
+.sign-in-notice {
+  left: 0 !important;
+  background-color: #e65000;
+  color: #fff3e0;
+  text-align: center;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.fa-icon-color {
+  color: #242536;
+}
+
+.select2-container .select2-selection--single {
+  min-height: 35px !important;
+  display: flex;
+  align-items: center;
+}
+
+.select2-container--default .select2-selection--single {
+  border-radius: 10px !important;
+  border: 1px solid #CACCD1 !important;
+
+  &:focus {
+    outline: none !important;
+    border-radius: 10px !important;
+    box-sizing: border-box !important;
+    border: 1px solid #1D2129 !important;
+  }
+}
+
+.form-select-label-group>label {
+  position: absolute;
+  top: 0;
+  left: 16px;
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 0;
+  line-height: 1.5;
+  transition: all .1s ease-in-out;
+  padding: 3px 12px;
+}
+
+.form-select-label-group {
+  .select2-container {
+    .select2-selection--single, .select2-selection--multiple {
+      min-height: 50px !important;
+    }
+
+    .select2-selection--single .select2-selection__rendered, .select2-selection--multiple .select2-selection__rendered {
+      padding-left: 12px !important;
+    }
+  }
+  .placeholder-padding .select2-selection__rendered {
+    padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
+    padding-bottom: calc(var(--input-padding-y) / 3);
+  }
+
+  .select2-container--default .select2-selection--single .select2-selection__arrow b {
+    top: 90%;
+  }
+
+  .select2-container--default {
+    .select2-selection--single .select2-selection__placeholder, .select2-selection--multiple .select2-selection__placeholder {
+      color: #696969 !important;
+    }
+  }
+
+  .select2-container .select2-search--inline {
+    padding-top: 5px;
+  }
+
+  .slideup {
+    animation: slideUp .2s linear forwards;
+    @keyframes slideUp {
+      from { transform: translateY(20px); }
+      to { transform: translateY(0); }
+    }
+  }
+
+  .slidedown {
+    animation: slideDown .2s linear forwards;
+    @keyframes slideDown {
+      from { transform: translateY(0); }
+      to { transform: translateY(25px); }
+    }
+  }
+
+}
+
+.select2-selection__placeholder {  
+  position: absolute;
+  top: 12px;
+}

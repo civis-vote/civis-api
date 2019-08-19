@@ -1,0 +1,22 @@
+.admin-index-records-found
+  = total_no_of_records_found(@ministries, "ministries", "facets")
+table.table
+      thead
+        tr
+          th.width-35 Name of Ministry
+          th Created by
+          th Status
+          th.text-center
+      tbody
+        - @ministries.data.each do |ministry|
+          tr
+            td
+              = ministry&.name
+            td
+              = ministry&.created_by&.full_name
+            td
+              = "#{ ministry&.is_approved ? 'Approved' : 'Not Approved' }"
+            td.text-center
+              = link_to "View", admin_ministry_path(ministry), class: "action-btn"
+.pagination-parent
+  = cm_paginate(@ministries.facets)
