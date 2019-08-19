@@ -1,0 +1,34 @@
+- navigation_add 'Consultations', admin_consultations_path
+- navigation_add "#{@consultation&.title}", edit_admin_consultation_path(@consultation)
+= render_navigation
+- flash.each do |key, value|
+	- if (key == "flash_info" || key == "flash_success_info")
+		div class=("alert #{key}") = value
+.admin-content-wrapper
+	.admin-filter-bg
+		.admin-filter-parent
+			.admin-filter-child.width-75
+				.admin-filter-child-field
+					.admin-index-title DETAILS
+	.admin-list-bg
+		= simple_form_for(@consultation, as: :consultation, url: admin_consultation_path(@consultation), html: { method: :patch, class: "edit_consultation_detail" })do |f|
+			.p-4
+				.admin-header-text
+					| Basic Information
+				.admin-details-box
+					= f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
+					- unless @consultation&.ministry&.is_approved
+						.row
+							.col-md-6
+								= link_to "Awaiting moderation", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "right", title: "Approve ministry"
+					= f.input :ministry_id, as: :select, collection: Ministry.all.map {|u| [u.name, u.id]}, selected: @consultation&.ministry_id, label: 'Select ministry', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry', id: "consultation_ministry" } }
+					= f.input :url, placeholder: "URL of consultation PDF", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation url" }
+					= f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "admin-event-from-to-date", class: "datepicker", value: "#{@consultation.response_deadline}" }
+					.row.form-group
+						.col-md-6.form-label-group
+							= f.rich_text_area :summary, placeholder: "Summary", required: false, label: false, autofocus: true, wrapper: :false, input_html: { id: "consultation summary" }
+				.admin-update-button-position
+					- if @consultation&.ministry&.is_approved 
+						= f.button :submit, "Update"
+					- else
+						div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Update
