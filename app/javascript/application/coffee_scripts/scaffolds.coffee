@@ -1,8 +1,9 @@
 import 'bootstrap/js/dist/tooltip';
 import 'select2';
+import 'pc-bootstrap4-datetimepicker';
+import 'trix/dist/trix';
 
 select2_form_input_ui = ->
-  console.log "input"
   $('.form-select-label-group select').each ->
     if $(this).val().length != 0
       $(this).parent().find('.select2-container--default').addClass('placeholder-padding')
@@ -22,6 +23,9 @@ $(document).on 'turbolinks:load', ->
   return
 
 $(document).on 'turbolinks:load', ->
+  $ ->
+    $('.datepicker').datetimepicker format: 'YYYY-MM-DD'
+    return
   fasterPreview = (uploader) ->
     if uploader.files and uploader.files[0]
       $('#profileImage').attr 'src', window.URL.createObjectURL(uploader.files[0])
