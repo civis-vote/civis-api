@@ -2,7 +2,7 @@ class Admin::ConsultationsController < ApplicationController
 	layout 'admin_panel_sidenav'
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show]
-	before_action :set_consultation, only: [:edit, :update, :show]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured]
 
 	def index
     @consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
@@ -28,13 +28,33 @@ class Admin::ConsultationsController < ApplicationController
 
 	def destroy
 		@consultation.destroy
-		redirect_to users_path, :notice => "User deleted."
+		redirect_to admin_consultations_path, flash_success_info: 'Consultation was successfully deleted.'
+	end
+
+	def publish
+		@consultation.publish
+		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully approved.'
+	end
+
+	def reject
+		@consultation.reject
+		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully rejected.'
+	end	
+
+	def featured
+		@consultation.featured
+		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully updated as featured.'
+	end
+
+	def unfeatured
+		@consultation.unfeatured
+		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully updated as unfeatured.'
 	end
 
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary)
 	end
 
 	def set_consultation

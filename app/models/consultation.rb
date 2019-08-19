@@ -2,6 +2,7 @@ class Consultation < ApplicationRecord
   include SpotlightSearch
 	include Paginator
   include Scorable::Consultation
+  has_rich_text :summary
 
   belongs_to :ministry
   belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User', optional: true
@@ -54,6 +55,14 @@ class Consultation < ApplicationRecord
 
   def satisfaction_rating_distribution
     self.responses.group(:satisfaction_rating).distinct.count(:satisfaction_rating)
+  end
+
+  def featured
+    self.update(is_featured: true)
+  end
+
+  def unfeatured
+    self.update(is_featured: false)
   end
 
 end

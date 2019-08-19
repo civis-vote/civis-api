@@ -114,6 +114,26 @@
 }
 
 .btn-parent {  
-  float: right;
-  margin-right: 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.featured-color {
+  color: #f2b01e;
+
+  &:hover {
+    color: #f2b01e !important;
+  }
+}
+
+a.disabled {
+  color: gray;
+  pointer-events: none;
+}
+
+trix-toolbar .trix-button-row {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: space-between !important;
 }
