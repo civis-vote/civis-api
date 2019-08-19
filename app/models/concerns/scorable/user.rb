@@ -62,9 +62,9 @@ module Scorable
 
     def check_for_new_best_rank
       self.update(best_rank: self.city_rank, best_rank_type: :city) unless self.best_rank.present?
-      self.update(best_rank: self.city_rank, best_rank_type: :city) if self.best_rank > self.city_rank
-      self.update(best_rank: self.state_rank, best_rank_type: :state) if self.best_rank > self.state_rank
-      self.update(best_rank: self.rank, best_rank_type: :national) if self.best_rank > self.rank   
+      self.update(best_rank: self.city_rank, best_rank_type: :city) if self.city_rank.present? && self.best_rank > self.city_rank
+      self.update(best_rank: self.state_rank, best_rank_type: :state) if self.state_rank.present? && self.best_rank > self.state_rank
+      self.update(best_rank: self.rank, best_rank_type: :national) if self.rank.present? && self.best_rank > self.rank   
     end
   end
 end
