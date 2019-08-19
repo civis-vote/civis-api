@@ -13,10 +13,18 @@ module Types
 					argument :resolution, String, required: false, default_value: nil
 				end
 				field :rank,							Integer,										"Overall rank in the system", null: false
+				field :shared_responses,									Types::Connections::ConsultationResponse, nil, null: true do 
+					argument :sort,													Types::Enums::ConsultationResponseSorts, 	required: false, default_value: nil
+					argument :sort_direction,								Types::Enums::SortDirections, 						required: false, default_value: nil
+				end
 				field :state_rank,				Integer,										"State rank in the system", null: false
 
 				def profile_picture(resolution:)
 					object.resize(resolution, "profile_picture")
+				end
+
+				def shared_responses(sort:, sort_direction:)
+					object.shared_responses.sort_records(sort, sort_direction)
 				end
 			end
 		end
