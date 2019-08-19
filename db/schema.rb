@@ -63,6 +63,16 @@ ActiveRecord::Schema.define(version: 2019_08_19_102501) do
     t.integer "parent_id"
   end
 
+  create_table "consultation_response_votes", force: :cascade do |t|
+    t.bigint "consultation_response_id", null: false
+    t.integer "vote_direction"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
+    t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
+  end
+
   create_table "consultation_responses", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "consultation_id", null: false
@@ -72,6 +82,8 @@ ActiveRecord::Schema.define(version: 2019_08_19_102501) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "visibility", default: 1
     t.integer "template_id"
+    t.float "points", default: 0.0
+    t.integer "templates_count", default: 0
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
@@ -190,6 +202,8 @@ ActiveRecord::Schema.define(version: 2019_08_19_102501) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "consultation_response_votes", "consultation_responses"
+  add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
