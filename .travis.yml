@@ -1,0 +1,40 @@
+addons:
+  postgresql: '11.4'
+  apt:
+    packages:
+      - postgresql-server-dev-11.4
+language: ruby
+cache: bundler
+env:
+  - DB=postgresql
+before_script:
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - cp config/database.yml.travis config/database.yml
+script:
+  - bundle exec rake db:schema:load
+  - bundle exec rake db:test:prepare
+  - bundle exec rspec spec
+services:
+  - redis-server
+before_deploy:
+  - export APPLICATION_NAME=CIVIS
+  - export DEPLOYENV=$(if [ "${TRAVIS_BRANCH}" == "staging" ]; then echo "staging"; else echo "production"; fi)
+  - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
+  - ./.rollbar.sh started
+  - export DEPLOY_ID="$(while read -r line; do echo "$line"; done < ~/deploy_id_from_rollbar)"
+deploy:
+  - provider: cloud66
+    redeployment_hook: "https://hooks.cloud66.com/stacks/redeploy/b4efb0344f55b9b41acb31fe85fffd1b/f5fb2496172fc7a61acc5c8888477948"
+    on:
+      branch: staging
+  - provider: cloud66
+    redeployment_hook: "https://hooks.cloud66.com/stacks/redeploy/b4efb0344f55b9b41acb31fe85fffd1b/93ee45d081e3ab886eda9e2999182381"
+    on:
+      branch: master
+after_deploy:
+  - ./.rollbar.sh succeeded
+
+branches:
+  only:
+  - master
+  - staging
