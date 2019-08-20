@@ -186,6 +186,15 @@ SimpleForm.setup do |config|
     end
   end
 
+  config.wrappers :form_datepicker_group, class: "row form-group" do |sub_wrapper|
+    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 form-label-group' do |input|
+      input.use :html5
+      input.use :placeholder
+      input.use :input, class: "w-100 datepicker"
+      input.use :label
+    end
+  end
+
   config.wrappers :form_select_group, class: "row form-group" do |sub_wrapper|
     sub_wrapper.wrapper tag: 'div', class: 'col-md-6 mb-3 form-select-label-group' do |input|
       input.use :html5

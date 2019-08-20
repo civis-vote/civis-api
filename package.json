@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@rails/actioncable": "^6.0.0-alpha",
+    "@rails/actiontext": "^6.0.0-rc1",
     "@rails/activestorage": "^6.0.0-alpha",
     "@rails/ujs": "^6.0.0-alpha",
     "@rails/webpacker": "^4.0.7",
@@ -10,10 +11,11 @@
     "coffee-loader": "^0.9.0",
     "coffeescript": "1.12.7",
     "jquery": "^3.4.1",
+    "pc-bootstrap4-datetimepicker": "^4.17.50",
     "popper.js": "^1.15.0",
     "rails-erb-loader": "^5.5.2",
     "select2": "^4.0.8",
-    "turbolinks": "^5.2.0",
+    "trix": "^1.0.0",
     "@fortawesome/fontawesome-free": "^5.10.1"
   },
   "version": "0.1.0",
