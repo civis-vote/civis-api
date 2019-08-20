@@ -33,8 +33,6 @@ deploy:
       secure: HVNozoXPhXL3nBOFs4v2lZLEJsGb8hF9DfChR79UkMv9LqPcJJtvbKgYOlkyXMSL3Dgt8ZtHTL/UCjtHvZFxJ1j3x357KGmvMfBZawgTuHmKjWSf5qFiQIL9CITq8JT++6LB7dYSAFesjATzHUOKvzdHyEoTkA28FZHcyj6J01YImpyuPAwPPe0BBAoHOeeZtkfwVMIkjcMdk8OQY9PXk6Izpr7CUgV945IdIega8d7kPOegsxKN8z49RDsj62mOxYix/uF3P2ddrxspMrqW8JTcacWo4dDhreTLx5XWUDz8oybsMOJohGLetX6DKG7sPbvxVvlA/Um+m1FwddR9Ba+w9FiIP/pHFRyV8lvV6+tox7rw4QmbOOSgFCKR9Ld8rropfBJjS38kxR4tJNri39+Zj7X5+5zp0OL+hX0Ree+Q7u6Am2AlCkpQviLvoOup9TUnNQnTt/dq9bAPm0aSOV6YerHsR2G1ZHKab+hROejc/CLOBafbpCcc3tizCvYKTKgX9XpbLwZrtvEc22ZcPQuuxqRFE5BEZtLbldYJcF5YugkMDZ/zw8t0WljHdJxq5A2P1AzK9z/SqqDHbvE58OmdY5MKXers9F0agY7faOZqGhXqRb3bXGnnj84TNev3zNs7iUA3mOvbI7zl4Q9+I/72ngb9QEdgI1sqQl4BAdw=
     on:
       branch: master
-after_deploy:
-- "./.rollbar.sh succeeded"
 branches:
   only:
   - master
