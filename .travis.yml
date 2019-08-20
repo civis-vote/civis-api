@@ -1,8 +1,8 @@
 addons:
-  postgresql: '11.4'
+  postgresql: '10'
   apt:
     packages:
-      - postgresql-server-dev-11.4
+      - postgresql-server-dev-10
 language: ruby
 cache: bundler
 env:
