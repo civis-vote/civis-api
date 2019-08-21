@@ -6,7 +6,10 @@ addons:
 language: ruby
 cache: bundler
 env:
-- DB=postgresql
+  matrix:
+  - DB=postgresql
+  global:
+    secure: J30voywFntJ2k6k/VubxQHdnHckz3wote42pUa9Avrn1Y1rJZD4LtBMkDQeR8wjTtVBnstFdGzo9qL0FJj6xwjK2yaILRlDOWEme8pfe+MFqEekTNxYZeYS2W8suYPZQyMHDi8EyzXQrHlnFNyuvNiNjVbfjsLhpsJTD6UnW+4tjWgicchrVtgnsUf0Qx/OBMfZiJu+mTGNn2Eu6QUm7v7r0ifw/0XCLVE1Z0i9OLC4RxCXXWAkItvbjsiV7d/nVfi5rBPzwiLvm8ZhGdjRT/Zo3msqFYHCYUrXEbaKOxup2Vc3MuunyqWd1PS2S65pLz/tuO5rDKrtEmQD/Ow0zOY0koefnqgoNzVvTJTFqTOEggABsbNTC8QcxR4jBKwtt1tXIn2TfEltIjBRd43VyLqwLmu1DR7HAlnAuUc5x627VAnaWHn9+XFWBYC0ScvrOAgAFnc3jeMaZEUA2ogQVonBRlgfLHw4dYEpD1AewoppOdUy5hGqDHe340ryNEFQZKtm63YCemXCsEIp6jBfUD1izsk+hF/8pQ/zBMuEyJ5RB0rruA3I0HMWvEnJbm2b0ojdD4WjCWowMMm7FyEMfLbhWIZ/Tk8iRUzzcTDU7g/BelRzGVcSNe1QUXoznxiss9eGZcPAOOrqy1f5vuAuEApw4FQ9ntdEbigibpKcfYiU=
 before_script:
 - psql -c 'create database travis_ci_test;' -U postgres
 - cp config/database.yml.travis config/database.yml
@@ -15,17 +18,26 @@ script:
 - bundle exec rspec spec
 services:
 - redis-server
+before_deploy:
+- export APPLICATION_NAME=civis
+- export DEPLOYENV=$(if [ "${TRAVIS_BRANCH}" == "staging" ]; then echo "staging";
+  else echo "production"; fi)
+- export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
+- "./.rollbar.sh started $rollbar_access_token"
+- export DEPLOY_ID="$(while read -r line; do echo "$line"; done < ~/deploy_id_from_rollbar)"
 deploy:
-  - provider: cloud66
-    redeployment_hook:
-      secure: ACRtTGERcEKDx1B8CceKW7Klz10p8roCrYNTDh14zPMid9gTVl4YufsINIwBsA0ct/brzL5bwOVrRWg64PsIHlVKyO+GyB4fbSo/zu0/1QZAtb60mXTgB7iQNA7Xo74eWYQXlypoTuFX1Hcx27/R6n4rocAKUkg7AiFFMEGpx6pH0wPBn9P3jwIikcXVic5xZRK7wPe/lsyhU6V6KYTb3CeIJqEPzW4PeHSIly1W623RldWd0usR7GWFEvScIFFB37NDfRnm/oR2tR707ZrYhLmQSEonPKa+AkQ5FwFsxngBiYakgTAdrRUQ3E7fa+Ptt/bkeAOLtorB1Fp319eEAAO1rssbBT8J1Ulq5g51MGENsD/8DSD7uzzBYjkdx1DAvGlKvtqlRnC26xwdpFJ/U5JuoteIOZ3qVhDf/+Qb0EblZFAxk+J1FTXNH1HJXTZoAQ8UETCm8Kgu1yBMWjoRZN81Gq6ourt8irqTQvLmzgOY1pGgeoUawYK/OdmY2GES+1At9NmfYHZI8fHi3BielBOtePolrQx83ekC7rRl+f+Wq2wnsgZKhH7KAYR3vOVTFoHfyclZSoFfaBs+JceM6UCfC+NL3YRWrkdBxFULypKUvr0wBaLuWjN/tpmgeea9uHEWFfbpy0wcn0PbkpZ580QPGNOq+9EH1VxgQ6dNnbI=
-    on:
-      branch: staging
-  - provider: cloud66
-    redeployment_hook:
-      secure: HVNozoXPhXL3nBOFs4v2lZLEJsGb8hF9DfChR79UkMv9LqPcJJtvbKgYOlkyXMSL3Dgt8ZtHTL/UCjtHvZFxJ1j3x357KGmvMfBZawgTuHmKjWSf5qFiQIL9CITq8JT++6LB7dYSAFesjATzHUOKvzdHyEoTkA28FZHcyj6J01YImpyuPAwPPe0BBAoHOeeZtkfwVMIkjcMdk8OQY9PXk6Izpr7CUgV945IdIega8d7kPOegsxKN8z49RDsj62mOxYix/uF3P2ddrxspMrqW8JTcacWo4dDhreTLx5XWUDz8oybsMOJohGLetX6DKG7sPbvxVvlA/Um+m1FwddR9Ba+w9FiIP/pHFRyV8lvV6+tox7rw4QmbOOSgFCKR9Ld8rropfBJjS38kxR4tJNri39+Zj7X5+5zp0OL+hX0Ree+Q7u6Am2AlCkpQviLvoOup9TUnNQnTt/dq9bAPm0aSOV6YerHsR2G1ZHKab+hROejc/CLOBafbpCcc3tizCvYKTKgX9XpbLwZrtvEc22ZcPQuuxqRFE5BEZtLbldYJcF5YugkMDZ/zw8t0WljHdJxq5A2P1AzK9z/SqqDHbvE58OmdY5MKXers9F0agY7faOZqGhXqRb3bXGnnj84TNev3zNs7iUA3mOvbI7zl4Q9+I/72ngb9QEdgI1sqQl4BAdw=
-    on:
-      branch: master
+- provider: cloud66
+  redeployment_hook:
+    secure: ACRtTGERcEKDx1B8CceKW7Klz10p8roCrYNTDh14zPMid9gTVl4YufsINIwBsA0ct/brzL5bwOVrRWg64PsIHlVKyO+GyB4fbSo/zu0/1QZAtb60mXTgB7iQNA7Xo74eWYQXlypoTuFX1Hcx27/R6n4rocAKUkg7AiFFMEGpx6pH0wPBn9P3jwIikcXVic5xZRK7wPe/lsyhU6V6KYTb3CeIJqEPzW4PeHSIly1W623RldWd0usR7GWFEvScIFFB37NDfRnm/oR2tR707ZrYhLmQSEonPKa+AkQ5FwFsxngBiYakgTAdrRUQ3E7fa+Ptt/bkeAOLtorB1Fp319eEAAO1rssbBT8J1Ulq5g51MGENsD/8DSD7uzzBYjkdx1DAvGlKvtqlRnC26xwdpFJ/U5JuoteIOZ3qVhDf/+Qb0EblZFAxk+J1FTXNH1HJXTZoAQ8UETCm8Kgu1yBMWjoRZN81Gq6ourt8irqTQvLmzgOY1pGgeoUawYK/OdmY2GES+1At9NmfYHZI8fHi3BielBOtePolrQx83ekC7rRl+f+Wq2wnsgZKhH7KAYR3vOVTFoHfyclZSoFfaBs+JceM6UCfC+NL3YRWrkdBxFULypKUvr0wBaLuWjN/tpmgeea9uHEWFfbpy0wcn0PbkpZ580QPGNOq+9EH1VxgQ6dNnbI=
+  on:
+    branch: staging
+- provider: cloud66
+  redeployment_hook:
+    secure: HVNozoXPhXL3nBOFs4v2lZLEJsGb8hF9DfChR79UkMv9LqPcJJtvbKgYOlkyXMSL3Dgt8ZtHTL/UCjtHvZFxJ1j3x357KGmvMfBZawgTuHmKjWSf5qFiQIL9CITq8JT++6LB7dYSAFesjATzHUOKvzdHyEoTkA28FZHcyj6J01YImpyuPAwPPe0BBAoHOeeZtkfwVMIkjcMdk8OQY9PXk6Izpr7CUgV945IdIega8d7kPOegsxKN8z49RDsj62mOxYix/uF3P2ddrxspMrqW8JTcacWo4dDhreTLx5XWUDz8oybsMOJohGLetX6DKG7sPbvxVvlA/Um+m1FwddR9Ba+w9FiIP/pHFRyV8lvV6+tox7rw4QmbOOSgFCKR9Ld8rropfBJjS38kxR4tJNri39+Zj7X5+5zp0OL+hX0Ree+Q7u6Am2AlCkpQviLvoOup9TUnNQnTt/dq9bAPm0aSOV6YerHsR2G1ZHKab+hROejc/CLOBafbpCcc3tizCvYKTKgX9XpbLwZrtvEc22ZcPQuuxqRFE5BEZtLbldYJcF5YugkMDZ/zw8t0WljHdJxq5A2P1AzK9z/SqqDHbvE58OmdY5MKXers9F0agY7faOZqGhXqRb3bXGnnj84TNev3zNs7iUA3mOvbI7zl4Q9+I/72ngb9QEdgI1sqQl4BAdw=
+  on:
+    branch: master
+after_deploy:
+- "./.rollbar.sh succeeded $rollbar_access_token"
 branches:
   only:
   - master
