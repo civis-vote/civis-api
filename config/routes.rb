@@ -1,3 +1,4 @@
+require 'sidekiq/web'
 Rails.application.routes.draw do
   if Rails.env.development?
     mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
@@ -6,6 +7,7 @@ Rails.application.routes.draw do
   devise_scope :user do
     root to: "devise/sessions#new"
   end
+  mount Sidekiq::Web => '/sidekiq'
   get 'signin_google','signin_linkedin','signin_facebook', to: 'oauth#redirect_to_provider'
   get 'users/auth/:provider/callback', to: 'oauth#callback'
   get 'users/auth/failure' => 'oauth#failure'
