@@ -28,6 +28,7 @@ GraphQL::Errors.configure(CivisApiSchema) do
 
   unless Rails.env.development?
 	  rescue_from StandardError do |exception|
+      Rollbar.error(e)
 	    GraphQL::ExecutionError.new("Please try to execute the query for this field later")
 	  end
 	end
