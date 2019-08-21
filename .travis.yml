@@ -23,7 +23,7 @@ before_deploy:
 - export DEPLOYENV=$(if [ "${TRAVIS_BRANCH}" == "staging" ]; then echo "staging";
   else echo "production"; fi)
 - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
-- ./.rollbar.sh started $rollbar_access_token
+- chmod +x ./.rollbar.sh
 - export DEPLOY_ID="$(while read -r line; do echo "$line"; done < ~/deploy_id_from_rollbar)"
 deploy:
 - provider: cloud66
@@ -37,7 +37,7 @@ deploy:
   on:
     branch: master
 after_deploy:
-- ./.rollbar.sh succeeded $rollbar_access_token
+- chmod +x ./.rollbar.sh
 branches:
   only:
   - master
