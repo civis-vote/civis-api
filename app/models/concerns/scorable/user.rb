@@ -26,7 +26,7 @@ module Scorable
         state_users = ::User.citizen.where(city_id: state.child_ids)
         distinct_points = state_users.distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
-          state_users.where(points: point_value).update_all(rank: index + 1)
+          state_users.where(points: point_value).update_all(state_rank: index + 1)
         end
       end
 
@@ -34,7 +34,7 @@ module Scorable
         city_users = ::User.citizen.where(city_id: city.id)
         distinct_points = city_users.distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
-          city_users.where(points: point_value).update_all(rank: index + 1)
+          city_users.where(points: point_value).update_all(city_rank: index + 1)
         end
       end
     end    
