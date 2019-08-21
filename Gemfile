@@ -43,6 +43,8 @@ gem 'local_time', '~> 2.1'
 
 gem 'travis'
 
+gem 'whenever', require: false
+
 # Use Active Storage variant
 gem 'image_processing'
 gem 'mini_magick'
