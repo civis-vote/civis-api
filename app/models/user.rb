@@ -17,7 +17,7 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
 
-	validates :first_name, :last_name,  presence: true
+	validates :first_name, presence: true
 
   # enums
   enum role: { citizen: 0, admin: 1 }

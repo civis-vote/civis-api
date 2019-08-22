@@ -42,7 +42,7 @@ module Scorable
     def add_points(action)
     	point_scale = calculate_point_scale(action)
     	point_event = self.point_events.create(point_scale: point_scale, points: point_scale.points)
-      if self.citizen?
+      if self.citizen? && self.city.present?
         User.update_national_rank
         User.update_state_rank(self.city.parent)
         User.update_city_rank(city)
