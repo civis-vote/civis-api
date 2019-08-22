@@ -1,8 +1,8 @@
 class Admin::ConsultationsController < ApplicationController
 	layout 'admin_panel_sidenav'
   before_action :authenticate_user!
-	before_action :require_admin, only: [:index, :update, :edit, :show]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured]
+	before_action :require_admin, only: [:index, :update, :edit, :show, :create]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry]
 
 	def index
     @consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
@@ -20,11 +20,25 @@ class Admin::ConsultationsController < ApplicationController
 
 	def update
 		if @consultation.update_attributes(secure_params)
-			redirect_back fallback_location: root_path, flash_success_info: 'Consultation details was successfully updated.'
+			redirect_to admin_consultation_path(@consultation), flash_success_info: 'Consultation details was successfully updated.'
 		else
 			redirect_back fallback_location: root_path, flash_info: 'Consultation details was not successfully updated.'
 		end
 	end
+
+	def new
+    @consultation = Consultation.new
+  end
+
+  def create
+    @consultation = Consultation.new(secure_params.merge(created_by_id: current_user.id))
+    if @consultation.save
+      redirect_to admin_consultation_path(@consultation), flash_success_info: 'Consultation was successfully created.'
+    else
+    	flash[:flash_info] = 'Consultation was not successfully created.'
+      render :new
+    end
+  end
 
 	def destroy
 		@consultation.destroy
@@ -49,6 +63,13 @@ class Admin::ConsultationsController < ApplicationController
 	def unfeatured
 		@consultation.unfeatured
 		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully updated as unfeatured.'
+	end
+
+	def check_active_ministry
+		ministry = Ministry.find(params[:ministry_id])
+		if ministry
+			render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: ministry }
+		end
 	end
 
 	private

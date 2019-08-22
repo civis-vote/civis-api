@@ -19,6 +19,7 @@ Rails.application.routes.draw do
         post :reject
         post :featured
         post :unfeatured
+        get :check_active_ministry
       end
     end
     resources :ministries do
