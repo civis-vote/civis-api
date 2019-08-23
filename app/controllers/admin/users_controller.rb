@@ -2,10 +2,10 @@ class Admin::UsersController < ApplicationController
 	layout 'admin_panel_sidenav'
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show]
-	before_action :set_user, only: [:edit, :update, :show]
+	before_action :set_user, only: [:edit, :update, :show, :update_user_role]
 
 	def index
-    @users = User.all.order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+    @users = User.all.order(created_at: :desc).includes(:city).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
         format.html {render partial: 'admin/users/table', locals: {users: @users}}
@@ -29,6 +29,16 @@ class Admin::UsersController < ApplicationController
 	def destroy
 		@user.destroy
 		redirect_to users_path, :notice => "User deleted."
+	end
+
+	def update_user_role
+		if @user.admin?
+			@user.citizen!
+			redirect_to admin_user_path(@user), flash_success_info: 'User role was updated as moderator'
+		else
+			@user.admin!
+			redirect_to admin_user_path(@user), flash_success_info: 'User role was updated as admin'
+		end
 	end
 
 	private

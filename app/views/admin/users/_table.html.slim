@@ -6,7 +6,10 @@ table.table
           th Name
           th Email
           th Joining date
-          th.text-center Action button
+          th Points
+          th City
+          th Rank
+          th.text-center
       tbody
         - @users.data.each do |user|
           tr
@@ -16,6 +19,12 @@ table.table
               = user&.email
             td 
               = user&.created_at&.localtime.try(:strftime, '%e %b %Y')
+            td
+              = user&.points
+            td
+              = user&.city&.name
+            td
+              = user&.rank
             td.text-center
               = link_to "View", admin_user_path(user), class: "action-btn"
 .pagination-parent

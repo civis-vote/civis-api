@@ -3,6 +3,7 @@ import 'select2';
 import 'pc-bootstrap4-datetimepicker';
 import 'trix/dist/trix';
 
+current_request = null
 select2_form_input_ui = ->
   $('.form-select-label-group select').each ->
     if $(this).val().length != 0
