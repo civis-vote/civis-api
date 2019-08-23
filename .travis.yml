@@ -23,10 +23,9 @@ before_deploy:
 - export DEPLOYENV=$(if [ "${TRAVIS_BRANCH}" == "staging" ]; then echo "staging";
   else echo "production"; fi)
 - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
-- "./.rollbar.sh started"
+- ./.rollbar.sh started
 - export DEPLOY_ID="$(while read -r line; do echo "$line"; done < ~/deploy_id_from_rollbar)"
 deploy:
-  matrix:
   - provider: cloud66
     redeployment_hook:
       secure: "XWxwX37phzxLQYdEXtidG6nSeATgG1YNIoFhkTYDLR+ISzzrAEeW+CBYls5sYqzGveM1gRWNSgxQmajvxbNwnErqzrGN8SUmTPJvDYdVpUtJkApl6fraWPeuS7Y9i38cs9CyMaNhA9S7MsFkFSGq/Dq1tCKQYysJZfdl8QZq0UsPJjky+HtV0Rr97l58YpzstotdrPc0CH8Z4fxVYwExgBuZKqNLwLooXll3DVYlmPFAUsD0gQTnJO283PtVl42grn0UFsPUKoJ51uJX3yhDuFESYXOUpX1dHw9fJtcqNG+uXMTEvDH+u8sE5n432atPacPHe9xhMe8TcM66C6s3/J1xvyb+gV54hre39lpMr6+4SVamHTMUQnDMQ8r7lihtPtCxGMV7sl1kkeOwjpoJqe30+hgpbWyitDnT9FEikVJv7BqLr1SzZU4Sr7pmMqUvtvAsKJJrTEyK/8F5ICRtOSAHWKleXQYH8NeBlqomHW4jppiPF65rQbA3ue2L4Vh7a+nPvSNbPn6JXnsK/Fj1PFbEHETH5Rr45fLklsUIkXIxWPhs2lQSu91/DMsHXvdmoIqwqMeJehWY0W7ruA4Aka3p+JRGFe0TWsq10IOAVIA7fKjAyN8BNCW70s+0xDATdA/8Mbw274Bf4zo1BpXkhOk2+et9fTjsBebOHjFwrxA="
@@ -38,7 +37,7 @@ deploy:
     on:
       branch: master
 after_deploy:
-- "./.rollbar.sh succeeded"
+- ./.rollbar.sh succeeded
 branches:
   only:
   - master
