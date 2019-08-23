@@ -14,6 +14,8 @@ module CivisApi
     config.action_mailer.delivery_method = :postmark
 
     config.active_job.queue_adapter = :sidekiq
+    config.active_storage.queues.analysis = :default
+    config.active_storage.queues.purge = :default
 
     config.autoload_paths << Rails.root.join("lib")
     config.eager_load_paths << Rails.root.join("lib")

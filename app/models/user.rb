@@ -17,7 +17,7 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
 
-	validates :first_name, :last_name,  presence: true
+	validates :first_name, presence: true
 
   # enums
   enum role: { citizen: 0, admin: 1 }
@@ -110,19 +110,19 @@ class User < ApplicationRecord
     else
       info_hash[:first_name] = info_hash[:name]
     end
-    User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'facebook', uid, info_hash[:image])
+    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'facebook', uid, info_hash[:image])
   end
 
   def self.create_from_google_oauth2(info_hash, uid)
-    User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'google', uid, info_hash[:image])
+    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'google', uid, info_hash[:image])
   end
 
   def self.create_from_linkedin(info_hash, uid)
-    User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'google', uid, info_hash[:picture_url])
+    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'google', uid, info_hash[:picture_url])
   end
 
   def self.add_fields_from_oauth(f_name, l_name, email, provider, uid, image_url)
-    user = User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: SecureRandom.hex(32)
+    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: SecureRandom.hex(32)
     user.skip_confirmation_notification!
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
