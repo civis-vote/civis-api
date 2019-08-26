@@ -11,4 +11,6 @@
 			= f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "admin-event-from-to-date", class: "datepicker", value: "#{@consultation.response_deadline}" }
 			.row.form-group
 				.col-md-6.form-label-group
-					= f.rich_text_area :summary, placeholder: "Summary", required: false, label: false, autofocus: true, wrapper: :false, input_html: { id: "consultation summary" }
+					.input-editor-box
+            			.trix-toolbar-parent
+							= f.rich_text_area :summary, placeholder: "Summary", required: false, label: false, autofocus: true, wrapper: :false, input_html: { id: "consultation summary" }

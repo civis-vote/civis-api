@@ -19,7 +19,7 @@ class Admin::MinistriesController < ApplicationController
 	end
 
 	def update
-		if @ministry.update_attributes(secure_params)
+		if @ministry.update(secure_params)
 			redirect_to admin_ministry_path(@ministry), flash_success_info: 'Ministry details was successfully updated.'
 		else
 			redirect_back fallback_location: root_path, flash_info: 'Ministry details was not successfully updated.'

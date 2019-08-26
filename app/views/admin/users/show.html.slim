@@ -14,10 +14,10 @@
         .btn-parent.float-right
           - if @user.admin?
             .admin-status-rejected
-              = link_to "Moderator role", update_user_role_admin_user_path(@user), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to revoke admin access"       
+              = link_to "Moderator role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to revoke admin access"       
           - else
             .admin-status-approved
-              = link_to "Admin role", update_user_role_admin_user_path(@user), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"       
+              = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"       
   .admin-list-bg
     .p-4
       .admin-header-text

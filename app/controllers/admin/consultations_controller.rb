@@ -19,7 +19,7 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def update
-		if @consultation.update_attributes(secure_params)
+		if @consultation.update(secure_params)
 			redirect_to admin_consultation_path(@consultation), flash_success_info: 'Consultation details was successfully updated.'
 		else
 			redirect_back fallback_location: root_path, flash_info: 'Consultation details was not successfully updated.'
