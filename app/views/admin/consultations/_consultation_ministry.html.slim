@@ -1,0 +1,19 @@
+- if selected_ministry
+	- unless selected_ministry.is_approved
+		.row
+			.col-md-6
+				= link_to "Awaiting moderation", admin_ministry_path(selected_ministry.id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "right", title: "Approve ministry"
+		.admin-update-button-position
+			div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Submit Consultation
+	- else
+		.admin-update-button-position
+			button class="btn" type="submit" Submit Consultation
+- elsif (consultation.ministry.is_approved || consultation.ministry_id.blank?)
+	.admin-update-button-position
+		button class="btn" type="submit" Submit Consultation
+- else
+	.row
+		.col-md-6
+			= link_to "Awaiting moderation", admin_ministry_path(consultation.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "right", title: "Approve ministry"
+	.admin-update-button-position
+		div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Submit Consultation

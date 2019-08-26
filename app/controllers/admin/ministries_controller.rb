@@ -1,7 +1,7 @@
 class Admin::MinistriesController < ApplicationController
 	layout 'admin_panel_sidenav'
   before_action :authenticate_user!
-	before_action :require_admin, only: [:index, :update, :edit, :show, :approve, :reject, :destroy]
+	before_action :require_admin, only: [:index, :update, :edit, :show, :approve, :reject, :destroy, :create]
 	before_action :set_ministry, only: [:edit, :update, :show, :approve, :reject, :destroy]
 
 	def index
@@ -19,8 +19,8 @@ class Admin::MinistriesController < ApplicationController
 	end
 
 	def update
-		if @ministry.update_attributes(secure_params)
-			redirect_back fallback_location: root_path, flash_success_info: 'Ministry details was successfully updated.'
+		if @ministry.update(secure_params)
+			redirect_to admin_ministry_path(@ministry), flash_success_info: 'Ministry details was successfully updated.'
 		else
 			redirect_back fallback_location: root_path, flash_info: 'Ministry details was not successfully updated.'
 		end
@@ -30,6 +30,20 @@ class Admin::MinistriesController < ApplicationController
 		@ministry.destroy
 		redirect_to admin_ministries_path, flash_success_info: 'Ministry was successfully deleted.'
 	end
+
+	def new
+		@ministry = Ministry.new
+	end
+
+	def create
+    @ministry = Ministry.new(secure_params.merge(created_by_id: current_user.id))
+    if @ministry.save
+      redirect_to admin_ministry_path(@ministry), flash_success_info: 'Ministry was successfully created.'
+    else
+    	flash[:flash_info] = 'Ministry was not successfully created.'
+      render :new
+    end
+  end
 
 	def approve
 		@ministry.approve

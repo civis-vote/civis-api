@@ -5,7 +5,7 @@ class Admin::UsersController < ApplicationController
 	before_action :set_user, only: [:edit, :update, :show]
 
 	def index
-    @users = User.all.order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+    @users = User.all.order(created_at: :desc).includes(:city).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
         format.html {render partial: 'admin/users/table', locals: {users: @users}}
@@ -19,16 +19,16 @@ class Admin::UsersController < ApplicationController
 	end
 
 	def update
-		if @user.update_attributes(secure_params)
-			redirect_to users_path, :notice => "User updated."
+		if @user.update(secure_params)
+			redirect_to admin_user_path(@user), flash_success_info: 'User role was updated.'
 		else
-			redirect_to users_path, :alert => "Unable to update user."
+			redirect_to admin_user_path(@user), flash_info: 'Unable to update user role.'
 		end
 	end
 
 	def destroy
 		@user.destroy
-		redirect_to users_path, :notice => "User deleted."
+		redirect_to admin_users_path, :notice => "User deleted."
 	end
 
 	private
