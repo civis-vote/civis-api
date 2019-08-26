@@ -20,9 +20,9 @@ class Admin::UsersController < ApplicationController
 
 	def update
 		if @user.update(secure_params)
-			redirect_to admin_user_path(@user), :flash_success_info => "User role was updated."
+			redirect_to admin_user_path(@user), flash_success_info: 'User role was updated.'
 		else
-			redirect_to admin_user_path(@user), :flash_info => "Unable to update user role."
+			redirect_to admin_user_path(@user), flash_info: 'Unable to update user role.'
 		end
 	end
 
