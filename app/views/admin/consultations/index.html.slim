@@ -8,7 +8,7 @@
     .admin-filter-parent
       .admin-filter-child.width-75
         .admin-filter-child-field
-          .admin-index-title CONSULTATION
+          .admin-index-title CONSULTATIONS
   .admin-filters-wrap
     .admin-filter-parent
       .admin-filter-child.width-100
@@ -22,3 +22,5 @@
     .admin-table.consultations_table
       = render 'table'
     br
+  .admin-update-button-position
+    = link_to "Create Consultation", new_admin_consultation_path, class: "btn"

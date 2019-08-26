@@ -1,5 +1,5 @@
-- navigation_add 'Consultations', admin_consultations_path
-- navigation_add "#{@consultation&.title}", edit_admin_consultation_path(@consultation)
+- navigation_add 'Ministries', admin_ministries_path
+- navigation_add 'Create Ministries', new_admin_ministry_path
 = render_navigation
 - flash.each do |key, value|
 	- if (key == "flash_info" || key == "flash_success_info")
