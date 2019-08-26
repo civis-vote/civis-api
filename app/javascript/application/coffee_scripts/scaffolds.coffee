@@ -1,8 +1,22 @@
-import 'bootstrap/js/dist/tooltip';
+import 'jquery/dist/jquery.min';
+import 'bootstrap/js/dist/alert'
+import 'bootstrap/js/dist/button'
+import 'bootstrap/js/dist/carousel'
+import 'bootstrap/js/dist/collapse'
+import 'bootstrap/js/dist/dropdown'
+import 'bootstrap/js/dist/index'
+import 'bootstrap/js/dist/modal'
+import 'bootstrap/js/dist/popover'
+import 'bootstrap/js/dist/scrollspy'
+import 'bootstrap/js/dist/tab'
+import 'bootstrap/js/dist/toast'
+import 'bootstrap/js/dist/tooltip'
+import 'bootstrap/js/dist/util'
 import 'select2';
 import 'pc-bootstrap4-datetimepicker';
 import 'trix/dist/trix';
 
+current_request = null
 select2_form_input_ui = ->
   $('.form-select-label-group select').each ->
     if $(this).val().length != 0

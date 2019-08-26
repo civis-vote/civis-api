@@ -8,7 +8,7 @@
     .admin-filter-parent
       .admin-filter-child.width-75
         .admin-filter-child-field
-          .admin-index-title MINISTRY
+          .admin-index-title MINISTRIES
   .admin-filters-wrap
     .admin-filter-parent
       .admin-filter-child.width-100
@@ -22,3 +22,5 @@
     .admin-table.ministries_table
       = render 'table'
     br
+  .admin-update-button-position
+    = link_to "Create Ministry", new_admin_ministry_path, class: "btn"

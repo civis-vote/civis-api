@@ -133,7 +133,21 @@ a.disabled {
 }
 
 trix-toolbar .trix-button-row {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: space-between !important;
+  font-size: 12px;
+}
+
+.trix-toolbar-parent {
+  border: 1px solid #C1C7D0;
+  border-radius: 6px;
+}
+
+.form-label-group input:focus, .form-label-group trix-editor:focus {
+  border: none !important;
+}
+
+.form-label-group trix-editor { 
+  border: none !important;
+  border-top: #bbb !important;
+  height: 500px !important;
+  overflow-y: scroll !important;
 }

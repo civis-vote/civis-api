@@ -1,4 +1,4 @@
-- navigation_add 'Ministries', admin_consultations_path
+- navigation_add 'Consultations', admin_consultations_path
 - navigation_add "#{@consultation&.title}", admin_consultation_path(@consultation)
 = render_navigation
 - flash.each do |key, value|
@@ -17,7 +17,10 @@
               = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
           - else
             .admin-status-approved.mr-3
-              = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
+              - if @consultation&.ministry&.is_approved
+                = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
+              - else
+                = link_to "Publish", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Approve ministry"
           - if @consultation.is_featured?
             .mr-3
               = link_to " ", unfeatured_admin_consultation_path(@consultation), method: :post, class: "fas fa-star featured-color", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Mark it as unfocused consultation"
@@ -35,6 +38,6 @@
       .admin-details-box
         = display_details("show-page-parent-details", "show-page-label-details", "Title of the consultation", "show-page-input-details", "#{@consultation&.title || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "URL of consultation pdf", "show-page-input-details", "#{@consultation&.url}")
-        = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? '@consultation.ministry.name' : '-' }")
+        = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
         = display_details("show-page-parent-details", "show-page-label-details", "Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Summary", "show-page-input-details", "#{@consultation&.summary || '-'}")
