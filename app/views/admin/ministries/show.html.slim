@@ -18,7 +18,7 @@
           - else
             .admin-status-approved.mr-3
               = link_to "Approve", approve_admin_ministry_path(@ministry), method: :post
-          = link_to ' ', admin_ministry_path(@ministry), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete
+          = link_to ' ', admin_ministry_path(@ministry), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
           .button-position.icon-bg
             = link_to ' ', edit_admin_ministry_path(@ministry), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
   .admin-list-bg
