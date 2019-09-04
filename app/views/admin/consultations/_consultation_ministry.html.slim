@@ -4,16 +4,16 @@
 			.col-md-6
 				= link_to "Awaiting moderation", admin_ministry_path(selected_ministry.id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "right", title: "Approve ministry"
 		.admin-update-button-position
-			div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Submit Consultation
+			div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Save Consultation
 	- else
 		.admin-update-button-position
-			button class="btn" type="submit" Submit Consultation
-- elsif (consultation.ministry.is_approved || consultation.ministry_id.blank?)
+			button class="btn" type="submit" Save Consultation
+- elsif (consultation.ministry_id.blank? || consultation.ministry.is_approved )
 	.admin-update-button-position
-		button class="btn" type="submit" Submit Consultation
+		button class="btn" type="submit" Save Consultation
 - else
 	.row
 		.col-md-6
 			= link_to "Awaiting moderation", admin_ministry_path(consultation.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "right", title: "Approve ministry"
 	.admin-update-button-position
-		div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Submit Consultation
+		div class="btn disabled" data-toggle="tooltip" data-placement="bottom" title="Approve ministry" Save Consultation
