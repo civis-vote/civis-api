@@ -28,7 +28,7 @@
             .mr-3
               = link_to " ", featured_admin_consultation_path(@consultation), method: :post, class: "far fa-star featured-color", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Mark it as focused consultation"
 
-          = link_to ' ', admin_consultation_path(@consultation), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete
+          = link_to ' ', admin_consultation_path(@consultation), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
           .button-position.icon-bg
             = link_to ' ', edit_admin_consultation_path(@consultation), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
   .admin-list-bg

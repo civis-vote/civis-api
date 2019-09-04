@@ -35,7 +35,7 @@ en:
     attributes:
       consultation:
         statuses:
-          submitted: "Submitted"
+          submitted: "Pending"
           published: "Published"
           rejected: "Rejected"
           expired: "Expired"
