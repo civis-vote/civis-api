@@ -18,7 +18,7 @@
               input.form-control.filter-box name=("search_term_for_ministries") placeholder=("Search Ministries") type="text" data-behaviour="filter" data-scope="search_query" data-type="input-filter"
         .col-md-2
           .filters data-filter-url="/admin/ministries" data-replacement-class="ministries_table"
-            = select_tag "status", options_for_select([['Approved', 'true'], ['UnApproved', 'false']]), class: 'form-control', include_blank: 'Status', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
+            = select_tag "status", options_for_select([['Approved', 'true'], ['UnApproved', 'false']]), class: 'form-control', include_blank: 'All', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
     .admin-table.ministries_table
       = render 'table'
     br
