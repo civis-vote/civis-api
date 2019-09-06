@@ -1,9 +1,9 @@
 module Mutations
-  module CurrentUser
+  module Auth
     class ChangePassword < Mutations::BaseMutation
       type Types::Objects::User::CurrentUser, null: false
 
-      argument :user, Types::Inputs::CurrentUser::ChangePassword, required: true
+      argument :user, Types::Inputs::Auth::ChangePassword, required: true
 
       def resolve(user:)
         current_user = context[:current_user]

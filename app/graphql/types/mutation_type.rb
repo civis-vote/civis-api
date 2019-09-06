@@ -6,7 +6,7 @@ module Types
     field :consultation_create,						resolver: Mutations::Consultation::Create
     field :consultation_response_create,	        resolver: Mutations::ConsultationResponse::Create
     field :current_user_update,                     resolver: Mutations::CurrentUser::Update
-    field :current_user_change_password,			resolver: Mutations::CurrentUser::ChangePassword
+    field :auth_change_password,			        resolver: Mutations::Auth::ChangePassword
     field :game_action_create,						resolver: Mutations::GameAction::Create
     field :ministry_create,								resolver: Mutations::Ministry::Create
     field :vote_create,										resolver: Mutations::ConsultationResponseVote::Create
