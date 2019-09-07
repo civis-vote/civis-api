@@ -32,6 +32,11 @@ class Consultation < ApplicationRecord
     where('title ILIKE (?)', "%#{query}%")
   }
 
+  scope :sort_records, lambda { |sort, sort_direction = "asc"|
+    return nil if sort.blank?
+    order("#{sort} #{sort_direction}")
+  }
+
   def publish
   	self.status = :published
     self.response_token = SecureRandom.uuid
