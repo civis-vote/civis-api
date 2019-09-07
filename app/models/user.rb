@@ -16,8 +16,8 @@ class User < ApplicationRecord
   has_many :responses, class_name: 'ConsultationResponse'
   has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
-
-	validates :first_name, presence: true
+  export_columns enabled: true, except: [:created_at, :updated_at]
+  validates :first_name, presence: true
 
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2 }
@@ -69,10 +69,10 @@ class User < ApplicationRecord
     order("#{sort} #{sort_direction}")
   }
 
-  def full_name 
+  def full_name
     "#{first_name}" + " #{last_name}"
   end
-  
+
   def find_or_generate_api_key
     self.live_api_key ? self.live_api_key : self.generate_api_key
   end
