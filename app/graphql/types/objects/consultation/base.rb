@@ -35,6 +35,7 @@ module Types
 				field :title,															String, nil, null: false
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
 				field :url,																String, nil, null: false
+				field :responses_reading_times,						Integer, "Reading times of all the responses in this consultation", null: false
 
 				def shared_responses(sort:, sort_direction:)
 					object.shared_responses.sort_records(sort, sort_direction)
@@ -43,6 +44,10 @@ module Types
 				def responses(response_token:, sort:, sort_direction:)
 					raise CivisApi::Exceptions::Unauthorized if response_token != object.response_token
 					return object.responses.sort_records(sort, sort_direction)
+				end
+
+				def responses_reading_times
+					object.shared_responses.sum(:reading_time)
 				end
 			end
 		end

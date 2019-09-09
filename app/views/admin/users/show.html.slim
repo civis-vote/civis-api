@@ -13,11 +13,20 @@
       .width-20
         .btn-parent.float-right
           - if @user.admin?
-            .admin-status-rejected
-              = link_to "Moderator role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to revoke admin access"       
+            .admin-status-approved.mr-3
+              = link_to "Moderator role", admin_user_path(@user, "[user][role]": "moderator"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant moderator access"
+            .admin-status-rejected.mr-3
+              = link_to "Citizen role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant citizen access"      
+          - elsif @user.moderator?
+            .admin-status-approved.mr-3
+              = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"
+            .admin-status-rejected.mr-3
+              = link_to "Citizen role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant citizen access"
           - else
-            .admin-status-approved
-              = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"       
+            .admin-status-approved.mr-3
+              = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"
+            .admin-status-rejected.mr-3
+              = link_to "Moderator role", admin_user_path(@user, "[user][role]": "moderator"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant moderator access"      
   .admin-list-bg
     .p-4
       .admin-header-text
