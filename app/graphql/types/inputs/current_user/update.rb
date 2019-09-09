@@ -7,6 +7,7 @@ module Types
 				argument :first_name,										String,		nil,	required: false
 				argument :last_name,										String,		nil,	required: false
 				argument :phone_number,									String,		nil,	required: false
+				argument :profile_picture_file,					Types::Inputs::Attachment, nil, required: false
 			end
 		end
 	end
