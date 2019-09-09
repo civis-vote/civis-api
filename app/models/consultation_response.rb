@@ -9,6 +9,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :up_votes, -> { up }, class_name: 'ConsultationResponseVote'
   has_many :down_votes, -> { down }, class_name: 'ConsultationResponseVote'
   has_many :votes, class_name: 'ConsultationResponseVote'
+  before_commit :update_reading_time
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -41,5 +42,22 @@ class ConsultationResponse < ApplicationRecord
     return user_vote
   end
 
+  def update_reading_time
+    if self.reading_time.blank? || self.saved_change_to_response_text?
+      if self.response_text && self.shared?
+        total_word_count = self.response_text.length
+        time = total_word_count.to_f / 200
+        time_with_divmod = time.divmod 1
+        array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
+        if array[1] > 0.30
+          total_reading_time = array[0] + 1
+        else
+          total_reading_time = array[0]
+        end
+        self.reading_time = total_reading_time
+        self.save
+      end
+    end
+  end
 
 end
