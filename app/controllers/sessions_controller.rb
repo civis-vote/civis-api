@@ -5,7 +5,7 @@ class SessionsController < Devise::SessionsController
 			if user.admin? || user.moderator?
 				super
 			else
-				redirect_to new_user_session_path, flash: { notice: "You need to be a admin to sign in, Please contact administrator to continue" }
+				redirect_to new_user_session_path, flash_info: "You need to be a admin or moderator to sign in, Please contact administrator to continue"
 			end
 		else
 			super
