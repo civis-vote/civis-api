@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_06_150652) do
+ActiveRecord::Schema.define(version: 2019_09_09_111050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,7 +84,7 @@ ActiveRecord::Schema.define(version: 2019_09_06_150652) do
     t.integer "template_id"
     t.float "points", default: 0.0
     t.integer "templates_count", default: 0
-    t.integer "reading_time"
+    t.integer "reading_time", default: 0
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
