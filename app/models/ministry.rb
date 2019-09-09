@@ -31,7 +31,7 @@ class Ministry < ApplicationRecord
     where(is_approved: status)
   }
 
-  scope :search_query, lambda { |query|
+  scope :search, lambda { |query|
     return nil  if query.blank?
     terms = query.downcase.split(/\s+/)
     # replace "*" with "%" for wildcard searches,

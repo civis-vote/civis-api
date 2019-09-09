@@ -20,7 +20,7 @@ class User < ApplicationRecord
   validates :first_name, presence: true
 
   # enums
-  enum role: { citizen: 0, admin: 1 }
+  enum role: { citizen: 0, admin: 1, moderator: 2 }
   enum best_rank_type: { national: 0, state: 1, city: 2 }
 
   # callbacks
