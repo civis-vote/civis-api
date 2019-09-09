@@ -16,7 +16,7 @@ class User < ApplicationRecord
   has_many :responses, class_name: 'ConsultationResponse'
   has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
-  export_columns enabled: true, except: [:created_at, :updated_at]
+  export_columns enabled: true
   validates :first_name, presence: true
 
   # enums
