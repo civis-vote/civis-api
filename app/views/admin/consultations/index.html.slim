@@ -19,6 +19,8 @@
         .col-md-2
           .filters data-filter-url="/admin/consultations" data-replacement-class="consultations_table"
             = select_tag "status", options_for_select(Consultation.statuses.map { |status| [Consultation.formatted_enum_name(:status, status[0]), status[1]] }), class: 'form-control', include_blank: 'All', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
+        - if current_user.role == "admin"
+          = exportable(current_user.email, Consultation)
     .admin-table.consultations_table
       = render 'table'
     br

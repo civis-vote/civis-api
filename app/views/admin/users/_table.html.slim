@@ -27,6 +27,5 @@ table.table
               = user&.rank
             td.text-center
               = link_to "View", admin_user_path(user), class: "action-btn"
-= exportable(current_user.email, current_user.class)
 .pagination-parent
   = cm_paginate(@users.facets)

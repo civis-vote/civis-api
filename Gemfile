@@ -53,7 +53,7 @@ gem "google-cloud-storage"
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'spotlight_search', '~> 0.1.5'
+gem 'spotlight_search', '~> 0.1.6'
 
 gem 'slim-rails'
 # oauth gems

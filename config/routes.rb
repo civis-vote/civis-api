@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   devise_scope :user do
     root to: "devise/sessions#new"
   end
+  mount SpotlightSearch::Engine => '/spotlight_search'
   mount Sidekiq::Web => '/sidekiq'
   get 'signin_google','signin_linkedin','signin_facebook', to: 'oauth#redirect_to_provider'
   get 'users/auth/:provider/callback', to: 'oauth#callback'
