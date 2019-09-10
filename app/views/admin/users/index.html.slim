@@ -16,7 +16,8 @@
           .filters data-filter-url="/admin/users" data-replacement-class="users_table"
             .input-group.search
               input.form-control.filter-box name=("search_term_for_users") placeholder=("Search Users") type="text" data-behaviour="filter" data-scope="search_query" data-type="input-filter"
-        = link_to "Export CSV", "#exportmodal", class: "action-btn", "data-toggle" => "modal"
+        - if current_user.role == "admin"
+         = exportable(current_user.email, User)
     .admin-table.users_table
       = render 'table'
 
