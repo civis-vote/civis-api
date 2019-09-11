@@ -4,7 +4,7 @@ module SpotlightSearch
       begin
         klass = params[:klass].constantize
         if klass.validate(params[:columns])
-          ExportJob.perform_now(params[:email], klass.to_s, params[:columns], params[:filters])
+          ExportJob.perform_later(params[:email], klass.to_s, params[:columns], params[:filters])
           flash[:success] = 'Successfully queued for export'
         else
           flash[:error] = 'Invalid columns found'
