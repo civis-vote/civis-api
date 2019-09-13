@@ -19,6 +19,8 @@
         .col-md-2
           .filters data-filter-url="/admin/ministries" data-replacement-class="ministries_table"
             = select_tag "status", options_for_select([['Approved', 'true'], ['UnApproved', 'false']]), class: 'form-control', include_blank: 'All', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
+        - if current_user.role == "admin"
+          = exportable(current_user.email, Ministry)
     .admin-table.ministries_table
       = render 'table'
     br
