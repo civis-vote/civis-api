@@ -9,7 +9,7 @@ class Consultation < ApplicationRecord
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
-
+  export_columns enabled: true, except: [:response_token, :url]
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
 
   scope :status_filter, lambda { |status|
