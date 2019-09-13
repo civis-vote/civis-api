@@ -94,6 +94,16 @@ Rails.application.configure do
 
   config.client_url = { host: ENV['CLIENT_HOST'], protocol: :https }
 
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.smtp_settings = {
+    address:              'smtp.postmarkapp.com',
+    port:                 587,
+    domain:               'civis.vote',
+    user_name:            'dd717b0c-c34c-42de-9f38-9546a92f3c4a',
+    password:             'dd717b0c-c34c-42de-9f38-9546a92f3c4a',
+    authentication:       'plain',
+    enable_starttls_auto: true  }
+
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector
   # middleware. The `delay` is used to determine how long to wait after a write
