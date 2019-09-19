@@ -99,8 +99,8 @@ Rails.application.configure do
     address:              'smtp.postmarkapp.com',
     port:                 587,
     domain:               'civis.vote',
-    user_name:            'dd717b0c-c34c-42de-9f38-9546a92f3c4a',
-    password:             'dd717b0c-c34c-42de-9f38-9546a92f3c4a',
+    user_name:            Rails.application.credentials.dig(:postmark, :api_key),
+    password:             Rails.application.credentials.dig(:postmark, :api_key),
     authentication:       'plain',
     enable_starttls_auto: true  }
 
