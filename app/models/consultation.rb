@@ -12,6 +12,8 @@ class Consultation < ApplicationRecord
   export_columns enabled: true, except: [:response_token, :url]
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
 
+  before_commit :update_reading_time
+
   scope :status_filter, lambda { |status|
     return all unless status.present?
     where(status: status)
@@ -70,4 +72,19 @@ class Consultation < ApplicationRecord
     self.update(is_featured: false)
   end
 
+  def update_reading_time
+    if self.summary.saved_change_to_body?
+      total_word_count = self.summary.body.to_plain_text.length
+      time = total_word_count.to_f / 200
+      time_with_divmod = time.divmod 1
+      array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
+      if array[1] > 0.30
+        total_reading_time = array[0] + 1
+      else
+        total_reading_time = array[0]
+      end
+      self.reading_time = total_reading_time
+      self.save
+    end
+  end
 end

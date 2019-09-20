@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_09_111050) do
+ActiveRecord::Schema.define(version: 2019_09_19_111717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,6 +103,7 @@ ActiveRecord::Schema.define(version: 2019_09_09_111050) do
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
     t.uuid "response_token"
+    t.integer "reading_time", default: 0
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
