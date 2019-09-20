@@ -1,8 +1,8 @@
 addons:
-  postgresql: '10'
+  postgresql: '9.6'
   apt:
     packages:
-    - postgresql-server-dev-10
+    - postgresql-server-dev-9.6
 language: ruby
 cache: bundler
 env:
@@ -14,8 +14,7 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
   - cp config/database.yml.travis config/database.yml
 script:
-  - RAILS_ENV=test bundle exec rake db:drop db:create db:migrate --trace
-  - bundle exec rake db:test:prepare
+  - RAILS_ENV=test bundle exec rake db:test:prepare --trace
   - bundle exec rspec spec
 services:
   - redis-server
