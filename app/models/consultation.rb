@@ -87,5 +87,4 @@ class Consultation < ApplicationRecord
       self.save
     end
   end
-
 end
