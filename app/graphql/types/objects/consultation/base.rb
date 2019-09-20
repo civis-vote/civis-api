@@ -36,6 +36,7 @@ module Types
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
 				field :url,																String, nil, null: false
 				field :responses_reading_times,						Integer, "Reading times of all the responses in this consultation", null: false
+				field :reading_time,											Integer, "Reading time of this consultation summary", null: false
 
 				def shared_responses(sort:, sort_direction:)
 					object.shared_responses.sort_records(sort, sort_direction)
