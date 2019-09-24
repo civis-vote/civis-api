@@ -53,7 +53,7 @@ class Consultation < ApplicationRecord
   end
 
   def expire
-  	self.update(status: :expired)
+  	self.expired!
     NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
     NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
   end
