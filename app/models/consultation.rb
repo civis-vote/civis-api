@@ -13,6 +13,7 @@ class Consultation < ApplicationRecord
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
 
   before_commit :update_reading_time
+  after_commit :notify_goverment_email
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -44,6 +45,8 @@ class Consultation < ApplicationRecord
     self.response_token = SecureRandom.uuid
   	self.published_at = DateTime.now
   	self.save!
+    NotifyNewConsultationEmailJob.perform_later(self)
+    NotifyPublishedConsultationEmailJob.perform_later(self) if self.created_by.citizen?
   end
 
   def reject
@@ -85,6 +88,27 @@ class Consultation < ApplicationRecord
       end
       self.reading_time = total_reading_time
       self.save
+    end
+  end
+
+  def days_left
+    (response_deadline.to_date - Date.current).to_i if (response_deadline && published_at)
+  end
+
+  def feedback_url
+    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/read' } ))
+    feedback_url.to_s
+  end
+
+  def response_url
+    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/summary', query: "response_token=#{self.response_token}" } ))
+    response_url.to_s
+  end
+
+  def notify_goverment_email
+    if self.status_changed? && self.expired?
+      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
+      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
     end
   end
 end

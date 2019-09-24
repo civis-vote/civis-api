@@ -69,6 +69,10 @@ class User < ApplicationRecord
     order("#{sort} #{sort_direction}")
   }
 
+  def self.notify_for_new_consultation_filter
+    where("notification_settings->>'notify_for_new_consultation' = ?", "true")
+  end
+
   def full_name
     "#{first_name}" + " #{last_name}"
   end

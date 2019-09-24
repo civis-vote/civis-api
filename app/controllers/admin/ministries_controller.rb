@@ -70,7 +70,7 @@ class Admin::MinistriesController < ApplicationController
   end
 
   def filter_params
-    params.require(:filters).permit(:search_query, :status_filter) if params[:filters]
+    params.require(:filters).permit(:search, :status_filter) if params[:filters]
   end
 
 end
