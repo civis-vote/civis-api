@@ -13,7 +13,6 @@ class Consultation < ApplicationRecord
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
 
   before_commit :update_reading_time
-  after_commit :notify_goverment_email
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -55,6 +54,8 @@ class Consultation < ApplicationRecord
 
   def expire
   	self.update(status: :expired)
+    NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
+    NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
   end
 
   def responded_on(user = Current.user)
@@ -103,12 +104,5 @@ class Consultation < ApplicationRecord
   def response_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/summary', query: "response_token=#{self.response_token}" } ))
     response_url.to_s
-  end
-
-  def notify_goverment_email
-    if self.status_changed? && self.expired?
-      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
-      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
-    end
   end
 end
