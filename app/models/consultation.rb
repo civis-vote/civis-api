@@ -44,6 +44,8 @@ class Consultation < ApplicationRecord
     self.response_token = SecureRandom.uuid
   	self.published_at = DateTime.now
   	self.save!
+    NotifyNewConsultationEmailJob.perform_later(self)
+    NotifyPublishedConsultationEmailJob.perform_later(self) if self.created_by.citizen?
   end
 
   def reject
@@ -51,7 +53,9 @@ class Consultation < ApplicationRecord
   end
 
   def expire
-  	self.update(status: :expired)
+  	self.expired!
+    NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
+    NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
   end
 
   def responded_on(user = Current.user)
@@ -86,5 +90,19 @@ class Consultation < ApplicationRecord
       self.reading_time = total_reading_time
       self.save
     end
+  end
+
+  def days_left
+    (response_deadline.to_date - Date.current).to_i if (response_deadline && published_at)
+  end
+
+  def feedback_url
+    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/read' } ))
+    feedback_url.to_s
+  end
+
+  def response_url
+    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/summary', query: "response_token=#{self.response_token}" } ))
+    response_url.to_s
   end
 end
