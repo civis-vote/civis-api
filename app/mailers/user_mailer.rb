@@ -47,4 +47,14 @@ class UserMailer < ApplicationMailer
 																							response_url: consultation.response_url
 																						})
 	end
+
+	def forgot_password_email(user, url)
+		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+																							to: user.email,
+																							template_alias: "forgot-password",
+																							template_model:{
+																								email: user.email,
+																								url: url
+																							})
+	end
 end
