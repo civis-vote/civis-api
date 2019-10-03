@@ -69,6 +69,10 @@ class User < ApplicationRecord
     order("#{sort} #{sort_direction}")
   }
 
+  def self.notify_for_new_consultation_filter
+    where("notification_settings->>'notify_for_new_consultation' = ?", "true")
+  end
+
   def full_name
     "#{first_name}" + " #{last_name}"
   end
@@ -127,5 +131,10 @@ class User < ApplicationRecord
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
     return user
+  end
+
+  def forgot_password_url(raw_token)
+    forgot_password_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/forgot-password', query: "reset-password-token=#{raw_token}"} ))
+    forgot_password_url.to_s
   end
 end

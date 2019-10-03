@@ -187,7 +187,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_111717) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"
