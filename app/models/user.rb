@@ -132,4 +132,9 @@ class User < ApplicationRecord
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
     return user
   end
+
+  def forgot_password_url(raw_token)
+    forgot_password_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/forgot-password', query: "reset-password-token=#{raw_token}"} ))
+    forgot_password_url.to_s
+  end
 end
