@@ -95,7 +95,7 @@ class User < ApplicationRecord
   end
 
   def send_email_verification
-  	VerifyUserEmailJob.perform_later(self)
+  	VerifyUserEmailJob.perform_later(self) unless confirmed_at
   end
 
   def update_last_activity
