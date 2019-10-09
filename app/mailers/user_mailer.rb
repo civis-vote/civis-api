@@ -1,7 +1,7 @@
 class UserMailer < ApplicationMailer
 
 	def verify_email(user)
-		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																						to: user.email,
 																						template_alias: "user-confirmation",
 																						template_model:{
@@ -12,7 +12,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_new_consultation_email(user, consultation)
-		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																						to: user.email,
 																						template_alias: "notify-new-consultation",
 																						template_model:{
@@ -25,7 +25,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_published_consultation_email(consultation)
-		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																						to: consultation.created_by.email,
 																						template_alias: "notify-published-consultation",
 																						template_model:{
@@ -36,7 +36,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_expired_consultation_email(email, consultation)
-		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																						to: email,
 																						template_alias: "notify-expired-consultation",
 																						template_model:{
@@ -49,7 +49,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def forgot_password_email(user, url)
-		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																							to: user.email,
 																							template_alias: "forgot-password",
 																							template_model:{
@@ -59,7 +59,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def existing_user_email(user, password, client_url)
-		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																							to: user.email,
 																							template_alias: "invite-existing-user-with-credentials",
 																							template_model:{
