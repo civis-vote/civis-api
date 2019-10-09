@@ -57,4 +57,16 @@ class UserMailer < ApplicationMailer
 																								url: url
 																							})
 	end
+
+	def existing_user_email(user, password, client_url)
+		@@postmark_client.deliver_with_template(from: 'support@civis.vote',
+																							to: user.email,
+																							template_alias: "invite-existing-user-with-credentials",
+																							template_model:{
+																								first_name: user.first_name,
+																								email: user.email,
+																								password: password,
+																								url: client_url
+																							})
+	end
 end

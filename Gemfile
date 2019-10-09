@@ -45,6 +45,8 @@ gem 'travis'
 
 gem 'whenever', require: false
 
+gem 'roo', '~> 2.8.0'
+
 # Use Active Storage variant
 gem 'image_processing'
 gem 'mini_magick'

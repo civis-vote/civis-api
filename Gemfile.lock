@@ -293,6 +293,9 @@ GEM
       railties (>= 5.0)
     retriable (3.1.2)
     rollbar (2.22.1)
+    roo (2.8.2)
+      nokogiri (~> 1)
+      rubyzip (>= 1.2.1, < 2.0.0)
     rspec-core (3.8.2)
       rspec-support (~> 3.8.0)
     rspec-expectations (3.8.4)
@@ -444,6 +447,7 @@ DEPENDENCIES
   rails (~> 6.0.0.rc1)
   rb-readline
   rollbar
+  roo (~> 2.8.0)
   rspec-rails (~> 3.7)
   sass-rails (~> 5)
   selenium-webdriver
