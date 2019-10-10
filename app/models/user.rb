@@ -44,10 +44,10 @@ class User < ApplicationRecord
 		terms = terms.map { |e|
 			(e.gsub('*', '%').prepend('%') + '%').gsub(/%+/, '%')
 		}
-		num_or_conds = 1
+		num_or_conds = 4
 		where(
 			terms.map { |term|
-				"(LOWER(users.first_name) LIKE ?)"
+				"(LOWER(users.first_name) LIKE ? OR LOWER(users.last_name) LIKE ? OR LOWER(users.email) LIKE ? OR CAST(users.phone_number AS TEXT) LIKE ?)"
 			}.join(' AND '),
 			*terms.map { |e| [e] * num_or_conds }.flatten
 		)
