@@ -1,7 +1,7 @@
 module Mutations
   module Auth
     class ResendVerificationEmail < Mutations::BaseMutation
-      type Types::Objects::ApiKey, null: false
+      type Boolean, null: false
 
       argument :email, String, nil, required: true
 
@@ -9,7 +9,7 @@ module Mutations
         user = User.find_by(email: email)
         if user
           user.send_email_verification
-          user.find_or_generate_api_key
+          return true
         else
           raise CivisApi::Exceptions::FailedLogin, "Email not found"
         end
