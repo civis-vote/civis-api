@@ -66,7 +66,7 @@ class User < ApplicationRecord
   }
 
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
-    order("#{sort} #{sort_direction}")
+    order("#{sort} #{sort_direction}, id asc")
   }
 
   def self.notify_for_new_consultation_filter
