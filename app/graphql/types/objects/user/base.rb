@@ -8,7 +8,7 @@ module Types
 				field :city,							Types::Objects::Location, 	"City where the user is registered from.", null: true
 				field :city_rank,					Integer,										"City rank in the system", null: true
 				field :first_name, 				String, 										nil, null: false
-				field :points,						Float,											nil, null: false
+				field :points,						Integer,											nil, null: false
 				field :profile_picture,		Types::Objects::Attachment, nil, null: true do
 					argument :resolution, String, required: false, default_value: nil
 				end
