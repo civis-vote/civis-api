@@ -90,7 +90,7 @@ class User < ApplicationRecord
   end
 
   def confirmation_url
-  	confirmation_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{self.confirmation_token}"}))
+  	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{self.confirmation_token}"}))
   	confirmation_url.to_s
   end
 
@@ -134,7 +134,7 @@ class User < ApplicationRecord
   end
 
   def forgot_password_url(raw_token)
-    forgot_password_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/auth/forgot-password', query: "reset_password_token=#{raw_token}"} ))
+    forgot_password_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: '/auth/forgot-password', query: "reset_password_token=#{raw_token}"} ))
     forgot_password_url.to_s
   end
 end
