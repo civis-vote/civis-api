@@ -10,10 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_19_111717) do
+ActiveRecord::Schema.define(version: 2019_10_16_132814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -90,7 +91,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_111717) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title"
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -199,6 +200,7 @@ ActiveRecord::Schema.define(version: 2019_09_19_111717) do
     t.integer "city_rank"
     t.integer "best_rank"
     t.integer "best_rank_type"
+    t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

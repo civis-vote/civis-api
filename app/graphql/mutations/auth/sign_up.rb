@@ -6,7 +6,7 @@ module Mutations
       argument :auth, Types::Inputs::Auth::SignUp, required: true
 
       def resolve(auth:)
-        user = User.new auth.to_h
+        user = ::User.new auth.to_h
         user.skip_confirmation_notification!
         user.save!
         return user.live_api_key
