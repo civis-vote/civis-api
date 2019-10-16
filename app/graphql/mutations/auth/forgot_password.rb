@@ -6,7 +6,7 @@ module Mutations
       argument :email, String, nil, required: true
 
       def resolve(email:)
-        user = User.find_by(email: email)
+        user = ::User.find_by(email: email)
         if user
           raw_token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
           user.reset_password_token = encrypted_token

@@ -6,7 +6,7 @@ module Mutations
       argument :email, String, nil, required: true
 
       def resolve(email:)
-        user = User.find_by(email: email)
+        user = ::User.find_by(email: email)
         if user
           user.send_email_verification
           return true

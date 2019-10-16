@@ -6,7 +6,8 @@ class UserMailer < ApplicationMailer
 																						template_alias: "user-confirmation",
 																						template_model:{
 																							first_name: user.first_name,
-																							confirmation_url: user.confirmation_url
+																							confirmation_url: user.confirmation_url,
+																							unsubscribe_url: user.unsubscribe_url
 																						})
 
 	end
@@ -20,7 +21,8 @@ class UserMailer < ApplicationMailer
 																							consultation_name: consultation.title,
 																							days_left: consultation.days_left,
 																							ministry_name: consultation.ministry.name,
-																							feedback_url: consultation.feedback_url
+																							feedback_url: consultation.feedback_url,
+																							unsubscribe_url: user.unsubscribe_url
 																						})
 	end
 
@@ -31,7 +33,8 @@ class UserMailer < ApplicationMailer
 																						template_model:{
 																							first_name: consultation.created_by.first_name,
 																							consultation_name: consultation.title,
-																							feedback_url: consultation.feedback_url
+																							feedback_url: consultation.feedback_url,
+																							unsubscribe_url: consultation.created_by.unsubscribe_url
 																						})
 	end
 
@@ -54,7 +57,8 @@ class UserMailer < ApplicationMailer
 																							template_alias: "forgot-password",
 																							template_model:{
 																								email: user.email,
-																								url: url
+																								url: url,
+																								unsubscribe_url: user.unsubscribe_url
 																							})
 	end
 
@@ -66,7 +70,8 @@ class UserMailer < ApplicationMailer
 																								first_name: user.first_name,
 																								email: user.email,
 																								password: password,
-																								url: client_url
+																								url: client_url,
+																								unsubscribe_url: user.unsubscribe_url
 																							})
 	end
 end
