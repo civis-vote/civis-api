@@ -139,7 +139,7 @@ class User < ApplicationRecord
   end
 
   def unsubscribe_url
-    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/emails/unsubscribe', query: "unsubscriibe_token=#{self.uuid}"}))
+    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/emails/unsubscribe', query: "unsubscribe_token=#{self.uuid}"}))
     unsubscribe_url.to_s
   end
 
