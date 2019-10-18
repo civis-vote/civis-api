@@ -8,7 +8,7 @@ module Mutations
       def resolve(email:)
         user = ::User.find_by(email: email)
         if user
-          raw_token, encrypted_token = Devise.token_generator.generate(User, :reset_password_token)
+          raw_token, encrypted_token = Devise.token_generator.generate(::User, :reset_password_token)
           user.reset_password_token = encrypted_token
           user.reset_password_sent_at = Time.now.utc
           user.save
