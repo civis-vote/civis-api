@@ -24,6 +24,9 @@ Rails.application.routes.draw do
         post :unfeatured
         get :check_active_ministry
       end
+      collection do
+        get :export_as_excel
+      end
     end
     resources :ministries do
       member do
