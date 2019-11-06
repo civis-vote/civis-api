@@ -137,4 +137,10 @@ class User < ApplicationRecord
     forgot_password_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: '/auth/forgot-password', query: "reset_password_token=#{raw_token}"} ))
     forgot_password_url.to_s
   end
+
+  def unsubscribe_url
+    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/emails/unsubscribe', query: "unsubscribe_token=#{self.uuid}"}))
+    unsubscribe_url.to_s
+  end
+
 end

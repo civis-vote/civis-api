@@ -6,7 +6,7 @@ module Mutations
       argument :confirmation_token, String, required: true
 
       def resolve(confirmation_token:)
-        user = User.find_by(confirmation_token: confirmation_token)
+        user = ::User.find_by(confirmation_token: confirmation_token)
         if user
           user.confirm
           user.find_or_generate_api_key
