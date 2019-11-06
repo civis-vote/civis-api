@@ -72,6 +72,21 @@ class Admin::ConsultationsController < ApplicationController
 		end
 	end
 
+	def export_as_excel
+		respond_to do |format|
+			if params[:consultation_responses]
+				consultation = Consultation.find(params[:id].to_i)
+				consultation_responses = consultation.responses.order(created_at: :desc)
+				ConsultationResponsesExportEmailJob.perform_later(consultation_responses.to_a, current_user.email)
+      	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: 'Consultations Responses was successfully exported will email you shortly.' }
+			else
+				@consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+				ConsultationExportEmailJob.perform_later(@consultations.data.to_a, current_user.email)
+      	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: 'Consultations was successfully exported will email you shortly.' }
+			end
+    end
+	end
+
 	private
 
 	def secure_params
