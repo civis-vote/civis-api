@@ -10,7 +10,7 @@ module Scorable
 	    end
 
 	    def add_consultation_created_points
-	    	self.created_by.add_points(:consultation_created) if self.status_changed?(from: "submitted", to: "published")
+	    	self.created_by.add_points(:consultation_created) if self.status_changed?(from: :submitted, to: :published)
 	    end
 	  end
   end
