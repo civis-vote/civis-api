@@ -27,6 +27,17 @@ class UserMailer < ApplicationMailer
 																						})
 	end
 
+	def notify_new_consultation_email_to_admin(user, consultation)
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
+																						to: user.email,
+																						template_alias: "notify-new-consultation-to-admin",
+																						template_model:{
+																							consultation_name: consultation.title,
+																							deadline: consultation.response_deadline.strftime('%e-%m-%Y'),
+																							review_url: consultation.review_url
+																						})
+	end
+
 	def notify_published_consultation_email(consultation)
 		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																						to: consultation.created_by.email,

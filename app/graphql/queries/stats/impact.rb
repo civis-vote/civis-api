@@ -5,7 +5,7 @@ module Queries
 	    type GraphQL::Types::JSON, null: false
 
 	    def resolve
-	    	consultation_count = ::Consultation.count
+	    	consultation_count = ::Consultation.where(status: [:expired, :published]).count
 	    	consultation_response_count = ::ConsultationResponse.count
 	    	consultation_response_distinct_users = ::ConsultationResponse.distinct.pluck(:user_id).count
 	    	return {

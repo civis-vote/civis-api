@@ -12,6 +12,7 @@ class Consultation < ApplicationRecord
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
 
   before_commit :update_reading_time
+  after_commit :notify_admins, on: :create
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -37,6 +38,10 @@ class Consultation < ApplicationRecord
     return nil if sort.blank?
     order("#{sort} #{sort_direction}")
   }
+
+  def notify_admins
+    NotifyNewConsultationEmailToAdminJob.perform_later(self)
+  end
 
   def publish
   	self.status = :published
@@ -102,6 +107,11 @@ class Consultation < ApplicationRecord
 
   def response_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/summary', query: "response_token=#{self.response_token}" } ))
+    response_url.to_s
+  end
+
+  def review_url
+    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/admin/consultations/' + "#{self.id}" } ))
     response_url.to_s
   end
 end
