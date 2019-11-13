@@ -81,6 +81,7 @@ class Admin::ConsultationsController < ApplicationController
       	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: 'Consultations Responses was successfully exported will email you shortly.' }
 			else
 				@consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+				@consultations = @consultations.data.list(@consultations.facets.filtered_count, nil, nil)
 				ConsultationExportEmailJob.perform_later(@consultations.data.to_a, current_user.email)
       	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: 'Consultations was successfully exported will email you shortly.' }
 			end
