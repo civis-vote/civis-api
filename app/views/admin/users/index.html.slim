@@ -17,7 +17,7 @@
             .input-group.search
               input.form-control.filter-box name=("search_term_for_users") placeholder=("Search Users") type="text" data-behaviour="filter" data-scope="search_query" data-type="input-filter"
         - if current_user.role == "admin"
-         = exportable(current_user.email, User)
+          button.btn#export-users-in-excel Export as excel
     .admin-table.users_table
       = render 'table'
 
