@@ -36,7 +36,7 @@ class Admin::CaseStudiesController < ApplicationController
 	end
 
 	def create
-    @case_study = CaseStudy.new(secure_params.merge(created_by_id: current_user.id))
+    @case_study = CaseStudy.new(secure_params.merge(created_by: current_user))
     if @case_study.save
       redirect_to admin_case_study_path(@case_study), flash_success_info: 'Case Study was successfully created.'
     else

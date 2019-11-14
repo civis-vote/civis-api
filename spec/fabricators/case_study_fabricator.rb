@@ -3,5 +3,5 @@ Fabricator(:case_study) do
   ministry_name  { Ministry.order('RANDOM()').first.name }
   no_of_citizens { rand(1..100) }
   url            { Faker::Internet.url }
-  created_by_id  { User.order('RANDOM()').first.id }
+  created_by_id  { User.admin.first.id }
 end
