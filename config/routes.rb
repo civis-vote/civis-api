@@ -38,5 +38,6 @@ Rails.application.routes.draw do
         post :reject
       end
     end
+    resources :case_studies
   end
 end

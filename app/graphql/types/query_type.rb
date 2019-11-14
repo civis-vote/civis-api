@@ -3,6 +3,8 @@ module Types
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 
+    field :case_study_list,                    resolver: Queries::CaseStudy::List
+    field :case_study_profile,                 resolver: Queries::CaseStudy::Profile
   	field :constant_for_type,			             resolver: Queries::Constant::ForType
   	field :consultation_list,                  resolver: Queries::Consultation::List
     field :consultation_response_list,         resolver: Queries::ConsultationResponse::List

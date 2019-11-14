@@ -1,0 +1,26 @@
+- navigation_add 'Case Studies', admin_case_studies_path
+- navigation_add "#{@case_study&.name}", admin_case_study_path(@case_study)
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-75
+        .admin-filter-child-field
+          .admin-index-title DETAILS
+      .mr-3.case-study-btn-width
+        .btn-parent
+          = link_to ' ', admin_case_study_path(@case_study), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
+          .button-position.icon-bg
+            = link_to ' ', edit_admin_case_study_path(@case_study), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
+  .admin-list-bg      
+    .p-4
+      .admin-header-text
+        | Basic Information
+      .admin-details-box
+        = display_details("show-page-parent-details", "show-page-label-details", "Case Study Name", "show-page-input-details", "#{@case_study&.name || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Ministry Name", "show-page-input-details", "#{@case_study&.ministry_name}")
+        = display_details("show-page-parent-details", "show-page-label-details", "No Of Citizens", "show-page-input-details", "#{@case_study&.no_of_citizens || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Case Study Link", "show-page-input-details", "#{@case_study&.url || '-'}")
