@@ -19,3 +19,7 @@
       = link_to admin_ministries_path, class: "#{current_class?(admin_ministries_path)} #{params[:id].present? ? current_class?(admin_ministry_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_ministry_path(params[:id])) : '' }" do
         li
           | Ministries
+
+      = link_to admin_case_studies_path, class: "#{current_class?(admin_case_studies_path)} #{params[:id].present? ? current_class?(admin_case_study_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_case_study_path(params[:id])) : '' }" do
+        li
+          | Case Studies
