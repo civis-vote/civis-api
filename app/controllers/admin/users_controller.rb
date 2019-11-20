@@ -31,6 +31,15 @@ class Admin::UsersController < ApplicationController
 		redirect_to admin_users_path, :notice => "User deleted."
 	end
 
+	def export_as_excel
+		respond_to do |format|
+			@users = User.all.includes(:city).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+			@users = @users.data.list(@users.facets.filtered_count, nil, nil)
+			UserExportEmailJob.perform_later(@users.data.to_a, current_user.email)
+    	format.html { redirect_back fallback_location: admin_users_path, flash_success_info: 'Users details was successfully exported will email you shortly.' }
+    end
+	end
+
 	private
 
 	def secure_params

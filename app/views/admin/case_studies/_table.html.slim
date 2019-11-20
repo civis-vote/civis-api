@@ -1,0 +1,29 @@
+.admin-index-records-found
+  = total_no_of_records_found(@case_studies, "case_studies", "facets")
+table.table
+      thead
+        tr
+          th.width-35 Name
+          th Ministry Name
+          th No Of Citizens
+          th URL
+          th Created By
+          th.text-center
+      tbody
+        - @case_studies.data.each do |case_study|
+          tr
+            td
+              = case_study&.name
+            td
+              = case_study&.ministry_name
+            td
+              = case_study&.no_of_citizens
+            td
+              = case_study&.url
+            td
+              = case_study&.created_by&.full_name
+            td.text-center
+              = link_to "View", admin_case_study_path(case_study), class: "action-btn"
+- if @case_studies.facets.total_count > 0
+  .pagination-parent
+    = cm_paginate(@case_studies.facets)

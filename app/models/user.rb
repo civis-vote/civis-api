@@ -16,7 +16,6 @@ class User < ApplicationRecord
   has_many :responses, class_name: 'ConsultationResponse'
   has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
-  export_columns enabled: true, only: [:first_name, :last_name, :email, :phone_number, :points, :city_rank, :created_at, :updated_at, :rank, :best_rank, :city_id, :role, :id, :uid, :state_rank, :best_rank_type]
   validates :first_name, presence: true
 
   # enums

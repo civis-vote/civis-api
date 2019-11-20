@@ -27,6 +27,17 @@ class UserMailer < ApplicationMailer
 																						})
 	end
 
+	def notify_new_consultation_email_to_admin(user, consultation)
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
+																						to: user.email,
+																						template_alias: "notify-new-consultation-to-admin",
+																						template_model:{
+																							consultation_name: consultation.title,
+																							deadline: consultation.response_deadline.strftime('%e-%m-%Y'),
+																							review_url: consultation.review_url
+																						})
+	end
+
 	def notify_published_consultation_email(consultation)
 		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
 																						to: consultation.created_by.email,
@@ -136,4 +147,33 @@ class UserMailer < ApplicationMailer
                                             )
 	end
 
+	def user_export_email_job(users, email)
+		size_arr = []
+    users.size.times { size_arr << 22 }
+		excel_file = "#{Dir.tmpdir()}/users-sheet_#{Time.now.to_s}.xlsx"
+		file_name = "users-sheet_#{Time.now.to_s}.xlsx"
+		xlsx = Axlsx::Package.new
+		xlsx.workbook.add_worksheet(name: "Users") do |sheet|
+		  sheet.add_row ["First Name", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type"], b: true
+		  users.each do |user|
+		    sheet.add_row [user.first_name, user.points, user.rank, user.best_rank, user.best_rank_type, user.state_rank, user.city.present? ? user.city.name : '', user.city.present? ? user.city.location_type : '']
+		  end
+			sheet.column_widths *size_arr
+		end
+    xlsx.serialize(excel_file)
+    user = User.find_by(email: email)
+    file = File.open(excel_file)
+		@@postmark_client.deliver_with_template(from: 'Civis'+ unless Rails.env.production? then +' - ' + Rails.env.titleize else '' end  + '<support@civis.vote>',
+																						to: user.email,
+																						template_id: 13651891,
+																						template_model:{
+																							first_name: user.first_name
+																						},
+                                              attachments: [{
+                                                name: file_name,
+                                                content: [file.read].pack('m'),
+                                                content_type: 'application/vnd.ms-excel'
+                                              }]
+                                            )
+	end
 end
