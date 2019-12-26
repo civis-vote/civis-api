@@ -16,5 +16,6 @@ module Types
   	field :ministry_autocomplete,              resolver: Queries::Ministry::Autocomplete
   	field :user_current,					             resolver: Queries::User::CurrentUser
     field :user_list,                          resolver: Queries::User::List
+    field :user_profile,                       resolver: Queries::User::Profile
   end
 end
