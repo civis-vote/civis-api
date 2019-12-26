@@ -4,7 +4,7 @@ module Queries
 	    description "Get a single user"
 	    argument :id,		Int,		required: true
 
-	    type Types::Objects::User::CurrentUser, null: false
+	    type Types::Objects::User::Base, null: false
 
 	    def resolve(id:)
 	    	::User.find(id)
