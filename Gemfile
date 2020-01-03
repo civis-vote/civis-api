@@ -47,6 +47,8 @@ gem 'whenever', require: false
 
 gem 'roo', '~> 2.8.0'
 
+gem 'sitemap_generator'
+
 # Use Active Storage variant
 gem 'image_processing'
 gem 'mini_magick'
