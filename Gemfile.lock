@@ -244,7 +244,8 @@ GEM
       json
       websocket (~> 1.0)
     rack (2.0.7)
-    rack-cors (1.0.3)
+    rack-cors (1.0.5)
+      rack (>= 1.6.0)
     rack-protection (2.0.7)
       rack
     rack-proxy (0.6.5)
@@ -344,6 +345,8 @@ GEM
     simple_form (5.0.0)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
+    sitemap_generator (6.1.0)
+      builder (~> 3.0)
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
@@ -453,6 +456,7 @@ DEPENDENCIES
   selenium-webdriver
   sidekiq
   simple_form
+  sitemap_generator
   slim-rails
   spotlight_search (~> 0.1.7)
   spring
