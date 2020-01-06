@@ -24,7 +24,7 @@ set :output, "log/cron_log.log"
 env :PATH, ENV['PATH']
 
 def local(time)
-	TZInfo::Timezone.get('Asia/Kolkata').local_to_utc(Time.parse(time))
+	(time).in_time_zone("Asia/Kolkata")
 end
 
 every :day, at: local('12:00AM') do
