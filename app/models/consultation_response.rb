@@ -10,6 +10,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :down_votes, -> { down }, class_name: 'ConsultationResponseVote'
   has_many :votes, class_name: 'ConsultationResponseVote'
   before_commit :update_reading_time
+  after_create :fetch_response_map
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -27,6 +28,10 @@ class ConsultationResponse < ApplicationRecord
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
   	order("#{sort} #{sort_direction}")
   }
+
+  def fetch_response_map
+    FetchResponseMapJob.perform_now(self)
+  end
 
   def up_vote_count
     return up_votes.size
