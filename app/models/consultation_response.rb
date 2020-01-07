@@ -1,6 +1,7 @@
 class ConsultationResponse < ApplicationRecord
   include Paginator
   include Scorable::ConsultationResponse
+  has_rich_text :response_text
   
   belongs_to :user
   belongs_to :consultation, counter_cache: true
@@ -10,6 +11,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :down_votes, -> { down }, class_name: 'ConsultationResponseVote'
   has_many :votes, class_name: 'ConsultationResponseVote'
   before_commit :update_reading_time
+  after_create :fetch_response_map
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -28,6 +30,10 @@ class ConsultationResponse < ApplicationRecord
   	order("#{sort} #{sort_direction}")
   }
 
+  def fetch_response_map
+    AnalyseKeywordsForConsultationJob.perform_later(self)
+  end
+
   def up_vote_count
     return up_votes.size
   end
@@ -43,9 +49,9 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def update_reading_time
-    if self.reading_time.blank? || self.saved_change_to_response_text?
+    if self.reading_time.blank? || self.response_text.saved_change_to_body?
       if self.response_text && self.shared?
-        total_word_count = self.response_text.length
+        total_word_count = self.response_text.body.to_plain_text.length
         time = total_word_count.to_f / 200
         time_with_divmod = time.divmod 1
         array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
