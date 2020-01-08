@@ -11,6 +11,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :down_votes, -> { down }, class_name: 'ConsultationResponseVote'
   has_many :votes, class_name: 'ConsultationResponseVote'
   before_commit :update_reading_time
+  after_create :analysis_response
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -28,7 +29,11 @@ class ConsultationResponse < ApplicationRecord
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
   	order("#{sort} #{sort_direction}")
   }
-  
+
+  def analysis_response
+    AnalyseKeywordsForConsultationJob.perform_later(self)
+  end
+
   def refresh_consultation_response_up_vote_count
     update(up_vote_count: up_votes.size)
   end
