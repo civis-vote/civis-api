@@ -2,7 +2,7 @@ class ConsultationResponse < ApplicationRecord
   include Paginator
   include Scorable::ConsultationResponse
   has_rich_text :response_text
-  
+
   belongs_to :user
   belongs_to :consultation, counter_cache: true
   belongs_to :template, class_name: 'ConsultationResponse', optional: true, counter_cache: :templates_count
@@ -28,13 +28,13 @@ class ConsultationResponse < ApplicationRecord
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
   	order("#{sort} #{sort_direction}")
   }
-
-  def up_vote_count
-    return up_votes.size
+  
+  def refresh_consultation_response_up_vote_count
+    update(up_vote_count: up_votes.size)
   end
 
-  def down_vote_count
-    return down_votes.size
+  def refresh_consultation_response_down_vote_count
+    update(down_vote_count: down_votes.size)
   end
 
   def voted_as(user = Current.user)
