@@ -448,6 +448,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 6.0.0.rc1)
   rb-readline
+  redis
   rollbar
   roo (~> 2.8.0)
   rspec-rails (~> 3.7)

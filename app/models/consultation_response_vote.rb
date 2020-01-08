@@ -9,4 +9,11 @@ class ConsultationResponseVote < ApplicationRecord
 
   # enums
   enum vote_direction: { up: 0, down: 1 }
+
+  after_commit :refresh_consultation_response_vote_count
+  
+  def refresh_consultation_response_vote_count
+    consultation_response.refresh_consultation_response_up_vote_count
+    consultation_response.refresh_consultation_response_down_vote_count
+  end
 end
