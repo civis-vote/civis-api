@@ -11,7 +11,7 @@ class AnalyseKeywordsForConsultationJob < ApplicationJob
 
 	  request = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
 
-	  request.body = {"#{cr.consultation.title}": { "responses": ["#{cr.response_text}"], "summary": "#{cr.consultation.summary}" }}.to_json # SOME JSON DATA e.g {msg: 'Why'}.to_json
+	  request.body = {"#{cr.consultation.title}": { "responses": ["#{cr.response_text.to_plain_text}"], "summary": "#{cr.consultation.summary.to_plain_text}" }}.to_json # SOME JSON DATA e.g {msg: 'Why'}.to_json
 
 	  response = http.request(request)
 
