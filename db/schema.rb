@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_07_103916) do
+ActiveRecord::Schema.define(version: 2020_01_10_062155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -88,7 +88,6 @@ ActiveRecord::Schema.define(version: 2020_01_07_103916) do
     t.bigint "user_id", null: false
     t.bigint "consultation_id", null: false
     t.integer "satisfaction_rating"
-    t.text "response_text"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "visibility", default: 1
@@ -112,7 +111,6 @@ ActiveRecord::Schema.define(version: 2020_01_07_103916) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "published_at"
-    t.text "summary"
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
     t.uuid "response_token"
