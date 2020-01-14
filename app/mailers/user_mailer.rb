@@ -154,9 +154,9 @@ class UserMailer < ApplicationMailer
 		file_name = "users-sheet_#{Time.now.to_s}.xlsx"
 		xlsx = Axlsx::Package.new
 		xlsx.workbook.add_worksheet(name: "Users") do |sheet|
-		  sheet.add_row ["First Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type"], b: true
+		  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Subscribed", "Role", "Phone Number"], b: true
 		  users.each do |user|
-		    sheet.add_row [user.first_name, user.email, user.points, user.rank, user.best_rank, user.best_rank_type, user.state_rank, user.city.present? ? user.city.name : '', user.city.present? ? user.city.location_type : '']
+		    sheet.add_row [user.presented?("first_name"), user.presented?("last_name"), user.email, user.presented?("points"), user.presented?("rank"), user.presented?("best_rank"), user.presented?("best_rank_type"), user.presented?("state_rank"), user.city.present? ? user.city.name : 'NA', user.city.present? ? user.city.location_type : 'NA', user.presented?("created_at"), user.notify_for_new_consultation.present? ? 'true' : 'false', user.role, user.presented?("phone_number")]
 		  end
 			sheet.column_widths *size_arr
 		end

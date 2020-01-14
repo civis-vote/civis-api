@@ -105,6 +105,9 @@ class User < ApplicationRecord
     last_activity_at.today?
   end
 
+  def presented?(field_name)
+    self[field_name.to_sym].present? ? self[field_name.to_sym] : 'NA'
+  end
   # Omnitauth related methods
   def self.create_from_facebook(info_hash, uid)
     if info_hash[:name].split.count > 1
