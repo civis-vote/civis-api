@@ -1,0 +1,14 @@
+- navigation_add 'Case Studies', admin_case_studies_path
+- navigation_add 'Create Case Studies', new_admin_case_study_path
+= render_navigation
+- flash.each do |key, value|
+	- if (key == "flash_info" || key == "flash_success_info")
+		div class=("alert #{key}") = value
+.admin-content-wrapper
+	.admin-filter-bg
+		.admin-filter-parent
+			.admin-filter-child.width-75
+				.admin-filter-child-field
+					.admin-index-title DETAILS
+	.admin-list-bg
+		= render 'form'

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_16_132814) do
+ActiveRecord::Schema.define(version: 2020_01_10_062155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -56,6 +56,16 @@ ActiveRecord::Schema.define(version: 2019_10_16_132814) do
     t.index ["user_id"], name: "index_api_keys_on_user_id"
   end
 
+  create_table "case_studies", force: :cascade do |t|
+    t.string "name"
+    t.string "ministry_name"
+    t.integer "no_of_citizens"
+    t.string "url"
+    t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "constants", force: :cascade do |t|
     t.string "name"
     t.integer "constant_type"
@@ -78,7 +88,6 @@ ActiveRecord::Schema.define(version: 2019_10_16_132814) do
     t.bigint "user_id", null: false
     t.bigint "consultation_id", null: false
     t.integer "satisfaction_rating"
-    t.text "response_text"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "visibility", default: 1
@@ -86,12 +95,14 @@ ActiveRecord::Schema.define(version: 2019_10_16_132814) do
     t.float "points", default: 0.0
     t.integer "templates_count", default: 0
     t.integer "reading_time", default: 0
+    t.integer "up_vote_count", default: 0, null: false
+    t.integer "down_vote_count", default: 0, null: false
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title"
+    t.string "title", null: false
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -100,7 +111,6 @@ ActiveRecord::Schema.define(version: 2019_10_16_132814) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "published_at"
-    t.text "summary"
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
     t.uuid "response_token"
@@ -188,7 +198,7 @@ ActiveRecord::Schema.define(version: 2019_10_16_132814) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"

@@ -16,7 +16,6 @@ class User < ApplicationRecord
   has_many :responses, class_name: 'ConsultationResponse'
   has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
   has_many :votes, class_name: 'ConsultationResponseVote'
-  export_columns enabled: true, only: [:first_name, :last_name, :email, :phone_number, :points, :city_rank, :created_at, :updated_at, :rank, :best_rank, :city_id, :role, :id, :uid, :state_rank, :best_rank_type]
   validates :first_name, presence: true
 
   # enums
@@ -109,7 +108,7 @@ class User < ApplicationRecord
   def format_for_csv(field_name)
     self[field_name.to_sym].present? ? self[field_name.to_sym] : 'NA'
   end
-  
+
   # Omnitauth related methods
   def self.create_from_facebook(info_hash, uid)
     if info_hash[:name].split.count > 1
@@ -143,7 +142,7 @@ class User < ApplicationRecord
   end
 
   def unsubscribe_url
-    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/emails/unsubscribe', query: "unsubscriibe_token=#{self.uuid}"}))
+    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/emails/unsubscribe', query: "unsubscribe_token=#{self.uuid}"}))
     unsubscribe_url.to_s
   end
 

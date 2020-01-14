@@ -2,7 +2,7 @@ module Queries
 	module User
 		class List < Queries::BaseQuery
 	    description "Get a list of users"
-	    argument :role_filter,			Types::Enums::UserRoles,required: false, default_value: nil
+	    argument :role_filter,		  [Types::Enums::UserRoles], required: false, default_value: nil
 	    argument :location_filter,	Integer,								required: false, default_value: nil
 	    argument :per_page,					Integer,								required: false, default_value: 20
 	    argument :page,							Integer,								required: false, default_value: 1
