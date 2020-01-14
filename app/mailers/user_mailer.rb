@@ -154,9 +154,9 @@ class UserMailer < ApplicationMailer
 		file_name = "users-sheet_#{Time.now.to_s}.xlsx"
 		xlsx = Axlsx::Package.new
 		xlsx.workbook.add_worksheet(name: "Users") do |sheet|
-		  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Subscribed", "Role", "Phone Number"], b: true
+		  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Created At", "Subscribed", "Role", "Phone Number"], b: true
 		  users.each do |user|
-		    sheet.add_row [user.presented?("first_name"), user.presented?("last_name"), user.email, user.presented?("points"), user.presented?("rank"), user.presented?("best_rank"), user.presented?("best_rank_type"), user.presented?("state_rank"), user.city.present? ? user.city.name : 'NA', user.city.present? ? user.city.location_type : 'NA', user.presented?("created_at"), user.notify_for_new_consultation.present? ? 'true' : 'false', user.role, user.presented?("phone_number")]
+		    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : 'NA', user.city.present? ? user.city.location_type : 'NA', user.format_for_csv("created_at"), user.notify_for_new_consultation.present? ? 'true' : 'false', user.role, user.format_for_csv("phone_number")], style: [center]*14
 		  end
 			sheet.column_widths *size_arr
 		end
