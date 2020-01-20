@@ -45,7 +45,7 @@ class Consultation < ApplicationRecord
 
   def publish
   	self.status = :published
-    self.response_token = SecureRandom.uuid
+    self.response_token = SecureRandom.uuid unless self.response_token
   	self.published_at = DateTime.now
   	self.save!
     NotifyNewConsultationEmailJob.perform_later(self)
