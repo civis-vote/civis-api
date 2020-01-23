@@ -36,8 +36,7 @@ s3 = Aws::S3::Resource.new(client: aws_client)
 
 #uploading sitemap.xml.gz
 file_name = "#{Rails.root}/public/sitemaps/sitemap.xml.gz"
-# bucket_name = "civis-sitemaps-#{Rails.env}"
-bucket_name = "civis-sitemaps-staging"
+bucket_name = "civis-sitemaps-#{Rails.env}"
 obj = s3.bucket(bucket_name).object("sitemap.xml.gz")
 obj.upload_file(file_name, { acl: 'public-read' })
 
