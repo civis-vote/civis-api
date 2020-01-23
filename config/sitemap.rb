@@ -1,4 +1,4 @@
-require "google/cloud/storage"
+require 'aws-sdk-s3'
 
 # Set the host name for URL creation
 SitemapGenerator::Sitemap.default_host = "https://www.civis.vote/"
@@ -12,29 +12,41 @@ SitemapGenerator::Sitemap.create(include_root: true, include_index: true) do
   end
 end
 
-SitemapGenerator::Sitemap.create(include_index: false) do
-  add "sitemaps/consultations.xml.gz"
-  add "/consultations/list"
-  add "/leader-board"
-  add "/how-civis-works"
-  add "/consultations/new"
-  add "/consultations/new"
-  add "/about-us"
-  add "/terms"
-  add "/privacy"
-  add "/content-policy"
-  add "/content-policy"
+SitemapGenerator::Sitemap.create(include_index: false, filename: "sitemap", compress: true) do
+  group(include_root: true, sitemaps_path: "sitemaps/", filename: "sitemap-static") do
+    add "/consultations/list"
+    add "/leader-board"
+    add "/how-civis-works"
+    add "/consultations/new"
+    add "/about-us"
+    add "/terms"
+    add "/privacy"
+    add "/content-policy"
+  end
+  add_to_index '/sitemaps/consultations.xml.gz'
 end
 
-#uploading to google-cloud-storage
-sitemap_file_path = "#{Rails.root}/public/sitemaps/sitemap.xml.gz"
-consultations_file_path = "#{Rails.root}/public/sitemaps/consultations.xml.gz"
-storage = storage = Google::Cloud::Storage.new(
-            project_id: Rails.application.credentials.gcs[:project_id],
-            credentials: Rails.application.credentials.gcs
-          )
-bucket = storage.bucket("civis-api-#{Rails.env}")
-bucket.file("sitemaps/sitemap.xml.gz").delete if bucket.file("sitemaps/sitemap.xml.gz")
-bucket.file("sitemaps/consultations.xml.gz").delete if bucket.file("sitemaps/consultations.xml.gz")
-bucket.create_file sitemap_file_path, "sitemaps/sitemap.xml.gz", acl: "public"
-bucket.create_file consultations_file_path, "sitemaps/consultations.xml.gz", acl: "public"
+#uploading to aws-cloud-storage
+aws_client = Aws::S3::Client.new(
+  access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
+  secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
+  region: "eu-west-1"
+)
+s3 = Aws::S3::Resource.new(client: aws_client)
+
+#uploading sitemap.xml.gz
+file_name = "#{Rails.root}/public/sitemaps/sitemap.xml.gz"
+# bucket_name = "civis-sitemaps-#{Rails.env}"
+bucket_name = "civis-sitemaps-staging"
+obj = s3.bucket(bucket_name).object("sitemap.xml.gz")
+obj.upload_file(file_name, { acl: 'public-read' })
+
+#uploading sitemap-static.xml.gz
+file_name = "#{Rails.root}/public/sitemaps/sitemap-static.xml.gz"
+obj = s3.bucket(bucket_name).object("sitemap-static.xml.gz")
+obj.upload_file(file_name, { acl: 'public-read' })
+
+#uploading sitemap-static.xml.gz
+file_name = "#{Rails.root}/public/sitemaps/consultations.xml.gz"
+obj = s3.bucket(bucket_name).object("consultations.xml.gz")
+obj.upload_file(file_name, { acl: 'public-read' })
