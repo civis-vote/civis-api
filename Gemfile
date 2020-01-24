@@ -28,7 +28,6 @@ gem 'rack-cors'
 gem 'postmark-rails'
 
 gem 'devise'
-gem 'omniauth'
 
 gem 'graphql'
 gem 'graphql-errors'
@@ -48,6 +47,8 @@ gem 'whenever', require: false
 gem 'roo', '~> 2.8.0'
 
 gem 'sitemap_generator'
+
+gem 'aws-sdk-s3', require: false
 
 # Use Active Storage variant
 gem 'image_processing'
