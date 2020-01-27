@@ -153,12 +153,15 @@ class UserMailer < ApplicationMailer
 		excel_file = "#{Dir.tmpdir()}/users-sheet_#{Time.now.to_s}.xlsx"
 		file_name = "users-sheet_#{Time.now.to_s}.xlsx"
 		xlsx = Axlsx::Package.new
-		xlsx.workbook.add_worksheet(name: "Users") do |sheet|
-		  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Created At", "Subscribed", "Role", "Phone Number"], b: true
-		  users.each do |user|
-		    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : 'NA', user.city.present? ? user.city.location_type : 'NA', user.format_for_csv("created_at"), user.notify_for_new_consultation.present? ? 'true' : 'false', user.role, user.format_for_csv("phone_number")], style: [center]*14
-		  end
-			sheet.column_widths *size_arr
+		xlsx.workbook do |workbook|
+			workbook.add_worksheet(name: "Users") do |sheet|
+				center = workbook.styles.add_style alignment: { horizontal: :center, vertical: :center }
+			  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Created At", "Subscribed", "Role", "Phone Number"], b: true
+			  users.each do |user|
+			    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : 'NA', user.city.present? ? user.city.location_type : 'NA', user.format_for_csv("created_at"), user.notify_for_new_consultation.present? ? 'true' : 'false', user.role, user.format_for_csv("phone_number")], style: [center]*14
+			  end
+				sheet.column_widths *size_arr
+			end
 		end
     xlsx.serialize(excel_file)
     user = User.find_by(email: email)
