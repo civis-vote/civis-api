@@ -7,8 +7,13 @@
   .admin-filter-bg
     .admin-filter-parent
       .admin-filter-child.width-75
-        .admin-filter-child-field
-          .admin-index-title CONSULTATIONS
+        ul.nav.nav-pills role="tablist" 
+          li.nav-item
+            a#all-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="" href="#home" ALL CONSULTATIONS
+          li.nav-item
+            a#published-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="published" href="#home" PUBLISHED CONSULTATIONS
+          li.nav-item
+            a#submitted-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="submitted" href="#home" SUBMITTED CONSULTATIONS
   .admin-filters-wrap
     .admin-filter-parent
       .admin-filter-child.width-100
@@ -18,11 +23,12 @@
               input.form-control.filter-box name=("search_term_for_consultations") placeholder=("Search Consultations") type="text" data-behaviour="filter" data-scope="search_query" data-type="input-filter"
         .col-md-2
           .filters data-filter-url="/admin/consultations" data-replacement-class="consultations_table"
-            = select_tag "status", options_for_select(Consultation.statuses.map { |status| [Consultation.formatted_enum_name(:status, status[0]), status[1]] }), class: 'form-control', include_blank: 'All', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
+            = select_tag "status", options_for_select([["Rejected", 2], ["Expired", 3]]), class: 'form-control', include_blank: 'All', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
         - if current_user.role == "admin"
           button.btn#export-consultation-in-excel Export as excel
-    .admin-table.consultations_table
-      = render 'table'
+    .tab-content
+      #home.admin-table.consultations_table.tab-pane.active
+        = render 'table'
     br
   .admin-update-button-position
     = link_to "Create Consultation", new_admin_consultation_path, class: "btn"
