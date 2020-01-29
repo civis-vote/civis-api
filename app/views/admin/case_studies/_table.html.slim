@@ -18,12 +18,12 @@ table.table
               = case_study&.ministry_name
             td
               = case_study&.no_of_citizens
-            td
+            td.word-break 
               = case_study&.url
             td
               = case_study&.created_by&.full_name
             td.text-center
               = link_to "View", admin_case_study_path(case_study), class: "action-btn"
-- if @case_studies.facets.total_count > 0
-  .pagination-parent
+.pagination-parent
+  - if @case_studies.facets.total_count > 0
     = cm_paginate(@case_studies.facets)

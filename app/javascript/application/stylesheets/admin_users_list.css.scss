@@ -144,3 +144,9 @@
   z-index: 99;
 }
 
+@media screen and (max-width: 1100px) and (min-width: 1000px) {
+  .admin-filter-parent .admin-filter-child .col-md-2 {
+    flex: unset;
+    max-width: 23% !important;
+  }
+}
