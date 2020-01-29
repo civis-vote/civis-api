@@ -304,3 +304,13 @@
 .case-study-btn-width {
   width: 125px;
 }
+
+@media screen and (max-width: 1100px) and (min-width: 1000px) {
+  .case_studies_table table {
+    table-layout: fixed;
+    width: 100%;
+  }
+  .case_studies_table .word-break {
+    word-break: break-word;
+  }
+}
