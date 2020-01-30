@@ -38,14 +38,14 @@ s3 = Aws::S3::Resource.new(client: aws_client)
 file_name = "#{Rails.root}/public/sitemaps/sitemap.xml.gz"
 bucket_name = "civis-sitemaps-#{Rails.env}"
 obj = s3.bucket(bucket_name).object("sitemap.xml.gz")
-obj.upload_file(file_name, { acl: 'public-read' })
+obj.upload_file(file_name, { acl: 'public-read', content_type: 'application/x-gzip' })
 
 #uploading sitemap-static.xml.gz
 file_name = "#{Rails.root}/public/sitemaps/sitemap-static.xml.gz"
 obj = s3.bucket(bucket_name).object("sitemap-static.xml.gz")
-obj.upload_file(file_name, { acl: 'public-read' })
+obj.upload_file(file_name, { acl: 'public-read', content_type: 'application/x-gzip' })
 
 #uploading sitemap-static.xml.gz
 file_name = "#{Rails.root}/public/sitemaps/consultations.xml.gz"
 obj = s3.bucket(bucket_name).object("consultations.xml.gz")
-obj.upload_file(file_name, { acl: 'public-read' })
+obj.upload_file(file_name, { acl: 'public-read', content_type: 'application/x-gzip' })
