@@ -82,7 +82,7 @@ class Consultation < ApplicationRecord
 
   def update_reading_time
     if self.summary.saved_change_to_body?
-      total_word_count = self.summary.body.to_plain_text.length
+      total_word_count = self.summary.body.to_plain_text.scan(/\w+/).size
       time = total_word_count.to_f / 200
       time_with_divmod = time.divmod 1
       array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]

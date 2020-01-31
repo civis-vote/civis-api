@@ -1,6 +1,17 @@
 current_request = null
 
 $(document).on 'turbolinks:load', ->
+	if window.location.href.indexOf('&filters%5Bstatus_filter%5D=published') > -1
+		$('#published-consultations-link').addClass("active")
+		$('#submitted-consultations-link').removeClass("active")
+		$('#all-consultations-link').removeClass("active")
+	else if window.location.href.indexOf('&filters%5Bstatus_filter%5D=submitted') > -1 
+		$('#submitted-consultations-link').addClass("active")
+		$('#published-consultations-link').removeClass("active")
+		$('#all-consultations-link').removeClass("active")
+	else
+		$('#all-consultations-link').addClass("active")
+	
 	$(document).on 'change', '#consultation_ministry_id', () ->
 		ministry_id = $(this).val()
 		id = $(this).data 'id'
@@ -40,3 +51,13 @@ $(document).on 'turbolinks:load', ->
 			  return
 			success:(data) -> 
 				location.reload()
+	$(document).on 'click', '.consultation-status-filter', () ->
+		status_filter = $(this).data 'status-filter'
+		if status_filter
+			$('#status').parent().parent().addClass("d-none")
+			$('#status').append '<option value=' + status_filter + '>' + status_filter + '</option>'
+		else	
+			$('#status option[value=\'published\']').remove()
+			$('#status option[value=\'submitted\']').remove()
+			$('#status').parent().parent().removeClass("d-none")
+		$('#status').val(status_filter).trigger 'change'
