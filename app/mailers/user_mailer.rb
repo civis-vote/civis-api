@@ -126,7 +126,7 @@ class UserMailer < ApplicationMailer
 		xlsx.workbook.add_worksheet(name: "Consultation Responses") do |sheet|
 		  sheet.add_row ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"], b: true
 		  consultation_responses.each do |consultation_response|
-		    sheet.add_row [consultation_response.consultation.title, consultation_response.response_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at]
+		    sheet.add_row [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at]
 		  end
 			sheet.column_widths *size_arr
 		end
