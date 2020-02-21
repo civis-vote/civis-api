@@ -5,8 +5,8 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-require 'database_cleaner'
-require 'faker'
+require "database_cleaner"
+require "faker"
 
 puts "Cleaning the database ...\n"
 DatabaseCleaner.strategy = :truncation
@@ -42,17 +42,17 @@ puts "---> Fabricating 10 consultations"
 Fabricate.times(50, :consultation)
 
 puts "---> Publish some consultations"
-Consultation.where(status: :submitted).order('RANDOM()').limit(30).each do |consultation|
+Consultation.where(status: :submitted).order("RANDOM()").limit(30).each do |consultation|
 	consultation.publish
 end
 
 puts "---> Reject some consultations"
-Consultation.where(status: :submitted).order('RANDOM()').limit(10).each do |consultation|
+Consultation.where(status: :submitted).order("RANDOM()").limit(10).each do |consultation|
 	consultation.reject
 end
 
 puts "---> Expire some consultations"
-Consultation.where(status: :published).order('RANDOM()').limit(10).each do |consultation|
+Consultation.where(status: :published).order("RANDOM()").limit(10).each do |consultation|
 	consultation.expire
 end
 

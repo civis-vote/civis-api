@@ -5,9 +5,7 @@ module Scorable
 
     included do 
 
-	    if respond_to? :after_commit
-	      after_commit :add_response_created_points, on: :create
-	    end
+	    after_commit :add_response_created_points, on: :create if respond_to? :after_commit
 
 	    def add_response_created_points
 	    	points_to_add = 0.0

@@ -7,12 +7,9 @@ module Mutations
 
       def resolve(email:)
         user = ::User.find_by(email: email)
-        if user
-          user.send_email_verification
-          return true
-        else
-          raise CivisApi::Exceptions::FailedLogin, "Email not found"
-        end
+        raise CivisApi::Exceptions::FailedLogin, "Email not found" unless user
+        user.send_email_verification
+        return true
       end
     end
   end

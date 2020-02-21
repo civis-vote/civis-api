@@ -1,7 +1,7 @@
 module NavigationHelper
   def ensure_navigation
   	request_url = request.path_info
-  	@navigation ||= [ { title: 'Dashboard', url: root_path } ]
+  	@navigation ||= [ { title: "Dashboard", url: root_path } ]
   end
 
   def navigation_add(title, url)
@@ -9,6 +9,6 @@ module NavigationHelper
   end
 
   def render_navigation
-    render partial: 'layouts/navigation', locals: { nav: ensure_navigation }
+    render partial: "layouts/navigation", locals: { nav: ensure_navigation }
   end
 end

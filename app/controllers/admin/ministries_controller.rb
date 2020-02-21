@@ -1,5 +1,5 @@
 class Admin::MinistriesController < ApplicationController
-	layout 'admin_panel_sidenav'
+	layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :approve, :reject, :destroy, :create]
 	before_action :set_ministry, only: [:edit, :update, :show, :approve, :reject, :destroy]
@@ -8,7 +8,7 @@ class Admin::MinistriesController < ApplicationController
     @ministries = Ministry.all.includes(:created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
-        format.html {render partial: 'admin/ministries/table', locals: { ministries: @ministries } }
+        format.html {render partial: "admin/ministries/table", locals: { ministries: @ministries } }
       else
         format.html
       end
@@ -20,15 +20,15 @@ class Admin::MinistriesController < ApplicationController
 
 	def update
 		if @ministry.update(secure_params)
-			redirect_to admin_ministry_path(@ministry), flash_success_info: 'Ministry details was successfully updated.'
+			redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry details was successfully updated."
 		else
-			redirect_back fallback_location: root_path, flash_info: 'Ministry details was not successfully updated.'
+			redirect_back fallback_location: root_path, flash_info: "Ministry details was not successfully updated."
 		end
 	end
 
 	def destroy
 		@ministry.destroy
-		redirect_to admin_ministries_path, flash_success_info: 'Ministry was successfully deleted.'
+		redirect_to admin_ministries_path, flash_success_info: "Ministry was successfully deleted."
 	end
 
 	def new
@@ -38,21 +38,21 @@ class Admin::MinistriesController < ApplicationController
 	def create
     @ministry = Ministry.new(secure_params.merge(created_by_id: current_user.id))
     if @ministry.save
-      redirect_to admin_ministry_path(@ministry), flash_success_info: 'Ministry was successfully created.'
+      redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry was successfully created."
     else
-    	flash[:flash_info] = 'Ministry was not successfully created.'
+    	flash[:flash_info] = "Ministry was not successfully created."
       render :new
     end
   end
 
 	def approve
 		@ministry.approve
-		redirect_back fallback_location: root_path,  flash_success_info: 'Ministry was successfully approved.'
+		redirect_back fallback_location: root_path,  flash_success_info: "Ministry was successfully approved."
 	end
 
 	def reject
 		@ministry.reject
-		redirect_back fallback_location: root_path,  flash_success_info: 'Ministry was successfully rejected.'
+		redirect_back fallback_location: root_path,  flash_success_info: "Ministry was successfully rejected."
 	end
 
 	private

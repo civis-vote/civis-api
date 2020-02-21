@@ -5,12 +5,12 @@ module SpotlightSearch
         klass = params[:klass].constantize
         if klass.validate(params[:columns])
           ExportJob.perform_later(params[:email], klass.to_s, params[:columns], params[:filters])
-          flash[:success] = 'Successfully queued for export'
+          flash[:success] = "Successfully queued for export"
         else
-          flash[:error] = 'Invalid columns found'
+          flash[:error] = "Invalid columns found"
         end
       rescue
-        flash[:error] = 'No records to import'
+        flash[:error] = "No records to import"
       ensure
         redirect_back fallback_location: root_path
       end

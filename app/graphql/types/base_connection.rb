@@ -3,12 +3,12 @@
 module Types
   # Base Connection Class
   class BaseConnection < GraphQL::Types::Relay::BaseConnection
-    field :total_count, Integer, 'Total # of objects returned from this Plural Query', null: false
+    field :total_count, Integer, "Total # of objects returned from this Plural Query", null: false
     def total_count
       object.nodes&.count
     end
 
-    field :total_page_count, Integer, 'Total # of pages, based on total count and pagesize', null: false
+    field :total_page_count, Integer, "Total # of pages, based on total count and pagesize", null: false
     def total_page_count
       return 1 unless object.nodes&.count&.positive?
       # get total count and create array with total count as first item
