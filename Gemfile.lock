@@ -260,7 +260,7 @@ GEM
       actionmailer (>= 3.0.0)
       postmark (~> 1.15.0)
     public_suffix (4.0.1)
-    puma (3.12.1)
+    puma (3.12.2)
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
@@ -482,7 +482,7 @@ DEPENDENCIES
   omniauth-linkedin-oauth2
   pg (>= 0.18, < 2.0)
   postmark-rails
-  puma (~> 3.11)
+  puma (~> 3.12)
   rack-cors
   rails (~> 6.0.0.rc1)
   rb-readline
