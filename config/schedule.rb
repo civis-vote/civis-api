@@ -1,4 +1,4 @@
-require 'tzinfo'
+require "tzinfo"
 # Use this file to easily define all of your cron jobs.
 #
 # It's helpful, but not entirely necessary to understand cron before proceeding.
@@ -21,13 +21,13 @@ require 'tzinfo'
 # Learn more: http://github.com/javan/whenever
 
 set :output, "log/cron_log.log"
-env :PATH, ENV['PATH']
+env :PATH, ENV["PATH"]
 
 def local(time)
-	TZInfo::Timezone.get('Asia/Kolkata').local_to_utc(Time.parse(time))
+	TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(time))
 end
 
-every :day, at: local('12:00AM') do
+every :day, at: local("12:00AM") do
   rake "expire:consultations"
   rake "sitemap:refresh"
 end

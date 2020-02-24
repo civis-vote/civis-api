@@ -8,7 +8,7 @@ class GraphqlController < ApplicationController
     Current.user = current_user
     Current.ip_address = request.ip
     context = {
-      current_user: current_user
+      current_user: current_user,
     }
     result = CivisApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
@@ -18,19 +18,16 @@ class GraphqlController < ApplicationController
   end
 
   def authenticate!
-    if current_user
-      return current_user
-    else
-      return nil
-    end
+    return current_user unless current_user  
+    return nil
   end
 
   private
 
   def current_user
     # find token. Check if valid.
-    if request.headers['Authorization']
-      api_key = ApiKey.verify(request.headers['Authorization'])
+    if request.headers["Authorization"]
+      api_key = ApiKey.verify(request.headers["Authorization"])
       return false unless api_key.present?
       @current_user = api_key.user
       @current_user.update_last_activity unless @current_user.was_active_today?

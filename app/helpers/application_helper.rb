@@ -4,7 +4,7 @@ module ApplicationHelper
   end
 
   def current_class?(test_path)
-    request.fullpath == test_path ? 'active' : ''
+    request.fullpath == test_path ? "active" : ""
   end
   
   def total_no_of_records_found(model, name, facets)

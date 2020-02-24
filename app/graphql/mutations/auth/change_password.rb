@@ -7,12 +7,9 @@ module Mutations
 
       def resolve(user:)
         current_user = context[:current_user]
-        if current_user.valid_password?(user[:old_password])
-          current_user.update!(password: user[:new_password])
-          return current_user
-        else
-          raise CivisApi::Exceptions::IncorrectPassword
-        end
+        raise CivisApi::Exceptions::IncorrectPassword unless current_user.valid_password?(user[:old_password])
+        current_user.update!(password: user[:new_password])
+        return current_user
       end
 
       def self.authorized?(object, context)
