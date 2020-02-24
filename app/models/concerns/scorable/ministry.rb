@@ -5,9 +5,7 @@ module Scorable
 
     included do 
 
-	    if respond_to? :before_save
-	      before_save :add_ministry_created_points, if: :is_approved_changed?
-	    end
+	    before_save :add_ministry_created_points, if: :is_approved_changed? if respond_to? :before_save
 
 	    def add_ministry_created_points
 	    	self.created_by.add_points(:ministry_created) if self.is_approved_changed?(from: false, to: true)

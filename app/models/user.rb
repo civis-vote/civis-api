@@ -9,13 +9,13 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable, :confirmable,
          :recoverable, :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
 
-	belongs_to :city, class_name: 'Location', foreign_key: 'city_id', optional: true
+	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
 	has_many :api_keys
   has_many :game_actions
   has_many :point_events
-  has_many :responses, class_name: 'ConsultationResponse'
-  has_many :shared_responses, -> { shared }, class_name: 'ConsultationResponse'
-  has_many :votes, class_name: 'ConsultationResponseVote'
+  has_many :responses, class_name: "ConsultationResponse"
+  has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
+  has_many :votes, class_name: "ConsultationResponseVote"
   validates :first_name, presence: true
 
   # enums
@@ -33,7 +33,7 @@ class User < ApplicationRecord
 
   class << self
     def attachment_types
-      ['profile_picture']
+      ["profile_picture"]
     end
   end
 
@@ -41,14 +41,14 @@ class User < ApplicationRecord
 		return nil if query.blank?
 		terms = query.downcase.split(/\s+/)
 		terms = terms.map { |e|
-			(e.gsub('*', '%').prepend('%') + '%').gsub(/%+/, '%')
+			(e.gsub("*", "%").prepend("%") + "%").gsub(/%+/, "%")
 		}
 		num_or_conds = 4
 		where(
 			terms.map { |term|
 				"(LOWER(users.first_name) LIKE ? OR LOWER(users.last_name) LIKE ? OR LOWER(users.email) LIKE ? OR CAST(users.phone_number AS TEXT) LIKE ?)"
-			}.join(' AND '),
-			*terms.map { |e| [e] * num_or_conds }.flatten
+			}.join(" AND "),
+			*terms.map { |e| [e] * num_or_conds }.flatten,
 		)
 	}
 
@@ -89,7 +89,7 @@ class User < ApplicationRecord
   end
 
   def confirmation_url
-  	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/confirm', query: "token=#{self.confirmation_token}"}))
+  	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/confirm", query: "token=#{self.confirmation_token}"}))
   	confirmation_url.to_s
   end
 
@@ -106,7 +106,7 @@ class User < ApplicationRecord
   end
 
   def format_for_csv(field_name)
-    self[field_name.to_sym].present? ? self[field_name.to_sym] : 'NA'
+    self[field_name.to_sym].present? ? self[field_name.to_sym] : "NA"
   end
 
   # Omnitauth related methods
@@ -117,15 +117,15 @@ class User < ApplicationRecord
     else
       info_hash[:first_name] = info_hash[:name]
     end
-    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'facebook', uid, info_hash[:image])
+    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], "facebook", uid, info_hash[:image])
   end
 
   def self.create_from_google_oauth2(info_hash, uid)
-    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'google', uid, info_hash[:image])
+    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], "google", uid, info_hash[:image])
   end
 
   def self.create_from_linkedin(info_hash, uid)
-    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], 'google', uid, info_hash[:picture_url])
+    ::User.add_fields_from_oauth(info_hash[:first_name], info_hash[:last_name], info_hash[:email], "google", uid, info_hash[:picture_url])
   end
 
   def self.add_fields_from_oauth(f_name, l_name, email, provider, uid, image_url)
@@ -137,12 +137,12 @@ class User < ApplicationRecord
   end
 
   def forgot_password_url(raw_token)
-    forgot_password_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: '/auth/forgot-password', query: "reset_password_token=#{raw_token}"} ))
+    forgot_password_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: "/auth/forgot-password", query: "reset_password_token=#{raw_token}"} ))
     forgot_password_url.to_s
   end
 
   def unsubscribe_url
-    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: '/emails/unsubscribe', query: "unsubscribe_token=#{self.uuid}"}))
+    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/emails/unsubscribe", query: "unsubscribe_token=#{self.uuid}"}))
     unsubscribe_url.to_s
   end
 

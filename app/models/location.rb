@@ -1,6 +1,6 @@
 class Location < ApplicationRecord
-	has_many :children, class_name: 'Location', foreign_key: 'parent_id'
-  belongs_to :parent, class_name: 'Location', optional: true
+	has_many :children, class_name: "Location", foreign_key: "parent_id"
+  belongs_to :parent, class_name: "Location", optional: true
 
   enum location_type: [:city, :state]
 
@@ -26,7 +26,7 @@ class Location < ApplicationRecord
     # replace "*" with "%" for wildcard searches,
     # append '%', remove duplicate '%'s
     terms = terms.map { |e|
-      (e.gsub('*', '%').prepend('%') + '%').gsub(/%+/, '%')
+      (e.gsub("*", "%").prepend("%") + "%").gsub(/%+/, "%")
     }
     # configure number of OR conditions for provision
     # of interpolation arguments. Adjust this if you
@@ -35,8 +35,8 @@ class Location < ApplicationRecord
     where(
       terms.map { |term|
         "(LOWER(name) LIKE ?)"
-      }.join(' OR '),
-      *terms.map { |e| [e] * num_or_conds }.flatten
+      }.join(" OR "),
+      *terms.map { |e| [e] * num_or_conds }.flatten,
     )
   }
 

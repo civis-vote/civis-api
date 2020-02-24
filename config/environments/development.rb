@@ -52,9 +52,9 @@ Rails.application.configure do
   # Suppress logger output for asset requests.
   config.assets.quiet = true
 
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 
-  config.client_url = { host: 'localhost', port:3000, protocol: :https }
+  config.client_url = { host: "localhost", port:3000, protocol: :https }
 
 
   # Raises error for missing translations.
@@ -65,12 +65,12 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:              'smtp.postmarkapp.com',
+    address:              "smtp.postmarkapp.com",
     port:                 587,
-    domain:               'civis.vote',
+    domain:               "civis.vote",
     user_name:            Rails.application.credentials.dig(:postmark, :api_key),
     password:             Rails.application.credentials.dig(:postmark, :api_key),
-    authentication:       'plain',
+    authentication:       "plain",
   enable_starttls_auto: true  }
 
   Rails.application.routes.default_url_options[:host] = "localhost:3000"

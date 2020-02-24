@@ -1,5 +1,5 @@
 class Admin::ConsultationsController < ApplicationController
-	layout 'admin_panel_sidenav'
+	layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create]
 	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry]
@@ -8,7 +8,7 @@ class Admin::ConsultationsController < ApplicationController
     @consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
-        format.html {render partial: 'admin/consultations/table', locals: {consultations: @consultations}}
+        format.html {render partial: "admin/consultations/table", locals: {consultations: @consultations}}
       else
         format.html
       end
@@ -20,9 +20,9 @@ class Admin::ConsultationsController < ApplicationController
 
 	def update
 		if @consultation.update(secure_params)
-			redirect_to admin_consultation_path(@consultation), flash_success_info: 'Consultation details was successfully updated.'
+			redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation details was successfully updated."
 		else
-			redirect_back fallback_location: root_path, flash_info: 'Consultation details was not successfully updated.'
+			redirect_back fallback_location: root_path, flash_info: "Consultation details was not successfully updated."
 		end
 	end
 
@@ -33,43 +33,41 @@ class Admin::ConsultationsController < ApplicationController
   def create
     @consultation = Consultation.new(secure_params.merge(created_by_id: current_user.id))
     if @consultation.save
-      redirect_to admin_consultation_path(@consultation), flash_success_info: 'Consultation was successfully created.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation was successfully created."
     else
-    	flash[:flash_info] = 'Consultation was not successfully created.'
+    	flash[:flash_info] = "Consultation was not successfully created."
       render :new
     end
   end
 
 	def destroy
 		@consultation.destroy
-		redirect_to admin_consultations_path, flash_success_info: 'Consultation was successfully deleted.'
+		redirect_to admin_consultations_path, flash_success_info: "Consultation was successfully deleted."
 	end
 
 	def publish
 		@consultation.publish
-		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully approved.'
+		redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully approved."
 	end
 
 	def reject
 		@consultation.reject
-		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully rejected.'
+		redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully rejected."
 	end	
 
 	def featured
 		@consultation.featured
-		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully updated as featured.'
+		redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully updated as featured."
 	end
 
 	def unfeatured
 		@consultation.unfeatured
-		redirect_back fallback_location: root_path,  flash_success_info: 'Consultation was successfully updated as unfeatured.'
+		redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully updated as unfeatured."
 	end
 
 	def check_active_ministry
 		ministry = Ministry.find(params[:ministry_id])
-		if ministry
-			render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: ministry }
-		end
+		render partial: "consultation_ministry", locals: { consultation: @consultation, selected_ministry: ministry } if ministry
 	end
 
 	def export_as_excel
@@ -78,12 +76,12 @@ class Admin::ConsultationsController < ApplicationController
 				consultation = Consultation.find(params[:id].to_i)
 				consultation_responses = consultation.responses.order(created_at: :desc)
 				ConsultationResponsesExportEmailJob.perform_later(consultation_responses.to_a, current_user.email)
-      	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: 'Consultations Responses was successfully exported will email you shortly.' }
+      	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: "Consultations Responses was successfully exported will email you shortly." }
 			else
 				@consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
 				@consultations = @consultations.data.list(@consultations.facets.filtered_count, nil, nil)
 				ConsultationExportEmailJob.perform_later(@consultations.data.to_a, current_user.email)
-      	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: 'Consultations was successfully exported will email you shortly.' }
+      	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: "Consultations was successfully exported will email you shortly." }
 			end
     end
 	end

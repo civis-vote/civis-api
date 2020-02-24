@@ -1,5 +1,5 @@
 class Admin::CaseStudiesController < ApplicationController
-	layout 'admin_panel_sidenav'
+	layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :destroy]
 	before_action :set_case_study, only: [:edit, :update, :show, :destroy]
@@ -8,7 +8,7 @@ class Admin::CaseStudiesController < ApplicationController
     @case_studies = CaseStudy.all.includes(:created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
-        format.html {render partial: 'admin/case_studies/table', locals: { case_studies: @case_studies } }
+        format.html {render partial: "admin/case_studies/table", locals: { case_studies: @case_studies } }
       else
         format.html
       end
@@ -20,15 +20,15 @@ class Admin::CaseStudiesController < ApplicationController
 
 	def update
 		if @case_study.update(secure_params)
-			redirect_to admin_case_study_path(@case_study), flash_success_info: 'Case Study details was successfully updated.'
+			redirect_to admin_case_study_path(@case_study), flash_success_info: "Case Study details was successfully updated."
 		else
-			redirect_back fallback_location: root_path, flash_info: 'Case Study details was not successfully updated.'
+			redirect_back fallback_location: root_path, flash_info: "Case Study details was not successfully updated."
 		end
 	end
 
 	def destroy
 		@case_study.destroy
-		redirect_to admin_case_studies_path, flash_success_info: 'Case Study was successfully deleted.'
+		redirect_to admin_case_studies_path, flash_success_info: "Case Study was successfully deleted."
 	end
 
 	def new
@@ -38,9 +38,9 @@ class Admin::CaseStudiesController < ApplicationController
 	def create
     @case_study = CaseStudy.new(secure_params.merge(created_by: current_user))
     if @case_study.save
-      redirect_to admin_case_study_path(@case_study), flash_success_info: 'Case Study was successfully created.'
+      redirect_to admin_case_study_path(@case_study), flash_success_info: "Case Study was successfully created."
     else
-    	flash[:flash_info] = 'Case Study was not successfully created.'
+    	flash[:flash_info] = "Case Study was not successfully created."
       render :new
     end
   end

@@ -1,19 +1,17 @@
 # config/initializers/webpacker_gem_assets.rb
 
 def default_assets_path
-  'app/assets/javascripts'
+  "app/assets/javascripts"
 end
 
 def output_path
-  Webpacker.config.send(:data)[:resolved_gems_output_path] || '/tmp/_add_gem_paths.js'
+  Webpacker.config.send(:data)[:resolved_gems_output_path] || "/tmp/_add_gem_paths.js"
 end
 
 def resolve_gem_path(gem)
   if gem.present?
     gem_path = Gem.loaded_specs[gem]&.full_gem_path
-    if gem_path.present?
-      return "#{gem_path}/#{default_assets_path}"
-    end
+    return "#{gem_path}/#{default_assets_path}" if gem_path.present?
   end
   abort("Gem '#{gem}' not found, please check webpacker config (#{Webpacker.config.config_path})")
 end
@@ -39,7 +37,7 @@ buffer << "}\nexports.add_paths_to_environment = add_paths_to_environment\n"
 
 File.write(
   output_path,
-  buffer.join
+  buffer.join,
 )
 
 module WebpackerGemAssets

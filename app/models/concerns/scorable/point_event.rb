@@ -5,9 +5,7 @@ module Scorable
 
     included do 
 
-	    if respond_to? :after_commit
-	      after_commit :add_points_to_user, on: :create
-	    end
+	    after_commit :add_points_to_user, on: :create if respond_to? :after_commit
 
 	    def add_points_to_user
 	    	current_points = self.user.points

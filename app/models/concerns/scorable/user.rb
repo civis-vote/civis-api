@@ -5,9 +5,7 @@ module Scorable
 
     included do 
 
-	    if respond_to? :after_commit
-	      after_commit :add_user_created_points, on: :create
-	    end
+	    after_commit :add_user_created_points, on: :create if respond_to? :after_commit
 
 	    def add_user_created_points
 	    	self.add_points(:user_created)
@@ -52,8 +50,8 @@ module Scorable
     end
 
     def calculate_point_scale(action)
-    	if PointScale.where('upper_limit > ?', self.points).where(action: action).order(upper_limit: :asc).present?
-    		point_scale = PointScale.where('upper_limit > ?', self.points).where(action: action).order(upper_limit: :asc).first
+    	if PointScale.where("upper_limit > ?", self.points).where(action: action).order(upper_limit: :asc).present?
+    		point_scale = PointScale.where("upper_limit > ?", self.points).where(action: action).order(upper_limit: :asc).first
     		return point_scale
     	else
     		puts "Could not find point scale!"
