@@ -1,4 +1,4 @@
-* # Civis API 
+# Civis API 
 
   This repository contains the codebase for the Civis API. [Civis](https://www.civis.vote/) is a bridge between citizens and Governments, to ensure that people's voice isn't just heard but acknowledged and acted upon by those in power. More information about Civis can be found [here](https://www.civis.vote/about-us). 
 
