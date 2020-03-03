@@ -74,7 +74,7 @@ SimpleForm.setup do |config|
   config.boolean_style = :nested
 
   # Default class for buttons
-  config.button_class = 'btn'
+  config.button_class = "btn"
 
   # Method used to tidy up errors. Specify any Rails Array method.
   # :first lists the first message for each field.
@@ -85,7 +85,7 @@ SimpleForm.setup do |config|
   config.error_notification_tag = :div
 
   # CSS class to add for error notification helper.
-  config.error_notification_class = 'error_notification'
+  config.error_notification_class = "error_notification"
 
   # Series of attempts to detect a default label method for collection.
   # config.collection_label_methods = [ :to_label, :name, :title, :to_s ]
@@ -164,7 +164,7 @@ SimpleForm.setup do |config|
   # config.input_class = nil
 
   # Define the default class of the input wrapper of the boolean input.
-  config.boolean_label_class = 'checkbox'
+  config.boolean_label_class = "checkbox"
 
   # Defines if the default input wrapper class should be included in radio
   # collection wrappers.
@@ -178,7 +178,7 @@ SimpleForm.setup do |config|
   # config.input_field_error_class = 'is-invalid'
 
   config.wrappers :form_input_group, class: "row form-group" do |sub_wrapper|
-    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 form-label-group' do |input|
+    sub_wrapper.wrapper tag: "div", class: "col-md-6 form-label-group" do |input|
       input.use :html5
       input.use :placeholder
       input.use :input, class: "w-100"
@@ -187,7 +187,7 @@ SimpleForm.setup do |config|
   end
 
   config.wrappers :form_datepicker_group, class: "row form-group" do |sub_wrapper|
-    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 form-label-group' do |input|
+    sub_wrapper.wrapper tag: "div", class: "col-md-6 form-label-group" do |input|
       input.use :html5
       input.use :placeholder
       input.use :input, class: "w-100 datepicker"
@@ -196,7 +196,7 @@ SimpleForm.setup do |config|
   end
 
   config.wrappers :form_select_group, class: "row form-group" do |sub_wrapper|
-    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 mb-3 form-select-label-group' do |input|
+    sub_wrapper.wrapper tag: "div", class: "col-md-6 mb-3 form-select-label-group" do |input|
       input.use :html5
       input.use :placeholder
       input.use :input, class: "form-control select2"
@@ -205,7 +205,7 @@ SimpleForm.setup do |config|
   end
 
   config.wrappers :form_select_group_with_ajax, class: "row form-group" do |sub_wrapper|
-    sub_wrapper.wrapper tag: 'div', class: 'col-md-6 mb-3 form-select-label-group' do |input|
+    sub_wrapper.wrapper tag: "div", class: "col-md-6 mb-3 form-select-label-group" do |input|
       input.use :html5
       input.use :placeholder
       input.use :input, class: "form-control select2_with_ajax"

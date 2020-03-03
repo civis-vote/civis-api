@@ -21,7 +21,7 @@ class FilteredList
     @paging = {
       total_items:  paginated_list.total_count,
       current_page: paginated_list.current_page,
-      total_pages:  paginated_list.total_pages
+      total_pages:  paginated_list.total_pages,
     }
   end
 end

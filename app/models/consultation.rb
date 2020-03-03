@@ -5,7 +5,7 @@ class Consultation < ApplicationRecord
   has_rich_text :summary
 
   belongs_to :ministry
-  belongs_to :created_by, foreign_key: 'created_by_id', class_name: 'User', optional: true
+  belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
@@ -31,7 +31,7 @@ class Consultation < ApplicationRecord
 
   scope :search_query, lambda { |query = nil|
     return nil unless query
-    where('title ILIKE (?)', "%#{query}%")
+    where("title ILIKE (?)", "%#{query}%")
   }
 
   scope :sort_records, lambda { |sort, sort_direction = "asc"|
@@ -81,19 +81,18 @@ class Consultation < ApplicationRecord
   end
 
   def update_reading_time
-    if self.summary.saved_change_to_body?
-      total_word_count = self.summary.body.to_plain_text.scan(/\w+/).size
-      time = total_word_count.to_f / 200
-      time_with_divmod = time.divmod 1
-      array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
-      if array[1] > 0.30
-        total_reading_time = array[0] + 1
-      else
-        total_reading_time = array[0]
-      end
-      self.reading_time = total_reading_time
-      self.save
+    return unless self.summary.saved_change_to_body?
+    total_word_count = self.summary.body.to_plain_text.scan(/\w+/).size
+    time = total_word_count.to_f / 200
+    time_with_divmod = time.divmod 1
+    array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
+    if array[1] > 0.30
+      total_reading_time = array[0] + 1
+    else
+      total_reading_time = array[0]
     end
+    self.reading_time = total_reading_time
+    self.save
   end
 
   def days_left
@@ -101,17 +100,17 @@ class Consultation < ApplicationRecord
   end
 
   def feedback_url
-    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/read' } ))
+    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/" + "#{self.id}" +"/read" } ))
     feedback_url.to_s
   end
 
   def response_url
-    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/consultations/' + "#{self.id}" +'/summary', query: "response_token=#{self.response_token}" } ))
+    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/" + "#{self.id}" +"/summary", query: "response_token=#{self.response_token}" } ))
     response_url.to_s
   end
 
   def review_url
-    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: '/admin/consultations/' + "#{self.id}" } ))
+    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/admin/consultations/" + "#{self.id}" } ))
     response_url.to_s
   end
 end

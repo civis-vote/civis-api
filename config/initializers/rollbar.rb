@@ -5,9 +5,7 @@ Rollbar.configure do |config|
   config.access_token = Rails.application.credentials.dig(:rollbar, :access_token)
 
   # Here we'll disable in 'test':
-  if Rails.env.development? || Rails.env.test?
-    config.enabled = false
-  end
+  config.enabled = false if Rails.env.development? || Rails.env.test?
 
   # By default, Rollbar will try to call the `current_user` controller method
   # to fetch the logged-in user object, and then call that object's `id`
@@ -67,5 +65,5 @@ Rollbar.configure do |config|
   # environment variable like this: `ROLLBAR_ENV=staging`. This is a recommended
   # setup for Heroku. See:
   # https://devcenter.heroku.com/articles/deploying-to-a-custom-rails-environment
-  config.environment = ENV['ROLLBAR_ENV'].presence || Rails.env
+  config.environment = ENV["ROLLBAR_ENV"].presence || Rails.env
 end

@@ -22,37 +22,32 @@ module Attachable
 
   def save_attachment
     self.class.attachment_types.each do |attachment_type|
-      if self.send("#{attachment_type}_file").present?
-        arr = []
-        if self.send("#{attachment_type}_file").class.eql?(Array)
-          arr = self.send("#{attachment_type}_file")
-        else
-          arr << self.send("#{attachment_type}_file")
-        end
-          arr.each do |x|
-            content_type = x[:content][/(image\/[a-z]{3,4})|(application\/[a-z]{3,4})/][/\b(?!.*\/).*/]
-            contents = x[:content].sub /data:((image|application)\/.{3,}),/, ''
-            decoded_data = Base64.decode64(contents)
-            filename = x[:filename]
-            File.open("#{Rails.root}/tmp/#{filename}", 'wb') do |f|
-              f.write(decoded_data)
-            end
-            self.send("#{attachment_type}").attach(io: File.open("#{Rails.root}/tmp/#{filename}"), filename: filename, content_type: content_type)
-          end
+      next unless self.send("#{attachment_type}_file").present?
+      arr = []
+      if self.send("#{attachment_type}_file").class.eql?(Array)
+        arr = self.send("#{attachment_type}_file")
+      else
+        arr << self.send("#{attachment_type}_file")
       end
+        arr.each do |x|
+          content_type = x[:content][%r{(image/[a-z]{3,4})|(application/[a-z]{3,4})}][%r{\b(?!.*/).*}]
+          contents = x[:content].sub %r{data:((image|application)/.{3,}),}, ""
+          decoded_data = Base64.decode64(contents)
+          filename = x[:filename]
+          File.open("#{Rails.root}/tmp/#{filename}", "wb") do |f|
+            f.write(decoded_data)
+          end
+          self.send("#{attachment_type}").attach(io: File.open("#{Rails.root}/tmp/#{filename}"), filename: filename, content_type: content_type)
+        end
     end
   end
 
   def attached_url(attachment_type)
-    if self.send("#{attachment_type}").attached? && self.send("#{attachment_type}").class == ActiveStorage::Attached::One
-      return Rails.application.routes.url_helpers.rails_blob_url(self.send("#{attachment_type}"))
-    elsif self.send("#{attachment_type}").attached? && self.send("#{attachment_type}").class == ActiveStorage::Attached::Many
-      return self.send("#{attachment_type}")
-    else
-      return nil
-    end
+    return Rails.application.routes.url_helpers.rails_blob_url(self.send("#{attachment_type}")) if self.send("#{attachment_type}").attached? && self.send("#{attachment_type}").class == ActiveStorage::Attached::One   
+    return self.send("#{attachment_type}") if self.send("#{attachment_type}").attached? && self.send("#{attachment_type}").class == ActiveStorage::Attached::Many
+    return nil
   end
-
+  
   private
 
   def add_accessors_for_attachment_types

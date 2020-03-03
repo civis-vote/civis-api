@@ -1,7 +1,7 @@
 class FetchResponseMapJob < ApplicationJob
   queue_as :default
-  require 'uri'
-	require 'net/http'
+  require "uri"
+	require "net/http"
 
   def perform(consultation_response)
   	cr = consultation_response
@@ -9,9 +9,10 @@ class FetchResponseMapJob < ApplicationJob
     uri = URI(url)
 	  http = Net::HTTP.new(uri.host, uri.port)
 
-	  request = Net::HTTP::Post.new(uri.path, {'Content-Type' => 'application/json'})
+	  request = Net::HTTP::Post.new(uri.path, {"Content-Type" => "application/json"})
 
-	  request.body = {"#{cr.consultation.title}": { "responses": ["#{cr.response_text}"], "summary": "#{cr.consultation.summary}" }}.to_json # SOME JSON DATA e.g {msg: 'Why'}.to_json
+    # SOME JSON DATA e.g {msg: 'Why'}.to_json
+	  request.body = {"#{cr.consultation.title}": { "responses": ["#{cr.response_text}"], "summary": "#{cr.consultation.summary}" }}.to_json 
 
 	  response = http.request(request)
 

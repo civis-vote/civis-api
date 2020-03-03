@@ -3,7 +3,7 @@ Fabricator(:user) do
 	last_name 											{ Faker::Name.last_name }
 	email 													{ "civis+#{Faker::Name.unique.first_name}@findemail.info" }
 	password 												{ Faker::Internet.password(8) }
-  city_id   											{ Location.cities.order('RANDOM()').first.id }
+  city_id   											{ Location.cities.order("RANDOM()").first.id }
   notify_for_new_consultation 		{ [true, false].sample }
   role														{ User.roles.to_a.sample.first }
   phone_number										{ rand(10 ** 10) }

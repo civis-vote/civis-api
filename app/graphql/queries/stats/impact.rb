@@ -11,7 +11,7 @@ module Queries
 	    	return {
 	    		consultation_count: consultation_count,
 	    		consultation_response_count: consultation_response_count,
-	    		consultation_response_distinct_users: consultation_response_distinct_users
+	    		consultation_response_distinct_users: consultation_response_distinct_users,
 	    	}
 	    end
 		end

@@ -7,11 +7,8 @@ module Mutations
 
       def resolve(unsubscribe_token:)
         user = ::User.find_by(uuid: unsubscribe_token)
-        if user
-          user.update(notify_for_new_consultation: false)
-        else
-          raise CivisApi::Exceptions::Unauthorized, "Invalid Unsubscriber Token"
-        end
+        raise CivisApi::Exceptions::Unauthorized, "Invalid Unsubscriber Token" unless user
+        user.update(notify_for_new_consultation: false)
       end
     end
   end
