@@ -30,4 +30,5 @@ end
 every :day, at: local("12:00AM") do
   rake "expire:consultations"
   rake "sitemap:refresh"
+	command "/usr/local/bin/backup perform -t civis_backup"
 end
