@@ -4,6 +4,7 @@
 			| Basic Information
 		.admin-details-box
 			= f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
+			= f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
 			#consultation-ministry
 				= render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: nil }
 			= f.input :ministry_id, as: :select, collection: Ministry.all.map {|u| [u.name, u.id]}, selected: @consultation&.ministry_id, label: 'Select ministry', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry', id: "#{@consultation.id}"  } }
