@@ -60,6 +60,7 @@ class Consultation < ApplicationRecord
   	self.expired!
     NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
     NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
+    NotifyExpiredConsultationEmailJob.perform_later(self.consultation_feedback_email, self) if self.consultation_feedback_email
   end
 
   def responded_on(user = Current.user)
