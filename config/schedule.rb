@@ -27,8 +27,10 @@ def local(time)
 	TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(time))
 end
 
+job_type :civis_backup,    "cd :path && :task --silent :output"
+
 every :day, at: local("12:00AM") do
   rake "expire:consultations"
   rake "sitemap:refresh"
-	command "/usr/local/bin/backup perform -t civis_backup"
+	civis_backup "backup perform -t civis_backup"
 end
