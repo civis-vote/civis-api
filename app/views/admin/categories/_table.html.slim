@@ -1,0 +1,19 @@
+.admin-index-records-found
+  = total_no_of_records_found(@categories, "categories", "facets")
+table.table
+      thead
+        tr
+          th.width-35 Name of Category
+          th Cover Photo
+          th.text-center
+      tbody
+        - @categories.data.each do |category|
+          tr
+            td
+              = category&.name
+            td
+              = image_tag category.cover_photo if category.cover_photo.attached? 
+            td.text-center
+              = link_to "View", admin_category_path(category), class: "action-btn"
+.pagination-parent
+  = cm_paginate(@categories.facets)

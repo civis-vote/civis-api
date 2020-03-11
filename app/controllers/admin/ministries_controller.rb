@@ -58,7 +58,7 @@ class Admin::MinistriesController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:ministry).permit(:name, :level, :poc_email_primary, :poc_email_secondary, :logo)
+		params.require(:ministry).permit(:name, :level, :poc_email_primary, :poc_email_secondary, :logo, :category_id)
 	end
 
 	def set_ministry

@@ -15,6 +15,8 @@ table.table
             td
               = ministry&.created_by&.full_name
             td
+              = ministry&.category&.name
+            td
               = "#{ ministry&.is_approved ? 'Approved' : 'Not Approved' }"
             td.text-center
               = link_to "View", admin_ministry_path(ministry), class: "action-btn"

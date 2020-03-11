@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20_200_110_062_155) do
+ActiveRecord::Schema.define(version: 2020_03_09_093958) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 20_200_110_062_155) do
     t.bigint "record_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index %w[record_type record_id name], name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -33,7 +33,7 @@ ActiveRecord::Schema.define(version: 20_200_110_062_155) do
     t.bigint "blob_id", null: false
     t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index %w[record_type record_id name blob_id], name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -62,6 +62,12 @@ ActiveRecord::Schema.define(version: 20_200_110_062_155) do
     t.integer "no_of_citizens"
     t.string "url"
     t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -102,7 +108,7 @@ ActiveRecord::Schema.define(version: 20_200_110_062_155) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title"
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -115,6 +121,7 @@ ActiveRecord::Schema.define(version: 20_200_110_062_155) do
     t.boolean "is_featured", default: false
     t.uuid "response_token"
     t.integer "reading_time", default: 0
+    t.string "consultation_feedback_email"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
@@ -198,7 +205,7 @@ ActiveRecord::Schema.define(version: 20_200_110_062_155) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"

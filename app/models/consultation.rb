@@ -24,6 +24,12 @@ class Consultation < ApplicationRecord
     where(ministry_id: ministry_id)
   }
 
+  scope :category_filter, lambda { |category_id|
+    return all unless category_id.present?
+    joins(ministry: :category).
+    where(categories: {id: category_id})
+  }
+
   scope :featured_filter, lambda { |featured|
     return all unless featured.present?
     where(is_featured: featured)

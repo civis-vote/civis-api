@@ -1,0 +1,34 @@
+- navigation_add 'Categories', admin_categories_path
+- navigation_add "#{@category&.name}", admin_category_path(@category)
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-75
+        .admin-filter-child-field
+          .admin-index-title DETAILS
+      .mr-3.width-20
+        .btn-parent
+          = link_to ' ', admin_category_path(@category), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
+          .button-position.icon-bg
+            = link_to ' ', edit_admin_category_path(@category), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
+  .admin-list-bg
+    .user-profile-padding
+      .user-name-list
+        .image-div
+          - if @category.cover_photo.attached?
+            = image_tag @category.cover_photo_url, class: "user-timeline-profile-picture-bg"
+          - else
+            = image_pack_tag @category.cover_photo_url, class: "user-timeline-profile-picture-bg"
+
+        .combine-user-list
+          .edit-user-name
+            = @category&.name
+    .p-4
+      .admin-header-text
+        | Basic Information
+      .admin-details-box
+        = display_details("show-page-parent-details", "show-page-label-details", "Ministry Name", "show-page-input-details", "#{@category&.name || '-'}")
