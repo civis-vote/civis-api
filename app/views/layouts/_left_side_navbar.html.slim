@@ -23,3 +23,7 @@
       = link_to admin_case_studies_path, class: "#{current_class?(admin_case_studies_path)} #{params[:id].present? ? current_class?(admin_case_study_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_case_study_path(params[:id])) : '' }" do
         li
           | Case Studies
+
+      = link_to admin_categories_path, class: "#{current_class?(admin_categories_path)} #{params[:id].present? ? current_class?(admin_category_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_category_path(params[:id])) : '' }" do
+        li
+          | Categories

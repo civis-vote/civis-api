@@ -37,5 +37,6 @@ Rails.application.routes.draw do
       end
     end
     resources :case_studies
+    resources :categories
   end
 end
