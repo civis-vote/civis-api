@@ -11,6 +11,7 @@
 					= image_pack_tag @ministry.logo_url, class: "pointer", id: "profileImage"
 			= f.input :name, placeholder: "Organisation name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "organisation_name" }
 			= f.input :level, as: :select, collection: Ministry.levels.map { |level| [Ministry.formatted_enum_name(:level, level[0]), level[0]] }, selected: @ministry.level, label: 'Select ministry level', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry level', id: "#{@ministry.id}" } }
+			= f.input :category_id, as: :select, collection: Category.all.map {|u| [u.name, u.id]}, selected: @ministry&.category_id, label: 'Select category', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select category', id: "category -#{@ministry.id}"  } }
 			= f.input :poc_email_primary, placeholder: "Primary email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "ministry_poc_email_primary" }
 			= f.input :poc_email_secondary, placeholder: "Secondary email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "ministry_poc_email_secondary" }
 		.admin-update-button-position

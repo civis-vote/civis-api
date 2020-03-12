@@ -1,0 +1,23 @@
+- navigation_add 'Categories', admin_categories_path
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-75
+        .admin-filter-child-field
+          .admin-index-title CATEGORIES
+  .admin-filters-wrap
+    .admin-filter-parent
+      .admin-filter-child.width-100
+        .col-md-2
+          .filters data-filter-url="/admin/categories" data-replacement-class="categories_table"
+            .input-group.search
+              input.form-control.filter-box name=("search_term_for_categories") placeholder=("Search Categories") type="text" data-behaviour="filter" data-scope="search" data-type="input-filter"
+    .admin-table.categories_table
+      = render 'table'
+    br
+  .admin-update-button-position
+    = link_to "Create Category", new_admin_category_path, class: "btn"
