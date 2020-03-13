@@ -7,6 +7,7 @@ module Types
 				field :anonymous_responses,								Types::Connections::ConsultationResponse, nil, null: true
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :created_by,												Types::Objects::User::Base, nil, null: false
+				field	:consultation_feedback_email,				String, nil, null: true
 				field :is_featured,												Boolean, nil, null: true
 				field :responded_on,											Types::Objects::DateTime, nil, null: true do 
 					def resolve(object, context)
