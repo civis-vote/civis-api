@@ -24,6 +24,12 @@ class Consultation < ApplicationRecord
     where(ministry_id: ministry_id)
   }
 
+  scope :category_filter, lambda { |category_id|
+    return all unless category_id.present?
+    joins(ministry: :category).
+    where(categories: {id: category_id})
+  }
+
   scope :featured_filter, lambda { |featured|
     return all unless featured.present?
     where(is_featured: featured)
@@ -60,6 +66,7 @@ class Consultation < ApplicationRecord
   	self.expired!
     NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
     NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
+    NotifyExpiredConsultationEmailJob.perform_later(self.consultation_feedback_email, self) if self.consultation_feedback_email
   end
 
   def responded_on(user = Current.user)

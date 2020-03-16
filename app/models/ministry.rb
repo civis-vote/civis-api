@@ -11,6 +11,7 @@ class Ministry < ApplicationRecord
   enum level: [:national, :state, :local]
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
+  belongs_to :category, optional: true
   has_one_attached :logo
   has_one_attached :cover_photo
   export_columns enabled: true, except: [:meta]

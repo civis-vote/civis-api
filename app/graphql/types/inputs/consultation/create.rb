@@ -7,6 +7,7 @@ module Types
 				argument :title,												String,															nil,	required: true
 				argument :url,													String,															nil,	required: true
 				argument :response_deadline,						Types::Objects::DateTime,						nil,	required: false
+				argument :consultation_feedback_email,	String,															nil,	required: false
 			end
 		end
 	end
