@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_09_093958) do
+ActiveRecord::Schema.define(version: 2020_03_18_055424) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -70,6 +70,7 @@ ActiveRecord::Schema.define(version: 2020_03_09_093958) do
     t.string "name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.text "cover_photo_data"
   end
 
   create_table "constants", force: :cascade do |t|
@@ -154,6 +155,7 @@ ActiveRecord::Schema.define(version: 2020_03_09_093958) do
     t.string "poc_email_secondary"
     t.integer "created_by_id"
     t.jsonb "meta"
+    t.text "logo_data"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -218,6 +220,7 @@ ActiveRecord::Schema.define(version: 2020_03_09_093958) do
     t.integer "best_rank"
     t.integer "best_rank_type"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
+    t.text "profile_picture_data"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
