@@ -38,3 +38,4 @@ config/environments/_add_gem_paths.js
 
 /config/credentials/production.key
 /config/database.yml
+/public/uploads/
