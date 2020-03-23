@@ -4,6 +4,8 @@ class User < ApplicationRecord
   include SpotlightSearch
   include Paginator
   include Scorable::User
+  include ImageUploader::Attachment(:profile_picture)
+  
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,

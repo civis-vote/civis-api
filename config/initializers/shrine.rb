@@ -7,6 +7,7 @@ Shrine.plugin :activerecord           # loads Active Record integration
 Shrine.plugin :cached_attachment_data # enables retaining cached file across form redisplays
 Shrine.plugin :restore_cached_data
 Shrine.plugin :remote_url, max_size: nil
+Shrine.plugin :derivation_endpoint, secret_key: Rails.application.credentials.dig(:secret_key_base)
 
 def production_storages
   s3_options = {
@@ -19,6 +20,7 @@ def production_storages
   Shrine.plugin :url_options, store: { host: "https://cdn.civis.vote/" }
 
   {
+    cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::S3.new(prefix: 'uploads', upload_options: { acl: 'public-read' }, **s3_options)
   }
 end
@@ -34,13 +36,15 @@ def staging_storages
   Shrine.plugin :url_options, store: { host: "https://cdn-staging.civis.vote/" }
 
   {
+    cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::S3.new(prefix: 'uploads', upload_options: { acl: 'public-read' }, **s3_options)
   }
 end
 
 def development_storages
   {
-    store: Shrine::Storage::FileSystem.new('public', prefix: 'uploads'), # permanent
+    cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"), #temporary
+    store: Shrine::Storage::FileSystem.new('public', prefix: 'uploads') # permanent
   }
 end
 

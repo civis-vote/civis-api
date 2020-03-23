@@ -8,7 +8,7 @@ module Mutations
       def resolve(ministry:)
         created_ministry = ::Ministry.new ministry.to_h
         created_ministry.created_by = Current.user
-        created_ministry.save_with_attachments
+        created_ministry.save_shrine_attachment
         return created_ministry
       end
 

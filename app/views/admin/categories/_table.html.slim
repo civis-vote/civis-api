@@ -12,7 +12,7 @@ table.table
             td
               = category&.name
             td
-              = image_tag category.cover_photo, class: "width-20" if category.cover_photo.attached? 
+              = image_tag category.cover_photo_url, class: "width-20" if category.cover_photo 
             td.text-center
               = link_to "View", admin_category_path(category), class: "action-btn"
 .pagination-parent
