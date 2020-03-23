@@ -44,4 +44,10 @@ def development_storages
   }
 end
 
-Shrine.storages = Rails.env.production? ? production_storages : Rails.env.staging? ? staging_storages : development_storages
+if Rails.env.production?
+  Shrine.storages = production_storages
+elsif Rails.env.staging?
+  Shrine.storages = staging_storages
+else
+  Shrine.storages = development_storages
+end
