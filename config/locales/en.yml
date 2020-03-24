@@ -39,6 +39,9 @@ en:
           published: "Published"
           rejected: "Rejected"
           expired: "Expired"
+        review_types:
+          consultation: "Consultation"
+          policy: "Policy"
       ministry:
         levels:
           national: "National"
