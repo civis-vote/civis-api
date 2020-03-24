@@ -43,4 +43,5 @@
         = display_details("show-page-parent-details", "show-page-label-details", "URL of consultation pdf", "show-page-input-details", "#{@consultation&.url}")
         = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
         = display_details("show-page-parent-details", "show-page-label-details", "Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Review Type", "show-page-input-details", "#{@consultation.review_type }")
         = display_details("show-page-parent-details", "show-page-label-details", "Summary", "show-page-input-details", "#{@consultation&.summary || '-'}")
