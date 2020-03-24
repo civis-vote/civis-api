@@ -89,7 +89,7 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type)
 	end
 
 	def set_consultation

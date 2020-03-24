@@ -10,6 +10,7 @@ class Consultation < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
+  enum review_type: { consultation: 0, policy: 1 }
 
   before_commit :update_reading_time
   after_commit :notify_admins, on: :create
