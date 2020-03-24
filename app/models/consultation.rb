@@ -55,7 +55,11 @@ class Consultation < ApplicationRecord
     self.response_token = SecureRandom.uuid unless self.response_token
   	self.published_at = DateTime.now
   	self.save!
-    NotifyNewConsultationEmailJob.perform_later(self)
+    if self.consultation?
+      NotifyNewConsultationEmailJob.perform_later(self)
+    else
+      NotifyNewConsultationPolicyReviewEmailJob.perform_later(self)
+    end
     NotifyPublishedConsultationEmailJob.perform_later(self) if self.created_by.citizen?
   end
 
@@ -65,9 +69,11 @@ class Consultation < ApplicationRecord
 
   def expire
   	self.expired!
-    NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
-    NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
     NotifyExpiredConsultationEmailJob.perform_later(self.consultation_feedback_email, self) if self.consultation_feedback_email
+    if self.consultation?
+      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
+      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
+    end
   end
 
   def responded_on(user = Current.user)

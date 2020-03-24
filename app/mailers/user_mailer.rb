@@ -29,6 +29,19 @@ class UserMailer < ApplicationMailer
 																						})
 	end
 
+	def notify_new_consultation_policy_review_email(user, consultation)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "notify-new-consultation-policy-review",
+																						template_model:{
+																							first_name: user.first_name,
+																							consultation_name: consultation.title,
+																							ministry_name: consultation.ministry.name,
+																							feedback_url: consultation.feedback_url,
+																							unsubscribe_url: user.unsubscribe_url,
+																						})
+	end
 	def notify_new_consultation_email_to_admin(user, consultation)
 		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
