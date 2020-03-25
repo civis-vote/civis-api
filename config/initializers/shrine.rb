@@ -48,10 +48,5 @@ def development_storages
   }
 end
 
-if Rails.env.production?
-  Shrine.storages = production_storages
-elsif Rails.env.staging?
-  Shrine.storages = staging_storages
-else
-  Shrine.storages = development_storages
-end
+Shrine.storages = Shrine.send(ENV["shrine_storages"]) if ENV["shrine_storages"].present?
+Shrine.storages = development_storages if Rails.env.development?
