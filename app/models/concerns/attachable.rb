@@ -12,7 +12,7 @@ module Attachable
   def update_attributes!(args)
     add_accessors_for_attachment_types
     super
-    self.save_attachment
+    self.save_shrine_attachment
   end
 
   def initialize(args)
