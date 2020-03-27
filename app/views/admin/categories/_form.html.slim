@@ -6,9 +6,9 @@
 			= f.input :name, placeholder: "Category name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "category_name" }
 			= f.input :cover_photo, placeholder: "Category cover photo", required: false, wrapper: :form_input_group, input_html: { class: "d-none", id: "imageUpload", capture: "", type: "file" }
 			#profile-container
-				- if @category.cover_photo.attached?
-					= image_tag @category.cover_photo_url, class: "pointer", id: "profileImage"
+				- if @category.cover_photo
+					= image_tag @category.picture_url, class: "pointer", id: "profileImage"
 				- else
-					= image_pack_tag @category.cover_photo_url, class: "pointer", id: "profileImage"
+					= image_pack_tag @category.picture_url, class: "pointer", id: "profileImage"
 		.admin-update-button-position
 			= f.button :submit, "Save Category"

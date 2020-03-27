@@ -6,7 +6,7 @@ module Attachable
 
   def save_with_attachments
     self.save!
-    self.save_attachment
+    self.save_shrine_attachment
   end
 
   def update_attributes!(args)
@@ -38,6 +38,33 @@ module Attachable
             f.write(decoded_data)
           end
           self.send("#{attachment_type}").attach(io: File.open("#{Rails.root}/tmp/#{filename}"), filename: filename, content_type: content_type)
+        end
+    end
+  end
+
+  def save_shrine_attachment
+    self.class.attachment_types.each do |attachment_type|
+      next unless self.send("#{attachment_type}_file").present?
+      arr = []
+      if self.send("#{attachment_type}_file").class.eql?(Array)
+        arr = self.send("#{attachment_type}_file")
+      else
+        arr << self.send("#{attachment_type}_file")
+      end
+        arr.each do |x|
+          return unless arr[0][:content].present?
+          content_type = x[:content][%r{(image/[a-z]{3,4})|(application/[a-z]{3,4})}][%r{\b(?!.*/).*}]
+          contents = x[:content].sub %r{data:((image|application)/.{3,}),}, ""
+          decoded_data = Base64.decode64(contents)
+          filename = x[:filename]
+          File.open("#{Rails.root}/tmp/#{filename}", "wb") do |f|
+            f.write(decoded_data)
+          end
+          uploader = ImageUploader.new(:store)
+          uploaded_file = uploader.upload(File.open("#{Rails.root}/tmp/#{filename}"))
+          uploaded_file.metadata["filename"] = filename
+          uploaded_file.metadata["mime_type"] = content_type unless content_type.present?
+          self.update("#{attachment_type}_data": uploaded_file.to_json)
         end
     end
   end

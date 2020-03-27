@@ -1,6 +1,7 @@
 require "sidekiq/web"
 Rails.application.routes.draw do
   mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql" if Rails.env.development?
+  mount ImageUploader.derivation_endpoint => "/derivations/image"
   devise_for :users, controllers: {sessions: "sessions"}
   devise_scope :user do
     root to: "devise/sessions#new"
