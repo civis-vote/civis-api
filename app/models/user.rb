@@ -28,7 +28,7 @@ class User < ApplicationRecord
   after_commit :generate_api_key, :send_email_verification, on: :create
 
   # attachments
-  has_one_attached :profile_picture
+  # has_one_attached :profile_picture
 
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation
