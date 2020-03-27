@@ -4,6 +4,7 @@ class Ministry < ApplicationRecord
   include Scorable::Ministry
   include SpotlightSearch
   include Paginator
+  include ImageUploader::Attachment(:logo)
 
 	validates :name, :level,  presence: true
 
@@ -12,7 +13,6 @@ class Ministry < ApplicationRecord
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :category, optional: true
-  has_one_attached :logo
   has_one_attached :cover_photo
   export_columns enabled: true, except: [:meta]
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
@@ -52,9 +52,9 @@ class Ministry < ApplicationRecord
     )
   }
 
-  def logo_url
-    if self.logo.attached?
-      self.logo
+  def picture_url
+    if self.logo
+      self.logo_url
     else
       "media/application/images/user_profile_picture.png"
     end

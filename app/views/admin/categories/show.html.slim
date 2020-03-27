@@ -19,10 +19,10 @@
     .user-profile-padding
       .user-name-list
         .image-div
-          - if @category.cover_photo.attached?
-            = image_tag @category.cover_photo_url, class: "user-timeline-profile-picture-bg"
+          - if @category.cover_photo
+            = image_tag @category.picture_url, class: "user-timeline-profile-picture-bg"
           - else
-            = image_pack_tag @category.cover_photo_url, class: "user-timeline-profile-picture-bg"
+            = image_pack_tag @category.picture_url, class: "user-timeline-profile-picture-bg"
 
         .combine-user-list
           .edit-user-name

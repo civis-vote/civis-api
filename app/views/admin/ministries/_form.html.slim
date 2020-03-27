@@ -3,12 +3,13 @@
 		.admin-header-text
 			| Basic Information
 		.admin-details-box
+			= f.hidden_field :logo, value: @ministry.cached_logo_data
 			= f.input :logo, placeholder: "Ministry logo", required: false, wrapper: :form_input_group, input_html: { class: "d-none", id: "imageUpload", capture: "", type: "file" }
 			#profile-container
-				- if @ministry.logo.attached?
-					= image_tag @ministry.logo_url, class: "pointer", id: "profileImage"
+				- if @ministry.logo
+					= image_tag @ministry.picture_url, class: "pointer", id: "profileImage"
 				- else
-					= image_pack_tag @ministry.logo_url, class: "pointer", id: "profileImage"
+					= image_pack_tag @ministry.picture_url, class: "pointer", id: "profileImage"
 			= f.input :name, placeholder: "Organisation name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "organisation_name" }
 			= f.input :level, as: :select, collection: Ministry.levels.map { |level| [Ministry.formatted_enum_name(:level, level[0]), level[0]] }, selected: @ministry.level, label: 'Select ministry level', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry level', id: "#{@ministry.id}" } }
 			= f.input :category_id, as: :select, collection: Category.all.map {|u| [u.name, u.id]}, selected: @ministry&.category_id, label: 'Select category', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select category', id: "category -#{@ministry.id}"  } }

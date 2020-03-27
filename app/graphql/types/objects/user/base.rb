@@ -9,7 +9,7 @@ module Types
 				field :city_rank,					Integer,										"City rank in the system", null: true
 				field :first_name, 				String, 										nil, null: false
 				field :points,						Integer,											nil, null: false
-				field :profile_picture,		Types::Objects::Attachment, nil, null: true do
+				field :profile_picture,		Types::Objects::ShrineAttachment, nil, null: true do
 					argument :resolution, String, required: false, default_value: nil
 				end
 				field :rank,							Integer,										"Overall rank in the system", null: true
@@ -20,7 +20,7 @@ module Types
 				field :state_rank,				Integer,										"State rank in the system", null: true
 
 				def profile_picture(resolution:)
-					object.resize(resolution, "profile_picture")
+					object.shrine_resize(resolution, "profile_picture")
 				end
 
 				def shared_responses(sort:, sort_direction:)
