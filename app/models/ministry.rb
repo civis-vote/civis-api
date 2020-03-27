@@ -13,7 +13,7 @@ class Ministry < ApplicationRecord
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :category, optional: true
-  has_one_attached :cover_photo
+  # has_one_attached :cover_photo
   export_columns enabled: true, except: [:meta]
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
