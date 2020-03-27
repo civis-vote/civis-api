@@ -5,7 +5,7 @@ class Category < ApplicationRecord
   include Paginator
   include ImageUploader::Attachment(:cover_photo)
 
-  has_one_attached :cover_photo
+  # has_one_attached :cover_photo
   has_many :ministries
   
   class << self
