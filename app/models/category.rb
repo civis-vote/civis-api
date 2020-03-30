@@ -3,8 +3,9 @@ class Category < ApplicationRecord
 	include ImageResizer
   include SpotlightSearch
   include Paginator
+  include ImageUploader::Attachment(:cover_photo)
 
-  has_one_attached :cover_photo
+  # has_one_attached :cover_photo
   has_many :ministries
   
   class << self
@@ -15,9 +16,9 @@ class Category < ApplicationRecord
 
   end
 
-  def cover_photo_url
-    if self.cover_photo.attached?
-      self.cover_photo
+  def picture_url
+    if self.cover_photo
+      self.cover_photo_url
     else
       "media/application/images/user_profile_picture.png"
     end

@@ -25,10 +25,10 @@
     .user-profile-padding
       .user-name-list
         .image-div
-          - if @ministry.logo.attached?
-            = image_tag @ministry.logo_url, class: "user-timeline-profile-picture-bg"
+          - if @ministry.logo
+            = image_tag @ministry.picture_url, class: "user-timeline-profile-picture-bg"
           - else
-            = image_pack_tag @ministry.logo_url, class: "user-timeline-profile-picture-bg"
+            = image_pack_tag @ministry.picture_url, class: "user-timeline-profile-picture-bg"
 
         .combine-user-list
           .edit-user-name

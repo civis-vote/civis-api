@@ -4,6 +4,8 @@ class User < ApplicationRecord
   include SpotlightSearch
   include Paginator
   include Scorable::User
+  include ImageUploader::Attachment(:profile_picture)
+  
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
@@ -26,7 +28,7 @@ class User < ApplicationRecord
   after_commit :generate_api_key, :send_email_verification, on: :create
 
   # attachments
-  has_one_attached :profile_picture
+  # has_one_attached :profile_picture
 
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation
