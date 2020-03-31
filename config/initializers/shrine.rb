@@ -8,6 +8,7 @@ Shrine.plugin :cached_attachment_data # enables retaining cached file across for
 Shrine.plugin :restore_cached_data
 Shrine.plugin :remote_url, max_size: nil
 Shrine.plugin :derivation_endpoint, secret_key: Rails.application.credentials.dig(:secret_key_base)
+Shrine.plugin :derivatives
 
 def production_storages
   s3_options = {
@@ -33,7 +34,7 @@ def staging_storages
     region: 'eu-west-1'
   }
 
-  Shrine.plugin :url_options, store: { host: "https://cdn-staging.civis.vote/" }
+  # Shrine.plugin :url_options, store: { host: "https://cdn-staging.civis.vote/" }
 
   {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
@@ -49,4 +50,5 @@ def development_storages
 end
 
 Shrine.storages = Shrine.send(ENV["shrine_storages"]) if ENV["shrine_storages"].present?
-Shrine.storages = development_storages if Rails.env.development?
+# Shrine.storages = development_storages if Rails.env.development?
+Shrine.storages = staging_storages if Rails.env.development?
