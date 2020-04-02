@@ -20,7 +20,7 @@ def production_storages
   Shrine.plugin :url_options, store: { host: "https://cdn.civis.vote/" }
 
   {
-    cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
+    cache: Shrine::Storage::FileSystem.new(Rails.root.join("public"), prefix: "uploads/cache"),
     store: Shrine::Storage::S3.new(prefix: 'uploads', upload_options: { acl: 'public-read' }, **s3_options)
   }
 end
@@ -36,7 +36,7 @@ def staging_storages
   Shrine.plugin :url_options, store: { host: "https://cdn-staging.civis.vote/" }
 
   {
-    cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
+    cache: Shrine::Storage::FileSystem.new(Rails.root.join("public"), prefix: "uploads/cache"),
     store: Shrine::Storage::S3.new(prefix: 'uploads', upload_options: { acl: 'public-read' }, **s3_options)
   }
 end
