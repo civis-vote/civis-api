@@ -13,25 +13,25 @@ module ImageResizer
   	if resolution.present?
   		array_resolution = resolution.split('X')
       if send("#{image}_versions_data").present?
-        url = nil
+        image_versions_data = nil
         send("#{image}_versions_data").each do |versions_data|
-          url = versions_data["url"] if versions_data["width"] == "#{array_resolution[0].to_i}" && versions_data["height"] == "#{array_resolution[1].to_i}"
+          image_versions_data = versions_data if versions_data["width"] == "#{array_resolution[0].to_i}" && versions_data["height"] == "#{array_resolution[1].to_i}"
         end
       end
-      if url.present?
-        return url
+      if image_versions_data.present?
+        return image_versions_data
       else
   		  uploaded_file = send(image).derivation(:resize, array_resolution[0].to_i, array_resolution[1].to_i).upload
-        h = {width: "#{array_resolution[0].to_i}", height: "#{array_resolution[1].to_i}", url: "#{uploaded_file.url}"}
+        h = {width: "#{array_resolution[0].to_i}", height: "#{array_resolution[1].to_i}", url: "#{uploaded_file.url}", id: send(image).id, filename: "#{send(image).metadata['filename']}_#{resolution}" }
         if send("#{image}_versions_data").present?
           new_array = send("#{image}_versions_data") << h
           self.update("#{image}_versions_data": new_array)
         else
           a = []
           a << h
-          self.update("#{image}_versions_data": new_array)
+          self.update("#{image}_versions_data": a)
         end
-        return uploaded_file.url
+        return h
       end
   	else
   		send(image)
