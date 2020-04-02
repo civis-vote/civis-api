@@ -31,7 +31,7 @@ module ImageResizer
           a << h
           self.update("#{image}_versions_data": a)
         end
-        return h
+        return JSON.parse(h.to_json)
       end
   	else
   		send(image)
