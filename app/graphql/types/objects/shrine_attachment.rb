@@ -6,15 +6,15 @@ module Types
 			field :url,					String, 	nil, null: false
 
 			def id
-        object.id
+        object.class == Hash ? object["id"] : object.id 
 			end
 
 			def filename
-        object.metadata["filename"].to_s
+        object.class == Hash ? object["filename"] : object.metadata["filename"]
 			end
 
 			def url
-				object.url
+				object.class == Hash ? object["url"] : object.url
 			end
 		end
 	end
