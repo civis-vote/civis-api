@@ -116,7 +116,7 @@ class UserMailer < ApplicationMailer
 		xlsx.workbook.add_worksheet(name: "Consultations") do |sheet|
 		  sheet.add_row ["Title", "Url", "Response Deadline", "Ministry", "Status", "Summary", "Response Count", "Featured", "Reading Time", "Created At"], b: true
 		  consultations.each do |consultation|
-		    sheet.add_row [consultation.title, consultation.url, consultation.response_deadline, consultation.ministry.name, consultation.status, consultation.summary.to_plain_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at]
+		    sheet.add_row [consultation.title, consultation.url, consultation.response_deadline&.strftime("%d %b %Y"), consultation.ministry.name, consultation.status, consultation.summary.to_plain_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime("%d %b %Y")]
 		  end
 			sheet.column_widths *size_arr
 		end
@@ -180,7 +180,7 @@ class UserMailer < ApplicationMailer
 				center = workbook.styles.add_style alignment: { horizontal: :center, vertical: :center }
 			  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Created At", "Subscribed", "Role", "Phone Number"], b: true
 			  users.each do |user|
-			    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : "NA", user.city.present? ? user.city.location_type : "NA", user.format_for_csv("created_at"), user.notify_for_new_consultation.present? ? "true" : "false", user.role, user.format_for_csv("phone_number")], style: [center]*14
+			    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : "NA", user.city.present? ? user.city.location_type : "NA", user.format_for_csv("created_at").strftime("%d %b %Y"), user.notify_for_new_consultation.present? ? "true" : "false", user.role, user.format_for_csv("phone_number")], style: [center]*14
 			  end
 				sheet.column_widths *size_arr
 			end
