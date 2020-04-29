@@ -50,6 +50,7 @@ gem "sitemap_generator"
 
 gem "aws-sdk-s3", require: false
 
+gem 'rails-erd'
 # Use Active Storage variant
 gem "image_processing"
 gem "mini_magick"
