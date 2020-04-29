@@ -39,7 +39,7 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
 
   - The deployment is triggered via [Travis](https://travis-ci.com/) configured via the travis.yml file.
   - Upon building the app, a Cloud66 webhook is triggered which finally pushes the code to the server. 
-  - Servers are hosted on AWS and managed by [Cloud66](https://www.cloud66.com/).
+  - Servers are hosted on Google Cloud and managed by [Cloud66](https://www.cloud66.com/).
 
 ----
 
