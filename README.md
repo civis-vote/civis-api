@@ -1,21 +1,30 @@
 # Civis API 
 
-  This repository contains the codebase for the Civis API. [Civis](https://www.civis.vote/) is a bridge between citizens and Governments, to ensure that people's voice isn't just heard but acknowledged and acted upon by those in power. More information about Civis can be found [here](https://www.civis.vote/about-us). 
+This repository contains the codebase for the Civis API. [Civis](https://www.civis.vote/) is a bridge between citizens and Governments, to ensure that people's voice isn't just heard but acknowledged and acted upon by those in power. More information about Civis can be found [here](https://www.civis.vote/about-us). 
 
-  ------
+-----
+
+**Platform Architecture**
+
+- The platform implements a public GraphQL API. 
+- Authentication is managed via an access_token which is sent as an Authorization Header.
+- User Interfaces consume the GraphQL API (including the primary interface i.e www.civis.vote)
+- The ERD of the platform can be found [here](https://github.com/civis-vote/civis-api/blob/develop/erd.pdf).
+
+------
 
   **Tech Stack**
 
   - Ruby on Rails 
 
-  ---
+---
 
   **System Requirements**
 
   - [Ruby](https://www.ruby-lang.org/en/downloads/) version **2.4.0** or above.
   - [Imagemagick](https://imagemagick.org/) for image processing
 
-  ---
+---
 
   **Third Party Tools**
 
@@ -24,7 +33,7 @@
   - [Facebook OAuth](https://developers.facebook.com/docs/facebook-login/web/) for Login with Facebook
   - [Google OAuth](https://developers.google.com/identity/protocols/OAuth2) for Login with Google
 
-  ---
+---
 
   **Deployment**
 
@@ -32,7 +41,7 @@
   - Upon building the app, a Cloud66 webhook is triggered which finally pushes the code to the server. 
   - Servers are hosted on AWS and managed by [Cloud66](https://www.cloud66.com/).
 
-  ----
+----
 
   **Credentials**
 
@@ -42,7 +51,7 @@
   - Google Client ID and Secret
   - Facebook App ID and Secret
 
-  ----
+----
 
   **Environment Variables**
 
@@ -50,7 +59,7 @@
   - HOST
   - RAILS_MASTER_KEY
 
-  ---
+---
 
   **Running locally**
 
@@ -60,7 +69,7 @@
     - `rails s`
   - To seed the database run `rails db:seed`
 
-  ---
+---
 
   **Notes**
 
