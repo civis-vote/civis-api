@@ -11,6 +11,8 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
 - User Interfaces consume the GraphQL API (including the primary interface i.e www.civis.vote)
 - The ERD of the platform can be found [here](https://github.com/civis-vote/civis-api/blob/develop/erd.pdf).
 
+![image-20200429202910834](https://civis-api-production.s3-eu-west-1.amazonaws.com/static/Civis-Arch.png)
+
 ------
 
   **Tech Stack**
