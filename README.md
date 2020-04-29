@@ -32,6 +32,7 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
   - [AWS S3](https://aws.amazon.com/s3/) for Storage
   - [Facebook OAuth](https://developers.facebook.com/docs/facebook-login/web/) for Login with Facebook
   - [Google OAuth](https://developers.google.com/identity/protocols/OAuth2) for Login with Google
+  - [Venter](https://github.com/VenterProject) (Machine Learning solution) for categorising responses.
 
 ---
 
