@@ -8,12 +8,11 @@ table.table
           th No Of Citizens
           th URL
           th Created By
-          th.text-center
       tbody
         - @case_studies.data.each do |case_study|
           tr
             td
-              = case_study&.name
+              = link_to case_study&.name, admin_case_study_path(case_study)
             td
               = case_study&.ministry_name
             td
@@ -22,8 +21,6 @@ table.table
               = case_study&.url
             td
               = case_study&.created_by&.full_name
-            td.text-center
-              = link_to "View", admin_case_study_path(case_study), class: "action-btn"
 .pagination-parent
   - if @case_studies.facets.total_count > 0
     = cm_paginate(@case_studies.facets)

@@ -11,19 +11,16 @@ table.table
           th Ministry name
           th Submission deadline
           th Uploaded by
-          th.text-center
       tbody
         - @consultations.data.each do |consultation|
           tr
             td
-              = consultation&.title
+              = link_to consultation&.title, admin_consultation_path(consultation)
             td
               = consultation&.ministry&.name
             td
               = consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y')
             td
               = consultation&.created_by&.full_name
-            td.text-center
-              = link_to "View", admin_consultation_path(consultation), class: "action-btn"
 .pagination-parent
   = cm_paginate(@consultations.facets)
