@@ -37,3 +37,4 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Phone number", "show-page-input-details", "#{@user&.phone_number || "-" }")
         = display_details("show-page-parent-details", "show-page-label-details", "Location", "show-page-input-details", "#{@user&.city&.name || "-" }")
         = display_details("show-page-parent-details", "show-page-label-details", "Points", "show-page-input-details", "#{@user&.points || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Role", "show-page-input-details", "#{@user&.role.titleize || '-'}")
