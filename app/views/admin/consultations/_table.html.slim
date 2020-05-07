@@ -1,5 +1,9 @@
-.admin-index-records-found
-  = total_no_of_records_found(@consultations, "consultations", "facets")
+-if current_class_include?("published") || current_class_include?("submitted")
+  .admin-index-records-found.published-submitted-consultations-count
+    = total_no_of_records_found(@consultations, "consultations", "facets")
+-else
+  .admin-index-records-found.all-consultations-count
+    = total_no_of_records_found(@consultations, "consultations", "facets")
 table.table
       thead
         tr
