@@ -1,4 +1,4 @@
-.admin-index-records-found
+.admin-index-records-found.ministries-count
   = total_no_of_records_found(@ministries, "ministries", "facets")
 table.table
       thead
@@ -11,14 +11,12 @@ table.table
         - @ministries.data.each do |ministry|
           tr
             td
-              = ministry&.name
+              = link_to ministry&.name, admin_ministry_path(ministry)
             td
               = ministry&.created_by&.full_name
             td
               = ministry&.category&.name
             td
               = "#{ ministry&.is_approved ? 'Approved' : 'Not Approved' }"
-            td.text-center
-              = link_to "View", admin_ministry_path(ministry), class: "action-btn"
 .pagination-parent
   = cm_paginate(@ministries.facets)

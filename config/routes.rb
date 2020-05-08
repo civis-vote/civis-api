@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get "users/auth/:provider/callback", to: "oauth#callback"
   get "users/auth/failure" => "oauth#failure"
   post "/graphql", to: "graphql#execute"
+  post "resend/create", to: "resend#create"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   namespace :admin do
     resources :users do

@@ -17,7 +17,7 @@ html * {
 }
 
 .modal-btn {
-  background-color: #e16d47 !important;
+  background-color: #0e73b9;
   color: #fff !important;
   border-radius: 10px !important;
   border: none !important;
@@ -27,4 +27,8 @@ html * {
   font-weight: 700 !important;
   border-radius: 24px !important;
   padding: 8px 16px !important;
+}
+
+.modal-btn:hover{
+  background-color: #f0653a !important;
 }

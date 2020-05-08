@@ -1,11 +1,22 @@
-h2
-  | Forgot your password?
-= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f|
-  = render "devise/shared/error_messages", resource: resource
-  .field
-    = f.label :email
-    br
-    = f.email_field :email, autofocus: true, autocomplete: "email"
-  .actions
-    = f.submit "Send me reset password instructions"
-= render "devise/shared/links"
+- flash.each do |key, value|
+  - if (key == "alert" || key == "flash_info" || key == "flash_success_info")
+    div class=("alert sign-in-notice #{key}") = value
+.login-form-bg-color
+  .container
+      .login-panel-input-width
+        .login-form
+          .sign-up-text.text-center Forgot your password?
+          = simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "user_login p-4" })do |f|
+            / = render partial: "devise/shared/error_messages"
+            .row.form-group
+              .col-md-12.form-label-group
+                = f.input :email, required: false, autofocus: true, label: false, placeholder: "Email", wrapper: false, input_html: { class: 'width-100', id: "user_email" }
+                label for="user_email" Email
+            .row.form-group.text-center
+              .col-md-12
+                = f.button :submit, "Send me reset password instructions", class: 'submit-btn sign-in-button'
+            .row.form-group.text-center
+              .col-md-12
+                = link_to "Resend confirmation mail", new_user_confirmation_path
+                br
+                = render "devise/shared/links"
