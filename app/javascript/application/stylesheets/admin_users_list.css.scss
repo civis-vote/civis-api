@@ -121,7 +121,7 @@
 }
 
 .btn {
-  background-color: #e16d47 !important;
+  background-color: #0e73b9 !important;
   color: #fff !important;
   border-radius: 24px !important;
   border: none !important;
@@ -131,10 +131,11 @@
   font-weight: 700 !important;
   border-radius: 24px !important;
   padding: 8px 16px !important;
+  margin-left: auto;
 }
 
 .btn:hover {
-  background-color: #c04f2a !important;
+  background-color: #f0653a !important;
 }
 
 .admin-update-button-position {
@@ -142,6 +143,57 @@
   top: 72px;
   right: 30px;
   z-index: 99;
+}
+
+#dropdown-container{
+  .dropdown-menu {
+    top: 15px;
+    left: -116px;
+  }
+  ul{
+    margin-block-start: 0em !important;
+  }
+  *{
+    text-align: left;
+  }
+}
+
+#show-page-dropdown {
+  
+  li {
+    margin: 0px 20px;
+    font-weight: 700;
+  }
+  
+  a{
+    margin: 6px 4px;
+    width: 100%;
+    text-align: left;
+  }
+}
+
+.ellipsis-icon{
+  font-size: 35px;
+  cursor: pointer;
+  color: #242536;
+}
+
+.dropdown-with-icon{
+  display: flex;
+  justify-content: space-between;
+}
+
+.dropdown-without-icon{
+width: fit-content;
+padding: 8px 24px;
+display: flex;
+margin: auto;
+}
+
+.icon-list{
+  li{
+    height: 40px;
+  }
 }
 
 @media screen and (max-width: 1100px) and (min-width: 1000px) {

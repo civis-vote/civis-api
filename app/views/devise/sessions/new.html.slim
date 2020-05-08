@@ -5,6 +5,8 @@
   .container
       .login-panel-input-width
         .login-form
+          .company-logo
+            = image_pack_tag "media/application/images/civis_logo.png"
           .sign-up-text.text-center LOGIN
           = simple_form_for(User.new, as: :user, url: session_path(User.new), html: { method: :post, class: "user_login p-4" })do |f|
             / = render partial: "devise/shared/error_messages"
@@ -21,4 +23,7 @@
                 = f.button :submit, "Sign In", class: 'submit-btn sign-in-button'
             .row.form-group.text-center
               .col-md-12
-                = link_to "Forgot your passwords?", new_password_path(User.new)
+                = link_to "Forgot your password?", new_password_path(User.new)
+            .row.form-group.text-center
+              .col-md-12
+                = link_to "Resend confirmation mail", new_user_confirmation_path

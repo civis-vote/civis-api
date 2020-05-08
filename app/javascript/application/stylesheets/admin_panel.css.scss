@@ -78,7 +78,7 @@
   }
 
   table {
-  margin-top: 12px;
+  margin-top: -22px;
   box-shadow: inset 0 1px 0 0 #EBECF0;
     td {
       color: #172B4D !important;
@@ -129,6 +129,30 @@
   font-size: 16px;
   line-height: 19px;
   padding: 5px 15px;
+  width: fit-content;
+  position: relative;
+  left: 17%;
+  bottom: 41px;
+}
+
+.ministries-count{
+  left: 34%;
+}
+
+.all-consultations-count{
+  left: 42%;
+}
+
+.published-submitted-consultations-count{
+  left: 25%;
+}
+
+.ministries-export-btn{
+  margin-left: auto;
+}
+
+.nav-link.active{
+background-color: #0e73b9 !important;
 }
 
 .admin-filters-wrap {

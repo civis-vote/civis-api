@@ -5,15 +5,12 @@ table.table
         tr
           th.width-35 Name of Category
           th Cover Photo
-          th.text-center
       tbody
         - @categories.data.each do |category|
           tr
             td
-              = category&.name
+              = link_to category&.name, admin_category_path(category)
             td
-              = image_tag category.cover_photo_url, class: "width-20" if category.cover_photo 
-            td.text-center
-              = link_to "View", admin_category_path(category), class: "action-btn"
+              = image_tag category.cover_photo_url, class: "width-20" if category.cover_photo
 .pagination-parent
   = cm_paginate(@categories.facets)

@@ -9,12 +9,11 @@ table.table
           th Points
           th City
           th Rank
-          th.text-center
       tbody
         - @users.data.each do |user|
           tr
             td
-              = user.full_name
+              = link_to user.full_name, admin_user_path(user)
             td
               = user&.email
             td
@@ -25,7 +24,5 @@ table.table
               = user&.city&.name
             td
               = user&.rank
-            td.text-center
-              = link_to "View", admin_user_path(user), class: "action-btn"
 .pagination-parent
   = cm_paginate(@users.facets)
