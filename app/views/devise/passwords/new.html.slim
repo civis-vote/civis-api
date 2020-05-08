@@ -17,4 +17,6 @@
                 = f.button :submit, "Send me reset password instructions", class: 'submit-btn sign-in-button'
             .row.form-group.text-center
               .col-md-12
+                = link_to "Resend confirmation mail", new_user_confirmation_path
+                br
                 = render "devise/shared/links"
