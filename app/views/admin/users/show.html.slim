@@ -13,20 +13,29 @@
       .width-25
         .btn-parent.float-right
           - if @user.admin?
-            .admin-status-approved.mr-3
-              = link_to "Moderator role", admin_user_path(@user, "[user][role]": "moderator"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant moderator access"
-            .admin-status-rejected.mr-3
-              = link_to "Citizen role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant citizen access"      
+              .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu#show-page-dropdown
+                      li
+                        = link_to "Moderator role", admin_user_path(@user, "[user][role]": "moderator"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant moderator access"
+                      li
+                        = link_to "Citizen role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant citizen access"      
           - elsif @user.moderator?
-            .admin-status-approved.mr-3
-              = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"
-            .admin-status-rejected.mr-3
-              = link_to "Citizen role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant citizen access"
+            .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu#show-page-dropdown
+                    li
+                      = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"
+                    li
+                      = link_to "Citizen role", admin_user_path(@user, "[user][role]": "citizen"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant citizen access"
           - else
-            .admin-status-approved.mr-3
-              = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"
-            .admin-status-rejected.mr-3
-              = link_to "Moderator role", admin_user_path(@user, "[user][role]": "moderator"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant moderator access"      
+            .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu#show-page-dropdown
+                    li
+                      = link_to "Admin role", admin_user_path(@user, "[user][role]": "admin"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant admin access"
+                    li
+                      = link_to "Moderator role", admin_user_path(@user, "[user][role]": "moderator"), method: :patch, class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Click to grant moderator access"      
   .admin-list-bg
     .p-4
       .admin-header-text

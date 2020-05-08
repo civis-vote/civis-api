@@ -10,11 +10,20 @@
       .admin-filter-child.width-75
         .admin-filter-child-field
           .admin-index-title DETAILS
-      .mr-3.width-20
-        .btn-parent
-          = link_to ' ', admin_category_path(@category), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
-          .button-position.icon-bg
-            = link_to ' ', edit_admin_category_path(@category), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
+      .mr-3
+        .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu.icon-list#show-page-dropdown
+                      li
+                        = link_to edit_admin_category_path(@category), method: :get do
+                          .dropdown-with-icon
+                            p Edit
+                            .pull-right.fa.fa-edit.pointer.fa-icon-color
+                      li
+                        = link_to admin_category_path(@category), method: :delete, data: { confirm: "Are you sure?" } do 
+                          .dropdown-with-icon
+                            p Delete
+                            .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
   .admin-list-bg
     .user-profile-padding
       .user-name-list

@@ -10,29 +10,45 @@
       .admin-filter-child.width-65
         .admin-filter-child-field
           .admin-index-title DETAILS
-      .mr-3.width-35
-        .btn-parent
-          - if current_user.role == "admin" && @consultation.responses.present?
-            = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
-          - if @consultation.published?
-            .admin-status-rejected.mr-3
-              = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
-          - else
-            .admin-status-approved.mr-3
-              - if @consultation&.ministry&.is_approved
-                = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
-              - else
-                = link_to "Publish", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Approve ministry"
-          - if @consultation.is_featured?
-            .mr-3
-              = link_to " ", unfeatured_admin_consultation_path(@consultation), method: :post, class: "fas fa-star featured-color", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Mark it as unfocused consultation"
-          - else
-            .mr-3
-              = link_to " ", featured_admin_consultation_path(@consultation), method: :post, class: "far fa-star featured-color", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Mark it as focused consultation"
-
-          = link_to ' ', admin_consultation_path(@consultation), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
-          .button-position.icon-bg
-            = link_to ' ', edit_admin_consultation_path(@consultation), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
+      .mr-3
+        .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu.icon-list#show-page-dropdown
+                    - if current_user.role == "admin" && @consultation.responses.present?
+                        li
+                          .dropdown-without-icon
+                          = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
+                    - if @consultation.published?
+                        li
+                          .dropdown-without-icon
+                            = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
+                    - else
+                        - if @consultation&.ministry&.is_approved
+                          li
+                            .dropdown-without-icon
+                              = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
+                        - else
+                          li
+                            .dropdown-without-icon
+                              = link_to "Publish", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Approve ministry"
+                    - if @consultation.is_featured?
+                      li
+                        .dropdown-without-icon
+                          = link_to " ", unfeatured_admin_consultation_path(@consultation), method: :post, class: "fas fa-star featured-color", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Mark it as unfocused consultation"
+                    - else
+                      li
+                        .dropdown-without-icon
+                          = link_to " ", featured_admin_consultation_path(@consultation), method: :post, class: "far fa-star featured-color", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Mark it as focused consultation"
+                    li
+                      = link_to edit_admin_consultation_path(@consultation), method: :get do
+                        .dropdown-with-icon
+                          p Edit
+                          .pull-right.fa.fa-edit.pointer.fa-icon-color
+                    li
+                      = link_to admin_consultation_path(@consultation), method: :delete, data: { confirm: "Are you sure?" } do
+                        .dropdown-with-icon
+                          p Delete
+                          .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
   .admin-list-bg
     .p-4
       .admin-header-text
