@@ -10,17 +10,29 @@
       .admin-filter-child.width-75
         .admin-filter-child-field
           .admin-index-title DETAILS
-      .mr-3.width-20
-        .btn-parent
-          - if @ministry.is_approved
-            .admin-status-rejected.mr-3
-              = link_to "Reject", reject_admin_ministry_path(@ministry), method: :post
-          - else
-            .admin-status-approved.mr-3
-              = link_to "Approve", approve_admin_ministry_path(@ministry), method: :post
-          = link_to ' ', admin_ministry_path(@ministry), class: "pull-right fas fa-trash-alt pointer fa-icon-color icon-bg", method: :delete, data: { confirm: "Are you sure?" }
-          .button-position.icon-bg
-            = link_to ' ', edit_admin_ministry_path(@ministry), class: "pull-right fa fa-edit pointer fa-icon-color", method: :get
+      .mr-3
+        .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu.icon-list#show-page-dropdown
+                      - if @ministry.is_approved
+                        li
+                          .dropdown-without-icon
+                            = link_to "Reject", reject_admin_ministry_path(@ministry), method: :post
+                      - else
+                        li
+                          .dropdown-without-icon
+                            = link_to "Approve", approve_admin_ministry_path(@ministry), method: :post
+                      li
+                        = link_to edit_admin_ministry_path(@ministry), method: :get do
+                          .dropdown-with-icon
+                            p Edit
+                            .pull-right.fa.fa-edit.pointer.fa-icon-color
+                      li
+                        = link_to admin_ministry_path(@ministry), method: :delete, data: { confirm: "Are you sure?" } do
+                          .dropdown-with-icon
+                            p Delete
+                            .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
+                      
   .admin-list-bg
     .user-profile-padding
       .user-name-list

@@ -29,7 +29,7 @@
     }
     ul a.active li {
       font-weight: 600;
-      border-left: 3px solid #FFCB05;
+      border-left: 3px solid #f0653a;
       background-color: #151524;
     }
     .navbar-header {
@@ -206,6 +206,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 10px;
+  padding-right: 15px;
 }
 
 .admin-filter-child {
@@ -226,4 +227,15 @@
   font-size: 14px;
   line-height: 19px;
   margin-top: 30px;
+}
+
+.company-logo {
+  display: flex;
+  justify-content: center;
+  padding-top: 10px;
+
+  img{
+  width: 100px;
+  height: auto;
+}
 }
