@@ -7,6 +7,12 @@ staging: # Environment
       - snippet: cloud66/yarn # Hook type
         target: rails # Hook fields
         execute: true
+    last_thing: # Hook point
+      - command: sudo chmod 0777 -R $STACK_PATH/public/uploads # Hook type
+        target: rails # Hook fields
+        run_on: single_server
+        apply_during: build_only
+        execute: true
 production: # Environment
     first_thing: # Hook point
       - snippet: cloud66/node_7 # Hook type
@@ -15,4 +21,10 @@ production: # Environment
     after_bundle:
       - snippet: cloud66/yarn # Hook type
         target: rails # Hook fields
+        execute: true
+    last_thing: # Hook point
+      - command: sudo chmod 0777 -R $STACK_PATH/public/uploads # Hook type
+        target: rails # Hook fields
+        run_on: single_server
+        apply_during: build_only
         execute: true
