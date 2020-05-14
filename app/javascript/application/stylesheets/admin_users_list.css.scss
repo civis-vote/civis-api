@@ -181,18 +181,17 @@
 .dropdown-with-icon{
   display: flex;
   justify-content: space-between;
+  height: -webkit-fill-available;
 }
 
 .dropdown-without-icon{
 width: fit-content;
-padding: 8px 24px;
+padding: 8px 2px;
 display: flex;
 margin: auto;
-}
-
-.icon-list{
-  li{
-    height: 40px;
+  .mr-3{
+    margin: 0 auto !important;
+    text-align: center !important;
   }
 }
 

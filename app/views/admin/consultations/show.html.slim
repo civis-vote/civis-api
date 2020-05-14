@@ -17,7 +17,7 @@
                     - if current_user.role == "admin" && @consultation.responses.present?
                         li
                           .dropdown-without-icon
-                          = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
+                            = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
                     - if @consultation.published?
                         li
                           .dropdown-without-icon
