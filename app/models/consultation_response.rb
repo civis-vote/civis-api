@@ -5,6 +5,7 @@ class ConsultationResponse < ApplicationRecord
 
   belongs_to :user
   belongs_to :consultation, counter_cache: true
+  validates_uniqueness_of :user_id, scope: :consultation_id
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
