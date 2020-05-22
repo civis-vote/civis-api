@@ -14,6 +14,8 @@
             a#published-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="published" href="#home" PUBLISHED CONSULTATIONS
           li.nav-item
             a#submitted-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="submitted" href="#home" SUBMITTED CONSULTATIONS
+          li.nav-item.private-consultation-block
+            a#private-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="private" href="#home" PRIVATE CONSULTATIONS
   .admin-filters-wrap
     .admin-filter-parent
       .admin-filter-child.width-100
@@ -24,6 +26,9 @@
         .col-md-2
           .filters data-filter-url="/admin/consultations" data-replacement-class="consultations_table"
             = select_tag "status", options_for_select([["Rejected", 2], ["Expired", 3]]), class: 'form-control', include_blank: 'All', data: { behaviour: "filter", scope: "status_filter", type: "select-filter"}
+        .col-md-2.d-none
+          .filters data-filter-url="/admin/consultations" data-replacement-class="consultations_table"
+            = select_tag "private_consultation", options_for_select([["Private Consultation", 1]]), class: 'form-control', id: "private_consultation", include_blank: 'All', data: { behaviour: "filter", scope: "private_consultation_filter", type: "select-filter"}
         - if current_user.role == "admin"
           button.btn#export-consultation-in-excel Export as excel
     .tab-content

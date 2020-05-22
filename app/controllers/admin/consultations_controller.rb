@@ -89,7 +89,7 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility)
 	end
 
 	def set_consultation
@@ -101,7 +101,7 @@ class Admin::ConsultationsController < ApplicationController
   end
 
   def filter_params
-    params.require(:filters).permit(:search_query, :status_filter) if params[:filters]
+    params.require(:filters).permit(:search_query, :status_filter, :private_consultation_filter) if params[:filters]
   end
 
 end
