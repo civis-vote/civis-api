@@ -7,7 +7,9 @@ module Queries
 	    type Types::Objects::Consultation::Base, null: true
 
 	    def resolve(id:)
-	    	::Consultation.find(id)
+	    	consultation = ::Consultation.find(id)
+	    	raise CivisApi::Exceptions::Unauthorized if (!context[:current_user].present? && consultation.private_consultation?) 
+	    	return consultation
 	    end
 		end
 	end

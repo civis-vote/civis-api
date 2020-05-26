@@ -60,7 +60,11 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
         = display_details("show-page-parent-details", "show-page-label-details", "Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Review Type", "show-page-input-details", "#{@consultation.review_type }")
+        = display_details("show-page-parent-details", "show-page-label-details", "Visibility", "show-page-input-details", "#{@consultation.visibility.titleize}")
         .show-page-parent-details
           .show-page-label-details Summary
           .show-page-input-details
-            = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", target: :_blank
+            - if @consultation.private_consultation?
+              = link_to  "#{ENV["CLIENT_HOST"]}/private/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
+            -else
+              = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank

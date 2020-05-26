@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_03_31_122626) do
+ActiveRecord::Schema.define(version: 2020_05_21_075912) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -110,7 +110,7 @@ ActiveRecord::Schema.define(version: 2020_03_31_122626) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title"
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -125,6 +125,7 @@ ActiveRecord::Schema.define(version: 2020_03_31_122626) do
     t.integer "reading_time", default: 0
     t.string "consultation_feedback_email"
     t.integer "review_type", default: 0
+    t.integer "visibility", default: 0
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
@@ -210,7 +211,7 @@ ActiveRecord::Schema.define(version: 2020_03_31_122626) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"

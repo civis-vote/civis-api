@@ -14,7 +14,7 @@ module Queries
 	    type Types::Objects::Consultation::List, null: true
 
 	    def resolve(featured_filter:, status_filter:, ministry_filter:, category_filter:, per_page:, page:, sort:, sort_direction:)
-	    	::Consultation.featured_filter(featured_filter).status_filter(status_filter).ministry_filter(ministry_filter).category_filter(category_filter).sort_records(sort, sort_direction).list(per_page, page)
+	    	::Consultation.public_consultation.featured_filter(featured_filter).status_filter(status_filter).ministry_filter(ministry_filter).category_filter(category_filter).sort_records(sort, sort_direction).list(per_page, page)
 	    end
 		end
 	end
