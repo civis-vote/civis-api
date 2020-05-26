@@ -51,13 +51,30 @@ $(document).on 'turbolinks:load', ->
 			  return
 			success:(data) -> 
 				location.reload()
+	url = window.location.href
+	status_filter = $('.nav-item .active').data 'status-filter'
+	if url.indexOf("visibility_filter%5D=1") != -1
+		$('#status').parent().parent().addClass("d-none")
+		$('.consultation-status-filter').removeClass('active')
+		$('.private-consultation-block .consultation-status-filter').addClass("active")
+	else if status_filter
+		$('#status').parent().parent().addClass("d-none")
 	$(document).on 'click', '.consultation-status-filter', () ->
 		status_filter = $(this).data 'status-filter'
-		if status_filter
+		if status_filter == 'private'
+			$('#status').parent().parent().addClass("d-none")
+			$('#status option[value=\'published\']').remove()
+			$('#status option[value=\'submitted\']').remove()
+			$('#status').val("")
+			$('#private_consultation').val(1).trigger 'change'
+		else if status_filter
 			$('#status').parent().parent().addClass("d-none")
 			$('#status').append '<option value=' + status_filter + '>' + status_filter + '</option>'
+			$('#private_consultation').val("")
+			$('#status').val(status_filter).trigger 'change'
 		else	
 			$('#status option[value=\'published\']').remove()
 			$('#status option[value=\'submitted\']').remove()
 			$('#status').parent().parent().removeClass("d-none")
-		$('#status').val(status_filter).trigger 'change'
+			$('#private_consultation').val("")
+			$('#status').val(status_filter).trigger 'change'

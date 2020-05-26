@@ -4,6 +4,8 @@
 			| Basic Information
 		.admin-details-box
 			= f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
+			.private-consultation
+				= f.input :visibility, as: :boolean, checked_value: "private_consultation", unchecked_value: "public_consultation", label: "Private Consultation"
 			= f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
 			#consultation-ministry
 				= render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: nil }

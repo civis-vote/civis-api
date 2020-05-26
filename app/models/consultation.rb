@@ -11,6 +11,7 @@ class Consultation < ApplicationRecord
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
+  enum visibility: { public_consultation: 0, private_consultation: 1 }
 
   before_commit :update_reading_time
   after_commit :notify_admins, on: :create
@@ -44,6 +45,11 @@ class Consultation < ApplicationRecord
   scope :sort_records, lambda { |sort, sort_direction = "asc"|
     return nil if sort.blank?
     order("#{sort} #{sort_direction}")
+  }
+
+  scope :visibility_filter, lambda { |visibility|
+    return all unless visibility.present?
+    where(visibility: visibility)
   }
 
   def notify_admins
