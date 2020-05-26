@@ -47,7 +47,7 @@ class Consultation < ApplicationRecord
     order("#{sort} #{sort_direction}")
   }
 
-  scope :private_consultation_filter, lambda { |visibility|
+  scope :visibility_filter, lambda { |visibility|
     return all unless visibility.present?
     where(visibility: visibility)
   }

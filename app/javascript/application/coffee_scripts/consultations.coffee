@@ -53,7 +53,7 @@ $(document).on 'turbolinks:load', ->
 				location.reload()
 	url = window.location.href
 	status_filter = $('.nav-item .active').data 'status-filter'
-	if url.indexOf("private_consultation_filter%5D=1") != -1
+	if url.indexOf("visibility_filter%5D=1") != -1
 		$('#status').parent().parent().addClass("d-none")
 		$('.consultation-status-filter').removeClass('active')
 		$('.private-consultation-block .consultation-status-filter').addClass("active")

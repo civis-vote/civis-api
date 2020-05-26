@@ -101,7 +101,7 @@ class Admin::ConsultationsController < ApplicationController
   end
 
   def filter_params
-    params.require(:filters).permit(:search_query, :status_filter, :private_consultation_filter) if params[:filters]
+    params.require(:filters).permit(:search_query, :status_filter, :visibility_filter) if params[:filters]
   end
 
 end

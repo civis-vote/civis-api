@@ -1,4 +1,4 @@
--if current_class_include?("published") || current_class_include?("submitted") || current_class_include?("private_consultation_filter%5D=1")
+-if current_class_include?("published") || current_class_include?("submitted") || current_class_include?("visibility_filter%5D=1")
   .admin-index-records-found.published-submitted-consultations-count
     = total_no_of_records_found(@consultations, "consultations", "facets")
 -else

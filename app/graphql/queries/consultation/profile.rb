@@ -8,9 +8,8 @@ module Queries
 
 	    def resolve(id:)
 	    	consultation = ::Consultation.find(id)
-	    	return consultation if consultation.public_consultation?
-	    	return consultation if context[:current_user].present? 
-	    	raise CivisApi::Exceptions::Unauthorized
+	    	raise CivisApi::Exceptions::Unauthorized if (!context[:current_user].present? && consultation.private_consultation?) 
+	    	return consultation
 	    end
 		end
 	end
