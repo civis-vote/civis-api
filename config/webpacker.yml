@@ -37,6 +37,7 @@ default: &default
     - .woff2
 
   extensions:
+    - .jsx
     - .erb
     - .coffee
     - .mjs
@@ -74,6 +75,7 @@ development:
     disable_host_check: true
     use_local_ip: false
     quiet: false
+    pretty: false
     headers:
       'Access-Control-Allow-Origin': '*'
     watch_options:
@@ -98,7 +100,7 @@ staging:
 
   # Cache manifest.json for performance
   cache_manifest: true
-
+  
 production:
   <<: *default
 

@@ -16,7 +16,13 @@ require("@rails/actiontext")
 //
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
+import 'core-js/stable'
+import 'regenerator-runtime/runtime'
 
 import '../application/coffee_scripts/index.js.erb';
 import '../application/stylesheets/index.js.erb';
 import '../application/images/index.js.erb';
+
+var componentRequireContext = require.context("components", true);
+var ReactRailsUJS = require("react_ujs");
+ReactRailsUJS.useContext(componentRequireContext);
