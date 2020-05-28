@@ -68,6 +68,8 @@ gem "omniauth-google-oauth2"
 gem "omniauth-linkedin-oauth2"
 gem "omniauth-facebook"
 gem "shrine", "~> 3.0"
+gem 'react-rails', '~> 2.6.0'
+gem 'cm_page_builder-rails'
 
 group :development, :test, :staging do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

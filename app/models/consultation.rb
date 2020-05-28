@@ -3,7 +3,8 @@ class Consultation < ApplicationRecord
 	include Paginator
   include Scorable::Consultation
   has_rich_text :summary
-
+  include CmPageBuilder::Rails::HasCmContent
+  
   belongs_to :ministry
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   has_many :responses, class_name: "ConsultationResponse"

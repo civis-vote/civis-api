@@ -68,3 +68,19 @@
               = link_to  "#{ENV["CLIENT_HOST"]}/private/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
             -else
               = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
+        .show-page-parent-details
+          .show-page-label-details Summary
+          .show-page-input-details
+            = react_component("HelloWorld", { greeting: "Hello from react-rails." })
+        .content-container.disabled.pt-24
+          = simple_form_for [:admin, @consultation], url: page_component_admin_consultations_path(@consultation), method: :patch do |f|
+            - if @page.errors.any?
+              #error_explanation
+                h2 = "#{pluralize(@page.errors.count, "error")} prohibited this page from being saved:"
+                ul
+                  - @page.errors.full_messages.each do |message|
+                    li = message
+            .field
+              input type='hidden' id="content-editor" name="page[components]"
+              = react_component("cm_content_manager/Content", {input: "content-editor", components: @page.components})
+            .actions = f.submit
