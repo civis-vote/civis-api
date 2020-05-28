@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_21_075912) do
+ActiveRecord::Schema.define(version: 2020_05_28_101310) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -105,6 +105,7 @@ ActiveRecord::Schema.define(version: 2020_05_21_075912) do
     t.integer "reading_time", default: 0
     t.integer "up_vote_count", default: 0, null: false
     t.integer "down_vote_count", default: 0, null: false
+    t.jsonb "answers"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
@@ -188,6 +189,16 @@ ActiveRecord::Schema.define(version: 2020_05_21_075912) do
     t.float "points"
   end
 
+  create_table "questions", force: :cascade do |t|
+    t.integer "parent_id"
+    t.string "question_text"
+    t.integer "question_type"
+    t.bigint "consultation_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consultation_id"], name: "index_questions_on_consultation_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -244,4 +255,5 @@ ActiveRecord::Schema.define(version: 2020_05_21_075912) do
   add_foreign_key "notification_settings", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
+  add_foreign_key "questions", "consultations"
 end
