@@ -3,6 +3,7 @@ module Types
 		module ConsultationResponse
 			class Create < Types::BaseInputObject
 				graphql_name "ConsultationResponseCreateInput"
+				argument :answers,											GraphQL::Types::JSON,																		nil,	required: false
 				argument :consultation_id,							Int,																										nil,	required: true
 				argument :response_text,								String,																									nil,	required: true
 				argument :satisfaction_rating,					Types::Enums::ConsultationResponseSatisfactionRatings,	nil,	required: true
