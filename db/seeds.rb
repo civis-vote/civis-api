@@ -62,3 +62,9 @@ Consultation.where(status: [:published, :rejected]).each do |consultation|
 	Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id)
 end
 
+puts "---> Creating Question to consultation"
+Fabricate.times(10, :question)
+Question.all.each do |question|
+	puts "---> Creating sub questions"
+	Fabricate.times(4, :question, parent_id: question.id, consultation_id: nil)
+end
