@@ -91,7 +91,7 @@ class User < ApplicationRecord
   end
 
   def confirmation_url
-  	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/confirm", query: "token=#{self.confirmation_token}"}))
+  	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/confirm", query: "token=#{self.confirmation_token}&callback_url=#{self.callback_url}"}))
   	confirmation_url.to_s
   end
 
