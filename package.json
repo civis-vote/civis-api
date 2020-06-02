@@ -15,7 +15,7 @@
     "cm-page-builder": "1.2.20",
     "coffee-loader": "^0.9.0",
     "coffeescript": "1.12.7",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "pc-bootstrap4-datetimepicker": "^4.17.50",
     "popper.js": "^1.15.0",
     "prop-types": "^15.7.2",

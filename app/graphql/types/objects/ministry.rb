@@ -7,10 +7,6 @@ module Types
 			field :logo,								Types::Objects::ShrineAttachment, nil, null: true do
 				argument :resolution, String, required: false, default_value: nil
 			end
-			field :cover_photo,					Types::Objects::Attachment, nil, null: true do 
-				argument :resolution, String, required: false, default_value: nil
-			end
-
 			field :name,								String, nil, null: false
 			field :poc_email_primary,		String, nil, null: false
 			field :poc_email_secondary,	String, nil, null: false
@@ -18,11 +14,6 @@ module Types
 			def logo(resolution:)
 				object.shrine_resize(resolution, "logo")
 			end
-			
-			def cover_photo(resolution:)
-				object.resize(resolution, "cover_photo")
-			end
-
 		end
 	end
 end
