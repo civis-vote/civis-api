@@ -16,7 +16,25 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def show
+		@page = @consultation.page
 	end
+
+	def page_component
+		@consultation = Consultation.find(params[:id])
+    components = page_params.delete(:components)
+    if @consultation.page.present?
+      @page = @consultation.page
+    else
+      @page = @consultation.page.new(page_params)
+    end
+    if @page.save
+      @page.save_content(components)
+      sleep(2.0)
+      redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation page details was successfully updated."
+    else
+      render :new
+    end
+  end
 
 	def update
 		if @consultation.update(secure_params)
@@ -104,4 +122,7 @@ class Admin::ConsultationsController < ApplicationController
     params.require(:filters).permit(:search_query, :status_filter, :visibility_filter) if params[:filters]
   end
 
+  def page_params
+    params.require(:page).permit(:components)
+  end
 end
