@@ -30,7 +30,7 @@ class Admin::ConsultationsController < ApplicationController
     if @page.save
       @page.save_content(components)
       sleep(2.0)
-      redirect_to admin_consultation_path(@consultation), notice: 'Page was successfully updated.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation page details was successfully updated."
     else
       render :new
     end
