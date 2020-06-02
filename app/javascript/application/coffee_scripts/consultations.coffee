@@ -78,3 +78,11 @@ $(document).on 'turbolinks:load', ->
 			$('#status').parent().parent().removeClass("d-none")
 			$('#private_consultation').val("")
 			$('#status').val(status_filter).trigger 'change'
+
+	$(document).on 'click', '#option-cross', ()->
+  		$(this).parent().parent().children().remove()
+
+	$(document).on 'click', '#add-option-btn', ()->
+		child = $('#options-fields-area').children(":nth-child(1)").clone()
+		child.children().last().children(":nth-child(1)").removeClass('hidden')
+		$('#options-fields-area').append(child)

@@ -68,3 +68,29 @@
               = link_to  "#{ENV["CLIENT_HOST"]}/private/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
             -else
               = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
+    .p-4
+      .admin-header-text
+        | Questions
+      .admin-details-box
+        - count = 0
+        - @questions.each do |question|
+          - count = count + 1
+          .admin-questions-box
+            .question-type-text
+              .question-type
+                ="Question #{count} • #{question.question_type.capitalize.humanize}"
+              .question-text
+                = question.question_text
+            .question-edit-delete
+              .icon-bg-question
+                = link_to '', { class: "fas fa-pencil-alt edit_question_modal", id: "edit_question_icon", 'data-target': "#edit_question_collapse_#{question.id}", 'data-toggle': "modal", 'data-id': "#{question.id}" } do
+              = render partial: 'admin/questions/edit_questions', locals: {question: question}
+              .icon-bg-question
+                = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
+
+        = link_to '', {class: "btn square-btn-question ", id: "edit_question_icon", 'data-target': "#create_question_collapse", 'data-toggle': "modal"}  do
+          p + Add question
+        = render partial: 'admin/questions/create_questions', locals: {question: @question}
+
+
+

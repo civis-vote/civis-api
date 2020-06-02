@@ -31,6 +31,7 @@ Rails.application.routes.draw do
       collection do
         get :export_as_excel
       end
+      resources :questions
     end
     resources :ministries do
       member do

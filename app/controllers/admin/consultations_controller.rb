@@ -16,6 +16,9 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def show
+		@questions = @consultation.questions.all
+		@question = Question.new
+		@question.sub_questions.build
 	end
 
 	def update

@@ -1,0 +1,6 @@
+= f.simple_fields_for :sub_questions do |p|
+    .checkbox-option-row
+        .input-box
+            = p.input :question_text, placeholder: "Option", autofocus: true, wrapper: :form_input_group, input_html: { id: "question_text", style: "border-radius: 2px!important; height: 48px; width: 432px !important;"}
+        .cross-btn
+            = image_tag 'Remove.svg', id: 'option-cross', class: 'hidden'
