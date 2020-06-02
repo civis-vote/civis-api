@@ -20,6 +20,7 @@ module Types
 				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
 				field :consultation_responses_count,			Integer,nil, null: false
+				field :page,															Types::Objects::CmPageBuilderType, null: true
 				field :response_deadline, 								Types::Objects::DateTime, "Deadline to submit responses.", null: false
 				field :responses,													Types::Connections::ConsultationResponse, nil, null: true do 
 					argument :response_token,								String, required: true

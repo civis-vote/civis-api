@@ -2,6 +2,8 @@ require "sidekiq/web"
 Rails.application.routes.draw do
   mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql" if Rails.env.development?
   mount ImageUploader.derivation_endpoint => "/derivations/image"
+  mount CmPageBuilder::Rails::Engine => "/cm_page_builder"
+
   devise_for :users, controllers: {sessions: "sessions"}
   devise_scope :user do
     root to: "devise/sessions#new"
@@ -30,6 +32,7 @@ Rails.application.routes.draw do
       end
       collection do
         get :export_as_excel
+        patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
       end
     end
     resources :ministries do
