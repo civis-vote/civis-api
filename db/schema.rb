@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_01_114444) do
+ActiveRecord::Schema.define(version: 2020_06_04_013641) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,6 +99,13 @@ ActiveRecord::Schema.define(version: 2020_06_01_114444) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "parent_id"
+  end
+
+  create_table "consultation_hindi_summaries", force: :cascade do |t|
+    t.bigint "consultation_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consultation_id"], name: "index_consultation_hindi_summaries_on_consultation_id"
   end
 
   create_table "consultation_response_votes", force: :cascade do |t|
@@ -268,6 +275,7 @@ ActiveRecord::Schema.define(version: 2020_06_01_114444) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
+  add_foreign_key "consultation_hindi_summaries", "consultations"
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"

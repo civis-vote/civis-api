@@ -29,10 +29,12 @@ Rails.application.routes.draw do
         post :featured
         post :unfeatured
         get :check_active_ministry
+        get :edit_hindi_summary
       end
       collection do
         get :export_as_excel
         patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
+        patch "/hindi_page_component/:id", to: "consultations#hindi_page_component", as: "hindi_page_component"
       end
     end
     resources :ministries do
