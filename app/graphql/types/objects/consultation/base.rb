@@ -8,6 +8,7 @@ module Types
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :created_by,												Types::Objects::User::Base, nil, null: false
 				field	:consultation_feedback_email,				String, nil, null: true
+				field	:summary_hindi,											Types::Objects::CmPageBuilderType, null: true
 				field :is_featured,												Boolean, nil, null: true
 				field :responded_on,											Types::Objects::DateTime, nil, null: true do 
 					def resolve(object, context)
@@ -53,6 +54,11 @@ module Types
 
 				def responses_reading_times
 					object.shared_responses.sum(:reading_time)
+				end
+
+				def summary_hindi
+					return nil unless object.consultation_hindi_summary.present?
+					object.consultation_hindi_summary.page
 				end
 			end
 		end

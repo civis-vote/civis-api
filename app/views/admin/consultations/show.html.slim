@@ -69,6 +69,10 @@
             -else
               = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
         .show-page-parent-details
+          .show-page-label-details Hindi Summary
+          .show-page-input-details
+            = link_to "Edit Hindi Summary", edit_hindi_summary_admin_consultation_path(@consultation)
+        .show-page-parent-details
           .show-page-label-details Page Details
           .show-page-input-details
             = simple_form_for [:admin, @consultation], url: page_component_admin_consultations_path(@consultation), method: :patch do |f|
@@ -83,3 +87,4 @@
                 = react_component("cm_content_manager/Content", {input: "content-editor", components: @page.components})
               .btn.float-right
                 button class="btn" type="submit" Update Page Details
+        
