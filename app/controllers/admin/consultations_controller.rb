@@ -2,7 +2,7 @@ class Admin::ConsultationsController < ApplicationController
 	layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary]
 
 	def index
     @consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
@@ -17,6 +17,11 @@ class Admin::ConsultationsController < ApplicationController
 
 	def show
 		@page = @consultation.page
+		ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
+	end
+
+	def edit_hindi_summary
+		@hindi_summary_page = ConsultationHindiSummary.find_by(consultation: @consultation).page
 	end
 
 	def page_component
@@ -33,6 +38,25 @@ class Admin::ConsultationsController < ApplicationController
       redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation page details was successfully updated."
     else
       render :new
+    end
+  end
+
+  def hindi_page_component
+		@consultation = Consultation.find(params[:id])
+		@consultation_hindi_summary = ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
+		
+    components = page_params.delete(:components)
+    if @consultation_hindi_summary.page.present?
+      @hindi_summary_page = @consultation_hindi_summary.page
+    else
+      @hindi_summary_page = @consultation_hindi_summary.page.new(page_params)
+    end
+    if @hindi_summary_page.save
+      @hindi_summary_page.save_content(components)
+      sleep(2.0)
+      redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation hindi summary page details was successfully updated."
+    else
+      redirect_to admin_consultation_path(@consultation), flash_info: "Consultation hindi summary page details was not successfully updated."
     end
   end
 
