@@ -68,6 +68,7 @@ gem "omniauth-google-oauth2"
 gem "omniauth-linkedin-oauth2"
 gem "omniauth-facebook"
 gem "shrine", "~> 3.0"
+gem "cocoon"
 
 group :development, :test, :staging do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

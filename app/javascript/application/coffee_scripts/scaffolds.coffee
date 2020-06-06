@@ -15,6 +15,7 @@ import 'bootstrap/js/dist/util'
 import 'select2';
 import 'pc-bootstrap4-datetimepicker';
 import 'trix/dist/trix';
+import 'cocoon-js';
 
 current_request = null
 select2_form_input_ui = ->

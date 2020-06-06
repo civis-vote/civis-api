@@ -9,6 +9,7 @@
     "@rails/ujs": "^6.0.0-alpha",
     "@rails/webpacker": "^4.0.7",
     "bootstrap": "^4.3.1",
+    "cocoon-js": "^0.0.5",
     "coffee-loader": "^0.9.0",
     "coffeescript": "1.12.7",
     "jquery": "^3.4.1",

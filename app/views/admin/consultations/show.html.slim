@@ -88,7 +88,7 @@
               .icon-bg-question
                 = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
 
-        = link_to '', {class: "btn square-btn-question ", id: "edit_question_icon", 'data-target': "#create_question_collapse", 'data-toggle': "modal"}  do
+        = link_to '', {class: "btn square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse", 'data-toggle': "modal"}  do
           p + Add question
         = render partial: 'admin/questions/create_questions', locals: {question: @question}
 

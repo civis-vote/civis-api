@@ -347,32 +347,41 @@ background-color: #0e73b9 !important;
   }
 }
 
-#add-option-btn{
-  width: fit-content;
+#add-option-btn, #add-option-btn-in-edit {
   cursor: pointer;
-  
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 19px;
+  color: #037BFF;
 }
 
 .checkbox-option-row{
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  *{
-    width: fit-content;
-  }
-
-  .input-box{
-    flex: 6;
-    display: flex;
-    align-items: center;
-  }
   .cross-btn{
     flex: 1;
     display: flex;
     justify-content: center;
+    margin-bottom: 1rem;
   }
 }
 
+.checkbox-option {
+  width: 15px;
+  height: 15px;
+  border: 1px solid #D5DBE2;
+  border-radius: 2px;
+  margin-right: 10px;
+  margin-top: 15px;
+}
+
+.radio-button-option {
+  width: 15px;
+  height: 15px;
+  border: 1px solid #D5DBE2;
+  border-radius: 8px;
+  margin-right: 10px;
+  margin-top: 15px;
+}
 .question-input-field{
   border-radius: 2px!important; 
   height: 48px; 
@@ -508,4 +517,22 @@ background-color: #0e73b9 !important;
   .case_studies_table .word-break {
     word-break: break-word;
   }
+}
+
+.question-pop-up-content {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+}
+
+.modal-content {
+  border: none !important;
+}
+
+.was-validated .form-control:valid, .form-control.is-valid {
+  border: 1px solid #ced4da !important;
+  background-image: none !important;
+}
+
+#option-cross {
+  cursor: pointer;
 }
