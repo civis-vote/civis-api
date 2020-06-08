@@ -107,6 +107,7 @@ GEM
     childprocess (3.0.0)
     choice (0.2.0)
     chronic (0.10.2)
+    cocoon (1.2.14)
     cm_page_builder-rails (0.1.12)
       rails (~> 6.0.0)
       slim-rails (~> 3.2.0)
@@ -491,6 +492,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
+  cocoon
   cm_page_builder-rails
   database_cleaner
   devise

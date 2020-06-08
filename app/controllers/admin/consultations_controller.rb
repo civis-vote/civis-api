@@ -16,6 +16,9 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def show
+		@questions = @consultation.questions.all
+		@question = Question.new
+		@question.sub_questions.build
 		@page = @consultation.page
 		ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
 	end
@@ -35,6 +38,7 @@ class Admin::ConsultationsController < ApplicationController
     if @page.save
       @page.save_content(components)
       sleep(2.0)
+      @consultation.update_reading_time
       redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation page details was successfully updated."
     else
       render :new
@@ -60,8 +64,23 @@ class Admin::ConsultationsController < ApplicationController
     end
   end
 
+  def edit
+  	@page = @consultation.page	
+  end
+
 	def update
 		if @consultation.update(secure_params)
+			components = page_params.delete(:components)
+	    if @consultation.page.present?
+	      @page = @consultation.page
+	    else
+	      @page = @consultation.create_page
+	    end
+	    if @page.save
+	      @page.save_content(components) if components.present?
+	      sleep(2.0)
+	    end
+	    @consultation.update_reading_time
 			redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation details was successfully updated."
 		else
 			redirect_back fallback_location: root_path, flash_info: "Consultation details was not successfully updated."
@@ -70,11 +89,23 @@ class Admin::ConsultationsController < ApplicationController
 
 	def new
     @consultation = Consultation.new
+    @page = @consultation.page
   end
 
   def create
     @consultation = Consultation.new(secure_params.merge(created_by_id: current_user.id))
     if @consultation.save
+    	components = page_params.delete(:components)
+	    if @consultation.page.present?
+	      @page = @consultation.page
+	    else
+	      @page = @consultation.create_page
+	    end
+	    if @page.save
+	      @page.save_content(components) if components.present?
+	      sleep(2.0)
+	      @consultation.update_reading_time
+	    end
       redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation was successfully created."
     else
     	flash[:flash_info] = "Consultation was not successfully created."
