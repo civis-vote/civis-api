@@ -37,6 +37,7 @@ default: &default
     - .woff2
 
   extensions:
+    - .jsx
     - .erb
     - .coffee
     - .mjs

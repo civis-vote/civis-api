@@ -18,3 +18,9 @@
 					.input-editor-box
             			.trix-toolbar-parent
 							= f.rich_text_area :summary, placeholder: "Summary", required: false, label: false, autofocus: true, wrapper: :false, input_html: { id: "consultation summary" }
+			.row.form-group
+				.col-md-6.form-label-group
+					.input-editor-box
+						.field.page-builder-border
+							input type='hidden' id="content-editor" name="page[components]"
+							= react_component("cm_content_manager/Content", {input: "content-editor", components: @page.present? ? @page.components : @page })

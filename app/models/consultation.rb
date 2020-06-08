@@ -3,18 +3,19 @@ class Consultation < ApplicationRecord
 	include Paginator
   include Scorable::Consultation
   has_rich_text :summary
-
+  include CmPageBuilder::Rails::HasCmContent
+  
   belongs_to :ministry
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :questions
+  has_one :consultation_hindi_summary
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
   enum visibility: { public_consultation: 0, private_consultation: 1 }
 
-  before_commit :update_reading_time
   after_commit :notify_admins, on: :create
 
   scope :status_filter, lambda { |status|
@@ -54,12 +55,13 @@ class Consultation < ApplicationRecord
   }
 
   def notify_admins
+    self.response_token = SecureRandom.uuid unless self.response_token
+    self.save!
     NotifyNewConsultationEmailToAdminJob.perform_later(self)
   end
 
   def publish
   	self.status = :published
-    self.response_token = SecureRandom.uuid unless self.response_token
   	self.published_at = DateTime.now
   	self.save!
     if self.consultation?
@@ -102,8 +104,8 @@ class Consultation < ApplicationRecord
   end
 
   def update_reading_time
-    return unless self.summary.saved_change_to_body?
-    total_word_count = self.summary.body.to_plain_text.scan(/\w+/).size
+    contents = self.page.components.map{|c| c["content"] }*" "
+    total_word_count = contents.scan(/\w+/).size
     time = total_word_count.to_f / 200
     time_with_divmod = time.divmod 1
     array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]

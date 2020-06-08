@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_28_101310) do
+ActiveRecord::Schema.define(version: 2020_06_04_013641) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,12 +74,38 @@ ActiveRecord::Schema.define(version: 2020_05_28_101310) do
     t.jsonb "cover_photo_versions_data"
   end
 
+  create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
+    t.string "uuid", null: false
+    t.bigint "page_id", null: false
+    t.string "content"
+    t.integer "position"
+    t.string "component_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["page_id"], name: "index_cm_page_builder_rails_page_components_on_page_id"
+  end
+
+  create_table "cm_page_builder_rails_pages", force: :cascade do |t|
+    t.string "container_type", null: false
+    t.bigint "container_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["container_type", "container_id"], name: "container_composite_index"
+  end
+
   create_table "constants", force: :cascade do |t|
     t.string "name"
     t.integer "constant_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.integer "parent_id"
+  end
+
+  create_table "consultation_hindi_summaries", force: :cascade do |t|
+    t.bigint "consultation_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consultation_id"], name: "index_consultation_hindi_summaries_on_consultation_id"
   end
 
   create_table "consultation_response_votes", force: :cascade do |t|
@@ -237,6 +263,9 @@ ActiveRecord::Schema.define(version: 2020_05_28_101310) do
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
     t.text "profile_picture_data"
     t.jsonb "profile_picture_versions_data"
+    t.string "organization"
+    t.string "callback_url"
+    t.string "designation"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -245,6 +274,8 @@ ActiveRecord::Schema.define(version: 2020_05_28_101310) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
+  add_foreign_key "consultation_hindi_summaries", "consultations"
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"

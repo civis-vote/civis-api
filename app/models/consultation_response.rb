@@ -31,6 +31,10 @@ class ConsultationResponse < ApplicationRecord
   	order("#{sort} #{sort_direction}")
   }
 
+  def self.public_consultation_response_filter
+    joins(:consultation).where(consultations: { visibility: 'public_consultation'} )
+  end
+
   def analysis_response
     AnalyseKeywordsForConsultationJob.perform_later(self)
   end

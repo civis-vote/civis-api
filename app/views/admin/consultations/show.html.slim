@@ -64,10 +64,26 @@
         .show-page-parent-details
           .show-page-label-details Summary
           .show-page-input-details
-            - if @consultation.private_consultation?
-              = link_to  "#{ENV["CLIENT_HOST"]}/private/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
-            -else
-              = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read",target: :_blank
+            = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
+        .show-page-parent-details
+          .show-page-label-details Hindi Summary
+          .show-page-input-details
+            = link_to "Edit Hindi Summary", edit_hindi_summary_admin_consultation_path(@consultation)
+        .show-page-parent-details
+          .show-page-label-details English Summary
+          .show-page-input-details
+            = simple_form_for [:admin, @consultation], url: page_component_admin_consultations_path(@consultation), method: :patch do |f|
+              - if @page.errors.any?
+                #error_explanation
+                  h2 = "#{pluralize(@page.errors.count, "error")} prohibited this page from being saved:"
+                  ul
+                    - @page.errors.full_messages.each do |message|
+                      li = message
+              .field.page-builder-border
+                input type='hidden' id="content-editor" name="page[components]"
+                = react_component("cm_content_manager/Content", {input: "content-editor", components: @page.components})
+              .btn.float-right.mt-3
+                button class="btn" type="submit" Update Page Details
     .p-4
       .admin-header-text
         | Questions
@@ -91,6 +107,3 @@
         = link_to '', {class: "btn square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse", 'data-toggle': "modal"}  do
           p + Add question
         = render partial: 'admin/questions/create_questions', locals: {question: @question}
-
-
-
