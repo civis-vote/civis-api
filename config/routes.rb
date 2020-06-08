@@ -36,6 +36,7 @@ Rails.application.routes.draw do
         patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
         patch "/hindi_page_component/:id", to: "consultations#hindi_page_component", as: "hindi_page_component"
       end
+      resources :questions
     end
     resources :ministries do
       member do
