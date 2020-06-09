@@ -3,7 +3,7 @@ module Queries
 		class Profile < Queries::BaseQuery
 	    description "Get a single consultation"
 	    argument :id,		Int,		required: true
-	    argument :response_token,		String, required: false
+	    argument :response_token,		String, required: false, default_value: nil
 
 	    type Types::Objects::Consultation::Base, null: true
 
