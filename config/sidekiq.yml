@@ -4,3 +4,5 @@
   - ["medium", 3]
   - ["default", 2]
   - ["low", 1]
+  - [active_storage_analysis, 3]
+  - [active_storage_purge, 3]

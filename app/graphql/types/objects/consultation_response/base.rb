@@ -3,6 +3,7 @@ module Types
 		module ConsultationResponse
 			class Base < BaseObject
 				graphql_name "BaseConsultationResponseType"
+				field :answers, 													GraphQL::Types::JSON, nil, null: true
 				field :consultation,											Types::Objects::Consultation::Base, nil, null: false
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :down_vote_count,										Integer, "Count of users that down-votes this response", null: false

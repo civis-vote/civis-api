@@ -60,7 +60,50 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
         = display_details("show-page-parent-details", "show-page-label-details", "Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Review Type", "show-page-input-details", "#{@consultation.review_type }")
+        = display_details("show-page-parent-details", "show-page-label-details", "Visibility", "show-page-input-details", "#{@consultation.visibility.titleize}")
         .show-page-parent-details
           .show-page-label-details Summary
           .show-page-input-details
-            = link_to  "#{ENV["CLIENT_HOST"]}/consultations/#{@consultation.id}/read", target: :_blank
+            = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
+        .show-page-parent-details
+          .show-page-label-details Hindi Summary
+          .show-page-input-details
+            = link_to "Edit Hindi Summary", edit_hindi_summary_admin_consultation_path(@consultation)
+        .show-page-parent-details
+          .show-page-label-details English Summary
+          .show-page-input-details
+            = simple_form_for [:admin, @consultation], url: page_component_admin_consultations_path(@consultation), method: :patch do |f|
+              - if @page.errors.any?
+                #error_explanation
+                  h2 = "#{pluralize(@page.errors.count, "error")} prohibited this page from being saved:"
+                  ul
+                    - @page.errors.full_messages.each do |message|
+                      li = message
+              .field.page-builder-border
+                input type='hidden' id="content-editor" name="page[components]"
+                = react_component("cm_content_manager/Content", {input: "content-editor", components: @page.components})
+              .btn.float-right.mt-3
+                button class="btn" type="submit" Update Page Details
+    .p-4
+      .admin-header-text
+        | Questions
+      .admin-details-box
+        - count = 0
+        - @questions.each do |question|
+          - count = count + 1
+          .admin-questions-box
+            .question-type-text
+              .question-type
+                ="Question #{count} • #{question.question_type.capitalize.humanize}"
+              .question-text
+                = question.question_text
+            .question-edit-delete
+              .icon-bg-question
+                = link_to '', { class: "fas fa-pencil-alt edit_question_modal", id: "edit_question_icon", 'data-target': "#edit_question_collapse_#{question.id}", 'data-toggle': "modal", 'data-id': "#{question.id}" } do
+              = render partial: 'admin/questions/edit_questions', locals: {question: question}
+              .icon-bg-question
+                = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
+
+        = link_to '', {class: "btn square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse", 'data-toggle': "modal"}  do
+          p + Add question
+        = render partial: 'admin/questions/create_questions', locals: {question: @question}

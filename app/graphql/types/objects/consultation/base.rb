@@ -8,6 +8,7 @@ module Types
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :created_by,												Types::Objects::User::Base, nil, null: false
 				field	:consultation_feedback_email,				String, nil, null: true
+				field	:summary_hindi,											Types::Objects::CmPageBuilderType, null: true
 				field :is_featured,												Boolean, nil, null: true
 				field :responded_on,											Types::Objects::DateTime, nil, null: true do 
 					def resolve(object, context)
@@ -20,6 +21,7 @@ module Types
 				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
 				field :consultation_responses_count,			Integer,nil, null: false
+				field :page,															Types::Objects::CmPageBuilderType, null: true
 				field :response_deadline, 								Types::Objects::DateTime, "Deadline to submit responses.", null: false
 				field :responses,													Types::Connections::ConsultationResponse, nil, null: true do 
 					argument :response_token,								String, required: true
@@ -39,7 +41,8 @@ module Types
 				field :url,																String, nil, null: false
 				field :responses_reading_times,						Integer, "Reading times of all the responses in this consultation", null: false
 				field :reading_time,											Integer, "Reading time of this consultation summary", null: false
-
+				field :visibility,												Types::Enums::ConsultationVisibilityType, nil, null: false
+				field :questions,													[Types::Objects::QuestionType], nil, null: true
 				def shared_responses(sort:, sort_direction:)
 					object.shared_responses.sort_records(sort, sort_direction)
 				end
@@ -51,6 +54,11 @@ module Types
 
 				def responses_reading_times
 					object.shared_responses.sum(:reading_time)
+				end
+
+				def summary_hindi
+					return nil unless object.consultation_hindi_summary.present?
+					object.consultation_hindi_summary.page
 				end
 			end
 		end
