@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_04_013641) do
+ActiveRecord::Schema.define(version: 2020_06_22_085500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,7 +137,7 @@ ActiveRecord::Schema.define(version: 2020_06_04_013641) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title"
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -197,6 +197,15 @@ ActiveRecord::Schema.define(version: 2020_06_04_013641) do
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
   end
 
+  create_table "organisations", force: :cascade do |t|
+    t.string "name"
+    t.text "logo_data"
+    t.integer "created_by_id"
+    t.integer "users_count", default: 0
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "point_events", force: :cascade do |t|
     t.bigint "point_scale_id", null: false
     t.bigint "user_id", null: false
@@ -248,7 +257,7 @@ ActiveRecord::Schema.define(version: 2020_06_04_013641) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"
@@ -266,8 +275,24 @@ ActiveRecord::Schema.define(version: 2020_06_04_013641) do
     t.string "organization"
     t.string "callback_url"
     t.string "designation"
+    t.bigint "consultation_id"
+    t.bigint "organisation_id"
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.integer "invitation_limit"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.integer "invitations_count", default: 0
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["consultation_id"], name: "index_users_on_consultation_id"
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
+    t.index ["invitations_count"], name: "index_users_on_invitations_count"
+    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
+    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
@@ -287,4 +312,6 @@ ActiveRecord::Schema.define(version: 2020_06_04_013641) do
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
   add_foreign_key "questions", "consultations"
+  add_foreign_key "users", "consultations"
+  add_foreign_key "users", "organisations"
 end

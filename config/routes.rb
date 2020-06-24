@@ -15,6 +15,8 @@ Rails.application.routes.draw do
   get "users/auth/failure" => "oauth#failure"
   post "/graphql", to: "graphql#execute"
   post "resend/create", to: "resend#create"
+  get "users/edit_invite", to: "users#edit_invite"
+  post "users/accepting_invite", to: "users#accepting_invite"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   namespace :admin do
     resources :users do
@@ -46,5 +48,12 @@ Rails.application.routes.draw do
     end
     resources :case_studies
     resources :categories
+    resources :organisations do
+      member do
+        get :list_employees
+        post :invite_employee
+        delete "destroy_employee/:user_id", to: "organisations#destroy_employee", as: "destroy_employee"
+      end
+    end
   end
 end

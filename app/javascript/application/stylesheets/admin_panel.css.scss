@@ -545,3 +545,60 @@ background-color: #0e73b9 !important;
   margin: 0 auto !important;
   width: 95%;
 }
+
+.nav-tabs {
+  border-bottom: none!important;
+  li {
+    padding: 10px;
+    cursor: pointer;
+    a:hover  {
+      color: white; 
+    }
+  }
+}
+
+.admin-filter-child-field .nav.nav-tabs .active {
+  border-bottom: 2px solid #E16D47;
+}
+
+.list-employees-count-left {
+  left: 1%;
+}
+
+.employee-table {
+  width: 50% !important;
+  margin-top: -20px;
+}
+
+.employee-table th, .employee-table td {
+  border-top: none !important;
+  background-color: white !important;
+}
+
+.child-invite-span {
+  font-size: 12px;
+  color: rgba(23, 43, 77, 0.6);
+}
+
+.employee-name {
+  font-size: 14px;
+  color: #172B4D;
+}
+
+.employee-td-box-shadow {
+  box-shadow: inset 0px -1px 0px #EBECF0;
+  .fa-trash-alt {
+    padding: 5px;
+    margin: 5px;
+    background: #F4F5F7;
+  }
+  .fa-trash-alt:before {
+    color: #BF2600;
+  }
+}
+
+.employee-table thead > tr > th {
+  background-color: white !important;
+  opacity: 0.6;
+  border-bottom: none;
+}

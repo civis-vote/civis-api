@@ -1,0 +1,31 @@
+.admin-index-records-found.list-employees-count-left
+  = total_no_of_records_found(@employees, "employees", "facets")
+table.table.employee-table
+      thead
+        tr
+          th
+          th.employee-td-box-shadow Name
+          th.employee-td-box-shadow
+          th.employee-td-box-shadow
+      tbody
+        - @employees.data.each do |employee|
+          tr
+            td.width-5
+            td.employee-td-box-shadow.width-5
+              - if ( employee.invitation_accepted? && employee.profile_picture.present? )
+                = image_tag employee.profile_picture_url, class: "user-timeline-profile-picture-bg"
+              - else
+                = image_pack_tag employee.profile_picture_url
+            td.employee-td-box-shadow.width-85
+              - if employee.invitation_accepted?
+                = employee.full_name
+              - else
+                .employee-name
+                  = employee.email
+                span.child-invite-span Invited
+            td.employee-td-box-shadow.width-10
+              = link_to destroy_employee_admin_organisation_path(@organisation.id, employee.id), method: :delete, data: { confirm: "Are you sure?" } do
+                .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
+
+.pagination-parent.width-50
+  = cm_paginate(@employees.facets)
