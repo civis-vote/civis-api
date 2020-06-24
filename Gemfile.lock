@@ -107,10 +107,10 @@ GEM
     childprocess (3.0.0)
     choice (0.2.0)
     chronic (0.10.2)
-    cocoon (1.2.14)
     cm_page_builder-rails (0.1.12)
       rails (~> 6.0.0)
       slim-rails (~> 3.2.0)
+    cocoon (1.2.14)
     coderay (1.1.2)
     concurrent-ruby (1.1.6)
     connection_pool (2.2.2)
@@ -277,7 +277,7 @@ GEM
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
-    rack (2.2.2)
+    rack (2.2.3)
     rack-cors (1.0.5)
       rack (>= 1.6.0)
     rack-protection (2.0.7)
@@ -492,8 +492,8 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
-  cocoon
   cm_page_builder-rails
+  cocoon
   database_cleaner
   devise
   fabrication
