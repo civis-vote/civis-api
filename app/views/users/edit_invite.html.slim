@@ -1,0 +1,37 @@
+- flash.each do |key, value|
+  - if (key == "alert" || key == "flash_info" || key == "flash_success_info")
+    div class=("alert sign-in-notice #{key}") = value
+.sign-up-form-bg-color
+  .container
+      .login-panel-input-width
+        .login-form
+          .company-logo
+            = image_pack_tag "media/application/images/civis_logo.png"
+          .sign-up-text.text-center SIGN UP
+          = simple_form_for(@user, url: users_accepting_invite_path, html: {method: :post, id: 'new_user_invite', class: "user_login p-4" })do |f|
+            / = render partial: "devise/shared/error_messages"
+            = hidden_field_tag "[user][invitation_token]", params[:invitation_token]
+            .row.form-group
+              .col-md-12.form-label-group
+                = f.input :first_name, required: false, label: false, placeholder:"First Name", wrapper: false, input_html: { size: 20, class: 'width-100', id: "user_first_name" }
+                label for="user_first_name" First Name
+            .row.form-group
+              .col-md-12.form-label-group
+                = f.input :last_name, required: false, label: false, placeholder:"Last Name", wrapper: false, input_html: { size: 20, class: 'width-100', id: "user_last_name" }
+                label for="user_last_name" Last Name
+            .row.form-group
+              .col-md-12.form-label-group
+                = f.input :password, required: false, label: false, placeholder:"Password", wrapper: false, input_html: { size: 20, class: 'width-100', id: "user_password" }
+                label for="user_password" Password
+            .row.form-group
+              .col-md-12.form-label-group.profile-picture-parent
+                = f.input :profile_picture, placeholder: "Category cover photo", required: false, label: false, wrapper: :form_input_group, input_html: { class: "d-none", id: "imageUpload", capture: "", type: "file" }
+                label.mt-4 for="imageUpload" Profile Picture
+                #profile-container
+                  - if @user.profile_picture.present?
+                    = image_tag @user.picture_url, class: "pointer", id: "profileImage"
+                  - else
+                    = image_pack_tag @user.picture_url, class: "pointer", id: "profileImage"
+            .row.form-group.text-center
+              .col-md-12
+                = f.button :submit, "Sign Up", class: 'submit-btn sign-in-button'

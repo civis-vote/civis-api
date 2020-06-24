@@ -156,12 +156,12 @@ class User < ApplicationRecord
       user = ::User.invite!({ email: email, organisation_id: params[:organisation_id] ,skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now, role: "organisation_employee" }, current_user)
       raw_token = user.raw_invitation_token
       url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/users/edit_invite", query: "invitation_token=#{raw_token}"})).to_s
-      InviteOrganisationEmployeeJob.perform_now(user, url)
+      InviteOrganisationEmployeeJob.perform_later(user, url)
     end 
   end
 
-  def profile_picture_url
-    if self.profile_picture
+  def picture_url
+    if self.profile_picture.present?
       self.profile_picture_url  
     else
       "media/application/images/defalut-user.svg"

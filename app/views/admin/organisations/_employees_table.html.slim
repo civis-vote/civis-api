@@ -13,9 +13,9 @@ table.table.employee-table
             td.width-5
             td.employee-td-box-shadow.width-5
               - if ( employee.invitation_accepted? && employee.profile_picture.present? )
-                = image_tag employee.profile_picture_url, class: "user-timeline-profile-picture-bg"
+                = image_tag employee.picture_url, class: "user-timeline-profile-picture-bg"
               - else
-                = image_pack_tag employee.profile_picture_url
+                = image_pack_tag employee.picture_url
             td.employee-td-box-shadow.width-85
               - if employee.invitation_accepted?
                 = employee.full_name

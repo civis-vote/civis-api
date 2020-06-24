@@ -602,3 +602,19 @@ background-color: #0e73b9 !important;
   opacity: 0.6;
   border-bottom: none;
 }
+
+.profile-picture-parent {
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  margin-left: 15px !important;
+  padding-right: 0 !important;
+  padding-top: 10px;
+  flex: unset !important;
+  display: flex;
+  justify-content: center;
+  width: 95% !important;
+}
+
+.sign-up-form-bg-color {
+  background-color: #F6F8FA;
+}
