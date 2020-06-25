@@ -64,14 +64,3 @@ $(document).on 'turbolinks:load', ->
     else
       $(this).parent().find('.select2-container--default').removeClass('placeholder-padding')
       $(this).parent().find('label').addClass('d-none slideup')
-  $('.nav-tabs li').click (e) ->
-    #get selected href
-    href = $(this).find('a').attr('href')
-    #set all nav tabs to inactive
-    $('.nav-tabs li').removeClass 'active'
-    #get all nav tabs matching the href and set to active
-    $('.nav-tabs li a[href="' + href + '"]').closest('li').addClass 'active'
-    #active tab
-    $('.tab-pane').removeClass 'active'
-    $('#' + href).addClass 'active'
-    return

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_22_085500) do
+ActiveRecord::Schema.define(version: 2020_06_25_114156) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -24,27 +24,6 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
-  end
-
-  create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-  end
-
-  create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "api_keys", force: :cascade do |t|
@@ -137,7 +116,7 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title"
+    t.string "title", null: false
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -204,6 +183,7 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
     t.integer "users_count", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.boolean "active", default: true
   end
 
   create_table "point_events", force: :cascade do |t|
@@ -275,7 +255,6 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
     t.string "organization"
     t.string "callback_url"
     t.string "designation"
-    t.bigint "consultation_id"
     t.bigint "organisation_id"
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -285,8 +264,8 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
     t.string "invited_by_type"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
+    t.boolean "active", default: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
-    t.index ["consultation_id"], name: "index_users_on_consultation_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
@@ -297,7 +276,6 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "consultation_hindi_summaries", "consultations"
@@ -312,6 +290,5 @@ ActiveRecord::Schema.define(version: 2020_06_22_085500) do
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
   add_foreign_key "questions", "consultations"
-  add_foreign_key "users", "consultations"
   add_foreign_key "users", "organisations"
 end

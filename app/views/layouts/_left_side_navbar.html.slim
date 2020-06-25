@@ -15,7 +15,7 @@
       = link_to admin_consultations_path, class: "#{current_class?(admin_consultations_path)} #{params[:id].present? ? current_class?(admin_consultation_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_consultation_path(params[:id])) : '' }" do
         li
           | Consultations
-      = link_to admin_organisations_path, class: "#{current_class?(admin_organisations_path)} #{params[:id].present? ? current_class?(admin_organisation_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_organisation_path(params[:id])) : '' }" do
+      = link_to admin_organisations_path(sort:{sort_column: "created_at", sort_direction: "desc"}), class: "#{current_class_include?('organisations') ? 'active' : ''}" do
         li
           | Organisations
       = link_to admin_ministries_path, class: "#{current_class?(admin_ministries_path)} #{params[:id].present? ? current_class?(admin_ministry_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_ministry_path(params[:id])) : '' }" do

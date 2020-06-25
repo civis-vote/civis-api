@@ -50,9 +50,9 @@ Rails.application.routes.draw do
     resources :categories
     resources :organisations do
       member do
-        get :list_employees
-        post :invite_employee
-        delete "destroy_employee/:user_id", to: "organisations#destroy_employee", as: "destroy_employee"
+        get :list_employees, controller: 'employees'
+        post :invite, controller: 'employees'
+        delete "destroy_employee/:user_id", to: "employees#destroy_employee", as: "destroy_employee"
       end
     end
   end
