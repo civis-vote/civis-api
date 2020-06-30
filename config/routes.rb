@@ -56,4 +56,26 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  namespace :organisation do
+    resources :consultations do
+      member do
+        post :publish
+        get :edit_hindi_summary
+      end
+      collection do
+        patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
+        patch "/hindi_page_component/:id", to: "consultations#hindi_page_component", as: "hindi_page_component"
+      end
+    end
+    resources :settings do
+      member do
+        get :list_employees, controller: 'employees'
+        get "/details/:user_id", to: "employees#details", as: "employee_details"
+        patch "/edit_employee/:user_id", to: "employees#edit_employee", as: "edit_employee"
+        post :invite, controller: 'employees'
+        delete "destroy_employee/:user_id", to: "employees#destroy_employee", as: "destroy_employee"
+      end
+    end
+  end
 end

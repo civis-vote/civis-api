@@ -6,8 +6,8 @@ class UsersController < ApplicationController
 
   def accepting_invite
     user = User.accept_invitation!(secure_params)
-    sign_out user
-    redirect_to root_path
+    sign_in(user)
+    redirect_to organisation_setting_path(user.organisation_id)
   end
 
   private

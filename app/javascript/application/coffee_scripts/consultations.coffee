@@ -160,3 +160,8 @@ $(document).on 'turbolinks:load', ->
 				id = parent.next().val()
 				parent.find('.sub_question_destroy').val(id)
 				parent.addClass('d-none')
+	$(document).on 'click', '#private_response_toggle', ()->
+		if $(this).prop('checked')
+			$(this).val("1")
+		else
+			$(this).val("0")

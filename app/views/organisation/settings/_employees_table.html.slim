@@ -19,7 +19,7 @@ table.table.employee-table
             td.employee-td-box-shadow.width-85
               - if employee.invitation_accepted?
                 .employee-name
-                  = employee.full_name
+                  = link_to employee.full_name, employee_details_organisation_setting_path(@organisation, employee)
                 span.child-invite-span 
                   = employee.email
               - else
