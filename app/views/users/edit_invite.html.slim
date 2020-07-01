@@ -8,7 +8,7 @@
           .company-logo
             = image_pack_tag "media/application/images/civis_logo.png"
           .sign-up-text.text-center SIGN UP
-          = simple_form_for(@user, url: users_accepting_invite_path, html: {method: :post, id: 'new_user_invite', class: "user_login p-4" })do |f|
+          = simple_form_for(@user, url: users_accepte_invite_path, html: {method: :post, id: 'new_user_invite', class: "user_login p-4" })do |f|
             / = render partial: "devise/shared/error_messages"
             = hidden_field_tag "[user][invitation_token]", params[:invitation_token]
             .row.form-group

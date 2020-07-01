@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
 
   def require_organisation_employee
     Current.user = current_user
-    return if user_signed_in? && current_user.organisation_employee? && session[:organisation_id] == current_user.organisation_id
+    return if user_signed_in? && current_user.organisation_employee? && session[:organisation_id] == current_user.organisation_id && current_user.organisation.active?
     sign_out current_user
     redirect_to root_path, flash_info: "You need to be an admin or moderator or organisation employee to sign in, Please contact administrator to continue"
   end

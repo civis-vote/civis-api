@@ -1,7 +1,7 @@
 class Organisation::EmployeesController < Organisation::SettingsController
   before_action :authenticate_user!
-  before_action :require_organisation_employee, only: [:invite, :list_employees, :destroy_employee, :details, :edit_employee]
-	before_action :set_organisation, only: [:invite, :list_employees, :destroy_employee, :details, :edit_employee]
+  before_action :require_organisation_employee, only: [:invite, :list_employees, :deactivate, :details, :edit_employee]
+	before_action :set_organisation, only: [:invite, :list_employees, :deactivate, :details, :edit_employee]
   before_action :set_user, only: [:details, :edit_employee]
 
   def details
@@ -37,12 +37,10 @@ class Organisation::EmployeesController < Organisation::SettingsController
     end
   end
 
-  def destroy_employee
+  def deactivate
     employee = @organisation.users.find_by(id: params[:user_id])
-    employee.active = false
-    employee.save(validate: false)
-    Organisation.decrement_counter(:users_count, @organisation.id)
-    redirect_to organisation_settings_path(@organisation), flash_success_info: "Employee was successfully deleted."
+    employee.deactivate(@organisation.id)
+    redirect_to list_employees_organisation_setting_path(@organisation), flash_success_info: "Employee was successfully deleted."
   end
 
 	private

@@ -23,4 +23,9 @@ class Organisation < ApplicationRecord
       "media/application/images/user_profile_picture.png"
     end
   end
+
+  def deactivate
+    self.active = false
+    self.save
+  end
 end

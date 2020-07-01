@@ -46,7 +46,7 @@ class Admin::OrganisationsController < ApplicationController
   end
 
 	def destroy
-		@organisation.update(active: false)
+		@organisation.deactivate
 		redirect_to admin_organisations_path, flash_success_info: "Organisation was successfully deleted."
 	end
 

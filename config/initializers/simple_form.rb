@@ -205,7 +205,7 @@ SimpleForm.setup do |config|
   end
 
   config.wrappers :form_select_group_with_width, class: "row" do |sub_wrapper|
-    sub_wrapper.wrapper tag: "div", class: "col-md-12 form-select-label-group" do |input|
+    sub_wrapper.wrapper tag: "div", class: "col-md-12 form-select-label-group mb-3" do |input|
       input.use :html5
       input.use :placeholder
       input.use :input, class: "form-control select2"

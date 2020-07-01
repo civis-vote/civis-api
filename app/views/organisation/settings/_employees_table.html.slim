@@ -27,7 +27,7 @@ table.table.employee-table
                   = employee.email
                 span.child-invite-span Invited
             td.employee-td-box-shadow.width-10
-              = link_to destroy_employee_admin_organisation_path(@organisation.id, employee.id), method: :delete, data: { confirm: "Are you sure?" } do
+              = link_to deactivate_organisation_setting_path(@organisation.id, employee.id), method: :delete, data: { confirm: "Are you sure?" } do
                 .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
 
 .pagination-parent.width-50

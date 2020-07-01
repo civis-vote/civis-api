@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   post "/graphql", to: "graphql#execute"
   post "resend/create", to: "resend#create"
   get "users/edit_invite", to: "users#edit_invite"
-  post "users/accepting_invite", to: "users#accepting_invite"
+  post "users/accepte_invite", to: "users#accepte_invite"
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   namespace :admin do
     resources :users do
@@ -52,7 +52,7 @@ Rails.application.routes.draw do
       member do
         get :list_employees, controller: 'employees'
         post :invite, controller: 'employees'
-        delete "destroy_employee/:user_id", to: "employees#destroy_employee", as: "destroy_employee"
+        delete "deactivate/:user_id", to: "employees#deactivate", as: "deactivate"
       end
     end
   end
@@ -74,7 +74,7 @@ Rails.application.routes.draw do
         get "/details/:user_id", to: "employees#details", as: "employee_details"
         patch "/edit_employee/:user_id", to: "employees#edit_employee", as: "edit_employee"
         post :invite, controller: 'employees'
-        delete "destroy_employee/:user_id", to: "employees#destroy_employee", as: "destroy_employee"
+        delete "deactivate/:user_id", to: "employees#deactivate", as: "deactivate"
       end
     end
   end

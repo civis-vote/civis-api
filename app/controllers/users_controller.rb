@@ -4,7 +4,7 @@ class UsersController < ApplicationController
     redirect_to root_path unless @user.present?
   end
 
-  def accepting_invite
+  def accepte_invite
     user = User.accept_invitation!(secure_params)
     sign_in(user)
     redirect_to organisation_setting_path(user.organisation_id)

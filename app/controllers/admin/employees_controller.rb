@@ -1,5 +1,5 @@
 class Admin::EmployeesController < Admin::OrganisationsController
-	before_action :set_organisation, only: [:invite, :list_employees, :destroy_employee]
+	before_action :set_organisation, only: [:invite, :list_employees, :deactivate]
 
   def list_employees
     @user = @organisation.users.build
@@ -22,11 +22,9 @@ class Admin::EmployeesController < Admin::OrganisationsController
     end
   end
 
-  def destroy_employee
+  def deactivate
     employee = @organisation.users.find_by(id: params[:user_id])
-    employee.active = false
-    employee.save(validate: false)
-    Organisation.decrement_counter(:users_count, @organisation.id)
+    employee.deactivate(@organisation.id)
     redirect_to admin_organisation_path(@organisation), flash_success_info: "Employee was successfully deleted."
   end
 

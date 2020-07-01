@@ -178,4 +178,10 @@ class User < ApplicationRecord
       "media/application/images/defalut-user.svg"
     end
   end
+
+  def deactivate(organisation_id)
+    self.active = false
+    self.save(validate: false)
+    Organisation.decrement_counter(:users_count, organisation_id)
+  end
 end
