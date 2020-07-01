@@ -68,3 +68,10 @@ Question.all.each do |question|
 	puts "---> Creating sub questions"
 	Fabricate.times(4, :question, parent_id: question.id, consultation_id: nil)
 end
+
+puts "---> Creating Organisation and employees"
+Fabricate.times(5, :organisation)
+Organisation.all.each do |organisation|
+	puts "---> Creating Employees"
+	Fabricate.times(3, :user, role: :organisation_employee, organisation_id: organisation.id)
+end

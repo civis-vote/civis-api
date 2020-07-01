@@ -1,0 +1,36 @@
+-if current_class_include?("published") || current_class_include?("submitted") || current_class_include?("visibility_filter%5D=1")
+  .admin-index-records-found.published-submitted-consultations-count
+    = total_no_of_records_found(@consultations, "consultations", "facets")
+-else
+  .admin-index-records-found.all-consultations-count
+    = total_no_of_records_found(@consultations, "consultations", "facets")
+table.table
+      thead
+        tr
+          th.width-30 Consultation Name
+          th Ministry
+          th Status
+          th Deadline
+          th Created by
+      tbody
+        - @consultations.data.each do |consultation|
+          tr
+            td
+              = link_to consultation&.title, organisation_consultation_path(consultation)
+            td
+              = consultation&.ministry&.name
+            td
+              div class="#{consultation.status}"
+                .text-color
+                  - if consultation.status == "submitted"
+                    | DRAFT
+                  - elsif consultation.status == "published"
+                    | ACTIVE
+                  - else
+                    | CLOSED
+            td
+              = consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y')
+            td
+              = consultation&.created_by&.full_name
+.pagination-parent
+  = cm_paginate(@consultations.facets)
