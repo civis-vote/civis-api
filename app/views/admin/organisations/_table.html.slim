@@ -1,0 +1,22 @@
+.admin-index-records-found
+  = total_no_of_records_found(@organisations, "organisations", "facets")
+table.table
+      thead
+        tr
+          th.width-35 Organisation Name
+          th Employess
+          th Added on
+          th Added by
+      tbody
+        - @organisations.data.each do |organisation|
+          tr
+            td
+              = link_to organisation&.name, admin_organisation_path(organisation)
+            td
+              = organisation.users_count
+            td
+              = organisation&.created_at&.localtime.try(:strftime, '%e %b %Y')
+            td
+              = organisation&.created_by&.full_name
+.pagination-parent
+  = cm_paginate(@organisations.facets)

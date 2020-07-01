@@ -202,4 +202,15 @@ class UserMailer < ApplicationMailer
                                               }],
                                             )
 	end
+
+	def invite_organisation_employee(user, invitation_url)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "organisation-user-invite",
+																							template_model:{
+																								invitation_url: invitation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+	end
 end

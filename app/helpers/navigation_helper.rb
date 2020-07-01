@@ -1,7 +1,7 @@
 module NavigationHelper
   def ensure_navigation
   	request_url = request.path_info
-  	@navigation ||= [ { title: "Dashboard", url: root_path } ]
+  	@navigation ||= []
   end
 
   def navigation_add(title, url)

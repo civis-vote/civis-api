@@ -5,23 +5,25 @@ class User < ApplicationRecord
   include Paginator
   include Scorable::User
   include ImageUploader::Attachment(:profile_picture)
-  
+  attr_accessor :skip_invitation
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :confirmable,
+  devise :invitable, :database_authenticatable, :confirmable,
          :recoverable, :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
 
 	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
-	has_many :api_keys
-  has_many :game_actions
-  has_many :point_events
+	has_many :api_keys, dependent: :destroy
+  has_many :game_actions, dependent: :destroy
+  has_many :point_events, dependent: :destroy
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
+  belongs_to :organisation, counter_cache: true, optional: true
   validates :first_name, presence: true
 
   # enums
-  enum role: { citizen: 0, admin: 1, moderator: 2 }
+  enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
   enum best_rank_type: { national: 0, state: 1, city: 2 }
 
   # callbacks
@@ -69,6 +71,8 @@ class User < ApplicationRecord
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
     order("#{sort} #{sort_direction}, id asc")
   }
+
+  scope :active, -> { where(active: true) }
 
   def self.notify_for_new_consultation_filter
     where("notification_settings->>'notify_for_new_consultation' = ?", "true")
@@ -148,4 +152,36 @@ class User < ApplicationRecord
     unsubscribe_url.to_s
   end
 
+  def self.invite_employee(params, current_user)
+    emails = params[:email].split(",")
+    emails.each do |email|
+      user = ::User.invite!({ email: email, organisation_id: params[:organisation_id] ,skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now, role: "organisation_employee", active: params[:active] }, current_user)
+      raw_token = user.raw_invitation_token
+      user_record = ::User.find_by(email: email.strip)
+      unless user_record.active?
+        organisation = ::Organisation.find(params[:organisation_id].to_i)
+        ::Organisation.increment_counter(:users_count, organisation.id)
+      end
+      if Rails.env.development?
+        url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/users/edit_invite", query: "invitation_token=#{raw_token}"})).to_s
+      else
+        url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/users/edit_invite", query: "invitation_token=#{raw_token}"})).to_s
+      end
+      InviteOrganisationEmployeeJob.perform_later(user_record, url)
+    end 
+  end
+
+  def picture_url
+    if self.profile_picture.present?
+      self.profile_picture_url  
+    else
+      "media/application/images/defalut-user.svg"
+    end
+  end
+
+  def deactivate(organisation_id)
+    self.active = false
+    self.save(validate: false)
+    Organisation.decrement_counter(:users_count, organisation_id)
+  end
 end

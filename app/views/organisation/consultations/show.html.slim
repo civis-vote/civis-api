@@ -1,0 +1,63 @@
+- navigation_add 'Consultations', organisation_consultations_path(sort:{sort_column: "created_at", sort_direction: "desc"})
+- navigation_add "#{@consultation&.title}", organisation_consultation_path(@consultation)
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-65
+        .admin-filter-child-field
+          .admin-index-title Consultation Details
+      .mr-3
+        .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
+                .dropdown#dropdown-container
+                  ul.dropdown-menu.icon-list#show-page-dropdown
+                    - unless @consultation.published?
+                      li
+                        .dropdown-without-icon
+                          = link_to "Publish", publish_organisation_consultation_path(@consultation), method: :post
+                    li
+                      = link_to edit_organisation_consultation_path(@consultation), method: :get do
+                        .dropdown-with-icon
+                          p Edit
+                          .pull-right.fa.fa-edit.pointer.fa-icon-color
+                    li
+                      = link_to organisation_consultation_path(@consultation), method: :delete, data: { confirm: "Are you sure?" } do
+                        .dropdown-with-icon
+                          p Delete
+                          .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
+  .admin-list-bg
+    .p-4
+      .admin-index-title
+        | Basic Information
+      .admin-details-box
+        = display_details("show-page-parent-details", "show-page-label-details", "Consultation title", "show-page-input-details", "#{@consultation&.title || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Feedback Email", "show-page-input-details", "#{@consultation&.consultation_feedback_email || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Consultation PDF", "show-page-input-details", "#{@consultation&.url}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
+        = display_details("show-page-parent-details", "show-page-label-details", "Response Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
+        .show-page-parent-details
+          .show-page-label-details Summary link
+          .show-page-input-details
+            = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
+        .show-page-parent-details
+          .show-page-label-details Hindi Summary
+          .show-page-input-details
+            = link_to "Edit Hindi Summary", edit_hindi_summary_organisation_consultation_path(@consultation)
+        .show-page-parent-details
+          .show-page-label-details English Summary
+          .show-page-input-details
+            = simple_form_for [:organisation, @consultation], url: page_component_organisation_consultations_path(@consultation), method: :patch do |f|
+              - if @page.errors.any?
+                #error_explanation
+                  h2 = "#{pluralize(@page.errors.count, "error")} prohibited this page from being saved:"
+                  ul
+                    - @page.errors.full_messages.each do |message|
+                      li = message
+              .field.page-builder-border
+                input type='hidden' id="content-editor" name="page[components]"
+                = react_component("cm_content_manager/Content", {input: "content-editor", components: @page.components})
+              .btn.float-right.mt-3
+                button class="btn" type="submit" Update English Summary
