@@ -267,6 +267,8 @@ GEM
     orm_adapter (0.5.0)
     os (1.0.1)
     parallel (1.19.1)
+    paranoia (2.4.2)
+      activerecord (>= 4.0, < 6.1)
     parser (2.7.0.2)
       ast (~> 2.4.0)
     pg (1.1.4)
@@ -516,6 +518,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-google-oauth2
   omniauth-linkedin-oauth2
+  paranoia
   pg (>= 0.18, < 2.0)
   postmark-rails
   puma (~> 3.12)

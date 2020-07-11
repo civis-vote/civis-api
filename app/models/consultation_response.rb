@@ -1,4 +1,5 @@
 class ConsultationResponse < ApplicationRecord
+  acts_as_paranoid
   include Paginator
   include Scorable::ConsultationResponse
   has_rich_text :response_text

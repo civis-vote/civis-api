@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_29_142231) do
+ActiveRecord::Schema.define(version: 2020_07_11_090049) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.datetime "updated_at", precision: 6, null: false
     t.text "cover_photo_data"
     t.jsonb "cover_photo_versions_data"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
   create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
@@ -132,7 +134,9 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.integer "up_vote_count", default: 0, null: false
     t.integer "down_vote_count", default: 0, null: false
     t.jsonb "answers"
+    t.datetime "deleted_at"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
+    t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
@@ -155,6 +159,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.integer "visibility", default: 0
     t.integer "organisation_id"
     t.integer "private_response", default: 0
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
@@ -189,6 +195,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.jsonb "meta"
     t.text "logo_data"
     t.jsonb "logo_versions_data"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -207,6 +215,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "active", default: true
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
   create_table "point_events", force: :cascade do |t|
@@ -234,7 +244,9 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.bigint "consultation_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
     t.index ["consultation_id"], name: "index_questions_on_consultation_id"
+    t.index ["deleted_at"], name: "index_questions_on_deleted_at"
   end
 
   create_table "users", force: :cascade do |t|

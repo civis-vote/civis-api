@@ -1,4 +1,5 @@
 class Question < ApplicationRecord
+	acts_as_paranoid
 	belongs_to :parent, class_name: "Question", optional: true
 	belongs_to :consultation, optional: true
   has_many :sub_questions, class_name: 'Question', foreign_key: :parent_id
