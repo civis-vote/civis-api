@@ -64,3 +64,50 @@ $(document).on 'turbolinks:load', ->
     else
       $(this).parent().find('.select2-container--default').removeClass('placeholder-padding')
       $(this).parent().find('label').addClass('d-none slideup')
+  $('.questions-rounds-tab li').click (e) ->
+    #get selected href
+    href = $(this).find('a').attr('href')
+    #set all nav tabs to inactive
+    $('.questions-rounds-tab li').removeClass 'active'
+    #get all nav tabs matching the href and set to active
+    $('.questions-rounds-tab li a[href="' + href + '"]').closest('li').addClass 'active'
+    #active tab
+    $('.tab-pane').removeClass 'active'
+    $('#' + href).addClass 'active'
+    return
+  copyToClipboard = (text, el) ->
+    copyTest = document.queryCommandSupported('copy')
+    elOriginalText = el.attr('data-original-title')
+    if copyTest == true
+      copyTextArea = document.createElement('textarea')
+      copyTextArea.value = text
+      document.body.appendChild copyTextArea
+      copyTextArea.select()
+      try
+        successful = document.execCommand('copy')
+        msg = if successful then 'Copied!' else 'Whoops, not copied!'
+        el.attr('data-original-title', msg).tooltip 'show'
+      catch err
+        console.log 'Oops, unable to copy'
+      document.body.removeChild copyTextArea
+      el.attr 'data-original-title', elOriginalText
+    else
+      # Fallback if browser doesn't support .execCommand('copy')
+      window.prompt 'Copy to clipboard: Ctrl+C or Command+C, Enter', text
+    return
+
+  $(document).ready ->
+    # Initialize
+    # ---------------------------------------------------------------------
+    # Tooltips
+    # Requires Bootstrap 3 for functionality
+    $('.js-tooltip').tooltip()
+    # Copy to clipboard
+    # Grab any text in the attribute 'data-copy' and pass it to the 
+    # copy function
+    $('.js-copy').click ->
+      text = $(this).attr('data-copy')
+      el = $(this)
+      copyToClipboard text, el
+      return
+    return

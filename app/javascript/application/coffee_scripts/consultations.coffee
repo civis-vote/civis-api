@@ -165,3 +165,8 @@ $(document).on 'turbolinks:load', ->
 			$(this).val("1")
 		else
 			$(this).val("0")
+	$(document).on 'click', '.optional_toggle', ()->
+		if $(this).prop('checked')
+			$(this).val("1")
+		else
+			$(this).val("0")

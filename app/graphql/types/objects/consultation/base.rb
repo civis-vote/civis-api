@@ -60,6 +60,10 @@ module Types
 					return nil unless object.consultation_hindi_summary.present?
 					object.consultation_hindi_summary.page
 				end
+
+				def questions
+					object.response_rounds.last.questions
+				end
 			end
 		end
 	end
