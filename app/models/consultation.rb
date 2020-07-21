@@ -149,4 +149,9 @@ class Consultation < ApplicationRecord
   def create_response_round
     self.response_rounds.create()
   end
+
+  def extend_deadline(deadline_date)
+    self.response_deadline = deadline_date
+    self.publish
+  end
 end

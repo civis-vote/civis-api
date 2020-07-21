@@ -1,8 +1,8 @@
 class Organisation::SettingsController < ApplicationController
 	layout "organisation_sidenav"
   before_action :authenticate_user!
-  before_action :require_organisation_employee, only: [:index, :create, :show, :edit]
   before_action :set_organisation, only: [:index, :create, :show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary]
+  before_action :require_organisation_employee, only: [:index, :create, :show, :edit]
 
 	def index
     # @consultations = Consultation.all.includes(:ministry, :created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)

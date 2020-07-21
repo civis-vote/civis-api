@@ -2,8 +2,8 @@ class Organisation::ConsultationsController < ApplicationController
 	layout "organisation_sidenav"
 	before_action :authenticate_user!
   before_action :require_organisation_employee, only: [:index, :create, :show, :edit]
-  before_action :set_organisation, only: [:index, :create, :show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :make_changes, :invite_respondents]
-  before_action :set_consultation, only: [:show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :make_changes, :invite_respondents]
+  before_action :set_organisation, only: [:index, :create, :show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents]
+  before_action :set_consultation, only: [:show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents]
 
 	def index
     @consultation = Consultation.new
@@ -118,19 +118,20 @@ class Organisation::ConsultationsController < ApplicationController
 	end
 
   def extend_deadline
-    @consultation.update(secure_params)
-    @consultation.publish
+    @consultation.extend_deadline(secure_params[:response_deadline])
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation deadline was extended and successfully published."
   end
 
-  def make_changes
+  def create_response_round
     @consultation.create_response_round
     @consultation.submitted!
     redirect_to edit_english_summary_organisation_consultation_path(@consultation)
   end
 
   def invite_respondents
-    Respondent.invite_respondent(@consultation, @organisation, params)
+    respondent_ids = params[:respondent][:ids].to_unsafe_h
+    emails = params[:respondent][:emails].split(",")
+    Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails)
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."
   end
 

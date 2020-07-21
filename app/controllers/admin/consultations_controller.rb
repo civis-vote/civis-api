@@ -2,7 +2,7 @@ class Admin::ConsultationsController < ApplicationController
 	layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :make_changes, :invite_respondents, :page_component]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :page_component]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
@@ -177,19 +177,20 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def extend_deadline
-    @consultation.update(secure_params)
-    @consultation.publish
+    @consultation.extend_deadline(secure_params[:response_deadline])
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation deadline was extended and successfully published."
   end
 
-  def make_changes
+  def create_response_round
     @consultation.create_response_round
     @consultation.submitted!
     redirect_to edit_english_summary_admin_consultation_path(@consultation)
   end
 
   def invite_respondents
-    Respondent.invite_respondent(@consultation, @organisation, params)
+    respondent_ids = params[:respondent][:ids].to_unsafe_h
+    emails = params[:respondent][:emails].split(",")
+    Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails)
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."
   end
 

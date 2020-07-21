@@ -32,7 +32,7 @@ Rails.application.routes.draw do
         post :unfeatured
         get :check_active_ministry
         patch :extend_deadline
-        patch :make_changes
+        patch :create_response_round
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
@@ -66,7 +66,7 @@ Rails.application.routes.draw do
       member do
         post :publish
         patch :extend_deadline
-        patch :make_changes
+        patch :create_response_round
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
