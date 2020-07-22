@@ -38,7 +38,7 @@
           = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
             p Invite
         - unless ( @consultation.published? || @consultation.expired? )
-          = link_to '', {class: "square-btn-question btn mb-0 mr-3", id: "", 'data-target': "#extend_deadline  ", 'data-toggle': "modal"}  do
+          = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline  ", 'data-toggle': "modal"}  do
             | Publish
       .mr-3
         .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
