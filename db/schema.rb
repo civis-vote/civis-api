@@ -139,7 +139,6 @@ ActiveRecord::Schema.define(version: 2020_07_15_150108) do
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
-    t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
