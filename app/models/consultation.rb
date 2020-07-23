@@ -1,4 +1,5 @@
 class Consultation < ApplicationRecord
+  acts_as_paranoid
   include SpotlightSearch
 	include Paginator
   include Scorable::Consultation
