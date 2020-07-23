@@ -243,5 +243,34 @@
 
 .company-white-bg {
   background-color: white;
-  box-shadow: inset 0px -1px 0px #333B43;
+  box-shadow: inset 0px -1px 0px #EBECF0;
+}
+
+.consultation-deadline-top {
+  margin-top: 100px !important;
+}
+
+.consultation-deadline-notification-top {
+  top: 121px !important;
+}
+
+.deadline-notification-bg {
+  background: #7838E7;
+  box-shadow: inset 0px -1px 0px #EBECF0;
+}
+
+.deadline-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: #FFFFFF;
+}
+
+.deadline-description {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  color: #FFFFFF;
 }

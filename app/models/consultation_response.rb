@@ -1,4 +1,5 @@
 class ConsultationResponse < ApplicationRecord
+  acts_as_paranoid
   include Paginator
   include Scorable::ConsultationResponse
   has_rich_text :response_text
@@ -11,6 +12,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
   has_many :down_votes, -> { down }, class_name: "ConsultationResponseVote"
   has_many :votes, class_name: "ConsultationResponseVote"
+  belongs_to :respondent, optional: true
   before_commit :update_reading_time
   after_create :analysis_response
 

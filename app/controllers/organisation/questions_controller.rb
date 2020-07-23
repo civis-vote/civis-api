@@ -1,4 +1,4 @@
-class Admin::QuestionsController < ApplicationController
+class Organisation::QuestionsController < ApplicationController
 
     def destroy
         @question = Question.find(params[:id])
@@ -32,4 +32,10 @@ class Admin::QuestionsController < ApplicationController
 		params.require(:question).permit(:question_text, :response_round_id, :question_type, :optional, sub_questions_attributes: [:id, :_destroy, :question_text, :parent_id])
 	end
 
+    def set_consultation
+      @consultation = Consultation.find(params[:id])
+    end
+    def set_organisation
+      @organisation = Organisation.find(current_user.organisation_id)
+    end
 end

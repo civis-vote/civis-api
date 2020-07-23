@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_06_29_142231) do
+ActiveRecord::Schema.define(version: 2020_07_15_150108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,6 +72,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.datetime "updated_at", precision: 6, null: false
     t.text "cover_photo_data"
     t.jsonb "cover_photo_versions_data"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
   create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
@@ -132,7 +134,12 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.integer "up_vote_count", default: 0, null: false
     t.integer "down_vote_count", default: 0, null: false
     t.jsonb "answers"
+    t.datetime "deleted_at"
+    t.bigint "respondent_id"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
+    t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
+    t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
+    t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
@@ -155,6 +162,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.integer "visibility", default: 0
     t.integer "organisation_id"
     t.integer "private_response", default: 0
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
 
@@ -189,6 +198,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.jsonb "meta"
     t.text "logo_data"
     t.jsonb "logo_versions_data"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
   create_table "notification_settings", force: :cascade do |t|
@@ -207,6 +218,8 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.boolean "active", default: true
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
   create_table "point_events", force: :cascade do |t|
@@ -231,10 +244,33 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
     t.integer "parent_id"
     t.string "question_text"
     t.integer "question_type"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "deleted_at"
+    t.bigint "response_round_id"
+    t.boolean "optional", default: false
+    t.index ["deleted_at"], name: "index_questions_on_deleted_at"
+    t.index ["response_round_id"], name: "index_questions_on_response_round_id"
+  end
+
+  create_table "respondents", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "response_round_id"
+    t.bigint "organisation_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["organisation_id"], name: "index_respondents_on_organisation_id"
+    t.index ["response_round_id"], name: "index_respondents_on_response_round_id"
+    t.index ["user_id"], name: "index_respondents_on_user_id"
+  end
+
+  create_table "response_rounds", force: :cascade do |t|
     t.bigint "consultation_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["consultation_id"], name: "index_questions_on_consultation_id"
+    t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
+    t.datetime "deleted_at"
+    t.index ["deleted_at"], name: "index_questions_on_deleted_at"
   end
 
   create_table "users", force: :cascade do |t|
@@ -308,6 +344,7 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
+  add_foreign_key "consultation_responses", "respondents"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
   add_foreign_key "game_actions", "point_events"
@@ -315,7 +352,11 @@ ActiveRecord::Schema.define(version: 2020_06_29_142231) do
   add_foreign_key "notification_settings", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
-  add_foreign_key "questions", "consultations"
+  add_foreign_key "questions", "response_rounds"
+  add_foreign_key "respondents", "organisations"
+  add_foreign_key "respondents", "response_rounds"
+  add_foreign_key "respondents", "users"
+  add_foreign_key "response_rounds", "consultations"
   add_foreign_key "users", "consultations"
   add_foreign_key "users", "organisations"
 end

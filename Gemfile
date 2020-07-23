@@ -73,6 +73,7 @@ gem "cocoon"
 gem 'react-rails', '~> 2.6.0'
 gem 'cm_page_builder-rails'
 gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
+gem "paranoia"
 
 group :development, :test, :staging do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

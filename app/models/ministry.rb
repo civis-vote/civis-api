@@ -1,4 +1,5 @@
 class Ministry < ApplicationRecord
+  acts_as_paranoid
 	include Attachable
 	include ImageResizer
   include Scorable::Ministry

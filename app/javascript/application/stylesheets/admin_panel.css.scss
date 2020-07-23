@@ -167,7 +167,7 @@ background-color: #0e73b9 !important;
 
 .admin-index-title {
   color: #172B4D;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 19px;
 }
@@ -715,4 +715,126 @@ background-color: #0e73b9 !important;
 
 .nav-side-menu ul .active .fas {
   padding-left: 0px !important;
+}
+.questions-rounds-tab {
+  font-family: Open Sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: 22px;
+  color: #172B4D;
+  .active {
+    font-weight: 600;
+    color: #E16D47;
+    box-shadow: inset 0px -2px 0px #E16D47;
+  }
+}
+
+.question-header-text {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: #172B4D;
+}
+
+.question-parent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.square-btn-with-border {
+  border-radius: 4px !important;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  background-color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  border: 1.5px solid #0E73B9;
+  color: #0E73B9 !important;
+  padding: 4px 14px;
+  margin-bottom: 0;
+  text-decoration: none;
+  p{
+    margin-bottom: 0;
+  }
+}
+
+.consultation-feedback-flex {
+  display: flex;
+}
+
+.question-block-border {
+  box-shadow: inset -1px 0px 0px #EBECF0;
+}
+
+.feedback-flex {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.organisation-question-box-width {
+  width: 100% !important;
+}
+
+.white-bg-btn {
+  background: #FFFFFF !important;
+}
+
+.make-change-btn-flex {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.align-end {
+  text-align: end;
+}
+
+.respondents-count {  
+  font-style: normal;
+  font-weight: normal;
+  font-size: 12px;
+  line-height: 20px;
+  color: #172B4D;
+  opacity: 0.6;
+}
+
+.invite-respondent-checkbox {
+  display:none;
+}
+
+.invite-respondent-checkbox + label {
+  display: inline-block;  
+  width: 24px;
+  height: 24px;
+  cursor: pointer;  
+  background-image: url('../images/Add.svg');
+  background-repeat: no-repeat;
+}
+
+.invite-respondent-checkbox:checked + label {
+  background-image: url('../images/Done.svg');
+  background-repeat: no-repeat;
+}
+
+.half-line {
+  border-top: 1px solid rgba(213, 219, 226, 0.5);
+}
+
+.invite-respondent-z-index {
+  z-index: 1051 !important;
+}
+
+.copy-public-url {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: rgba(23, 43, 77, 0.6);
 }

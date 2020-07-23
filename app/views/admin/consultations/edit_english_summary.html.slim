@@ -1,0 +1,36 @@
+- navigation_add 'Consultations', admin_consultations_path(sort:{sort_column: "created_at", sort_direction: "desc"})
+- navigation_add "#{@consultation&.title}", admin_consultation_path(@consultation)
+- navigation_add "Edit English Summary", edit_english_summary_admin_consultation_path(@consultation)
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-65
+        .admin-filter-child-field
+          .admin-index-title Edit English Summary
+  .admin-list-bg
+    .p-4
+      .admin-details-box
+        .show-page-parent-details
+          .show-page-label-details English Summary
+          .show-page-input-details
+            = simple_form_for [:admin, @consultation], url: page_component_admin_consultations_path(@consultation), method: :patch do |f|
+              - if @english_summary_page.errors.any?
+                #error_explanation
+                  h2 = "#{pluralize(@english_summary_page.errors.count, "error")} prohibited this page from being saved:"
+                  ul
+                    - @english_summary_page.errors.full_messages.each do |message|
+                      li = message
+              .field
+                input type='hidden' id="content-editor" name="page[components]"
+                - unless @english_summary_page.components.present?
+                  input type='hidden' id="content-editor" name="consultation_create" value="true"
+                = react_component("cm_content_manager/Content", {input: "content-editor", components: @english_summary_page.components})
+              .admin-update-button-position
+                - if @english_summary_page.components.present?
+                  button class="btn square-btn-question" type="submit" Save Changes
+                - else
+                  button class="btn square-btn-question" type="submit" Save Consultation

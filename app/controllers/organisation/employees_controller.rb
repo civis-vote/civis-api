@@ -1,4 +1,5 @@
 class Organisation::EmployeesController < Organisation::SettingsController
+  layout "organisation_sidenav"
   before_action :authenticate_user!
   before_action :require_organisation_employee, only: [:invite, :list_employees, :deactivate, :details, :edit_employee]
 	before_action :set_organisation, only: [:invite, :list_employees, :deactivate, :details, :edit_employee]

@@ -5,11 +5,40 @@
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
 .admin-content-wrapper
-  .admin-filter-bg
+  - if ( @consultation.expired? && @consultation.private_consultation?)
+    .admin-filter-bg.deadline-notification-bg
+      .admin-filter-parent
+        .admin-filter-child.width-100
+          .mr-3
+            svg fill="none" height="24" viewbox=("0 0 21 24") width="21" xmlns="http://www.w3.org/2000/svg" 
+              path d=("M20.25 14.25C20.25 19.6359 15.8859 24 10.5 24C5.11406 24 0.75 19.6359 0.75 14.25C0.75 9.375 4.32656 5.33437 9 4.61719V3H7.6875C7.37813 3 7.125 2.74688 7.125 2.4375V0.5625C7.125 0.253125 7.37813 0 7.6875 0H13.3125C13.6219 0 13.875 0.253125 13.875 0.5625V2.4375C13.875 2.74688 13.6219 3 13.3125 3H12V4.61719C13.7578 4.88906 15.3609 5.62969 16.6734 6.70781L17.9625 5.41875C18.1828 5.19844 18.5391 5.19844 18.7594 5.41875L20.0859 6.74531C20.3062 6.96562 20.3062 7.32187 20.0859 7.54219L18.7078 8.92031L18.6797 8.94844C19.6734 10.4672 20.25 12.2906 20.25 14.25ZM12 15.9375V8.83594C12 8.52656 11.7469 8.27344 11.4375 8.27344H9.5625C9.25313 8.27344 9 8.52656 9 8.83594V15.9375C9 16.2469 9.25313 16.5 9.5625 16.5H11.4375C11.7469 16.5 12 16.2469 12 15.9375Z") fill="white" /
+          div
+            .deadline-title Deadline Passed
+            .deadline-description
+              | You can make changes to the summary, add new questions and publish it to get another round of feedback.
+      .admin-filter-child.width-30.make-change-btn-flex
+        = link_to '', {class: "square-btn-question white-bg-btn mb-0 p-2 mr-3", id: "edit_question_icon", 'data-target': "#extend_deadline  ", 'data-toggle': "modal"}  do
+          | Extend deadline
+        = link_to '', {class: "square-btn-question white-bg-btn mb-0 p-2 mr-3", id: "edit_question_icon", 'data-target': "#make_changes", 'data-toggle': "modal"}  do
+          | Make changes
+  .admin-filter-bg class="#{(@consultation.expired? && @consultation.private_consultation?) ? 'consultation-deadline-notification-top' : '' }"
     .admin-filter-parent
       .admin-filter-child.width-65
         .admin-filter-child-field
           .admin-index-title DETAILS
+      .width-35.d-flex.justify-content-end.align-items-center
+        - if (@consultation.private_consultation? && @consultation.published?)
+          .d-flex.justify-content-end.align-items-center
+            div.js-tooltip.js-copy.pointer.d-flex.align-items-center data-toggle="tooltip" data-placement="bottom" data-copy="#{@consultation.feedback_url}" title="Copy to clipboard"
+              .fa.fa-link.mr-2
+              .copy-public-url.mr-2
+                | Copy share link
+        - if (@consultation.private_consultation? && !@consultation.expired?)
+            = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
+              p Invite
+        - if (@consultation.private_consultation? && !(@consultation.published? || @consultation.expired?))
+          = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline  ", 'data-toggle': "modal"}  do
+            | Publish
       .mr-3
         .ellipsis-icon.fas.fa-ellipsis-h data-toggle="collapse" data-target="#show-page-dropdown"
                 .dropdown#dropdown-container
@@ -23,11 +52,11 @@
                           .dropdown-without-icon
                             = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
                     - else
-                        - if @consultation&.ministry&.is_approved
+                        - if (@consultation&.ministry&.is_approved && @consultation.public_consultation?)
                           li
                             .dropdown-without-icon
                               = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
-                        - else
+                        - elsif (!@consultation&.ministry&.is_approved && @consultation.public_consultation?)
                           li
                             .dropdown-without-icon
                               = link_to "Publish", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Approve ministry"
@@ -49,7 +78,7 @@
                         .dropdown-with-icon
                           p Delete
                           .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
-  .admin-list-bg
+  .admin-list-bg  class="#{(@consultation.private_consultation? && @consultation.expired?) ? 'consultation-deadline-top' : ''}"
     .p-4
       .admin-header-text
         | Basic Information
@@ -61,6 +90,13 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Review Type", "show-page-input-details", "#{@consultation.review_type }")
         = display_details("show-page-parent-details", "show-page-label-details", "Visibility", "show-page-input-details", "#{@consultation.visibility.titleize}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Response Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
+        .show-page-parent-details
+          .show-page-label-details Status
+          .show-page-input-details
+            div class="#{@consultation.status}"
+              .text-color.m-1
+                = consultation_status_text(@consultation)
         .show-page-parent-details
           .show-page-label-details Summary
           .show-page-input-details
@@ -85,25 +121,124 @@
               .btn.float-right.mt-3
                 button class="btn" type="submit" Update Page Details
     .p-4
-      .admin-header-text
-        | Questions
-      .admin-details-box
-        - count = 0
-        - @questions.each do |question|
-          - count = count + 1
-          .admin-questions-box
-            .question-type-text
-              .question-type
-                ="Question #{count} • #{question.question_type.capitalize.humanize}"
-              .question-text
-                = question.question_text
-            .question-edit-delete
-              .icon-bg-question
-                = link_to '', { class: "fas fa-pencil-alt edit_question_modal", id: "edit_question_icon", 'data-target': "#edit_question_collapse_#{question.id}", 'data-toggle': "modal", 'data-id': "#{question.id}" } do
-              = render partial: 'admin/questions/edit_questions', locals: {question: question}
-              .icon-bg-question
-                = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
-
-        = link_to '', {class: "btn square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse", 'data-toggle': "modal"}  do
-          p + Add question
-        = render partial: 'admin/questions/create_questions', locals: {question: @question}
+      .admin-index-title
+        | Feedback 
+        .admin-details-box.pt-0
+          .consultation-feedback-flex
+            .width-50 class="#{@consultation.private_consultation? ? '' : 'width-75'}"
+              ul.questions-rounds-tab.nav.nav-tabs role="tablist"
+                - if (@consultation.private_consultation? && @response_rounds.size > 1)
+                  - @response_rounds.each_with_index do |response_round, index|
+                    li class="#{@response_rounds.last.id == response_round.id ? 'active' : ''}"
+                      a data-toggle="tab" href="#{response_round.id}" role="tab"
+                      | Round #{index + 1}
+              .tab-content class="#{@consultation.private_consultation? ? 'question-block-border' : ''}"
+                - @response_rounds.each do |response_round|
+                  .tab-pane class="#{@response_rounds.last.id == response_round.id ? 'active' : '' }" role="tabpanel" id="#{response_round.id}"
+                    - if response_round.questions.present?
+                      .admin-details-box.width-100
+                        .question-parent
+                          .question-header-text
+                            | Questions
+                          - if (!@consultation.published? && response_round.id == @response_rounds.last.id)
+                            = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{response_round.id}", 'data-toggle': "modal"}  do
+                              p + Add question
+                        - count = 0
+                        - response_round.questions.each do |question|
+                          - count = count + 1
+                          .admin-questions-box.width-100
+                            .question-type-text
+                              .question-type
+                                ="Question #{count} • #{question.question_type.capitalize.humanize}"
+                              .question-text
+                                = question.question_text
+                            .question-edit-delete
+                              .icon-bg-question.mr-2
+                                = link_to '', { class: "fas fa-pencil-alt edit_question_modal", id: "edit_question_icon", 'data-target': "#edit_question_collapse_#{question.id}", 'data-toggle': "modal", 'data-id': "#{question.id}" } do
+                              = render partial: 'admin/questions/edit_questions', locals: {question: question, response_round_id: response_round.id}
+                              - if (!@consultation.published? && response_round.id == @response_rounds.last.id)
+                                .icon-bg-question
+                                  = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
+                    - else
+                      .feedback-flex.p-3
+                        = image_pack_tag "media/application/images/no_questions_illustration.svg", class: "p-2"
+                        .question-header-text.p-3
+                          | No questions added
+                        .pb-2
+                          = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{@response_rounds.last.id}", 'data-toggle': "modal"}  do
+                            p + Add question
+                = render partial: 'admin/questions/create_questions', locals: {question: @question, response_round_id: @response_rounds.last.id}
+            - if @consultation.private_consultation?
+              .width-50
+                .p-3
+                  .question-parent.mb-3
+                    .question-header-text
+                      | Responses
+                  .show-page-parent-details
+                    .show-page-label-details Summary link
+                    .show-page-input-details
+                      = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
+                  .show-page-parent-details
+                    .show-page-label-details Invitations
+                    .show-page-input-details
+                      | #{@invitation_sent_count} invitations sent
+                      - if @consultation.published?
+                        a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
+                      - else
+                        a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
+                  = display_details("show-page-parent-details", "show-page-label-details", "Responses", "show-page-input-details", "#{@responses_count || '-'} responses")
+  .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="extend_deadline"
+    .modal-dialog role="document" 
+      .modal-content
+        .question-pop-up
+          .question-pop-up-content
+              .pop-up-head
+                  .head-text
+                      p Extend deadline
+                  .close-symbol data-dismiss="modal" type="button"
+                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                      </svg>
+              = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|        
+                .row.form-group.string.optional.consultation_response_deadline
+                  .col-md-12.form-label-group
+                    = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
+                    label.string.optional for="admin-event-from-to-date"  Response deadline
+                .modal-footer
+                  .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                  input.btn.square-btn-question type="submit" value="Publish"
+  .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="make_changes"
+    .modal-dialog role="document" 
+      .modal-content
+        .question-pop-up
+          .question-pop-up-content
+              .pop-up-head
+                  .head-text
+                      p Make changes
+                  .close-symbol data-dismiss="modal" type="button"
+                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                      </svg>
+              = simple_form_for @consultation, url: create_response_round_admin_consultation_path(@consultation) do |f|        
+                .row.form-group.string.optional
+                  .col-md-12.form-label-group
+                    p 
+                      | Are you sure want to make changes to this consultation? If you make any changes then a new round will be created by automatically closing the first round.
+                .modal-footer
+                  .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                  input.btn.square-btn-question type="submit" value="Make changes"
+  = render partial: 'users/admin/invite_respondents'
+  .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="invited_respondents"
+    .modal-dialog role="document" 
+      .modal-content
+        .question-pop-up
+          .question-pop-up-content
+              .pop-up-head
+                  .head-text
+                      p Invited respondents
+                  .close-symbol data-dismiss="modal" type="button"
+                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                      </svg>
+              .col-md-12.p-0.mb-3
+              = render partial: 'users/invited_respondents_table'
