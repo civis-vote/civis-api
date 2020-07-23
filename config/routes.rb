@@ -31,7 +31,11 @@ Rails.application.routes.draw do
         post :featured
         post :unfeatured
         get :check_active_ministry
+        patch :extend_deadline
+        patch :create_response_round
+        post :invite_respondents
         get :edit_hindi_summary
+        get :edit_english_summary
       end
       collection do
         get :export_as_excel
@@ -61,12 +65,17 @@ Rails.application.routes.draw do
     resources :consultations do
       member do
         post :publish
+        patch :extend_deadline
+        patch :create_response_round
+        post :invite_respondents
         get :edit_hindi_summary
+        get :edit_english_summary
       end
       collection do
         patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
         patch "/hindi_page_component/:id", to: "consultations#hindi_page_component", as: "hindi_page_component"
       end
+      resources :questions
     end
     resources :settings do
       member do

@@ -12,13 +12,14 @@ class Consultation < ApplicationRecord
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
-  has_many :questions
+  has_many :response_rounds
   has_one :consultation_hindi_summary, dependent: :destroy
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
   enum visibility: { public_consultation: 0, private_consultation: 1 }
 
   after_commit :notify_admins, on: :create
+  after_commit :create_response_round, on: :create
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -72,6 +73,13 @@ class Consultation < ApplicationRecord
       NotifyNewConsultationPolicyReviewEmailJob.perform_later(self)
     end
     NotifyPublishedConsultationEmailJob.perform_later(self) if self.created_by.citizen?
+    if self.private_consultation?
+      respondents = Respondent.where(response_round_id: self.response_round_ids)
+      respondents.each do |respondent|
+        url = Respondent.respondent_invite_url(self, respondent.user)
+        InviteRespondentJob.perform_later(self, respondent.user, url)  
+      end
+    end
   end
 
   def reject
@@ -137,5 +145,14 @@ class Consultation < ApplicationRecord
   def review_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/admin/consultations/" + "#{self.id}" } ))
     response_url.to_s
+  end
+
+  def create_response_round
+    self.response_rounds.create()
+  end
+
+  def extend_deadline(deadline_date)
+    self.response_deadline = deadline_date
+    self.publish
   end
 end

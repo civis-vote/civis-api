@@ -6,6 +6,7 @@ class Organisation < ApplicationRecord
   include ImageUploader::Attachment(:logo)
 
   has_many :users, -> { active }, dependent: :nullify
+  has_many :respondents
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User"
   validates_presence_of :created_by_id
   accepts_nested_attributes_for :users, allow_destroy: true, reject_if: proc { |attributes| attributes['email'].blank? }

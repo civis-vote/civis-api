@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_11_090049) do
+ActiveRecord::Schema.define(version: 2020_07_15_150108) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -135,7 +135,10 @@ ActiveRecord::Schema.define(version: 2020_07_11_090049) do
     t.integer "down_vote_count", default: 0, null: false
     t.jsonb "answers"
     t.datetime "deleted_at"
+    t.bigint "respondent_id"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
+    t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
+    t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
@@ -241,11 +244,32 @@ ActiveRecord::Schema.define(version: 2020_07_11_090049) do
     t.integer "parent_id"
     t.string "question_text"
     t.integer "question_type"
-    t.bigint "consultation_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "deleted_at"
-    t.index ["consultation_id"], name: "index_questions_on_consultation_id"
+    t.bigint "response_round_id"
+    t.boolean "optional", default: false
+    t.index ["deleted_at"], name: "index_questions_on_deleted_at"
+    t.index ["response_round_id"], name: "index_questions_on_response_round_id"
+  end
+
+  create_table "respondents", force: :cascade do |t|
+    t.bigint "user_id"
+    t.bigint "response_round_id"
+    t.bigint "organisation_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["organisation_id"], name: "index_respondents_on_organisation_id"
+    t.index ["response_round_id"], name: "index_respondents_on_response_round_id"
+    t.index ["user_id"], name: "index_respondents_on_user_id"
+  end
+
+  create_table "response_rounds", force: :cascade do |t|
+    t.bigint "consultation_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
+    t.datetime "deleted_at"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
   end
 
@@ -320,6 +344,7 @@ ActiveRecord::Schema.define(version: 2020_07_11_090049) do
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
+  add_foreign_key "consultation_responses", "respondents"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
   add_foreign_key "game_actions", "point_events"
@@ -327,7 +352,11 @@ ActiveRecord::Schema.define(version: 2020_07_11_090049) do
   add_foreign_key "notification_settings", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
-  add_foreign_key "questions", "consultations"
+  add_foreign_key "questions", "response_rounds"
+  add_foreign_key "respondents", "organisations"
+  add_foreign_key "respondents", "response_rounds"
+  add_foreign_key "respondents", "users"
+  add_foreign_key "response_rounds", "consultations"
   add_foreign_key "users", "consultations"
   add_foreign_key "users", "organisations"
 end

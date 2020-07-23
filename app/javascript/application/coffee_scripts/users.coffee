@@ -26,3 +26,18 @@ $(document).on 'turbolinks:load', ->
 			  return
 			success:(data) -> 
 				location.reload()
+	$(document).on 'keyup', '#respondent_user_search', ()->
+		search_term = $('#respondent_user_search').val()
+		consultation_id = $(this).data('consultation-id')
+		route = $(this).data('route')
+		if route == "admin"
+			url = '/admin/consultations/'+consultation_id
+		else
+			url = '/organisation/consultations/'+consultation_id	
+		$.ajax url,
+			type: 'GET'
+			data: {
+			  search: search_term
+			}
+			success: (data, jqxhr, textStatus) ->
+			  $('#invited-respondents-table').html data
