@@ -5,8 +5,7 @@ module Queries
 	    type GraphQL::Types::JSON, null: false
 
 	    def resolve
-	    	hash_map_response = Rails.cache.read("response_hash_map")
-	    	return hash_map_response
+	    	return nil
 	    end
 		end
 	end
