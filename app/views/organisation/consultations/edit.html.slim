@@ -1,6 +1,6 @@
 - navigation_add 'Consultations', organisation_consultations_path(sort:{sort_column: "created_at", sort_direction: "desc"})
 - navigation_add "#{@consultation&.title}", edit_organisation_consultation_path(@consultation)
-= render_navigation
+= render_organisation_navigation
 - flash.each do |key, value|
 	- if (key == "flash_info" || key == "flash_success_info")
 		div class=("alert #{key}") = value
@@ -34,5 +34,5 @@
 			          	  input name="consultation[private_response]" type="checkbox" id="private_response_toggle" value=""
 			              span.slider.round
 		          .modal-footer
-		              .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+		              .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
 		              button.btn.square-btn-question type="submit" Update Consultation

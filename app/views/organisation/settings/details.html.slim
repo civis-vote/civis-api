@@ -1,6 +1,6 @@
 - navigation_add 'Profile', list_employees_organisation_setting_path(@organisation)
 - navigation_add @user.full_name, employee_details_organisation_setting_path(@organisation, @user)
-= render_navigation
+= render_organisation_navigation
 - flash.each do |key, value|
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
@@ -8,12 +8,12 @@
   .admin-filter-bg
     .admin-filter-parent
       .admin-filter-child.width-75
-        .admin-header-text
-        | Profile                      
-  .admin-list-bg
+        .admin-index-title
+          | Profile                      
+  .admin-index-title.mt-5
+    | Personal Details
+  .admin-list-bg.mt-4
     .p-4
-      .admin-header-text
-        | Personal Details
       .admin-details-box
         = display_details("show-page-parent-details", "show-page-label-details", "Name", "show-page-input-details", "#{@user&.full_name || '-'}")
         .show-page-parent-details
@@ -51,5 +51,5 @@
                 = f.input :first_name, placeholder: "First Name", required: true, autofocus: true, label: false, input_html: { id: "first_name", style: "height: 48px;", placeholder: "First Name"}
                 = f.input :last_name, placeholder: "Last Name", required: true, autofocus: true, label: false, input_html: { id: "last_name", style: "height: 48px;", placeholder: "Last Name"}
                 .modal-footer
-                    .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                    .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
                     button.btn.square-btn-question type="submit" Save changes

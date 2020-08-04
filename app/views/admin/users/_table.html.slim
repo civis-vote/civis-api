@@ -1,6 +1,6 @@
-.admin-index-records-found
-  = total_no_of_records_found(@users, "users", "facets")
-table.table
+.admin-index-records-found-text
+  | Showing #{@users.data.size} users
+table.table.mt-3
       thead
         tr
           th Name
@@ -11,9 +11,9 @@ table.table
           th Rank
       tbody
         - @users.data.each do |user|
-          tr
-            td
-              = link_to user.full_name, admin_user_path(user)
+          tr.pointer onclick='window.location="#{admin_user_path(user)}";'
+            td.table-bold-title
+              = user.full_name
             td
               = user&.email
             td

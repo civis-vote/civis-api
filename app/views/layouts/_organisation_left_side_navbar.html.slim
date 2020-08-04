@@ -1,6 +1,6 @@
 #admin-navbar
-  .nav-side-menu
-    .navbar-header
+  .nav-side-menu.organisation-side-navbar
+    .navbar-header.organisation-navbar-header
       .text-center
           span
             = image_pack_tag "media/application/images/civis_organisation_logo.svg"
@@ -11,6 +11,11 @@
           div
             .fas.pointer.fa-clipboard-list.pr-4
             | Consultations
+      = link_to list_respondents_organisation_setting_path(current_user.organisation_id), class: "#{current_class?(list_respondents_organisation_setting_path(current_user.organisation_id))}" do
+        li
+          div
+            .fas.fa-address-book.pointer.pr-4
+            | Respondents
       = link_to organisation_setting_path(current_user.organisation_id), class: "#{current_class?(organisation_setting_path(current_user.organisation_id))} #{params[:id].present? ? current_class?(edit_organisation_setting_path(params[:id])) : '' } #{params[:id].present? ? current_class?(list_employees_organisation_setting_path(params[:id])) : '' }" do
         li
           div

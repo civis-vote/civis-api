@@ -1,9 +1,9 @@
 .admin-index-records-found.list-employees-count-left
-  = total_no_of_records_found(@employees, "employees", "facets")
+  | Showing #{@employees.data.size} employees
 table.table.employee-table
       thead
         tr
-          th
+          th.width-5
           th.employee-td-box-shadow Name
           th.employee-td-box-shadow
           th.employee-td-box-shadow

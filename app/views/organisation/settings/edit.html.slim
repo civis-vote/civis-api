@@ -1,6 +1,6 @@
 - navigation_add 'Organisation', admin_organisations_path
 - navigation_add "#{@organisation&.name}", edit_admin_organisation_path(@organisation)
-= render_navigation
+= render_organisation_navigation
 - flash.each do |key, value|
 	- if (key == "flash_info" || key == "flash_success_info")
 		div class=("alert #{key}") = value

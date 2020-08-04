@@ -1,4 +1,4 @@
-.admin-header-navbar.company-white-bg#admin-navbar
+.admin-header-navbar#admin-navbar
 	.navbar-header
       .avatar-circle data-toggle="collapse" data-target="#admin-dropdown-li"
       	span.initials #{(current_user.first_name+ " " + current_user.last_name).split.map(&:first).join.upcase}

@@ -3,8 +3,8 @@
 - flash.each do |key, value|
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
-.admin-content-wrapper
-  .admin-filter-bg
+.bg-white.p-3
+  .admin-filter-bg.box-shadow-none
     .admin-filter-parent
       .admin-filter-child.width-80
         ul.nav.nav-pills role="tablist" 
@@ -17,9 +17,9 @@
           li.nav-item.private-consultation-block
             a#private-consultations-link.nav-link.consultation-status-filter.admin-index-title data-toggle="pill" data-status-filter="private" href="#home" PRIVATE CONSULTATIONS
   .admin-filters-wrap
-    .admin-filter-parent
+    .admin-filter-parent.pl-0
       .admin-filter-child.width-100
-        .col-md-3
+        .col-md-3.pl-0
           .filters data-filter-url="/admin/consultations" data-replacement-class="consultations_table"
             .input-group.search
               input.form-control.filter-box name=("search_term_for_consultations") placeholder=("Search Consultations") type="text" data-behaviour="filter" data-scope="search_query" data-type="input-filter"

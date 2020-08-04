@@ -11,4 +11,8 @@ module NavigationHelper
   def render_navigation
     render partial: "layouts/navigation", locals: { nav: ensure_navigation }
   end
+
+  def render_organisation_navigation
+    render partial: "layouts/organisation_navigation", locals: { nav: ensure_navigation }
+  end
 end
