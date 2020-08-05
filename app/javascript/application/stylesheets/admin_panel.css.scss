@@ -824,12 +824,12 @@ background-color: #0e73b9 !important;
   width: 24px;
   height: 24px;
   cursor: pointer;  
-  background-image: url('../images/Add.svg');
+  background-image: url('../images/icons/Add.svg');
   background-repeat: no-repeat;
 }
 
 .invite-respondent-checkbox:checked + label {
-  background-image: url('../images/Done.svg');
+  background-image: url('../images/icons/Done.svg');
   background-repeat: no-repeat;
 }
 

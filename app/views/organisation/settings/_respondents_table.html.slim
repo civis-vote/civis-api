@@ -1,5 +1,5 @@
 .admin-index-records-found.list-employees-count-left.pl-0
-  | Showing #{@respondents.data.size} employees 
+  | Showing #{@respondents.data.size} respondents 
 table.table.employee-table
       thead
         tr
@@ -27,8 +27,9 @@ table.table.employee-table
                   = respondent.email
                 span.child-invite-span Invited
             td.employee-td-box-shadow.width-10
-              = link_to destroy_respondents_organisation_setting_path(@organisation.id, respondent.id), method: :delete, data: { confirm: "Are you sure?" } do
-                .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
+              - unless @responded_user_ids.include? respondent.id
+                = link_to destroy_respondents_organisation_setting_path(@organisation.id, respondent.id), method: :delete, data: { confirm: "Are you sure?" } do
+                  .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
 
 .pagination-parent.width-50
   = cm_paginate(@respondents.facets)

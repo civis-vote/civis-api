@@ -85,7 +85,7 @@ Rails.application.routes.draw do
         post :invite, controller: 'employees'
         delete "deactivate/:user_id", to: "employees#deactivate", as: "deactivate"
         get :list_respondents
-        delete "destroy_respondents/:user_id", to: "settings#destroy_respondents", as: "destroy_respondents"
+        delete "respondents/:user_id", to: "settings#destroy_respondents", as: "destroy_respondents"
       end
     end
   end

@@ -44,8 +44,10 @@ class Organisation::SettingsController < ApplicationController
 	end
 
 	def list_respondents
-		respondent_ids = @organisation.respondents.uniq(&:user_id).map(&:user_id)
-		@respondents = User.where(id: respondent_ids).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+		@respondent_ids = @organisation.respondents.uniq(&:user_id).map(&:id)
+    @responded_user_ids = ConsultationResponse.where(respondent_id: @respondent_ids).map(&:user_id)
+    user_ids = @organisation.respondents.uniq(&:user_id).map(&:user_id)
+		@respondents = User.where(id: user_ids).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
         format.html { render partial: "organisation/settings/respondents_table" }

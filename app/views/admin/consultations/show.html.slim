@@ -30,7 +30,7 @@
         - if (@consultation.private_consultation? && !@consultation.submitted?)
           .d-flex.justify-content-end.align-items-center
             div.js-tooltip.js-copy.pointer.d-flex.align-items-center data-toggle="tooltip" data-placement="bottom" data-copy="#{@consultation.feedback_url}" title="Copy to clipboard"
-              = image_pack_tag "media/application/images/copy-link.svg",class: "mr-2"
+              = image_pack_tag "media/application/images/icons/copy-link.svg",class: "mr-2"
               .copy-public-url.mr-2
                 | Copy share link
         - if (@consultation.private_consultation?)
@@ -41,7 +41,7 @@
             | Publish
       .mr-3.mt-2
         = link_to '', { id: "edit_question_icon", 'data-target': "#show-page-dropdown", 'data-toggle': "collapse"}  do
-          = image_pack_tag "media/application/images/more.svg"
+          = image_pack_tag "media/application/images/icons/more.svg"
         .dropdown#dropdown-container
           ul.dropdown-menu.icon-list#show-page-dropdown
             - if current_user.role == "admin" && @consultation.responses.present?
@@ -221,7 +221,7 @@
                       <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
                       </svg>
               .d-flex.pt-1.pb-3
-                = image_pack_tag "media/application/images/info.svg", class: "pr-2"
+                = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
                 .extend-deadline-sub-text
                   | Choose a extended response deadline for this consultation
               = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|        
@@ -245,7 +245,7 @@
                       <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
                       </svg>
               .d-flex.pt-1.pb-3
-                = image_pack_tag "media/application/images/info.svg", class: "pr-2"
+                = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
                 .extend-deadline-sub-text
                   | Choose a response deadline for this round of feedback
               = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|        
