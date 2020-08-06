@@ -33,6 +33,9 @@
   z-index: 99999;
   align-items: baseline;
   background-color: transparent !important;
+  width: 80%;
+  overflow: hidden;
+  white-space: nowrap;
 
   a:link{color:$breadcrumb-color}
 	a:visited	{
@@ -54,6 +57,9 @@
 		color: #172B4D !important;
 		font-weight: 600;
     opacity: unset;
+    width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
 	}
 
 }
