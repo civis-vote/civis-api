@@ -30,6 +30,7 @@ class Organisation::ConsultationsController < ApplicationController
     @consultation_response_rounds = Consultation.includes(:response_rounds)
 		@page = @consultation.page
 		ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
+    @hindi_summary_page = ConsultationHindiSummary.find_by(consultation: @consultation).page
     respond_to do |format|
       if request.xhr?
         format.html {render partial: "users/invite_respondents_table", locals: {consultations: @consultations}}
@@ -129,7 +130,7 @@ class Organisation::ConsultationsController < ApplicationController
   end
 
   def invite_respondents
-    respondent_ids = params[:respondent][:ids].to_unsafe_h
+    respondent_ids = params[:respondent][:ids].present? ? params[:respondent][:ids].to_unsafe_h : ""
     emails = params[:respondent][:emails].split(",")
     Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails)
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."

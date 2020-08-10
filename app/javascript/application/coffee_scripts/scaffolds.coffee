@@ -39,7 +39,9 @@ $(document).on 'turbolinks:load', ->
 
 $(document).on 'turbolinks:load', ->
   $ ->
-    $('.datepicker').datetimepicker format: 'YYYY-MM-DD'
+    $('.datepicker').datetimepicker
+      format: 'YYYY-MM-DD'
+      minDate: new Date
     return
   fasterPreview = (uploader) ->
     if uploader.files and uploader.files[0]

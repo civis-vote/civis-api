@@ -4,37 +4,36 @@
 - flash.each do |key, value|
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
-.admin-content-wrapper
-  .admin-filter-bg
+.bg-white.p-3
+  .admin-filter-bg.box-shadow-none
     .admin-filter-parent
       .admin-filter-child.width-75
         .admin-filter-child-field
           ul.nav.nav-tabs role="tablist"
             li.active role="presentation"
               = link_to admin_organisation_path(@organisation) do
-                .admin-index-title Overview
+                .organisation-index-title Overview
             li role="presentation"
               = link_to list_employees_admin_organisation_path(@organisation, sort:{sort_column: "created_at", sort_direction: "desc"}) do
-                .admin-index-title Employees
+                .organisation-index-title Employees
       .admin-filter-child
         .mr-3
-          = link_to edit_admin_organisation_path(@organisation), method: :get do
-              .pull-right.fa.fa-edit.pointer.fa-icon-color
-        = link_to admin_organisation_path(@organisation), method: :delete, data: { confirm: "Are you sure?" } do
-            .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
+          = link_to edit_admin_organisation_path(@organisation), method: :get, class: "icon-with-bg" do
+            .pull-right.fa.fa-pencil-alt.pointer.fa-icon-color
+        = link_to admin_organisation_path(@organisation), method: :delete, data: { confirm: "Are you sure?" }, class: "icon-with-bg" do
+            .pull-right.fas.fa-trash-alt.pointer.fa-icon-color.text-danger
                       
-  .admin-list-bg
-    .tab-content
-      .tab-pane.active#organisation_overview role="tabpanel"
-        .p-4
-          .admin-details-box
-            = display_details("show-page-parent-details", "show-page-label-details", "Organisation Name", "show-page-input-details", "#{@organisation&.name || '-'}")
-            .show-page-parent-details
-              .show-page-label-details Logo
-              .show-page-input-details
-                - if @organisation.logo
-                  = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg"
-                - else
-                  = image_pack_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg"
-            = display_details("show-page-parent-details", "show-page-label-details", "Added on", "show-page-input-details", "#{@organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'}")
-            = display_details("show-page-parent-details", "show-page-label-details", "Addeded by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")
+  .tab-content
+    .tab-pane.active#organisation_overview role="tabpanel"
+      .mt-60
+        .admin-details-box
+          = display_details("show-page-parent-details", "show-page-label-details", "Organisation Name", "show-page-input-details", "#{@organisation&.name || '-'}")
+          .show-page-parent-details
+            .show-page-label-details Logo
+            .show-page-input-details
+              - if @organisation.logo
+                = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+              - else
+                = image_pack_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+          = display_details("show-page-parent-details", "show-page-label-details", "Added on", "show-page-input-details", "#{@organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'}")
+          = display_details("show-page-parent-details", "show-page-label-details", "Addeded by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")

@@ -1,6 +1,6 @@
-.admin-index-records-found.ministries-count
-  = total_no_of_records_found(@ministries, "ministries", "facets")
-table.table
+.admin-index-records-found-text
+  | Showing #{@ministries.data.size} ministries
+table.table.mt-3
       thead
         tr
           th.width-35 Name of Ministry
@@ -9,9 +9,9 @@ table.table
           th.text-center
       tbody
         - @ministries.data.each do |ministry|
-          tr
-            td
-              = link_to ministry&.name, admin_ministry_path(ministry)
+          tr.pointer onclick='window.location="#{admin_ministry_path(ministry)}";'
+            td.table-bold-title
+              = ministry&.name
             td
               = ministry&.created_by&.full_name
             td

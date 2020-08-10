@@ -1,5 +1,5 @@
-- navigation_add "Profile", list_employees_organisation_setting_path(@organisation, sort:{sort_column: "created_at", sort_direction: "desc"})
-= render_navigation
+- navigation_add "Settings", list_employees_organisation_setting_path(@organisation, sort:{sort_column: "created_at", sort_direction: "desc"})
+= render_organisation_navigation
 - flash.each do |key, value|
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
@@ -47,5 +47,5 @@
                         = f.input :organisation_id, as: :hidden, input_html: { value: @organisation.id }
                         = f.input :active, as: :hidden, input_html: { value: true }
                         .modal-footer
-                            .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                            .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
                             button.btn.square-btn-question type="submit" Invite Employee

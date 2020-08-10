@@ -1,37 +1,49 @@
 - navigation_add 'Settings', organisation_setting_path(@organisation)
-= render_navigation
+= render_organisation_navigation
 - flash.each do |key, value|
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
-.admin-content-wrapper
+.bg-white.p-3.mt-60
   .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-65
+        .admin-filter-child-field
+          .admin-index-title Settings
+  .admin-filter-bg.mt-60.box-shadow-none
     .admin-filter-parent
       .admin-filter-child.width-75
         .admin-filter-child-field
           ul.nav.nav-tabs role="tablist"
             li.active role="presentation"
               = link_to organisation_setting_path(@organisation) do
-                .admin-index-title Overview
+                .organisation-index-title Overview
             li role="presentation"
               = link_to list_employees_organisation_setting_path(@organisation, sort:{sort_column: "created_at", sort_direction: "desc"}) do
-                .admin-index-title Employees
+                .organisation-index-title Employees
       .admin-filter-child
         .mr-3
-          = link_to edit_organisation_setting_path(@organisation), method: :get do
-              .pull-right.fa.fa-edit.pointer.fa-icon-color
-                      
-  .admin-list-bg
-    .tab-content
-      .tab-pane.active#organisation_overview role="tabpanel"
-        .p-4
-          .admin-details-box
-            = display_details("show-page-parent-details", "show-page-label-details", "Organisation Name", "show-page-input-details", "#{@organisation&.name || '-'}")
-            .show-page-parent-details
-              .show-page-label-details Logo
-              .show-page-input-details
-                - if @organisation.logo
-                  = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg"
-                - else
-                  = image_pack_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg"
-            = display_details("show-page-parent-details", "show-page-label-details", "Added on", "show-page-input-details", "#{@organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'}")
-            = display_details("show-page-parent-details", "show-page-label-details", "Addeded by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")
+          = link_to edit_organisation_setting_path(@organisation), method: :get, class: "icon-with-bg" do
+            .pull-right.fa.fa-pencil-alt.pointer.fa-icon-color
+  .tab-content
+    .tab-pane.active#organisation_overview role="tabpanel"
+      .mt-60
+        .admin-details-box
+          .show-page-parent-details.pb-4
+            .show-page-label-details Organisation Name
+            .show-page-input-details
+              = @organisation&.name || '-'
+          .show-page-parent-details.pb-4
+            .show-page-label-details Logo
+            .show-page-input-details
+              - if @organisation.logo
+                = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+              - else
+                = image_pack_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+          .show-page-parent-details.pb-4
+            .show-page-label-details Added on
+            .show-page-input-details
+              = @organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'
+          .show-page-parent-details.pb-4
+            .show-page-label-details Addeded by
+            .show-page-input-details
+              = @organisation&.created_by&.full_name || '-'
