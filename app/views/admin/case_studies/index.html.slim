@@ -3,14 +3,14 @@
 - flash.each do |key, value|
   - if (key == "flash_info" || key == "flash_success_info")
     div class=("alert #{key}") = value
-.admin-content-wrapper
-  .admin-filter-bg
+.bg-white.p-3
+  .admin-filter-bg.box-shadow-none
     .admin-filter-parent
       .admin-filter-child.width-75
         .admin-filter-child-field
-          .admin-index-title CASE STUDIES
+          .admin-index-title-bold CASE STUDIES
   .admin-filters-wrap
-    .admin-filter-parent
+    .admin-filter-parent.pl-0
       .admin-filter-child.width-100
         .col-md-2
           .filters data-filter-url="/admin/case_studies" data-replacement-class="case_studies_table"

@@ -11,7 +11,7 @@
   }
   .nav-side-menu {
     width: 200px;
-    background-color: #1F252C !important;
+    background-color: #242536 !important;
     height: 100vh;
     ul a {
       text-decoration: none; 
@@ -30,12 +30,13 @@
     ul a.active li {
       font-weight: 600;
       border-left: 3px solid #f0653a;
+      background-color: #151524;
     }
     .navbar-header {
       height: 60px;
       width: 200px;
       margin-bottom: 20px;
-      background-color: #1F252C;
+      background-color: #151524;
       box-shadow: inset 0px -1px 0px #333B43 !important;
     }
     .text-center span img {
@@ -247,7 +248,7 @@
 }
 
 .consultation-deadline-top {
-  margin-top: 100px !important;
+  margin-top: 115px !important;
 }
 
 .consultation-deadline-notification-top {
@@ -273,4 +274,17 @@
   font-size: 14px;
   line-height: 22px;
   color: #FFFFFF;
+}
+
+#admin-navbar .organisation-side-navbar {
+  background-color: #1F252C !important;
+  ul a.active li {
+      font-weight: 600;
+      border-left: 3px solid #f0653a;
+      background-color: transparent !important;
+    }
+}
+
+.organisation-navbar-header {
+  background-color: #1F252C !important;
 }

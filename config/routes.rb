@@ -84,6 +84,8 @@ Rails.application.routes.draw do
         patch "/edit_employee/:user_id", to: "employees#edit_employee", as: "edit_employee"
         post :invite, controller: 'employees'
         delete "deactivate/:user_id", to: "employees#deactivate", as: "deactivate"
+        get :list_respondents
+        delete "respondents/:user_id", to: "settings#destroy_respondents", as: "destroy_respondents"
       end
     end
   end

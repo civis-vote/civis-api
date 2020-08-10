@@ -170,3 +170,23 @@ $(document).on 'turbolinks:load', ->
 			$(this).val("1")
 		else
 			$(this).val("0")
+	$(document).on 'click', '.validate-question-option', (e)->
+		e.preventDefault()
+		form = $(this).parents('form')
+		form.find('.validation-error').addClass("d-none")
+		question_text = form.children('.question_question_text').children('input').val()
+		question_type = form.children('.question_question_type').children('select').val()
+		if question_text == ""
+			form.find('.validation-question-text').removeClass("d-none")
+		else if question_type == ""
+			form.find('.validation-question-type').removeClass("d-none")
+		else if question_type != "long_text"
+			option_empty = false
+			form.find('.checkbox-option-row').each ->
+				option_empty = true if $(this).find('input').val() == ""
+			if option_empty == true
+				form.find('.validation-question-option').removeClass("d-none")
+			else
+				form.submit()
+		else
+			form.submit()

@@ -1,6 +1,8 @@
 .admin-index-records-found
   = total_no_of_records_found(@case_studies, "case_studies", "facets")
-table.table
+.admin-index-records-found-text
+  | Showing #{@case_studies.data.size} case_studies
+table.table.mt-3
       thead
         tr
           th.width-35 Name
@@ -10,9 +12,9 @@ table.table
           th Created By
       tbody
         - @case_studies.data.each do |case_study|
-          tr
-            td
-              = link_to case_study&.name, admin_case_study_path(case_study)
+          tr.pointer onclick='window.location="#{admin_case_study_path(case_study)}";'
+            td.table-bold-title
+              = case_study&.name
             td
               = case_study&.ministry_name
             td

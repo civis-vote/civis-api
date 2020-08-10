@@ -1,4 +1,8 @@
 <% images_glob = Rails.application.root.join('app', 'javascript', 'application', 'images', '**', '*.{png,svg,ico}') %>
+<% icons_glob = Rails.application.root.join('app', 'javascript', 'application', 'images', 'icons', '**', '*.{png,svg,ico}') %>
 <% Dir.glob(images_glob).each do |image| %>
   import '<%= image %>';
+<% end %>
+<% Dir.glob(icons_glob).each do |icon| %>
+  import '<%= icon %>';
 <% end %>

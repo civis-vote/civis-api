@@ -1,6 +1,6 @@
-.admin-index-records-found
-  = total_no_of_records_found(@organisations, "organisations", "facets")
-table.table
+.admin-index-records-found-text
+  | Showing #{@organisations.data.size} organisations
+table.table.mt-3
       thead
         tr
           th.width-35 Organisation Name
@@ -9,14 +9,14 @@ table.table
           th Added by
       tbody
         - @organisations.data.each do |organisation|
-          tr
-            td
-              = link_to organisation&.name, admin_organisation_path(organisation)
-            td
-              = organisation.users_count
-            td
-              = organisation&.created_at&.localtime.try(:strftime, '%e %b %Y')
-            td
-              = organisation&.created_by&.full_name
+            tr.pointer onclick='window.location="#{admin_organisation_path(organisation)}";'
+              td.table-bold-title
+                = organisation&.name
+              td
+                = organisation.users_count
+              td
+                = organisation&.created_at&.localtime.try(:strftime, '%e %b %Y')
+              td
+                = organisation&.created_by&.full_name
 .pagination-parent
   = cm_paginate(@organisations.facets)
