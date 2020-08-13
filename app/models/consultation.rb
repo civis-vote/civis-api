@@ -65,7 +65,7 @@ class Consultation < ApplicationRecord
   	self.published_at = DateTime.now
   	self.save!
     if self.consultation?
-      NotifyNewConsultationEmailJob.perform_later(self)
+      NotifyNewConsultationEmailJob.perform_later(self) if self.public_consultation?
     else
       NotifyNewConsultationPolicyReviewEmailJob.perform_later(self)
     end
