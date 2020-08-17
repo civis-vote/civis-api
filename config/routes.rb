@@ -36,7 +36,7 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
-        patch :edit_response_submission_message
+        patch :update_response_submission_message
         get :show_response_submission_message
       end
       collection do

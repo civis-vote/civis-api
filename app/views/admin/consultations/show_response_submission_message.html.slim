@@ -16,7 +16,7 @@
     .p-4
       .show-page-parent-details
         .show-page-input-details
-          = simple_form_for [:admin, @consultation], url: edit_response_submission_message_admin_consultation_path(@consultation), method: :patch do |f|
+          = simple_form_for [:admin, @consultation], url: update_response_submission_message_admin_consultation_path(@consultation), method: :patch do |f|
             .field
               = f.rich_text_area :response_submission_message
             .admin-update-button-position
