@@ -36,6 +36,8 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
+        patch :edit_response_submission_message
+        get :show_response_submission_message
       end
       collection do
         get :export_as_excel
