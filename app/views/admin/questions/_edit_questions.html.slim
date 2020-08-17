@@ -33,12 +33,12 @@
                 .private-response
                   label Mark as optional
                   label.switch
-                    input name="question[optional]" type="hidden" value="0"
-                    - if question.optional?
-                        input name="question[optional]" type="checkbox" id="private_response_toggle" checked="checked" value="1"
+                    input name="question[is_optional]" type="hidden" value="0"
+                    - if question.is_optional?
+                        input name="question[is_optional]" type="checkbox" id="private_response_toggle" checked="checked" value="1"
                         span.slider.round
                     - else
-                        input name="question[optional]" type="checkbox" id="private_response_toggle" value=""
+                        input name="question[is_optional]" type="checkbox" id="private_response_toggle" value=""
                         span.slider.round
                 .validation-question-type.validation-error.text-danger.d-none Add question_type to create question
                 .validation-question-option.validation-error.text-danger.d-none Add option to create question
