@@ -33,9 +33,9 @@
               = image_pack_tag "media/application/images/icons/copy-link.svg",class: "mr-2"
               .copy-public-url.mr-2
                 | Copy share link
-        - if (@consultation.private_consultation?)
-            = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
-              p Invite
+        / - if (@consultation.private_consultation?)
+        /     = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
+        /       p Invite
         - if (@consultation.private_consultation? && !(@consultation.published? || @consultation.expired?))
           = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline_2", 'data-toggle': "modal"}  do
             | Publish
@@ -137,6 +137,17 @@
             | --
         = link_to edit_hindi_summary_admin_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
           .pull-right.fa.fa-pencil-alt.fa-icon-color
+  - if @consultation.public_consultation?
+    .admin-index-title.mt-4
+      | Thank you message
+    .admin-list-bg.mt-4
+      .p-4
+        .show-page-parent-details
+          .show-page-label-details Message
+          .show-page-input-details
+            = raw @consultation.response_submission_message
+          = link_to show_response_submission_message_admin_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
+            .pull-right.fa.fa-pencil-alt.pointer.fa-icon-color
   .admin-index-title.mt-4
     | Feedback 
   .admin-list-bg.mt-4
@@ -156,7 +167,7 @@
                   .question-parent
                     .question-header-text
                       | Questions
-                    - if (@consultation.private_consultation? && @consultation.submitted? && response_round.id == @response_rounds.last.id)
+                    - if (@consultation.private_consultation? && ( @consultation.submitted? || @consultation.published? ) && response_round.id == @response_rounds.last.id)
                       = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{response_round.id}", 'data-toggle': "modal"}  do
                         p + Add question
                   - count = 0
@@ -175,7 +186,7 @@
                           = render partial: 'admin/questions/edit_questions', locals: {question: question, response_round_id: response_round.id}
                           .icon-bg-question
                             = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
-                  - if (@consultation.public_consultation? && @consultation.submitted? && response_round.id == @response_rounds.last.id)
+                  - if (@consultation.public_consultation? && ( @consultation.submitted? || @consultation.published? ) && response_round.id == @response_rounds.last.id)
                       = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{response_round.id}", 'data-toggle': "modal"}  do
                         p + Add question
               - else
@@ -183,7 +194,7 @@
                   = image_pack_tag "media/application/images/no_questions_illustration.svg", class: "p-2"
                   .question-header-text.p-3
                     | No questions added
-                  - if @consultation.submitted?
+                  - if ( @consultation.submitted? || @consultation.published? )
                     .pb-2
                       = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{@response_rounds.last.id}", 'data-toggle': "modal"}  do
                         p + Add question
@@ -198,14 +209,14 @@
               .show-page-label-details Consultations responses summary link
               .show-page-input-details
                 = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
-            .show-page-parent-details
-              .show-page-label-details Invitations
-              .show-page-input-details
-                | #{@invitation_sent_count} invitations sent
-                - if @consultation.published?
-                  a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
-                - else
-                  a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
+            / .show-page-parent-details
+            /   .show-page-label-details Invitations
+            /   .show-page-input-details
+            /     | #{@invitation_sent_count} invitations sent
+            /     - if @consultation.published?
+            /       a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
+            /     - else
+            /       a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
             = display_details("show-page-parent-details", "show-page-label-details", "Responses", "show-page-input-details", "#{@responses_count || '-'} responses")
   .h-20
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="extend_deadline"
@@ -223,7 +234,7 @@
               .d-flex.pt-1.pb-3
                 = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
                 .extend-deadline-sub-text
-                  | Choose a extended response deadline for this consultation
+                  | Extended the response deadline date for this consultation
               = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|        
                 .row.form-group.string.optional.consultation_response_deadline
                   .col-md-12.form-label-group

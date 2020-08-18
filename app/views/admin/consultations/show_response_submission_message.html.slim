@@ -1,0 +1,24 @@
+- navigation_add 'Consultations', admin_consultations_path(sort:{sort_column: "created_at", sort_direction: "desc"})
+- navigation_add "#{@consultation&.title}", admin_consultation_path(@consultation)
+- navigation_add "Edit Response Submission Message", show_response_submission_message_admin_consultation_path(@consultation)
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper.page-builder-content-height
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-65
+        .admin-index-title-bold Edit Response Submission Message
+  .admin-index-title.mt-5
+    | Message
+  .width-60.bg-white.mt-4
+    .p-4
+      .show-page-parent-details
+        .show-page-input-details
+          = simple_form_for [:admin, @consultation], url: update_response_submission_message_admin_consultation_path(@consultation), method: :patch do |f|
+            .field
+              = f.rich_text_area :response_submission_message
+            .admin-update-button-position
+              button class="btn square-btn-question" type="submit" Save Changes
+  .h-20

@@ -29,7 +29,7 @@ class Admin::QuestionsController < ApplicationController
     private
 
     def question_params
-		params.require(:question).permit(:question_text, :response_round_id, :question_type, :optional, sub_questions_attributes: [:id, :_destroy, :question_text, :parent_id])
+		params.require(:question).permit(:question_text, :response_round_id, :question_type, :is_optional, sub_questions_attributes: [:id, :_destroy, :question_text, :parent_id])
 	end
 
 end

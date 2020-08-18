@@ -247,7 +247,7 @@ ActiveRecord::Schema.define(version: 2020_07_15_150108) do
     t.datetime "updated_at", precision: 6, null: false
     t.datetime "deleted_at"
     t.bigint "response_round_id"
-    t.boolean "optional", default: false
+    t.boolean "is_optional", default: false
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
   end
@@ -268,8 +268,6 @@ ActiveRecord::Schema.define(version: 2020_07_15_150108) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
-    t.datetime "deleted_at"
-    t.index ["deleted_at"], name: "index_response_rounds_on_deleted_at"
   end
 
   create_table "users", force: :cascade do |t|
