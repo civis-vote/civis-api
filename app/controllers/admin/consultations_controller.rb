@@ -1,8 +1,8 @@
 class Admin::ConsultationsController < ApplicationController
 	layout "admin_panel_sidenav"
   before_action :authenticate_user!
-	before_action :require_admin, only: [:index, :update, :edit, :show, :create]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :page_component]
+	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :page_component, :show_response_submission_message, :update_response_submission_message]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
@@ -195,10 +195,22 @@ class Admin::ConsultationsController < ApplicationController
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."
   end
 
+  def show_response_submission_message
+    
+  end
+
+  def update_response_submission_message
+    if @consultation.update(secure_params)
+      redirect_to admin_consultation_path,  flash_success_info: "Consultation response submission message was successfully updated."
+    else
+      redirect_to admin_consultation_path,  flash_info: "Consultation response submission message was not successfully updated."
+    end
+  end
+
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message)
 	end
 
 	def set_consultation

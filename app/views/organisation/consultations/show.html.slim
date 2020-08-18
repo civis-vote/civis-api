@@ -34,8 +34,8 @@
               = image_pack_tag "media/application/images/icons/copy-link.svg",class: "mr-2"
               .copy-public-url.mr-2
                 | Copy share link
-        = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
-          p Invite
+        / = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
+        /   p Invite
         - unless ( @consultation.published? || @consultation.expired? )
           = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline_2", 'data-toggle': "modal"}  do
             | Publish
@@ -166,14 +166,14 @@
             .show-page-label-details Consultations responses summary link
             .show-page-input-details
               = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
-          .show-page-parent-details
-            .show-page-label-details Invitations
-            .show-page-input-details
-              | #{@invitation_sent_count} invitations sent
-              - if @consultation.published?
-                a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
-              - else
-                a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
+          / .show-page-parent-details
+          /   .show-page-label-details Invitations
+          /   .show-page-input-details
+          /     | #{@invitation_sent_count} invitations sent
+          /     - if @consultation.published?
+          /       a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
+          /     - else
+          /       a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
 
           = display_details("show-page-parent-details", "show-page-label-details", "Responses", "show-page-input-details", "#{@responses_count || '-'} responses")
   .h-20
@@ -192,7 +192,7 @@
               .d-flex.pt-1.pb-3
                 = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
                 .extend-deadline-sub-text
-                  | Choose a extended response deadline for this consultation
+                  | Extended the response deadline date for this consultation
               = simple_form_for @consultation, url: extend_deadline_organisation_consultation_path(@consultation) do |f|        
                 .row.form-group.string.optional.consultation_response_deadline
                   .col-md-12.form-label-group
