@@ -13,14 +13,3 @@
 			= f.input :url, placeholder: "URL of consultation PDF", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation url" }
 			= f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "admin-event-from-to-date", class: "datepicker", value: "#{@consultation.response_deadline}" }
 			= f.input :review_type, as: :select, collection: Consultation.review_types.map {|review_type| [Consultation.formatted_enum_name(:review_type, review_type[0]), review_type[0]] }, selected: "#{@consultation.review_type}", label: 'Select Review Type', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select Review Type', id: "#{@consultation.id}_review_type"  } }
-			.row.form-group
-				.col-md-6.form-label-group
-					.input-editor-box
-            			.trix-toolbar-parent
-							= f.rich_text_area :summary, placeholder: "Summary", required: false, label: false, autofocus: true, wrapper: :false, input_html: { id: "consultation summary" }
-			.row.form-group
-				.col-md-6.form-label-group
-					.input-editor-box
-						.field.page-builder-border
-							input type='hidden' id="content-editor" name="page[components]"
-							= react_component("cm_content_manager/Content", {input: "content-editor", components: @page.present? ? @page.components : @page })
