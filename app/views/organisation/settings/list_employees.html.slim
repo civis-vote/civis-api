@@ -1,0 +1,51 @@
+- navigation_add "Settings", list_employees_organisation_setting_path(@organisation, sort:{sort_column: "created_at", sort_direction: "desc"})
+= render_organisation_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.admin-content-wrapper
+  .admin-filter-bg
+    .admin-filter-parent
+      .admin-filter-child.width-75
+        .admin-filter-child-field
+          ul.nav.nav-tabs role="tablist"
+            li role="presentation"
+              = link_to organisation_setting_path(@organisation) do
+                .admin-index-title Overview
+            li.active role="presentation"
+              = link_to list_employees_admin_organisation_path(@organisation, sort:{sort_column: "created_at", sort_direction: "desc"}) do
+                .admin-index-title Employees                      
+  .admin-list-bg
+    .tab-content
+      .tab-pane.active#organisation_employee role="tabpanel"
+        .admin-filters-wrap.mt-1
+          .admin-filter-parent.mb-5
+            .admin-filter-child.width-100
+              .col-md-2
+                .filters data-filter-url="/organisation/settings/#{@organisation.id}/list_employees" data-replacement-class="organisation_employees_table"
+                  .input-group.search
+                    input.form-control.filter-box name=("search_term_for_organisation_employees") placeholder=("Search") type="text" data-behaviour="filter" data-scope="search_query" data-type="input-filter"
+          .organisation_employees_table
+            = render 'employees_table'
+          br
+        .admin-update-button-position
+          .btn.square-btn-question data-target="#invite_employee" data-toggle="modal" Invite Employee
+        .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="invite_employee"
+          .modal-dialog role="document" 
+            .modal-content
+              .question-pop-up
+                .question-pop-up-content
+                    .pop-up-head
+                        .head-text
+                            p Invite employee
+                        .close-symbol data-dismiss="modal" type="button"
+                            <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                            </svg>
+                    = simple_form_for [:admin, @user], url: invite_organisation_setting_path(@organisation) do |f|     
+                        = f.input :email, placeholder: "Email address", required: true, autofocus: true, label: false, input_html: { id: "email", style: "height: 48px;", placeholder: "Email address"}
+                        = f.input :organisation_id, as: :hidden, input_html: { value: @organisation.id }
+                        = f.input :active, as: :hidden, input_html: { value: true }
+                        .modal-footer
+                            .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                            button.btn.square-btn-question type="submit" Invite Employee

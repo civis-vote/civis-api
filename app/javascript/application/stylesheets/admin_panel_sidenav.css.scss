@@ -37,10 +37,11 @@
       width: 200px;
       margin-bottom: 20px;
       background-color: #151524;
-      box-shadow: 0 0 2px 0 rgba(0,0,0,0.23), 0 1px 0 0 rgba(0,0,0,0.1);
+      box-shadow: inset 0px -1px 0px #333B43 !important;
     }
     .text-center span img {
-      height: 60px;
+      height: 30px;
+      margin: 13px;
     }
   }
 }
@@ -105,6 +106,7 @@
 }
 
 #admin-profile-dropdown {
+  list-style-type: none;
   .dropdown-menu {
     top: 15px;
     left: -118px;
@@ -238,4 +240,51 @@
   width: 100px;
   height: auto;
 }
+}
+
+.company-white-bg {
+  background-color: white;
+  box-shadow: inset 0px -1px 0px #EBECF0;
+}
+
+.consultation-deadline-top {
+  margin-top: 115px !important;
+}
+
+.consultation-deadline-notification-top {
+  top: 121px !important;
+}
+
+.deadline-notification-bg {
+  background: #7838E7;
+  box-shadow: inset 0px -1px 0px #EBECF0;
+}
+
+.deadline-title {
+  font-style: normal;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  color: #FFFFFF;
+}
+
+.deadline-description {
+  font-style: normal;
+  font-weight: normal;
+  font-size: 14px;
+  line-height: 22px;
+  color: #FFFFFF;
+}
+
+#admin-navbar .organisation-side-navbar {
+  background-color: #1F252C !important;
+  ul a.active li {
+      font-weight: 600;
+      border-left: 3px solid #f0653a;
+      background-color: transparent !important;
+    }
+}
+
+.organisation-navbar-header {
+  background-color: #1F252C !important;
 }

@@ -1,4 +1,4 @@
-.modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="create_question_collapse"
+.modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="create_question_collapse_#{response_round_id}"
   .modal-dialog role="document" 
     .modal-content
       .question-pop-up
@@ -12,13 +12,21 @@
                     </svg>
             = simple_form_for @question, url: admin_consultation_questions_path(@consultation) do |f|        
                 = f.input :question_text, placeholder: "Question", required: true, autofocus: true, label: false, input_html: { id: "question_text", style: "height: 48px;", placeholder: "Question"}
+                .validation-question-text.validation-error.text-danger.d-none Add question text to create question
                 = f.input :question_type, as: :select, collection: Question.question_types.keys.map{|a| [a.humanize.capitalize, a]}, prompt: "Question type", required: true, label: false, input_html: { style: "height: 48px;"}
-                = f.input :consultation_id, as: :hidden, input_html: { value: Consultation.find(params[:id]).id }
+                = f.input :response_round_id, as: :hidden, input_html: { value: response_round_id }
                 #options-fields-area
                     = f.simple_fields_for :sub_questions do |q|
                         = render partial: '/admin/questions/check_box_options', locals: {q: q}
                 #add-option-btn.d-none
                     p + Add option
+                .private-response
+                  label Mark as optional
+                  label.switch
+                    input name="question[is_optional]" type="checkbox" class="optional_toggle" value=""
+                    span.slider.round
+                .validation-question-type.validation-error.text-danger.d-none Add question_type to create question
+                .validation-question-option.validation-error.text-danger.d-none Add option to create question
                 .modal-footer
-                    .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
-                    = f.button :submit, class: "square-btn-question"
+                    .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                    = f.button :submit, class: "square-btn-question validate-question-option", value: "Add question"

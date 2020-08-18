@@ -1,0 +1,32 @@
+.admin-index-records-found-text
+  | Showing #{@consultations.data.size} consultations
+table.table.mt-3
+      thead
+        tr
+          th.width-30 Consultation Name
+          th Ministry
+          th Status
+          th Deadline
+          th Created by
+      tbody
+        - @consultations.data.each do |consultation|
+          tr.pointer onclick='window.location="#{organisation_consultation_path(consultation)}";'
+            td.table-bold-title
+              = consultation&.title
+            td
+              = consultation&.ministry&.name
+            td
+              div class="#{consultation.status}"
+                .text-color
+                  - if consultation.status == "submitted"
+                    | DRAFT
+                  - elsif consultation.status == "published"
+                    | ACTIVE
+                  - else
+                    | CLOSED
+            td
+              = consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y')
+            td
+              = consultation&.created_by&.full_name
+.pagination-parent
+  = cm_paginate(@consultations.facets)

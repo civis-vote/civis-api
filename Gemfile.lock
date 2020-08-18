@@ -107,10 +107,10 @@ GEM
     childprocess (3.0.0)
     choice (0.2.0)
     chronic (0.10.2)
-    cocoon (1.2.14)
     cm_page_builder-rails (0.1.12)
       rails (~> 6.0.0)
       slim-rails (~> 3.2.0)
+    cocoon (1.2.14)
     coderay (1.1.2)
     concurrent-ruby (1.1.6)
     connection_pool (2.2.2)
@@ -126,6 +126,9 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    devise_invitable (2.0.2)
+      actionmailer (>= 5.0)
+      devise (>= 4.6)
     diff-lcs (1.3)
     digest-crc (0.4.1)
     down (5.1.1)
@@ -196,7 +199,7 @@ GEM
     jbuilder (2.9.1)
       activesupport (>= 4.2.0)
     jmespath (1.4.0)
-    json (2.2.0)
+    json (2.3.1)
     jwt (2.2.1)
     kaminari (1.2.1)
       activesupport (>= 4.1.0)
@@ -264,6 +267,8 @@ GEM
     orm_adapter (0.5.0)
     os (1.0.1)
     parallel (1.19.1)
+    paranoia (2.4.2)
+      activerecord (>= 4.0, < 6.1)
     parser (2.7.0.2)
       ast (~> 2.4.0)
     pg (1.1.4)
@@ -273,11 +278,11 @@ GEM
       actionmailer (>= 3.0.0)
       postmark (~> 1.15.0)
     public_suffix (4.0.3)
-    puma (3.12.4)
+    puma (3.12.6)
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
-    rack (2.2.2)
+    rack (2.2.3)
     rack-cors (1.0.5)
       rack (>= 1.6.0)
     rack-protection (2.0.7)
@@ -473,7 +478,7 @@ GEM
     websocket (1.2.8)
     websocket-driver (0.7.1)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.4)
+    websocket-extensions (0.1.5)
     whenever (1.0.0)
       chronic (>= 0.6.3)
     xpath (3.2.0)
@@ -492,10 +497,11 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
-  cocoon
   cm_page_builder-rails
+  cocoon
   database_cleaner
   devise
+  devise_invitable (~> 2.0, >= 2.0.2)
   fabrication
   faker
   google-cloud-storage
@@ -512,6 +518,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-google-oauth2
   omniauth-linkedin-oauth2
+  paranoia
   pg (>= 0.18, < 2.0)
   postmark-rails
   puma (~> 3.12)

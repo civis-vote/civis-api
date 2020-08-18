@@ -1,0 +1,40 @@
+= form_tag invite_respondents_admin_consultation_path(@consultation), method: "post" do
+	.respondents-count Respondents (#{@respondents.size})
+	.row.form-group.string.optional
+		table.table.employee-table.w-100
+		      thead
+		        tr
+		          th
+		          th
+		          th
+		        tr
+		        	th
+		        	th
+		        	th
+		      tbody
+		        - @respondents.each do |respondent|
+		          tr
+		            td.employee-td-box-shadow.width-5
+		              - if ( respondent.user.first_name? && respondent.user.profile_picture.present? )
+		                = image_tag respondent.user.picture_url, class: "user-timeline-profile-picture-bg"
+		              - else
+		                = image_pack_tag respondent.user.picture_url
+		            td.employee-td-box-shadow.width-85
+		            	= respondent_name_and_email(respondent.user)
+		            td.employee-td-box-shadow.width-10
+		            	= check_respondent_present_in_other_consultation(respondent.user_id, @consultation_response_rounds, @consultation, respondent)
+	.d-flex.mb-3
+	  .half-line.width-35.mt-2.mr-3.ml-2
+	  .respondents-count Not listed above?
+	  .half-line.width-35.mt-2.ml-3
+	.col-md-12.p-0.mb-3
+	    div
+	      .input-group.search
+	        input#respondent_email.form-control.filter-box name="respondent[emails]" placeholder="Invite by email address" type="text"
+	    .d-flex.mt-2
+	      .respondents-count.font-weight-bold.small.mr-1 Tip: 
+	      .respondents-count 
+	        | To invite many people enter the email addresses separated by a comma.
+	.modal-footer
+	  .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+	  input.btn.square-btn-question type="submit" value="Send invite"

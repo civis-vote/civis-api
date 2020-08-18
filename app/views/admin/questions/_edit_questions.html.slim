@@ -12,8 +12,9 @@
                     </svg>
             = simple_form_for question, url: admin_consultation_question_path(@consultation, question) do |f|        
                 = f.input :question_text, required: true, autofocus: true, input_html: { id: "question_text", style: "border-radius: 2px!important; height: 48px;"}
+                .validation-question-text.validation-error.text-danger.d-none Add question text to create question
                 = f.input :question_type, as: :select, collection: Question.question_types.keys.map{|a| [a.humanize.capitalize, a]}, prompt: "Question type", required: true, label: false, input_html: { style: "height: 48px;"}
-                = f.input :consultation_id, as: :hidden, input_html: { value: Consultation.find(params[:id]).id }
+                = f.input :response_round_id, as: :hidden, input_html: { value: response_round_id }
                 #options-fields-area-edit.edit-options-fields
                   - if question.sub_questions.blank?
                     .checkbox-option-row.d-none data-id="0" 
@@ -29,6 +30,18 @@
                       = render partial: '/admin/questions/edit_check_box_options', locals: {q: q}
                 #add-option-btn-in-edit.edit-add-option
                     p + Add option
+                .private-response
+                  label Mark as optional
+                  label.switch
+                    input name="question[is_optional]" type="hidden" value="0"
+                    - if question.is_optional?
+                        input name="question[is_optional]" type="checkbox" id="private_response_toggle" checked="checked" value="1"
+                        span.slider.round
+                    - else
+                        input name="question[is_optional]" type="checkbox" id="private_response_toggle" value=""
+                        span.slider.round
+                .validation-question-type.validation-error.text-danger.d-none Add question_type to create question
+                .validation-question-option.validation-error.text-danger.d-none Add option to create question
                 .modal-footer
-                    .btn.square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
-                    = f.button :submit, class: "square-btn-question"
+                    .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                    = f.button :submit, class: "square-btn-question validate-question-option", value: "Save question"

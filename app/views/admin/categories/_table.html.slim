@@ -1,15 +1,15 @@
-.admin-index-records-found
-  = total_no_of_records_found(@categories, "categories", "facets")
-table.table
+.admin-index-records-found-text
+  | Showing #{@categories.data.size} categories
+table.table.mt-3
       thead
         tr
           th.width-35 Name of Category
           th Cover Photo
       tbody
         - @categories.data.each do |category|
-          tr
-            td
-              = link_to category&.name, admin_category_path(category)
+          tr.pointer onclick='window.location="#{admin_category_path(category)}";'
+            td.table-bold-title
+              = category&.name 
             td
               = image_tag category.cover_photo_url, class: "width-20" if category.cover_photo
 .pagination-parent

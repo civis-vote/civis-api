@@ -1,4 +1,5 @@
 class ConsultationResponse < ApplicationRecord
+  acts_as_paranoid
   include Paginator
   include Scorable::ConsultationResponse
   has_rich_text :response_text
@@ -11,8 +12,8 @@ class ConsultationResponse < ApplicationRecord
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
   has_many :down_votes, -> { down }, class_name: "ConsultationResponseVote"
   has_many :votes, class_name: "ConsultationResponseVote"
+  belongs_to :respondent, optional: true
   before_commit :update_reading_time
-  after_create :analysis_response
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -33,10 +34,6 @@ class ConsultationResponse < ApplicationRecord
 
   def self.public_consultation_response_filter
     joins(:consultation).where(consultations: { visibility: 'public_consultation'} )
-  end
-
-  def analysis_response
-    AnalyseKeywordsForConsultationJob.perform_later(self)
   end
 
   def refresh_consultation_response_up_vote_count
