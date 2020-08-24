@@ -24,6 +24,9 @@ class Content extends React.Component {
            showEmoji={false}
            showPageInfo={false}
            useDirectStorageUpload={true}
+           assetBaseUrl={ this.props.assetBaseUrl }
+           meta={ {id: "debug"} }
+           status="Edit"
           />
       </React.Fragment>
     );
@@ -32,7 +35,8 @@ class Content extends React.Component {
 
 Content.propTypes = {
   input: PropTypes.string,
-  components: PropTypes.array
+  components: PropTypes.array,
+  assetBaseUrl: PropTypes.string
 };
 export default Content
 
