@@ -20,6 +20,11 @@
                         = render partial: '/organisation/questions/check_box_options', locals: {q: q}
                 #add-option-btn.d-none
                     p + Add option
+                .private-response.supports-other-toggle.pb-4.pt-3.d-none
+                  label Other option
+                  label.switch
+                    input name="question[supports_other]" type="checkbox" class="optional_toggle" value=""
+                    span.slider.round
                 .private-response
                     label Mark as optional
                     label.switch

@@ -30,6 +30,16 @@
                       = render partial: '/organisation/questions/edit_check_box_options', locals: {q: q}
                 #add-option-btn-in-edit.edit-add-option
                     p + Add option
+                .private-response.pb-4.pt-3.supports-other-toggle
+                  label Other option
+                  label.switch
+                    input name="question[supports_other]" type="hidden" value="0"
+                    - if question.supports_other?
+                        input name="question[supports_other]" type="checkbox" class="optional_toggle" id="supports_other_toggle" checked="checked" value="1"
+                        span.slider.round
+                    - else
+                        input name="question[supports_other]" type="checkbox" class="optional_toggle" id="supports_other_toggle" value="0"
+                        span.slider.round
                 .private-response
                   label Mark as optional
                   label.switch

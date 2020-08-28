@@ -130,30 +130,36 @@ $(document).on 'turbolinks:load', ->
 	$(document).on 'change', '#new_question #question_question_type', ()->
 		if $(this).val() == "checkbox"
 			$('#add-option-btn').removeClass("d-none")
+			$('.supports-other-toggle').removeClass("d-none")
 			$('.checkbox-option-row').removeClass("d-none")
 			$('.checkbox-option').removeClass("d-none")
 			$('.radio-button-option').addClass("d-none")
 		else if ( $(this).val() == "multiple_choice" || $(this).val() == "dropdown" )
 			$('#add-option-btn').removeClass("d-none")
+			$('.supports-other-toggle').removeClass("d-none")
 			$('.checkbox-option-row').removeClass("d-none")
 			$('.checkbox-option').addClass("d-none")
 			$('.radio-button-option').removeClass("d-none")
 		else
 			$('#add-option-btn').addClass("d-none")
+			$('.supports-other-toggle').addClass("d-none")
 			$('.checkbox-option-row').addClass("d-none")
 	$(document).on 'change', '.edit_question .question_question_type select', ()->
 		if $(this).val() == "checkbox"
 			$(this).parent().parent().find('.edit-add-option').removeClass('d-none')
+			$(this).parent().parent().find('.supports-other-toggle').removeClass('d-none')
 			$(this).parent().parent().find('.checkbox-option-row').removeClass("d-none")
 			$(this).parent().parent().find('.checkbox-option').removeClass("d-none")
 			$(this).parent().parent().find('.radio-button-option').addClass("d-none")
 		else if ( $(this).val() == "multiple_choice" || $(this).val() == "dropdown" )
 			$(this).parent().parent().find('.edit-add-option').removeClass("d-none")
+			$(this).parent().parent().find('.supports-other-toggle').removeClass("d-none")
 			$(this).parent().parent().find('.checkbox-option-row').removeClass("d-none")
 			$(this).parent().parent().find('.checkbox-option').addClass("d-none")
 			$(this).parent().parent().find('.radio-button-option').removeClass("d-none")
 		else
 			$(this).parent().parent().find('.edit-add-option').addClass("d-none")
+			$(this).parent().parent().find('.supports-other-toggle').addClass("d-none")
 			$(this).parent().parent().find('.checkbox-option-row').addClass("d-none")
 			$(this).parent().parent().find('.edit-options-fields .checkbox-option-row').each () ->
 				parent = $(this)
