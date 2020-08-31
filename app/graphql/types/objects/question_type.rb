@@ -8,6 +8,7 @@ module Types
 		  field :question_text, String, nil, null: true
 		  field :parent, 				Types::Objects::QuestionType, nil, null: true
 		  field :sub_questions, [Types::Objects::QuestionType], nil, null: true
+		  field :supports_other, Boolean, nil, null: false
 		end
 	end
 end
