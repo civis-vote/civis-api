@@ -103,7 +103,7 @@ class Consultation < ApplicationRecord
   end
 
   def satisfaction_rating_distribution
-    self.responses.group(:satisfaction_rating).distinct.count(:satisfaction_rating)
+    self.responses.group(:satisfaction_rating).count(:satisfaction_rating)
   end
 
   def featured
