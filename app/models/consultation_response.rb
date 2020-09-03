@@ -5,8 +5,8 @@ class ConsultationResponse < ApplicationRecord
   has_rich_text :response_text
 
   belongs_to :user
-  belongs_to :consultation, counter_cache: true
-  validates_uniqueness_of :user_id, scope: :consultation_id
+  belongs_to :consultation, counter_cache: true, optional: true
+  # validates_uniqueness_of :user_id, scope: :consultation_id
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
@@ -20,7 +20,7 @@ class ConsultationResponse < ApplicationRecord
   enum visibility: { shared: 0, anonymous: 1 }
 
   # validations
-  validates_uniqueness_of :consultation_id, scope: :user_id  
+  # validates_uniqueness_of :consultation_id, scope: :user_id  
 
   # scopes
   scope :consultation_filter, lambda { |consultation_id|

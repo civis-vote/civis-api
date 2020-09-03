@@ -113,17 +113,6 @@ class Admin::ConsultationsController < ApplicationController
   def create
     @consultation = Consultation.new(secure_params.merge(created_by_id: current_user.id))
     if @consultation.save
-    	components = page_params.delete(:components)
-	    if @consultation.page.present?
-	      @page = @consultation.page
-	    else
-	      @page = @consultation.create_page
-	    end
-	    if @page.save
-	      @page.save_content(components) if components.present?
-	      sleep(2.0)
-	      @consultation.update_reading_time
-	    end
       redirect_to edit_english_summary_admin_consultation_path(@consultation)
     else
     	flash[:flash_info] = "Consultation was not successfully created."

@@ -144,13 +144,74 @@ class UserMailer < ApplicationMailer
 		excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
 		file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
 		xlsx = Axlsx::Package.new
-		xlsx.workbook.add_worksheet(name: "Consultation Responses") do |sheet|
-		  sheet.add_row ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"], b: true
-		  consultation_responses.each do |consultation_response|
-		    sheet.add_row [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at]
-		  end
-			sheet.column_widths *size_arr
+		if consultation_responses.last.consultation.public_consultation?
+			xlsx.workbook do |workbook|
+				workbook.add_worksheet(name: "Consultation Responses") do |sheet|
+					wrap = workbook.styles.add_style alignment: {wrap_text: true}
+				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"]
+					question_headers = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:question_text)
+					question_ids = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:id)	
+					question_headers.each do | question |
+						response_header << question
+					end
+					sheet.add_row response_header, b: true
+				  consultation_responses.each do |consultation_response|
+				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+				    answers = []
+			  		question_ids.each do |id|
+			  			if answer = consultation_response.answers.find { |ans| ans['question_id'] == id }
+							  answers << answer
+							else
+							  answers << ""
+							end
+						end
+			    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+			    	answers.each do | answer |
+			    		row_data << answer
+			    	end
+				    sheet.add_row row_data, style: wrap
+				  end
+					sheet.column_widths *size_arr
+				end
+			end
+		else
+			xlsx.workbook do |workbook|
+				consultation_responses.last.consultation.response_rounds.order(:created_at).each_with_index do |response_round, index|
+					if response_round.present?
+						workbook.add_worksheet(name: "Responses - Round #{index+1}") do |sheet|
+							wrap = workbook.styles.add_style alignment: {wrap_text: true}
+							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"]
+							question_headers = response_round.questions.order(:created_at).pluck(:question_text)
+							question_ids = response_round.questions.order(:created_at).pluck(:id)	
+							question_headers.each do | question |
+								response_header << question
+							end
+						  sheet.add_row response_header, b: true
+						  consultation_responses.each do |consultation_response|
+						  	if consultation_response.respondent.response_round_id == response_round.id
+						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+						  		answers = []
+						  		question_ids.each do |id|
+						  			if answer = consultation_response.answers.find { |ans| ans['question_id'] == id }
+										  answers << answer
+										else
+										  answers << ""
+										end
+									end
+						    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+						    	answers.each do | answer |
+						    		row_data << answer
+						    	end
+						    	sheet.add_row row_data, style: wrap
+						    end
+						  end
+							sheet.column_widths *size_arr
+						end
+					end
+				end
+			end
 		end
+		xlsx.use_shared_strings = true
     xlsx.serialize(excel_file)
     user = User.find_by(email: email)
     file = File.open(excel_file)
@@ -178,9 +239,9 @@ class UserMailer < ApplicationMailer
 		xlsx.workbook do |workbook|
 			workbook.add_worksheet(name: "Users") do |sheet|
 				center = workbook.styles.add_style alignment: { horizontal: :center, vertical: :center }
-			  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Created At", "Subscribed", "Role", "Phone Number"], b: true
+			  sheet.add_row ["First Name", "Last Name", "Email", "Points", "Rank", "Best Rank", "Best Rank Type", "State Rank", "City", "City Type", "Created At", "Subscribed", "Role", "Phone Number", "Email Verified", "Signup Through"], b: true
 			  users.each do |user|
-			    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : "NA", user.city.present? ? user.city.location_type : "NA", user.format_for_csv("created_at").strftime("%d %b %Y"), user.notify_for_new_consultation.present? ? "true" : "false", user.role, user.format_for_csv("phone_number")], style: [center]*14
+			    sheet.add_row [user.format_for_csv("first_name"), user.format_for_csv("last_name"), user.email, user.format_for_csv("points"), user.format_for_csv("rank"), user.format_for_csv("best_rank"), user.format_for_csv("best_rank_type"), user.format_for_csv("state_rank"), user.city.present? ? user.city.name : "NA", user.city.present? ? user.city.location_type : "NA", user.format_for_csv("created_at").strftime("%d %b %Y"), user.notify_for_new_consultation.present? ? "true" : "false", user.role, user.format_for_csv("phone_number"), user.confirmed?, user.provider ? user.provider : "email"], style: [center]*14
 			  end
 				sheet.column_widths *size_arr
 			end
