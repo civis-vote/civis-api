@@ -5,7 +5,7 @@ module Types
 				graphql_name "ConsultationResponseCreateInput"
 				argument :answers,											GraphQL::Types::JSON,																		nil,	required: false
 				argument :consultation_id,							Int,																										nil,	required: true
-				argument :response_text,								String,																									nil,	required: true
+				argument :response_text,								String,																									nil,	required: false
 				argument :satisfaction_rating,					Types::Enums::ConsultationResponseSatisfactionRatings,	nil,	required: true
 				argument :template_id,									Int,																										"ID of the response you are using as a template",	required: false, default_value: nil
 				argument :visibility,										Types::Enums::ConsultationResponseVisibilities,					nil,	required: true
