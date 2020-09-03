@@ -165,7 +165,7 @@ class UserMailer < ApplicationMailer
 							  answers << ""
 							end
 						end
-			    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join("\n") : k['answer'] } \n\n #{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+			    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
 			    	answers.each do | answer |
 			    		row_data << answer
 			    	end
@@ -198,7 +198,7 @@ class UserMailer < ApplicationMailer
 										  answers << ""
 										end
 									end
-						    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join("\n") : k['answer'] } \n\n #{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+						    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
 						    	answers.each do | answer |
 						    		row_data << answer
 						    	end
