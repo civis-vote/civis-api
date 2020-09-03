@@ -159,7 +159,7 @@ class UserMailer < ApplicationMailer
 				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 				    answers = []
 			  		question_ids.each do |id|
-			  			if answer = consultation_response.answers.find { |ans| ans['question_id'] == id }
+			  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == "#{id}" }
 							  answers << answer
 							else
 							  answers << ""
@@ -192,7 +192,7 @@ class UserMailer < ApplicationMailer
 						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 						  		answers = []
 						  		question_ids.each do |id|
-						  			if answer = consultation_response.answers.find { |ans| ans['question_id'] == id }
+						  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
 										  answers << answer
 										else
 										  answers << ""
