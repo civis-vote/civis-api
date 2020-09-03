@@ -7,7 +7,7 @@ module Types
 				field :confirmed_at,								Types::Objects::DateTime, nil, 	null: true
 				field :designation,									String,										nil,	null: true
 				field :email,												String, 									nil,	null: false
-				field :last_name, 									String, 									nil, 	null: false
+				field :last_name, 									String, 									nil, 	null: true
 				field :notify_for_new_consultation, Boolean, 									nil, 	null: true
 				field :organization, 								String,										nil,	null: true
 				field :phone_number,								String,										nil, 	null: true
