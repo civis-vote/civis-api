@@ -159,13 +159,13 @@ class UserMailer < ApplicationMailer
 				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 				    answers = []
 			  		question_ids.each do |id|
-			  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == "#{id}" }
+			  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
 							  answers << answer
 							else
 							  answers << ""
 							end
 						end
-			    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+			    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
 			    	answers.each do | answer |
 			    		row_data << answer
 			    	end
@@ -198,7 +198,7 @@ class UserMailer < ApplicationMailer
 										  answers << ""
 										end
 									end
-						    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+						    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(",") : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
 						    	answers.each do | answer |
 						    		row_data << answer
 						    	end
