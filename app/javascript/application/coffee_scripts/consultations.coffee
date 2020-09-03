@@ -80,7 +80,7 @@ $(document).on 'turbolinks:load', ->
 			$('#status').val(status_filter).trigger 'change'
 
 	$(document).on 'click', '#options-fields-area #option-cross', ()->
-  		$(this).parent().parent().children().remove()
+  		$(this).parent().parent().remove() if $(this).parent().parent().parent().children().length > 1
 	$(document).on 'click', '#options-fields-area-edit #option-cross', ()->
   	parent = $(this).parent().parent()
   	id = parent.next().val()
