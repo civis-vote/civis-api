@@ -71,7 +71,7 @@ gem "omniauth-facebook"
 gem "shrine", "~> 3.0"
 gem "cocoon"
 gem 'react-rails', '~> 2.6.0'
-gem 'cm_page_builder-rails'
+gem 'cm_page_builder-rails', '~> 0.2.1'
 gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
 gem "paranoia"
 

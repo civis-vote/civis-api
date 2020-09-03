@@ -80,12 +80,12 @@ $(document).on 'turbolinks:load', ->
 			$('#status').val(status_filter).trigger 'change'
 
 	$(document).on 'click', '#options-fields-area #option-cross', ()->
-  		$(this).parent().parent().children().remove()
+  		$(this).parent().parent().remove() if $(this).parent().parent().parent().children().length > 1
 	$(document).on 'click', '#options-fields-area-edit #option-cross', ()->
   	parent = $(this).parent().parent()
   	id = parent.next().val()
   	parent.find('.sub_question_destroy').val(id)
-  	parent.addClass('d-none')
+  	parent.remove()
 
 	$(document).on 'click', '#add-option-btn', ()->
 		child = $('#options-fields-area').children().last(":nth-child(1)").clone()
@@ -101,7 +101,7 @@ $(document).on 'turbolinks:load', ->
 		parent = $(this).parent()
 		if parent.find('select').val() == "checkbox"
 			parent.find('.checkbox-option').removeClass("d-none")
-		else if parent.find('select').val() == "multiple_choice"
+		else if ( parent.find('select').val() == "multiple_choice" || parent.find('select').val() == "dropdown" )
 			parent.find('.radio-button-option').removeClass("d-none")
 		else
 			parent.find('.checkbox-option').addClass("d-none")
@@ -120,7 +120,7 @@ $(document).on 'turbolinks:load', ->
 	$('.question_question_type select').each () ->
 		if $(this).val() == "checkbox"
 			$(this).parent().parent().children().find('.radio-button-option').addClass('d-none')
-		else if $(this).val() == "multiple_choice"
+		else if ( $(this).val() == "multiple_choice" || $(this).val() == "dropdown" )
 			$(this).parent().parent().children().find('.checkbox-option').addClass('d-none')
 		else
 			$(this).parent().parent().children().find('.radio-button-option').addClass('d-none')
@@ -130,30 +130,36 @@ $(document).on 'turbolinks:load', ->
 	$(document).on 'change', '#new_question #question_question_type', ()->
 		if $(this).val() == "checkbox"
 			$('#add-option-btn').removeClass("d-none")
+			$('.supports-other-toggle').removeClass("d-none")
 			$('.checkbox-option-row').removeClass("d-none")
 			$('.checkbox-option').removeClass("d-none")
 			$('.radio-button-option').addClass("d-none")
-		else if $(this).val() == "multiple_choice"
+		else if ( $(this).val() == "multiple_choice" || $(this).val() == "dropdown" )
 			$('#add-option-btn').removeClass("d-none")
+			$('.supports-other-toggle').removeClass("d-none")
 			$('.checkbox-option-row').removeClass("d-none")
 			$('.checkbox-option').addClass("d-none")
 			$('.radio-button-option').removeClass("d-none")
 		else
 			$('#add-option-btn').addClass("d-none")
+			$('.supports-other-toggle').addClass("d-none")
 			$('.checkbox-option-row').addClass("d-none")
 	$(document).on 'change', '.edit_question .question_question_type select', ()->
 		if $(this).val() == "checkbox"
 			$(this).parent().parent().find('.edit-add-option').removeClass('d-none')
+			$(this).parent().parent().find('.supports-other-toggle').removeClass('d-none')
 			$(this).parent().parent().find('.checkbox-option-row').removeClass("d-none")
 			$(this).parent().parent().find('.checkbox-option').removeClass("d-none")
 			$(this).parent().parent().find('.radio-button-option').addClass("d-none")
-		else if $(this).val() == "multiple_choice"
+		else if ( $(this).val() == "multiple_choice" || $(this).val() == "dropdown" )
 			$(this).parent().parent().find('.edit-add-option').removeClass("d-none")
+			$(this).parent().parent().find('.supports-other-toggle').removeClass("d-none")
 			$(this).parent().parent().find('.checkbox-option-row').removeClass("d-none")
 			$(this).parent().parent().find('.checkbox-option').addClass("d-none")
 			$(this).parent().parent().find('.radio-button-option').removeClass("d-none")
 		else
 			$(this).parent().parent().find('.edit-add-option').addClass("d-none")
+			$(this).parent().parent().find('.supports-other-toggle').addClass("d-none")
 			$(this).parent().parent().find('.checkbox-option-row').addClass("d-none")
 			$(this).parent().parent().find('.edit-options-fields .checkbox-option-row').each () ->
 				parent = $(this)
@@ -190,3 +196,15 @@ $(document).on 'turbolinks:load', ->
 				form.submit()
 		else
 			form.submit()
+	$(document).on 'keypress', '.sub_question_text', (e) ->
+	  key = e.which
+	  element = $(this)
+	  edit_option_fields = element.parent().parent().parent().parent().hasClass("edit-options-fields")
+	  if key == 13
+	  	if edit_option_fields == true
+		    $('.edit-add-option').click()
+		    return false
+		  else
+		  	$('#add-option-btn').click()
+		  	return false
+	  return

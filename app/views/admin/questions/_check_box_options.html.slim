@@ -2,6 +2,6 @@
 	.radio-button-option
 	.checkbox-option
     .input-box.width-85
-        = q.input :question_text, placeholder: "Option", autofocus: true, label: false, input_html: { id: "question_text", style: "height: 48px;" }
+        = q.input :question_text, placeholder: "Option", autofocus: true, label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 48px;" }
     .cross-btn
         = image_tag 'Remove.svg', id: 'option-cross'

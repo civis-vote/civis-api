@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_16_150108) do
+ActiveRecord::Schema.define(version: 2020_08_28_081336) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -248,6 +248,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_150108) do
     t.datetime "deleted_at"
     t.bigint "response_round_id"
     t.boolean "is_optional", default: false
+    t.boolean "supports_other", default: false
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
   end

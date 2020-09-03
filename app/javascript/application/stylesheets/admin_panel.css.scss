@@ -27,7 +27,7 @@
   line-height: 25px;
   padding-left: 34px;
   margin: 0px auto;
-  display: flex;
+  flex-wrap: unset !important;
   position: fixed;
   top: 10px;
   z-index: 99999;
@@ -57,7 +57,6 @@
 		color: #FFFFFF !important;
 		font-weight: 600;
     opacity: unset;
-    width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
 	}
