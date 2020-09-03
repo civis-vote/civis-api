@@ -148,10 +148,28 @@ class UserMailer < ApplicationMailer
 			xlsx.workbook do |workbook|
 				workbook.add_worksheet(name: "Consultation Responses") do |sheet|
 					wrap = workbook.styles.add_style alignment: {wrap_text: true}
-				  sheet.add_row ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At", "Question and answers"], b: true
+				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"]
+					question_headers = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:question_text)
+					question_ids = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:id)	
+					question_headers.each do | question |
+						response_header << question
+					end
+					sheet.add_row response_header, b: true
 				  consultation_responses.each do |consultation_response|
-				    sheet.add_row [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at, consultation_response.answers.map { |k| 
-"Question Text : #{ Question.find(k['question_id']).question_text} \n Answers: #{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join("\n") : k['answer'] } \n\n #{ k.key?('is_other') ? 'Other Option Answer :' + k['other_option_answer'] : '' }\n"}.join("\n") ], style: wrap
+				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+				    answers = []
+			  		question_ids.each do |id|
+			  			if answer = consultation_response.answers.find { |ans| ans['question_id'] == id }
+							  answers << answer
+							else
+							  answers << ""
+							end
+						end
+			    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join("\n") : k['answer'] } \n\n #{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+			    	answers.each do | answer |
+			    		row_data << answer
+			    	end
+				    sheet.add_row row_data, style: wrap
 				  end
 					sheet.column_widths *size_arr
 				end
@@ -162,11 +180,29 @@ class UserMailer < ApplicationMailer
 					if response_round.present?
 						workbook.add_worksheet(name: "Responses - Round #{index+1}") do |sheet|
 							wrap = workbook.styles.add_style alignment: {wrap_text: true}
-						  sheet.add_row ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At", "Question and answers"], b: true
+							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"]
+							question_headers = response_round.questions.order(:created_at).pluck(:question_text)
+							question_ids = response_round.questions.order(:created_at).pluck(:id)	
+							question_headers.each do | question |
+								response_header << question
+							end
+						  sheet.add_row response_header, b: true
 						  consultation_responses.each do |consultation_response|
 						  	if consultation_response.respondent.response_round_id == response_round.id
-						    	sheet.add_row [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at, consultation_response.answers.map { |k| 
-"Question Text : #{ Question.find(k['question_id']).question_text} \n Answers: #{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join("\n") : k['answer'] } \n\n #{ k.key?('is_other') ? 'Other Option Answer :' + k['other_option_answer'] : '' }\n"}.join("\n") ], style: wrap
+						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+						  		answers = []
+						  		question_ids.each do |id|
+						  			if answer = consultation_response.answers.find { |ans| ans['question_id'] == id }
+										  answers << answer
+										else
+										  answers << ""
+										end
+									end
+						    	answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join("\n") : k['answer'] } \n\n #{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+						    	answers.each do | answer |
+						    		row_data << answer
+						    	end
+						    	sheet.add_row row_data, style: wrap
 						    end
 						  end
 							sheet.column_widths *size_arr
