@@ -10,8 +10,8 @@ namespace :import_records_from_csv do
 				logo_base_url = "https://storage.googleapis.com/civis-api-static/ministry_logos/"
 				ministry.name = csv_ministry["name"].strip
 				ministry.level = csv_ministry["level"].strip.downcase
-				ministry.poc_email_primary = csv_ministry["poc_primary"]
-				ministry.poc_email_secondary = csv_ministry["poc_secondary"]
+				ministry.poc_email_primary = csv_ministry["poc_email_primary"]
+				ministry.poc_email_secondary = csv_ministry["poc_email_secondary"]
 				ministry.is_approved = true
 				ministry.created_by_id = User.admin.first.id
 				ministry.save!
