@@ -132,7 +132,7 @@ class Organisation::ConsultationsController < ApplicationController
   def invite_respondents
     respondent_ids = params[:respondent][:ids].present? ? params[:respondent][:ids].to_unsafe_h : ""
     emails = params[:respondent][:emails].split(",")
-    Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails)
+    Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails, current_user)
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."
   end
 
