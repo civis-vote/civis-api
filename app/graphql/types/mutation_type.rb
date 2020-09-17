@@ -1,5 +1,6 @@
 module Types
   class MutationType < Types::BaseObject
+    field :auth_accept_invite,                      resolver: Mutations::Auth::AcceptInvite
     field :auth_change_password,                    resolver: Mutations::Auth::ChangePassword
     field :auth_confirm_email,                      resolver: Mutations::Auth::ConfirmEmail
     field :auth_forgot_password,                    resolver: Mutations::Auth::ForgotPassword
