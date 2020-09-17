@@ -14,6 +14,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :respondent, optional: true
   before_commit :update_reading_time
+  before_commit :sanitize_html_tags
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -66,4 +67,12 @@ class ConsultationResponse < ApplicationRecord
     self.save
   end
 
+  def sanitize_html_tags
+    if self.response_text.body
+      safe_list_sanitizer = Rails::Html::SafeListSanitizer.new
+      response_text = safe_list_sanitizer.sanitize(self.response_text.body.to_html, tags: %w(p img ul ol li a), attributes: %w(id class style src href))
+      self.response_text = response_text
+      self.save
+    end
+  end
 end

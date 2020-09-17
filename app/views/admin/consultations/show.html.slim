@@ -33,9 +33,10 @@
               = image_pack_tag "media/application/images/icons/copy-link.svg",class: "mr-2"
               .copy-public-url.mr-2
                 | Copy share link
-        / - if (@consultation.private_consultation?)
-        /     = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
-        /       p Invite
+        - unless Rails.env == "production"
+          - if (@consultation.private_consultation?)
+              = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
+                p Invite
         - if (@consultation.private_consultation? && !(@consultation.published? || @consultation.expired?))
           = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline_2", 'data-toggle': "modal"}  do
             | Publish
@@ -209,14 +210,15 @@
               .show-page-label-details Consultations responses summary link
               .show-page-input-details
                 = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
-            / .show-page-parent-details
-            /   .show-page-label-details Invitations
-            /   .show-page-input-details
-            /     | #{@invitation_sent_count} invitations sent
-            /     - if @consultation.published?
-            /       a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
-            /     - else
-            /       a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
+            - unless Rails.env == "production"
+              .show-page-parent-details
+                .show-page-label-details Invitations
+                .show-page-input-details
+                  | #{@invitation_sent_count} invitations sent
+                  - if @consultation.published?
+                    a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invited_respondents" data-toggle="modal" href="" Invite
+                  - else
+                    a class="square-btn-question ml-2" id="edit_question_icon" data-target="#invite_respondents" data-toggle="modal" href="" Invite
             = display_details("show-page-parent-details", "show-page-label-details", "Responses", "show-page-input-details", "#{@responses_count || '-'} responses")
   .h-20
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="extend_deadline"
