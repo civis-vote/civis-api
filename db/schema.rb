@@ -268,7 +268,7 @@ ActiveRecord::Schema.define(version: 2020_09_15_160325) do
     t.bigint "consultation_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "round"
+    t.integer "round_number"
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
 

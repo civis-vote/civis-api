@@ -3,7 +3,7 @@ module Types
 		class ResponseRoundType < BaseObject
 		  graphql_name "BaseResponseRoundType"
 		  field :id, 						Int, "ID of the response round", null: false
-		  field :round,					Int, nil, null: false
+		  field :round_number,	Int, nil, null: false
 		  field :active,				Boolean, nil, null: false
 		  field :questions, [Types::Objects::QuestionType], nil, null: true
 
