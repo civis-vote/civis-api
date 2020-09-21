@@ -67,26 +67,26 @@ class Respondent < ApplicationRecord
 			callback_url = ""
 			if (user_record.created_by_invite?) && !(user_record.invitation_accepted?)
 				if Rails.env.development?
-		      callback_url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
+		      callback_url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
 		      user_record.update(callback_url: callback_url)
 		      url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}&consultation_id=#{consultation.id}&invitation_token=#{@raw_token}"})).to_s
 		      return url
 		    else
-		      callback_url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
+		      callback_url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
 		      user_record.update(callback_url: callback_url)
 		      url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}&consultation_id=#{consultation.id}&invitation_token=#{@raw_token}"})).to_s
 		      return url
 		    end
 			else
 				if Rails.env.development?
-		      callback_url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
+		      callback_url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
 		      user_record.update(callback_url: callback_url)
-		      url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
+		      url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
 		      return url
 		    else
-		      callback_url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
+		      callback_url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
 		      user_record.update(callback_url: callback_url)
-		      url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
+		      url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
 		      return url
 		    end
 			end
