@@ -74,4 +74,8 @@ class ConsultationResponse < ApplicationRecord
       raise CivisApi::Exceptions::IncompleteEntity, "Certain HTML attributes are not permitted."
     end
   end
+
+  def round_number
+    return response_round.round_number if consultation.private_consultation? && respondent_id
+  end
 end
