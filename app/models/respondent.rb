@@ -29,7 +29,7 @@ class Respondent < ApplicationRecord
 		def invite_respondent(consultation, organisation, respondent_ids, emails, current_user)
 			if respondent_ids.present?
 				consultation_response_rounds = Consultation.includes(:response_rounds)
-				invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation)
+				invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation, current_user)
 			end
 			invite_new_respondent_via_email(emails, organisation, consultation, current_user) if emails.present?
 		end
@@ -42,14 +42,14 @@ class Respondent < ApplicationRecord
 	    end
 		end
 
-		def invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation)
+		def invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation, current_user)
 			respondent_ids.each do |id, value|
 				respondent = Respondent.find(id.to_i)
 				response_round_ids = Respondent.where(user_id: respondent.user_id).map{|r| r.response_round_id }
       	consultation_ids = consultation_response_rounds.where(response_rounds: { id: response_round_ids } ).map(&:id)
 				unless consultation_ids.include? consultation.id
-					respondent = create_respondent_record(respondent.user_id, organisation.id, consultation.response_rounds.last.id)
-					invite_respondent_email_job(consultation, respondent.user)
+					user_record = create_respondent(respondent.user.email, organisation, consultation, current_user)
+					invite_respondent_email_job(consultation, user_record)
 				end
 			end
 		end
