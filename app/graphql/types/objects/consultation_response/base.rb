@@ -34,10 +34,6 @@ module Types
 					return object.user if object.user == context[:current_user]
 					return nil
 				end
-
-				def round_number
-					return object.response_round.round_number if object.consultation.private_consultation? && object.respondent_id
-				end
 			end
 		end
 	end
