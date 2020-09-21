@@ -43,7 +43,8 @@ module Types
 				field :responses_reading_times,						Integer, "Reading times of all the responses in this consultation", null: false
 				field :reading_time,											Integer, "Reading time of this consultation summary", null: false
 				field :visibility,												Types::Enums::ConsultationVisibilityType, nil, null: false
-				field :questions,													[Types::Objects::QuestionType], nil, null: true
+				field :response_rounds,										[Types::Objects::ResponseRoundType], nil, null: true
+				
 				def shared_responses(sort:, sort_direction:)
 					object.shared_responses.sort_records(sort, sort_direction)
 				end
@@ -62,8 +63,8 @@ module Types
 					object.consultation_hindi_summary.page
 				end
 
-				def questions
-					object.response_rounds.last.questions
+				def response_rounds
+					object.response_rounds.order(:created_at)
 				end
 			end
 		end

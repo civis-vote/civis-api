@@ -34,10 +34,12 @@ module Attachable
           contents = x[:content].sub %r{data:((image|application)/.{3,}),}, ""
           decoded_data = Base64.decode64(contents)
           filename = x[:filename]
-          File.open("#{Rails.root}/tmp/#{filename}", "wb") do |f|
+          filepath = "#{Rails.root}/tmp/#{filename}"
+          File.open(filepath, "wb") do |f|
             f.write(decoded_data)
           end
-          self.send("#{attachment_type}").attach(io: File.open("#{Rails.root}/tmp/#{filename}"), filename: filename, content_type: content_type)
+          self.send("#{attachment_type}").attach(io: File.open(filepath), filename: filename, content_type: content_type)
+          File.delete(filepath)
         end
     end
   end
