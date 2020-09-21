@@ -23,7 +23,7 @@ class Admin::ConsultationsController < ApplicationController
     @responses_count = ConsultationResponse.where(respondent_id: @consultation_respondents.ids).size
     @question = Question.new
     @question.sub_questions.build
-    @respondents = @organisation ? @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id) : []
+    @respondents = @organisation ? @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id) : @consultation_respondents.search_user_query(params[:search]).uniq(&:user_id)
     @consultation_response_rounds = Consultation.includes(:response_rounds)
 		@page = @consultation.page
 		ConsultationHindiSummary.find_or_create_by(consultation: @consultation)

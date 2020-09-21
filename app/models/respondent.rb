@@ -4,7 +4,7 @@ class Respondent < ApplicationRecord
 
 	belongs_to :user
 	belongs_to :response_round
-	belongs_to :organisation
+	belongs_to :organisation, optional: true
 	has_many :consultation_response
 
 	scope :search_user_query, lambda { |query|
@@ -57,8 +57,8 @@ class Respondent < ApplicationRecord
 		def create_respondent(email, organisation, consultation, current_user=nil)
 			user_record = User.find_by(email: email.strip)
 			user_record = create_user_record(email.strip, DateTime.now, current_user) if !(user_record.present?) || (user_record.created_by_invite? && !user_record.invitation_accepted?)
-	    respondent_record = Respondent.where(user_id: user_record.id, organisation_id: organisation.id, response_round_id: consultation.response_rounds.last.id)
-    	create_respondent_record(user_record.id, organisation.id, consultation.response_rounds.last.id) unless respondent_record.present?
+	    respondent_record = Respondent.where(user_id: user_record.id, organisation: organisation, response_round_id: consultation.response_rounds.last.id)
+    	create_respondent_record(user_record.id, organisation, consultation.response_rounds.last.id) unless respondent_record.present?
 	    return user_record
 		end
 
@@ -104,8 +104,8 @@ class Respondent < ApplicationRecord
     	return user_record
 		end
 
-		def create_respondent_record(user_id, organisation_id, response_round_id)
-			Respondent.create(user_id: user_id, organisation_id: organisation_id, response_round_id: response_round_id)
+		def create_respondent_record(user_id, organisation, response_round_id)
+			Respondent.create(user_id: user_id, organisation: organisation, response_round_id: response_round_id)
 		end
 	end
 end

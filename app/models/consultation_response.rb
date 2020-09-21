@@ -14,6 +14,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :respondent, optional: true
   before_commit :update_reading_time
+  before_commit :validate_html_tags
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -66,4 +67,11 @@ class ConsultationResponse < ApplicationRecord
     self.save
   end
 
+  def validate_html_tags
+    if response_text.body.to_html !~ /(?!<\/?ol>|<\/?p>|<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>|<\/?a>)<\/?[^>]*>/
+      return true
+    else
+      raise CivisApi::Exceptions::IncompleteEntity, "Certain HTML attributes are not permitted."
+    end
+  end
 end
