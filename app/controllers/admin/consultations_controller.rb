@@ -17,7 +17,7 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def show
-		@response_rounds = @consultation.response_rounds
+		@response_rounds = @consultation.response_rounds.order(:created_at)
     @consultation_respondents = Respondent.where(response_round_id: @consultation.response_round_ids)
     @invitation_sent_count = @consultation_respondents.size
     @responses_count = ConsultationResponse.where(respondent_id: @consultation_respondents.ids).size

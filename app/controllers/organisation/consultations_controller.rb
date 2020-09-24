@@ -19,7 +19,7 @@ class Organisation::ConsultationsController < ApplicationController
 	end
 
 	def show
-    @response_rounds = @consultation.response_rounds
+    @response_rounds = @consultation.response_rounds.order(:created_at)
     @consultation_respondents = Respondent.where(response_round_id: @consultation.response_round_ids)
     @consultation_last_respond_round = Respondent.where(response_round_id: @consultation.response_rounds.last.id)
     @invitation_sent_count = @consultation_respondents.size
