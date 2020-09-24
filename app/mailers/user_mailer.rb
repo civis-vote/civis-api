@@ -148,7 +148,7 @@ class UserMailer < ApplicationMailer
 			xlsx.workbook do |workbook|
 				workbook.add_worksheet(name: "Consultation Responses") do |sheet|
 					wrap = workbook.styles.add_style alignment: {wrap_text: true}
-				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"]
+				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At"]
 					question_headers = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:question_text)
 					question_ids = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:id)	
 					question_headers.each do | question |
@@ -156,7 +156,7 @@ class UserMailer < ApplicationMailer
 					end
 					sheet.add_row response_header, b: true
 				  consultation_responses.each do |consultation_response|
-				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 				    answers = []
 			  		question_ids.each do |id|
 			  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
@@ -180,7 +180,7 @@ class UserMailer < ApplicationMailer
 					if response_round.present?
 						workbook.add_worksheet(name: "Responses - Round #{index+1}") do |sheet|
 							wrap = workbook.styles.add_style alignment: {wrap_text: true}
-							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Satisfication Rating", "Visibility", "Submitted At"]
+							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At"]
 							question_headers = response_round.questions.order(:created_at).pluck(:question_text)
 							question_ids = response_round.questions.order(:created_at).pluck(:id)	
 							question_headers.each do | question |
@@ -189,7 +189,7 @@ class UserMailer < ApplicationMailer
 						  sheet.add_row response_header, b: true
 						  consultation_responses.each do |consultation_response|
 						  	if consultation_response.respondent.response_round_id == response_round.id
-						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 						  		answers = []
 						  		question_ids.each do |id|
 						  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
