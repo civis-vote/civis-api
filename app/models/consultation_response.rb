@@ -68,6 +68,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def validate_html_tags
+    return response_text.body.blank?
     if response_text.body.to_html !~ /(?!<\/?ol>|<\/?p>|<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>|<\/?a>)<\/?[^>]*>/
       return true
     else
