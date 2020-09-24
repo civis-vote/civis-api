@@ -76,6 +76,6 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def round_number
-    return response_round.round_number if consultation.private_consultation? && respondent_id
+    return respondent.response_round.round_number if consultation.private_consultation? && respondent_id
   end
 end
