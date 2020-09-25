@@ -21,9 +21,8 @@ class Organisation::ConsultationsController < ApplicationController
 	def show
     @response_rounds = @consultation.response_rounds.order(:created_at)
     @consultation_respondents = Respondent.where(response_round_id: @consultation.response_round_ids)
-    @consultation_last_respond_round = Respondent.where(response_round_id: @consultation.response_rounds.last.id)
     @invitation_sent_count = @consultation_respondents.size
-    @responses_count = ConsultationResponse.where(respondent_id: @consultation_last_respond_round).size
+    @responses_count = ConsultationResponse.where(response_round_id: @response_rounds.last.id).size
     @question = Question.new
     @question.sub_questions.build
     @respondents = @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id)

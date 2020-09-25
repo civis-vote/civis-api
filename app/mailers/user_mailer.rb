@@ -188,7 +188,7 @@ class UserMailer < ApplicationMailer
 							end
 						  sheet.add_row response_header, b: true
 						  consultation_responses.each do |consultation_response|
-						  	if consultation_response.respondent.response_round_id == response_round.id
+						  	if consultation_response.response_round_id == response_round.id
 						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 						  		answers = []
 						  		question_ids.each do |id|

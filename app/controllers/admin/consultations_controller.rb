@@ -20,7 +20,7 @@ class Admin::ConsultationsController < ApplicationController
 		@response_rounds = @consultation.response_rounds.order(:created_at)
     @consultation_respondents = Respondent.where(response_round_id: @consultation.response_round_ids)
     @invitation_sent_count = @consultation_respondents.size
-    @responses_count = ConsultationResponse.where(respondent_id: @consultation_respondents.ids).size
+    @responses_count = ConsultationResponse.where(response_round_id: @response_rounds.last.id).size
     @question = Question.new
     @question.sub_questions.build
     @respondents = @organisation ? @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id) : @consultation_respondents.search_user_query(params[:search]).uniq(&:user_id)

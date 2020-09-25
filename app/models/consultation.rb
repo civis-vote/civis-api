@@ -134,7 +134,7 @@ class Consultation < ApplicationRecord
   end
 
   def feedback_url
-    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/" + "#{self.id}" +"/read" } ))
+    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/" + "#{self.id}" +"/read", query: nil } ))
     feedback_url.to_s
   end
 
@@ -144,7 +144,7 @@ class Consultation < ApplicationRecord
   end
 
   def review_url
-    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/admin/consultations/" + "#{self.id}" } ))
+    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/admin/consultations/" + "#{self.id}", query: nil } ))
     response_url.to_s
   end
 

@@ -13,6 +13,7 @@ class ConsultationResponse < ApplicationRecord
   has_many :down_votes, -> { down }, class_name: "ConsultationResponseVote"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :respondent, optional: true
+  belongs_to :response_round
   before_commit :update_reading_time
   before_commit :validate_html_tags
 
@@ -77,6 +78,6 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def round_number
-    return respondent.response_round.round_number if consultation.private_consultation? && respondent_id
+    return response_round.round_number
   end
 end
