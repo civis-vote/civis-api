@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_09_15_160325) do
+ActiveRecord::Schema.define(version: 2020_09_25_092527) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,9 +136,11 @@ ActiveRecord::Schema.define(version: 2020_09_15_160325) do
     t.jsonb "answers"
     t.datetime "deleted_at"
     t.bigint "respondent_id"
+    t.bigint "response_round_id"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
+    t.index ["response_round_id"], name: "index_consultation_responses_on_response_round_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
@@ -344,6 +346,7 @@ ActiveRecord::Schema.define(version: 2020_09_15_160325) do
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
   add_foreign_key "consultation_responses", "respondents"
+  add_foreign_key "consultation_responses", "response_rounds"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "ministries"
   add_foreign_key "game_actions", "point_events"
