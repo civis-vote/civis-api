@@ -138,7 +138,7 @@ class UserMailer < ApplicationMailer
                                             )
 	end
 
-	def consultation_responses_export_email_job(consultation_responses, email)
+	def 	consultation_responses_export_email_job(consultation_responses, email)
 		size_arr = []
     consultation_responses.size.times { size_arr << 22 }
 		excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
@@ -189,7 +189,7 @@ class UserMailer < ApplicationMailer
 						  sheet.add_row response_header, b: true
 						  consultation_responses.each do |consultation_response|
 						  	if consultation_response.response_round_id == response_round.id
-						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
 						  		answers = []
 						  		question_ids.each do |id|
 						  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
