@@ -29,8 +29,8 @@ def staging_storages
   s3_options = {
     access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
     secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
-    bucket: 'civis-api-staging',
-    region: 'eu-west-1'
+    bucket: 'civis-staging-api',
+    region: 'ap-south-1'
   }
 
   Shrine.plugin :url_options, store: { host: "https://cdn-staging.civis.vote/" }
