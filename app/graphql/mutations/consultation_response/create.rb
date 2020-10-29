@@ -12,6 +12,7 @@ module Mutations
         active_response_round = @consultation.response_rounds.order(:created_at).last
         created_consultation_response.response_round = active_response_round
         if @consultation.private_consultation?
+          raise GraphQL::ExecutionError, "Private response is enforced, response visibility can't be shared" if (@consultation.private_response? && created_consultation_response.visibility == "shared")
           respondent = ::Respondent.find_by(user: context[:current_user], response_round: active_response_round)
           created_consultation_response.respondent_id = respondent.id if respondent
         end
