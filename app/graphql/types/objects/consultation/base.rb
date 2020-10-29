@@ -22,7 +22,7 @@ module Types
 				field :ministry,													Types::Objects::Ministry, nil, null: false
 				field :consultation_responses_count,			Integer,nil, null: false
 				field :page,															Types::Objects::CmPageBuilderType, null: true
-				field :enforce_private_responses,					Boolean, nil, null: false
+				field :enforce_private_response,					Boolean, nil, null: false
 				field :response_deadline, 								Types::Objects::DateTime, "Deadline to submit responses.", null: false
 				field :responses,													Types::Connections::ConsultationResponse, nil, null: true do 
 					argument :response_token,								String, required: true
@@ -68,7 +68,7 @@ module Types
 					object.response_rounds.order(:created_at)
 				end
 
-				def enforce_private_responses
+				def enforce_private_response
 					object.private_response?
 				end
 			end
