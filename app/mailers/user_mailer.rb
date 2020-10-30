@@ -270,6 +270,7 @@ class UserMailer < ApplicationMailer
 																							reply_to: "support@civis.vote",
 																							template_alias: "organisation-user-invite",
 																							template_model:{
+																								first_name: user.first_name,
 																								invitation_url: invitation_url,
 																								unsubscribe_url: user.unsubscribe_url,
 																							})
