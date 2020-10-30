@@ -211,7 +211,7 @@
               .question-header-text
                 | Responses
             .show-page-parent-details
-              .show-page-label-details Consultations responses summary link
+              .show-page-label-details Responses to Consultation
               .show-page-input-details
                 = link_to  @consultation.response_url, @consultation.response_url, target: :_blank
             - unless Rails.env == "production"
