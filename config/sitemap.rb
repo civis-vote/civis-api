@@ -27,16 +27,26 @@ SitemapGenerator::Sitemap.create(include_index: false, filename: "sitemap", comp
 end
 
 #uploading to aws-cloud-storage
-aws_client = Aws::S3::Client.new(
+if Rails.env == "staging"
+  bucket_name = "civis-#{Rails.env}-sitemaps"
+  aws_client = Aws::S3::Client.new(
+  access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
+  secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
+  region: "ap-south-1",
+)
+else
+  bucket_name = "civis-sitemaps-#{Rails.env}"
+  aws_client = Aws::S3::Client.new(
   access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
   secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
   region: "eu-west-1",
 )
+end
+
 s3 = Aws::S3::Resource.new(client: aws_client)
 
 #uploading sitemap.xml.gz
 file_name = "#{Rails.root}/public/sitemaps/sitemap.xml.gz"
-bucket_name = "civis-sitemaps-#{Rails.env}"
 obj = s3.bucket(bucket_name).object("sitemap.xml.gz")
 obj.upload_file(file_name, { acl: "public-read", content_type: "application/x-gzip" })
 
