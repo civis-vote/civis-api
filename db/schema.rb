@@ -145,7 +145,7 @@ ActiveRecord::Schema.define(version: 2020_09_25_092527) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title"
+    t.string "title", null: false
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -297,7 +297,7 @@ ActiveRecord::Schema.define(version: 2020_09_25_092527) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"
@@ -315,7 +315,6 @@ ActiveRecord::Schema.define(version: 2020_09_25_092527) do
     t.string "organization"
     t.string "callback_url"
     t.string "designation"
-    t.bigint "consultation_id"
     t.bigint "organisation_id"
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -327,7 +326,6 @@ ActiveRecord::Schema.define(version: 2020_09_25_092527) do
     t.integer "invitations_count", default: 0
     t.boolean "active", default: true
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
-    t.index ["consultation_id"], name: "index_users_on_consultation_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
@@ -359,6 +357,5 @@ ActiveRecord::Schema.define(version: 2020_09_25_092527) do
   add_foreign_key "respondents", "response_rounds"
   add_foreign_key "respondents", "users"
   add_foreign_key "response_rounds", "consultations"
-  add_foreign_key "users", "consultations"
   add_foreign_key "users", "organisations"
 end
