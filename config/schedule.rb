@@ -30,7 +30,7 @@ end
 job_type :civis_backup,    "cd :path && :task :output"
 
 every :day, at: local("12:00AM") do
-  rake "expire:consultations"
-  rake "sitemap:refresh"
-  civis_backup "backup perform -t civis_backup"
+  command "bundle exec rails expire:consultations"
+  command "bundle exec rails sitemap:refresh"
+  command "/usr/local/bin/backup perform -t civis_backup"
 end
