@@ -20,17 +20,16 @@ require "tzinfo"
 
 # Learn more: http://github.com/javan/whenever
 
-set :output, "log/cron_log.log"
 env :PATH, ENV["PATH"]
 
 def local(time)
 	TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(time))
 end
 
-job_type :civis_backup,    "cd :path && :task :output"
+job_type :stack_path,    "cd $STACK_PATH && :task"
 
-every :day, at: local("12:00AM") do
-  command "bundle exec rails expire:consultations"
-  command "bundle exec rails sitemap:refresh"
-  command "/usr/local/bin/backup perform -t civis_backup"
+every :day, at: local('12:00am') do
+  stack_path "bundle exec rails expire:consultations"
+  stack_path "bundle exec rails sitemap:refresh"
+  stack_path "backup perform -t civis_backup"
 end
