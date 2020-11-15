@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   get "signin_google","signin_linkedin","signin_facebook", to: "oauth#redirect_to_provider"
   get "users/auth/:provider/callback", to: "oauth#callback"
   get "users/auth/failure" => "oauth#failure"
-  # post "/graphql", to: "graphql#execute"
+  post "/graphql", to: "graphql#execute"
   post "resend/create", to: "resend#create"
   get "users/edit_invite", to: "users#edit_invite"
   post "users/accepte_invite", to: "users#accepte_invite"
