@@ -30,7 +30,7 @@ end
 aws_client = Aws::S3::Client.new(
   access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
   secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
-  region: "eu-west-1",
+  region: "ap-south-1",
 )
 s3 = Aws::S3::Resource.new(client: aws_client)
 
