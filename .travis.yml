@@ -11,33 +11,33 @@ env:
   global:
   - secure: J30voywFntJ2k6k/VubxQHdnHckz3wote42pUa9Avrn1Y1rJZD4LtBMkDQeR8wjTtVBnstFdGzo9qL0FJj6xwjK2yaILRlDOWEme8pfe+MFqEekTNxYZeYS2W8suYPZQyMHDi8EyzXQrHlnFNyuvNiNjVbfjsLhpsJTD6UnW+4tjWgicchrVtgnsUf0Qx/OBMfZiJu+mTGNn2Eu6QUm7v7r0ifw/0XCLVE1Z0i9OLC4RxCXXWAkItvbjsiV7d/nVfi5rBPzwiLvm8ZhGdjRT/Zo3msqFYHCYUrXEbaKOxup2Vc3MuunyqWd1PS2S65pLz/tuO5rDKrtEmQD/Ow0zOY0koefnqgoNzVvTJTFqTOEggABsbNTC8QcxR4jBKwtt1tXIn2TfEltIjBRd43VyLqwLmu1DR7HAlnAuUc5x627VAnaWHn9+XFWBYC0ScvrOAgAFnc3jeMaZEUA2ogQVonBRlgfLHw4dYEpD1AewoppOdUy5hGqDHe340ryNEFQZKtm63YCemXCsEIp6jBfUD1izsk+hF/8pQ/zBMuEyJ5RB0rruA3I0HMWvEnJbm2b0ojdD4WjCWowMMm7FyEMfLbhWIZ/Tk8iRUzzcTDU7g/BelRzGVcSNe1QUXoznxiss9eGZcPAOOrqy1f5vuAuEApw4FQ9ntdEbigibpKcfYiU=
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
-  - cp config/database.yml.travis config/database.yml
+- psql -c 'create database travis_ci_test;' -U postgres
+- cp config/database.yml.travis config/database.yml
 script:
-  - RAILS_ENV=test bundle exec rake db:test:prepare --trace
-  - bundle exec rspec spec
+- RAILS_ENV=test bundle exec rake db:test:prepare --trace
+- bundle exec rspec spec
 services:
-  - redis-server
+- redis-server
 before_deploy:
-  - export APPLICATION_NAME=civis
-  - export DEPLOYENV=$(if [ "${TRAVIS_BRANCH}" == "staging" ]; then echo "staging";
-    else echo "production"; fi)
-  - export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
-  - chmod +x ./.rollbar.sh
-  - export DEPLOY_ID="$(while read -r line; do echo "$line"; done < ~/deploy_id_from_rollbar)"
+- export APPLICATION_NAME=civis
+- export DEPLOYENV=$(if [ "${TRAVIS_BRANCH}" == "staging" ]; then echo "staging";
+  else echo "production"; fi)
+- export AUTHOR_NAME="$(git log -1 $TRAVIS_COMMIT --pretty="%aN")"
+- chmod +x ./.rollbar.sh
+- export DEPLOY_ID="$(while read -r line; do echo "$line"; done < ~/deploy_id_from_rollbar)"
 deploy:
   - provider: cloud66
     redeployment_hook:
-      secure: ACRtTGERcEKDx1B8CceKW7Klz10p8roCrYNTDh14zPMid9gTVl4YufsINIwBsA0ct/brzL5bwOVrRWg64PsIHlVKyO+GyB4fbSo/zu0/1QZAtb60mXTgB7iQNA7Xo74eWYQXlypoTuFX1Hcx27/R6n4rocAKUkg7AiFFMEGpx6pH0wPBn9P3jwIikcXVic5xZRK7wPe/lsyhU6V6KYTb3CeIJqEPzW4PeHSIly1W623RldWd0usR7GWFEvScIFFB37NDfRnm/oR2tR707ZrYhLmQSEonPKa+AkQ5FwFsxngBiYakgTAdrRUQ3E7fa+Ptt/bkeAOLtorB1Fp319eEAAO1rssbBT8J1Ulq5g51MGENsD/8DSD7uzzBYjkdx1DAvGlKvtqlRnC26xwdpFJ/U5JuoteIOZ3qVhDf/+Qb0EblZFAxk+J1FTXNH1HJXTZoAQ8UETCm8Kgu1yBMWjoRZN81Gq6ourt8irqTQvLmzgOY1pGgeoUawYK/OdmY2GES+1At9NmfYHZI8fHi3BielBOtePolrQx83ekC7rRl+f+Wq2wnsgZKhH7KAYR3vOVTFoHfyclZSoFfaBs+JceM6UCfC+NL3YRWrkdBxFULypKUvr0wBaLuWjN/tpmgeea9uHEWFfbpy0wcn0PbkpZ580QPGNOq+9EH1VxgQ6dNnbI=
+      secure: CMv/6NgB2BYco+5WacJv6OgxIlN7lkJY2uYpct5mSMcpIhjAg/z2uuCpd9ojjV4rmzMkptQzYLrU3PvvGb4lyxIm4baAPm+sDz7GxUNDey8yn8CHcMJ48PqvSCeK0b1IF2dL/+fILZ4mSAj5Z424y0ICBS/nmO66MDv/DeBO3HT6o6i+t8Vk34ZxRw2lgU5Sa+ZMN2NMKQ6rtS1zSeFTw0cmbYQgsaurcvcsoRDKWvFiebcOb7YUPjBkNXm95J895HxfO+eS96BeH6quYai/BbauEZhIaPa5dd5Jz60nL0oUW9TAtvZCEizxieKdwxpvpK6e2zd+Jgy6xu3KGs9fjHAaRzZtgwlk8SirID5lYRJgQforVrWQY3bNq2XWJPqquhNXZhylDidA1ui4hVt8yFhTjgxWFuenfPGK6xziCxbaGKpDwy8fgtI6xwn5OtU18uLrdBEflMpL+AtZqeL5LS/4cpXzVi7Ajp+Jk8dvdmQzDaZE97se0EYQSzLM+Y8ywBzThv57lDHEYIfDpFuaAvtFtoI6axV56tQ+B/XFCz1+kTvGwtuuZIeJ2bgoZx5FY9qmly7yowgN7cBnOdETwRfUwmbzs+9o0RYZqKR3ECE22v/xE5ZiusDE0+tw78f1e1rPVIPOFUoE2Wd5Gtt/yXkf7Gd7XBm+YqONPLR02IM=
     on:
       branch: staging
   - provider: cloud66
     redeployment_hook:
-      secure: HVNozoXPhXL3nBOFs4v2lZLEJsGb8hF9DfChR79UkMv9LqPcJJtvbKgYOlkyXMSL3Dgt8ZtHTL/UCjtHvZFxJ1j3x357KGmvMfBZawgTuHmKjWSf5qFiQIL9CITq8JT++6LB7dYSAFesjATzHUOKvzdHyEoTkA28FZHcyj6J01YImpyuPAwPPe0BBAoHOeeZtkfwVMIkjcMdk8OQY9PXk6Izpr7CUgV945IdIega8d7kPOegsxKN8z49RDsj62mOxYix/uF3P2ddrxspMrqW8JTcacWo4dDhreTLx5XWUDz8oybsMOJohGLetX6DKG7sPbvxVvlA/Um+m1FwddR9Ba+w9FiIP/pHFRyV8lvV6+tox7rw4QmbOOSgFCKR9Ld8rropfBJjS38kxR4tJNri39+Zj7X5+5zp0OL+hX0Ree+Q7u6Am2AlCkpQviLvoOup9TUnNQnTt/dq9bAPm0aSOV6YerHsR2G1ZHKab+hROejc/CLOBafbpCcc3tizCvYKTKgX9XpbLwZrtvEc22ZcPQuuxqRFE5BEZtLbldYJcF5YugkMDZ/zw8t0WljHdJxq5A2P1AzK9z/SqqDHbvE58OmdY5MKXers9F0agY7faOZqGhXqRb3bXGnnj84TNev3zNs7iUA3mOvbI7zl4Q9+I/72ngb9QEdgI1sqQl4BAdw=
+      secure: du8P7HdB6+fjWoC0RSza9c6BVLIyMSpYqDL/uFSlTIrGGVZBy1PvDH9nZR0P45C7oUIuleK3RThGzZLTxU5O0UTNDSEHGvsa7VVBYNz/xNpnfTUyE7OaATrjValyhpIN0b/vKUdTsQB+HzWMuzPltCNXJsJxY/EQrqQ3CsO7J3PoIZzZUS+mvdI1MuO6MbtdXFjjkrocvljWn+08mtDc3N+f9FxdpLjiaV/jLJkbQLfHlvevvJABBytSUwbtWL9HwFCV23IDSB28cdWLzFSGDRj14mgMWdXiYCWIAmNeb5bODQwoRxPqc3NZRr3tCBjoXLVUu8uPGtgMBThj+mcVacsg5da6Do0OYlKxTGZXREMCKr32X7EFrlh1R4QYechjAjEXZzQIhJucwsK/bKBXQHM+UCfgf51Pp/R7QtXzkI497MOjxeE1no7CMdXkjkKoHsWnHqoo2/T75qyGWY8txRCt76jZsfllUhpyVgQpqmDW+e2F8QYhYiNx7//JQLR+TyqTAUVK7fZQ7Tiy+6qk0IgNX73J3gsv9/dahW0py1CWrkN16s9IpiWRx9uw2UZAcoQhcne7GMvX+hwNueGRZP8Dl2G0TSxt7t9DceGfiXaykGPnfBESN2waesEljan6eaD5dnlj/Mdff/lNg5AWxUhYJ0kPiGMO98t1m6tckxs=
     on:
       branch: master
 after_deploy:
-  - chmod +x ./.rollbar.sh
+- chmod +x ./.rollbar.sh
 branches:
   only:
   - master
