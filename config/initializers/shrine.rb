@@ -13,11 +13,11 @@ def production_storages
   s3_options = {
     access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
     secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
-    bucket: 'civis-api-production',
-    region: 'eu-west-1'
+    bucket: 'civis-production-api',
+    region: 'ap-south-1'
   }
 
-  Shrine.plugin :url_options, store: { host: "https://cdn.civis.vote/" }
+  Shrine.plugin :url_options, store: { host: "https://production.cdn.civis.vote/" }
 
   {
     cache: Shrine::Storage::FileSystem.new(Rails.root.join("public"), prefix: "uploads/cache"),
