@@ -6,7 +6,7 @@ module Scorable
     included do 
 
 	    after_commit :add_user_created_points, on: :create if respond_to? :after_commit
-
+      after_commit :add_user_created_points, if: :saved_change_to_city_id?
 	    def add_user_created_points
 	    	self.add_points(:user_created)
 	    end
