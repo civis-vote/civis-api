@@ -86,7 +86,7 @@
             - @page.components.each do |component|
               - if component["componentType"] == "Upload"
                 .width-25
-                  = image_tag "#{component['component_attachment']['url']}"
+                  = image_tag "#{component['component_attachment']['url']}" if component['component_attachment'].present?
               - else
                 p
                   = raw component["content"]
@@ -101,7 +101,7 @@
             - @hindi_summary_page.components.each do |component|
               - if component["componentType"] == "Upload"
                 .width-25
-                  = image_tag "#{component['component_attachment']['url']}"
+                  = image_tag "#{component['component_attachment']['url']}" if component['component_attachment'].present?
               - else
                 p
                   = raw component["content"]
