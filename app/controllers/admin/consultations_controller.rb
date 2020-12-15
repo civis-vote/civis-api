@@ -88,15 +88,10 @@ class Admin::ConsultationsController < ApplicationController
 
 	def update
 		if @consultation.update(secure_params)
-			components = page_params.delete(:components)
 	    if @consultation.page.present?
 	      @page = @consultation.page
 	    else
 	      @page = @consultation.create_page
-	    end
-	    if @page.save
-	      @page.save_content(components) if components.present?
-	      sleep(2.0)
 	    end
 	    @consultation.update_reading_time
 			redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation details was successfully updated."
@@ -199,7 +194,7 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response)
 	end
 
 	def set_consultation
