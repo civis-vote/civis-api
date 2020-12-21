@@ -8,7 +8,7 @@ class ImageUploader < Shrine
   if Rails.env.production?
 	  host = "https://cdn.civis.vote/"
 	elsif Rails.env.staging?
-	  host = "https://cdn-staging.civis.vote/"
+	  host = "https://staging.cdn.civis.vote/"
 	else
 	  host = "http:localhost:3000"
 	end

@@ -6,14 +6,16 @@ class ConsultationResponse < ApplicationRecord
 
   belongs_to :user
   belongs_to :consultation, counter_cache: true, optional: true
-  # validates_uniqueness_of :user_id, scope: :consultation_id
+  validates_uniqueness_of :user_id, scope: :response_round_id
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
   has_many :down_votes, -> { down }, class_name: "ConsultationResponseVote"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :respondent, optional: true
+  belongs_to :response_round
   before_commit :update_reading_time
+  before_commit :validate_html_tags
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -66,4 +68,16 @@ class ConsultationResponse < ApplicationRecord
     self.save
   end
 
+  def validate_html_tags
+    return response_text.body.blank?
+    if response_text.body.to_html !~ /(?!<\/?ol>|<\/?p>|<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>|<\/?a>)<\/?[^>]*>/
+      return true
+    else
+      raise CivisApi::Exceptions::IncompleteEntity, "Certain HTML attributes are not permitted."
+    end
+  end
+
+  def round_number
+    return response_round.round_number
+  end
 end

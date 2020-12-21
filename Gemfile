@@ -70,7 +70,7 @@ gem "omniauth-google-oauth2"
 gem "omniauth-linkedin-oauth2"
 gem "omniauth-facebook"
 
-gem "shrine", "~> 3.0"
+gem "shrine", "~> 3.3"
 gem "cocoon"
 gem 'react-rails', '~> 2.6.0'
 gem 'cm_page_builder-rails', '~> 0.2.1'

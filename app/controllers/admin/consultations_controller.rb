@@ -17,13 +17,13 @@ class Admin::ConsultationsController < ApplicationController
 	end
 
 	def show
-		@response_rounds = @consultation.response_rounds
+		@response_rounds = @consultation.response_rounds.order(:created_at)
     @consultation_respondents = Respondent.where(response_round_id: @consultation.response_round_ids)
     @invitation_sent_count = @consultation_respondents.size
-    @responses_count = ConsultationResponse.where(respondent_id: @consultation_respondents.ids).size
+    @responses_count = ConsultationResponse.where(response_round: @response_rounds.last).size
     @question = Question.new
     @question.sub_questions.build
-    @respondents = @organisation ? @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id) : []
+    @respondents = @organisation ? @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id) : @consultation_respondents.search_user_query(params[:search]).uniq(&:user_id)
     @consultation_response_rounds = Consultation.includes(:response_rounds)
 		@page = @consultation.page
 		ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
@@ -88,15 +88,10 @@ class Admin::ConsultationsController < ApplicationController
 
 	def update
 		if @consultation.update(secure_params)
-			components = page_params.delete(:components)
 	    if @consultation.page.present?
 	      @page = @consultation.page
 	    else
 	      @page = @consultation.create_page
-	    end
-	    if @page.save
-	      @page.save_content(components) if components.present?
-	      sleep(2.0)
 	    end
 	    @consultation.update_reading_time
 			redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation details was successfully updated."
@@ -180,7 +175,7 @@ class Admin::ConsultationsController < ApplicationController
   def invite_respondents
     respondent_ids = params[:respondent][:ids].present? ? params[:respondent][:ids].to_unsafe_h : ""
     emails = params[:respondent][:emails].split(",")
-    Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails)
+    Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails, current_user)
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."
   end
 
@@ -199,7 +194,7 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response)
 	end
 
 	def set_consultation

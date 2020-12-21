@@ -4,7 +4,7 @@ class Respondent < ApplicationRecord
 
 	belongs_to :user
 	belongs_to :response_round
-	belongs_to :organisation
+	belongs_to :organisation, optional: true
 	has_many :consultation_response
 
 	scope :search_user_query, lambda { |query|
@@ -26,70 +26,86 @@ class Respondent < ApplicationRecord
 	private
 
 	class << self
-		def invite_respondent(consultation, organisation, respondent_ids, emails)
+		def invite_respondent(consultation, organisation, respondent_ids, emails, current_user)
 			if respondent_ids.present?
 				consultation_response_rounds = Consultation.includes(:response_rounds)
-				invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation)
+				invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation, current_user)
 			end
-			invite_new_respondent_via_email(emails, organisation, consultation) if emails.present?
+			invite_new_respondent_via_email(emails, organisation, consultation, current_user) if emails.present?
 		end
 
-		def invite_new_respondent_via_email(emails, organisation, consultation)
+		def invite_new_respondent_via_email(emails, organisation, consultation, current_user=nil)
 			emails.each do |email|
-	    	user_record = create_respondent(email, organisation, consultation)
+	    	user_record = create_respondent(email, organisation, consultation, current_user)
 	      user_record.update(callback_url: "https://www.civis.vote/auth-private?email=")
 	      invite_respondent_email_job(consultation, user_record)
 	    end
 		end
 
-		def invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation)
+		def invite_other_consultation_respondents(respondent_ids, consultation_response_rounds, consultation, organisation, current_user)
 			respondent_ids.each do |id, value|
 				respondent = Respondent.find(id.to_i)
 				response_round_ids = Respondent.where(user_id: respondent.user_id).map{|r| r.response_round_id }
       	consultation_ids = consultation_response_rounds.where(response_rounds: { id: response_round_ids } ).map(&:id)
 				unless consultation_ids.include? consultation.id
-					respondent = create_respondent_record(respondent.user_id, organisation.id, consultation.response_rounds.last.id)
-					invite_respondent_email_job(consultation, respondent.user)
+					user_record = create_respondent(respondent.user.email, organisation, consultation, current_user)
+					invite_respondent_email_job(consultation, user_record)
 				end
 			end
 		end
 
-		def create_respondent(email, organisation, consultation)
+		def create_respondent(email, organisation, consultation, current_user=nil)
 			user_record = User.find_by(email: email.strip)
-	    if user_record
-	    	respondent_record = Respondent.where(user_id: user_record.id, organisation_id: organisation.id, response_round_id: consultation.response_rounds.last.id)
-	    	create_respondent_record(user_record.id, organisation.id, consultation.response_rounds.last.id) unless respondent_record.present?
-	    else
-	    	user_record = create_user_record(email.strip, DateTime.now)
-	    	create_respondent_record(user_record.id, organisation.id, consultation.response_rounds.last.id)
-	    end
+			user_record = create_user_record(email.strip, DateTime.now, current_user) if !(user_record.present?) || (user_record.created_by_invite? && !user_record.invitation_accepted?)
+	    respondent_record = Respondent.where(user_id: user_record.id, organisation: organisation, response_round_id: consultation.response_rounds.last.id)
+    	create_respondent_record(user_record.id, organisation, consultation.response_rounds.last.id) unless respondent_record.present?
 	    return user_record
 		end
 
 		def respondent_invite_url(consultation, user_record)
-			if Rails.env.development?
-	      callback_url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
-	      url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}"})).to_s
-	    else
-	      callback_url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/consultations/#{consultation.id}/read"})).to_s
-	      url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}"})).to_s
-	    end
-		end
+			url = ""
+			callback_url = ""
+			if (user_record.created_by_invite?) && !(user_record.invitation_accepted?)
+				if Rails.env.development?
+		      callback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
+		      user_record.update(callback_url: callback_url)
+		      url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}&consultation_id=#{consultation.id}&invitation_token=#{@raw_token}"})).to_s
+		      return url
+		    else
+		      callback_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
+		      user_record.update(callback_url: callback_url)
+		      url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}&consultation_id=#{consultation.id}&invitation_token=#{@raw_token}"})).to_s
+		      return url
+		    end
+			else
+				if Rails.env.development?
+		      callback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
+		      user_record.update(callback_url: callback_url)
+		      url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
+		      return url
+		    else
+		      callback_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
+		      user_record.update(callback_url: callback_url)
+		      url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
+		      return url
+		    end
+			end
+   	end
 
 		def invite_respondent_email_job(consultation, user_record)
 			url = respondent_invite_url(consultation, user_record)
 			InviteRespondentJob.perform_later(consultation, user_record, url) if consultation.published?
 		end
 
-		def create_user_record(email, confirmed_at)
-			user_record = User.new(email: email, confirmed_at: confirmed_at)
-    	user_record.save(validate: false)
+		def create_user_record(email, confirmed_at, current_user)
+			user_record = User.invite!({ email: email, skip_invitation: true, invitation_sent_at: confirmed_at, confirmed_at: confirmed_at }, current_user)
+      @raw_token = user_record.raw_invitation_token
     	user_record = User.find_by(email: email.strip)
     	return user_record
 		end
 
-		def create_respondent_record(user_id, organisation_id, response_round_id)
-			Respondent.create(user_id: user_id, organisation_id: organisation_id, response_round_id: response_round_id)
+		def create_respondent_record(user_id, organisation, response_round_id)
+			Respondent.create(user_id: user_id, organisation: organisation, response_round_id: response_round_id)
 		end
 	end
 end
