@@ -78,7 +78,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def round_number
-    return nil unless round_number.present?
+    return nil unless response_round_id.present?
     return response_round.round_number
   end
 end
