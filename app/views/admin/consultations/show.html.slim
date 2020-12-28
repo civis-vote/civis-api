@@ -105,9 +105,9 @@
             .text-color.m-1
               = consultation_status_text(@consultation)
       .show-page-parent-details
-        .show-page-label-details Consultation Report
+        .show-page-label-details Consultation Page
         .show-page-input-details
-          = link_to  "#{@consultation.response_url}", @consultation.response_url, target: :_blank
+          = link_to  "#{@consultation.feedback_url}", @consultation.response_url, target: :_blank
   .admin-index-title.mt-4
     | Summary
   .admin-list-bg.mt-4
@@ -119,7 +119,7 @@
             - @page.components.each do |component|
               - if component["componentType"] == "Upload"
                 .width-25
-                  = image_tag "#{component['component_attachment']['url']}"
+                  = image_tag "#{component['component_attachment']['url']}" if component['component_attachment'].present?
               - else
                 p
                   = raw component["content"]
@@ -134,7 +134,7 @@
             - @hindi_summary_page.components.each do |component|
               - if component["componentType"] == "Upload"
                 .width-25
-                  = image_tag "#{component['component_attachment']['url']}"
+                  = image_tag "#{component['component_attachment']['url']}" if component['component_attachment'].present?
               - else
                 p
                   = raw component["content"]
