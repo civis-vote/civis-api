@@ -8,6 +8,7 @@ module Types
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :down_vote_count,										Integer, "Count of users that down-votes this response", null: false
 				field :id,																Integer, "ID of the consultation", null: false
+				field :is_verified,												Boolean, "Email verification of the user", null: false
 				field :points,														Float, "Points earned by submitting this response", null: false
 				field :reading_time,											Integer, "Reading time of this response", null: false
 				field :response_text,											String, nil, null: true
@@ -30,9 +31,13 @@ module Types
 				end
 
 				def user
-					return object.user if object.shared?
+					return object.user if (object.shared? && is_verified)
 					return object.user if object.user == context[:current_user]
 					return nil
+				end
+
+				def is_verified
+					object.user.confirmed_at?
 				end
 			end
 		end
