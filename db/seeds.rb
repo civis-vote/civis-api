@@ -25,8 +25,8 @@ Rake::Task["import_records_from_csv:point_scale"].invoke("")
 Rake::Task["import_records_from_csv:point_scale"].reenable
 
 puts "---> Fabricating API Team"
-Fabricate(:user, email: "mkv@commutatus.com")
-Fabricate(:user, email: "balaji@commutatus.com")
+Fabricate(:user, email: "mkv@commutatus.com", role: "admin")
+Fabricate(:user, email: "balaji@commutatus.com", role: "admin")
 
 puts "---> Importing Ministries"
 Rake::Task["import_records_from_csv:ministries"].invoke("")
@@ -59,14 +59,19 @@ end
 puts "---> Responding to some consultations"
 Consultation.where(status: [:published, :rejected]).each do |consultation|
 	response_count = [0, 1, 2, 3, 4, 5].sample
-	Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id)
+	Fabricate.times(response_count, :response_round, consultation_id: consultation.id)
+	begin
+		puts "---> Creating Response Round for consultations"
+		Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id, response_round_id: consultation.response_rounds.last.id)
+	rescue
+	end
 end
 
 puts "---> Creating Question to consultation"
 Fabricate.times(10, :question)
 Question.all.each do |question|
 	puts "---> Creating sub questions"
-	Fabricate.times(4, :question, parent_id: question.id, consultation_id: nil)
+	Fabricate.times(4, :question, parent_id: question.id)
 end
 
 puts "---> Creating Organisation and employees"
