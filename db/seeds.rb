@@ -63,7 +63,8 @@ Consultation.where(status: [:published, :rejected]).each do |consultation|
 	begin
 		puts "---> Creating Response Round for consultations"
 		Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id, response_round_id: consultation.response_rounds.last.id)
-	rescue
+	rescue ActiveRecord::RecordInvalid => exception
+		puts "---> #{exception.record.errors.full_messages.join('\n')}"
 	end
 end
 
