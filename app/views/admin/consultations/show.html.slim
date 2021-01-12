@@ -107,7 +107,11 @@
       .show-page-parent-details
         .show-page-label-details Consultation Page
         .show-page-input-details
-          = link_to  "#{@consultation.feedback_url}", @consultation.response_url, target: :_blank
+          = link_to  "#{@consultation.feedback_url}", @consultation.feedback_url, target: :_blank
+      .show-page-parent-details
+        .show-page-label-details Consultation Summary
+        .show-page-input-details
+          = link_to  "#{@consultation.response_url}", @consultation.response_url, target: :_blank
   .admin-index-title.mt-4
     | Summary
   .admin-list-bg.mt-4
