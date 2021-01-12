@@ -16,9 +16,10 @@ namespace :import_records_from_csv do
 				ministry.created_by_id = User.admin.first.id
 				ministry.save!
 				logo_image = open(logo_base_url + csv_ministry["logo"].strip)
-				ministry.logo.attach(io: logo_image, filename: csv_ministry["logo"].strip)
-				cover_photo_image = open(cover_photo_base_url + csv_ministry["cover_photo"].strip)
-				ministry.cover_photo.attach(io: cover_photo_image, filename: csv_ministry["cover_photo"].strip)
+				uploader = ImageUploader.new(:store)
+        uploaded_file = uploader.upload(logo_image)
+        uploaded_file.metadata["filename"] = csv_ministry["logo"].strip
+        ministry.update(logo_data: uploaded_file.to_json)
 			end
 		end
 	end
