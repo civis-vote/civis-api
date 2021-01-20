@@ -14,6 +14,7 @@ module Types
 				argument :organization, 								String,		nil,	required: false
 				argument :password, 										String, 	nil, 	required: true
 				argument :phone_number,									String,		nil, 	required: false
+				argument :referring_consultation_id,		Int,			nil,	required: false
 			end
 		end
 	end
