@@ -326,7 +326,7 @@ ActiveRecord::Schema.define(version: 2021_01_19_101243) do
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.boolean "active", default: true
-    t.integer "referer_id"
+    t.integer "referring_consultation_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["consultation_id"], name: "index_users_on_consultation_id"
     t.index ["email"], name: "index_users_on_email", unique: true
