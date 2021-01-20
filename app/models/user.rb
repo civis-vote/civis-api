@@ -101,6 +101,11 @@ class User < ApplicationRecord
 
   def send_email_verification
   	VerifyUserEmailJob.perform_later(self) unless confirmed_at
+    if (!confirmed_at && referer_id)
+      VerifyUserEmailAfter8HoursJob.set(wait: 8.hours).perform_later(self.id, self.referer_id) 
+      VerifyUserEmailAfter72HoursJob.set(wait: 80.hours).perform_later(self.id)
+      VerifyUserEmailAfter120HoursJob.set(wait: 200.hours).perform_later(self.id)
+    end
   end
 
   def update_last_activity

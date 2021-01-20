@@ -287,4 +287,51 @@ class UserMailer < ApplicationMailer
 																								unsubscribe_url: user.unsubscribe_url,
 																							})
 	end
+
+	def verify_email_after_8_hours(user_id, consultation_id)
+		user = User.find(user_id)
+		consultation = Consultation.find(consultation_id)
+		unless user.confirmed_at?
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "user-confirmation-after-8-hours",
+																							template_model:{
+																								consultation_name: consultation.title,
+																								first_name: user.first_name,
+																								confirmation_url: user.confirmation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+		end
+	end
+
+	def verify_email_after_72_hours(user_id)
+		user = User.find(user_id)
+		unless user.confirmed_at?
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "user-confirmation-after-72-hours",
+																							template_model:{
+																								confirmation_url: user.confirmation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+		end
+	end
+
+	def verify_email_after_120_hours(user_id)
+		user = User.find(user_id)
+		unless user.confirmed_at?
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "user-confirmation-after-120-hours",
+																							template_model:{
+																								first_name: user.first_name,
+																								confirmation_url: user.confirmation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+		end
+	end
+
 end
