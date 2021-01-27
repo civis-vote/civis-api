@@ -9,6 +9,13 @@ module Scorable
       after_commit :add_user_created_points, if: :saved_change_to_city_id?
 	    def add_user_created_points
 	    	self.add_points(:user_created)
+        point_events = self.point_events.joins(:point_scale).where(point_scales: {action: "response_submitted"})
+        consultation_responses = self.responses
+        if !point_events.present? && consultation_responses.present?
+          consultation_responses.each do | consultation_response|
+            consultation_response.add_response_created_points
+          end
+        end
 	    end
 	  end
 
