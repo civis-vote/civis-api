@@ -21,7 +21,7 @@ module Scorable
 
     class << self
       def update_national_rank
-        distinct_points = ::User.citizen.distinct(:points).pluck(:points).sort.reverse
+        distinct_points = ::User.citizen.where.not(city_id: nil).distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
           ::User.where(points: point_value).update_all(rank: index + 1)
         end
