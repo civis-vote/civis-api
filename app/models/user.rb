@@ -140,7 +140,7 @@ class User < ApplicationRecord
   end
 
   def self.add_fields_from_oauth(f_name, l_name, email, provider, uid, image_url)
-    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: SecureRandom.hex(32)
+    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: SecureRandom.hex(32), confirmed_at: DateTime.now
     user.skip_confirmation_notification!
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
