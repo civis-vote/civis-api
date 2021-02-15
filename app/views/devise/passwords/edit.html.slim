@@ -1,22 +1,24 @@
-h2
-  | Change your password
-= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f|
-  = render "devise/shared/error_messages", resource: resource
-  = f.hidden_field :reset_password_token
-  .field
-    = f.label :password, "New password"
-    br
-    - if @minimum_password_length
-      em
-        | (
-        = @minimum_password_length
-        |  characters minimum)
-      br
-    = f.password_field :password, autofocus: true, autocomplete: "new-password"
-  .field
-    = f.label :password_confirmation, "Confirm new password"
-    br
-    = f.password_field :password_confirmation, autocomplete: "off"
-  .actions
-    = f.submit "Change my password"
-= render "devise/shared/links"
+- flash.each do |key, value|
+  - if (key == "alert" || key == "flash_info" || key == "flash_success_info")
+    div class=("alert sign-in-notice #{key}") = value
+.login-form-bg-color
+  .container
+      .login-panel-input-width
+        .login-form
+          .company-logo
+            = image_pack_tag "media/application/images/civis_logo.png"
+          .sign-up-text.text-center Change your password
+          = simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "user_login p-4" }) do |f|
+            = f.hidden_field :reset_password_token
+            .row.form-group
+              .col-md-12.form-label-group
+                = f.password_field :password, required: true, autofocus: true, label: false, placeholder: "Password", wrapper: false, class: 'width-100 form-control', input_html: { id: "user_password" }
+                label for="user_password" New Password (minimum 6 characters)
+              .col-md-12.form-label-group
+                = f.password_field :password_confirmation, required: true, autofocus: true, label: false, placeholder: "Confirm Password", wrapper: false, class: 'width-100 form-control', input_html: { id: "user_password_confirmation" }
+                label for="user_password_confirmation" Confirm new password
+            .row.form-group.text-center
+              .col-md-12
+                = f.button :submit, "Change my password", class: 'submit-btn sign-in-button'
+                br
+                = render "devise/shared/links"
