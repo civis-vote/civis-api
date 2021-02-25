@@ -42,8 +42,6 @@ gem "local_time", "~> 2.1"
 
 gem "travis"
 
-gem "whenever", require: false
-
 gem "roo", "~> 2.8.0"
 
 gem "sitemap_generator"
