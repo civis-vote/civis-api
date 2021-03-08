@@ -101,6 +101,11 @@ class User < ApplicationRecord
 
   def send_email_verification
   	VerifyUserEmailJob.perform_later(self) unless confirmed_at
+    if (!confirmed_at && referring_consultation_id)
+      VerifyUserEmailAfter8HoursJob.set(wait: 8.hours).perform_later(self.id, self.referring_consultation_id) 
+      VerifyUserEmailAfter72HoursJob.set(wait: 80.hours).perform_later(self.id)
+      VerifyUserEmailAfter120HoursJob.set(wait: 200.hours).perform_later(self.id)
+    end
   end
 
   def update_last_activity
@@ -135,7 +140,7 @@ class User < ApplicationRecord
   end
 
   def self.add_fields_from_oauth(f_name, l_name, email, provider, uid, image_url)
-    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: SecureRandom.hex(32)
+    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: SecureRandom.hex(32), confirmed_at: DateTime.now
     user.skip_confirmation_notification!
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url

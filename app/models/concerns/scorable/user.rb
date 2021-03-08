@@ -9,12 +9,19 @@ module Scorable
       after_commit :add_user_created_points, if: :saved_change_to_city_id?
 	    def add_user_created_points
 	    	self.add_points(:user_created)
+        point_events = self.point_events.joins(:point_scale).where(point_scales: {action: "response_submitted"})
+        consultation_responses = self.responses
+        if !point_events.present? && consultation_responses.present?
+          consultation_responses.each do | consultation_response|
+            consultation_response.add_response_created_points
+          end
+        end
 	    end
 	  end
 
     class << self
       def update_national_rank
-        distinct_points = ::User.citizen.distinct(:points).pluck(:points).sort.reverse
+        distinct_points = ::User.citizen.where.not(city_id: nil).distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
           ::User.where(points: point_value).update_all(rank: index + 1)
         end

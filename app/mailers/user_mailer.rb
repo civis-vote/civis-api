@@ -148,7 +148,7 @@ class UserMailer < ApplicationMailer
 			xlsx.workbook do |workbook|
 				workbook.add_worksheet(name: "Consultation Responses") do |sheet|
 					wrap = workbook.styles.add_style alignment: {wrap_text: true}
-				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At"]
+				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified"]
 					question_headers = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:question_text)
 					question_ids = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:id)	
 					question_headers.each do | question |
@@ -156,10 +156,10 @@ class UserMailer < ApplicationMailer
 					end
 					sheet.add_row response_header, b: true
 				  consultation_responses.each do |consultation_response|
-				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user.confirmed_at? ]
 				    answers = []
 			  		question_ids.each do |id|
-			  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
+			  			if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id })
 							  answers << answer
 							else
 							  answers << ""
@@ -180,7 +180,7 @@ class UserMailer < ApplicationMailer
 					if response_round.present?
 						workbook.add_worksheet(name: "Responses - Round #{index+1}") do |sheet|
 							wrap = workbook.styles.add_style alignment: {wrap_text: true}
-							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At"]
+							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified"]
 							question_headers = response_round.questions.order(:created_at).pluck(:question_text)
 							question_ids = response_round.questions.order(:created_at).pluck(:id)	
 							question_headers.each do | question |
@@ -189,10 +189,10 @@ class UserMailer < ApplicationMailer
 						  sheet.add_row response_header, b: true
 						  consultation_responses.each do |consultation_response|
 						  	if consultation_response.response_round_id == response_round.id
-						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') ]
+						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user.full_name, consultation_response.user.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user.confirmed_at? ]
 						  		answers = []
 						  		question_ids.each do |id|
-						  			if answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
+						  			if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id } )
 										  answers << answer
 										else
 										  answers << ""
@@ -287,4 +287,51 @@ class UserMailer < ApplicationMailer
 																								unsubscribe_url: user.unsubscribe_url,
 																							})
 	end
+
+	def verify_email_after_8_hours(user_id, consultation_id)
+		user = User.find(user_id)
+		consultation = Consultation.find(consultation_id)
+		unless user.confirmed_at?
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "user-confirmation-after-8-hours",
+																							template_model:{
+																								consultation_name: consultation.title,
+																								first_name: user.first_name,
+																								confirmation_url: user.confirmation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+		end
+	end
+
+	def verify_email_after_72_hours(user_id)
+		user = User.find(user_id)
+		unless user.confirmed_at?
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "user-confirmation-after-72-hours",
+																							template_model:{
+																								confirmation_url: user.confirmation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+		end
+	end
+
+	def verify_email_after_120_hours(user_id)
+		user = User.find(user_id)
+		unless user.confirmed_at?
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_alias: "user-confirmation-after-120-hours",
+																							template_model:{
+																								first_name: user.first_name,
+																								confirmation_url: user.confirmation_url,
+																								unsubscribe_url: user.unsubscribe_url,
+																							})
+		end
+	end
+
 end
