@@ -52,6 +52,9 @@ Rails.application.routes.draw do
         post :reject
       end
     end
+
+    # resources :glossary
+    resources :wordindices
     resources :case_studies
     resources :categories
     resources :organisations do

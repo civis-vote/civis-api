@@ -19,5 +19,7 @@ module Types
   	field :user_current,					             resolver: Queries::User::CurrentUser
     field :user_list,                          resolver: Queries::User::List
     field :user_profile,                       resolver: Queries::User::Profile
+    field :glossary_list,                      resolver: Queries::Glossary::List
+    field :glossary_word,                     resolver: Queries::Glossary::Profile
   end
 end
