@@ -16,6 +16,7 @@ class ConsultationResponse < ApplicationRecord
   belongs_to :response_round
   before_commit :update_reading_time
   before_commit :validate_html_tags
+  before_commit :validate_answers
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -80,5 +81,22 @@ class ConsultationResponse < ApplicationRecord
   def round_number
     return nil unless response_round_id.present?
     return response_round.round_number
+  end
+
+  def validate_answers
+    return true if ( !response_round.questions.present? && !answers.present? )
+    mandatory_question_ids = []
+    response_round.questions.map{|question| mandatory_question_ids << question.id if question.is_optional == false }
+    raise CivisApi::Exceptions::IncompleteEntity, "Mandatory question should be answered." if ( mandatory_question_ids.present? && !answers.present? )
+    if answers.present?
+      mandatory_question_ids.each do |question_id|
+      	if answers.class == Array
+      		mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s }
+      	else
+        	mandatory_answer = YAML.load(answers).select { |answer| answer["question_id"] == question_id.to_s }
+      	end
+        raise CivisApi::Exceptions::IncompleteEntity, "Mandatory question with id #{question_id} should be answered." if ( !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?) )
+      end
+    end
   end
 end
