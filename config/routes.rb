@@ -55,6 +55,7 @@ Rails.application.routes.draw do
 
     # resources :glossary
     resources :wordindices
+    resources :user_profanity_counts
     resources :case_studies
     resources :categories
     resources :organisations do
