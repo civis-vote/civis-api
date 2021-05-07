@@ -1,0 +1,13 @@
+= simple_form_for [:admin, @glossary_mapping], data: { id: "add_edit_glossary_mapping_detail" } do |f|
+	.p-4
+		.admin-header-text
+			| Glossary Word And Consultation Mapping
+		.admin-details-box
+			= f.input :consultation_id, as: :select, collection: Consultation.all.map {|u| [u.title, u.id]}, selected: @glossary_mapping&.consultation_id, label: 'Select Consultation', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select Consultation', id: "#{@glossary_mapping.consultation_id}"  } }
+			/ = f.input :glossary_id, as: :select, collection: Wordindex.all.map {|u| [u.word, u.word]}, selected: @glossary_mapping&.glossary_id, label: 'Select Glossary Word', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select Glossary Word', id: "#{@glossary_mapping.glossary_id}"  } }
+			= f.input :glossary_id, as: :select, collection: Wordindex.all.map {|u| [u.word, u.id]}, selected: @glossary_mapping&.glossary_id, label: 'Select Glossary Word', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select Glossary Word', id: "#{@glossary_mapping.glossary_id}"  } }
+			
+		.admin-update-button-position
+			= f.button :submit, "Save Mapping"
+
+

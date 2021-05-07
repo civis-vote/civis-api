@@ -2,12 +2,12 @@ module Queries
 	module Glossary
 		class Profile < Queries::BaseQuery
 	    description "Get a single case study"
-	    argument :id,		Int,		required: true
+	    argument :id,		String,		required: true
 
-	    type Types::Objects::Glossary::Base, null: true
+	    type [Types::Objects::GlossaryMapping::Base], null: true
 
 	    def resolve(id:)
-	    	::Wordindex.find(id)
+	    	::GlossaryMapping.where(consultation_id: id)
 	    end
 		end
 	end

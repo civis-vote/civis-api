@@ -1,0 +1,22 @@
+.admin-index-records-found
+  = total_no_of_records_found(@glossary_mappings, "glossary_mappings", "facets")
+.admin-index-records-found-text
+  | Showing #{@glossary_mappings.data.size} glossary_mappings
+table.table.mt-3
+      thead
+        tr
+          th.width-35 Consultations
+          th Glossary Words
+          th Description
+      tbody
+        - @glossary_mappings.data.each do |glossary_mapping|
+          tr.pointer onclick='window.location="#{admin_glossary_mapping_path(glossary_mapping)}";'
+            td.table-bold-title
+              = glossary_mapping&.consultation&.title
+            td
+              = glossary_mapping&.wordindex&.word
+            td 
+              = glossary_mapping&.wordindex&.description
+.pagination-parent
+  - if @glossary_mappings.facets.total_count > 0
+    = cm_paginate(@glossary_mappings.facets)
