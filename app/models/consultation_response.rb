@@ -4,9 +4,9 @@ class ConsultationResponse < ApplicationRecord
   include Scorable::ConsultationResponse
   has_rich_text :response_text
 
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :consultation, counter_cache: true, optional: true
-  validates_uniqueness_of :user_id, scope: :response_round_id
+  validates_uniqueness_of :user_id, scope: :response_round_id, unless: Proc.new { |user| user_id.blank? }
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
@@ -16,11 +16,12 @@ class ConsultationResponse < ApplicationRecord
   belongs_to :response_round
   before_commit :update_reading_time
   before_commit :validate_html_tags
-  before_commit :validate_answers
+  before_commit :validate_answers, on: :create
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
   enum visibility: { shared: 0, anonymous: 1 }
+  enum source: { platform: 0, off_platform: 1 }
 
   # validations
   # validates_uniqueness_of :consultation_id, scope: :user_id  
