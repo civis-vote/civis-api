@@ -11,7 +11,7 @@ module Queries
 	    type Types::Objects::ConsultationResponse::List, null: true
 
 	    def resolve(consultation_filter:, per_page:, page:, sort:, sort_direction:)
-	    	::ConsultationResponse.public_consultation_response_filter.consultation_filter(consultation_filter).shared.sort_records(sort, sort_direction).list(per_page, page)
+	    	::ConsultationResponse.platform.public_consultation_response_filter.consultation_filter(consultation_filter).shared.sort_records(sort, sort_direction).list(per_page, page)
 	    end
 		end
 	end

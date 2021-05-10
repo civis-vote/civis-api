@@ -46,6 +46,8 @@ gem "whenever", require: false
 
 gem "roo", "~> 2.8.0"
 
+gem "roo-xls"
+
 gem "sitemap_generator"
 
 gem "aws-sdk-s3", require: false
@@ -76,6 +78,7 @@ gem 'react-rails', '~> 2.6.0'
 gem 'cm_page_builder-rails', '~> 0.2.1'
 gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
 gem "paranoia"
+gem 'activerecord-import'
 
 group :development, :test, :staging do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

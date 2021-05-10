@@ -38,6 +38,7 @@ Rails.application.routes.draw do
         get :edit_english_summary
         patch :update_response_submission_message
         get :show_response_submission_message
+        post :import_responses
       end
       collection do
         get :export_as_excel
