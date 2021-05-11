@@ -49,6 +49,11 @@
                 li
                   .dropdown-without-icon
                     = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
+            - if current_user.role == "admin"
+                li
+                  .dropdown-without-icon
+                    button.btn.mr-3 data-target="#importModal" data-toggle="modal" type="button"
+                      | Import Responses
             - if @consultation.submitted?
                 li
                   .dropdown-without-icon
@@ -312,3 +317,21 @@
                       </svg>
               .col-md-12.p-0.mb-3
               = render partial: 'users/invited_respondents_table'
+
+  #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1" 
+    .modal-dialog.modal-dialog-centered role="document" 
+      = simple_form_for @consultation, url: import_responses_admin_consultation_path(@consultation.id), method: :post do |f|        
+        .modal-content
+          .modal-header
+            h5.modal-title Upload File To Import Response
+            button.close aria-label="Close" data-dismiss="modal" type="button" 
+              span aria-hidden="true"  &times;
+          .modal-body
+                  .row.form-group.string.optional
+                    .col-md-12.form-label-group
+                      = link_to 'Click to download sample template' , "https://civis-production-api.s3.ap-south-1.amazonaws.com/SampleResponseTemplate.xlsx"
+                    .col-md-12.form-label-group
+                      = f.file_field :file, class: "p10"
+          .modal-footer
+            button.btn.btn-secondary data-dismiss="modal" type="button"  Close
+            input.btn.square-btn-question type="submit" value="Import"
