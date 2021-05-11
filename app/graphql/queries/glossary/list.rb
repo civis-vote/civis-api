@@ -8,10 +8,10 @@ module Queries
 	    argument :sort_direction,		Types::Enums::SortDirections,		required: false, default_value: nil
 	    argument :search_filter,		String, required: false, default_value: nil
 
-	    type Types::Objects::Glossary::List, null: true
+	    type Types::Objects::GlossaryMapping::List, null: true
 
 	    def resolve(search_filter:, per_page:, page:, sort:, sort_direction:)
-	    	::Wordindex.search(search_filter).sort_records(sort, sort_direction).list(per_page, page)
+	    	::GlossaryMapping.search(search_filter).sort_records(sort, sort_direction).list(per_page, page)
 	    end
 		end
 	end
