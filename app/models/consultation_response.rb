@@ -2,6 +2,7 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   include Paginator
   include Scorable::ConsultationResponse
+  include ImportResponse
   has_rich_text :response_text
 
   belongs_to :user, optional: true
@@ -99,5 +100,9 @@ class ConsultationResponse < ApplicationRecord
         raise CivisApi::Exceptions::IncompleteEntity, "Mandatory question with id #{question_id} should be answered." if ( !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?) )
       end
     end
+  end
+
+  def self.import_responses(file)
+    self.import_fields_from_files(file)
   end
 end
