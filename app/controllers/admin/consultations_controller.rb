@@ -1,8 +1,8 @@
 class Admin::ConsultationsController < ApplicationController
 	layout "admin_panel_sidenav"
   before_action :authenticate_user!
-	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :page_component, :show_response_submission_message, :update_response_submission_message]
+	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :page_component, :show_response_submission_message, :update_response_submission_message, :import_responses]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
@@ -188,6 +188,19 @@ class Admin::ConsultationsController < ApplicationController
       redirect_to admin_consultation_path,  flash_success_info: "Consultation response submission message was successfully updated."
     else
       redirect_to admin_consultation_path,  flash_info: "Consultation response submission message was not successfully updated."
+    end
+  end
+
+  def import_responses
+    if params[:consultation][:file].present?
+      import = ConsultationResponse.import_responses(params[:consultation][:file])
+      if import == false
+        redirect_to admin_consultation_path(@consultation), flash_info: "Something went wrong, please try again later."
+      else
+        redirect_to admin_consultation_path(@consultation), flash_success_info: "Responses imported successfully"
+      end
+    else
+      redirect_to admin_consultation_path(@consultation), flash_info: "File not found."
     end
   end
 
