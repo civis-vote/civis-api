@@ -194,7 +194,7 @@ class Admin::ConsultationsController < ApplicationController
 
   def import_responses
     if params[:consultation][:file].present?
-      import = import_fields_from_files(params[:consultation][:file])
+      import = ConsultationResponse.import_responses(params[:consultation][:file])
       if import == false
         redirect_to admin_consultation_path(@consultation), flash_info: "Something went wrong, please try again later."
       else
