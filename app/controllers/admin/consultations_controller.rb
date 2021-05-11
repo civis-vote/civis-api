@@ -1,5 +1,4 @@
 class Admin::ConsultationsController < ApplicationController
-  include ImportResponse
 	layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
