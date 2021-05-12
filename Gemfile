@@ -28,6 +28,7 @@ gem "rack-cors"
 gem "postmark-rails"
 
 gem "devise"
+gem 'razorpay'
 
 gem "graphql"
 gem "graphql-errors"
