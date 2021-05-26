@@ -71,30 +71,30 @@ module ImportResponse
       hash.merge!({"response_round_id": response_round_id})
       hash.delete "product_interest"
       email = hash["email"]
-      if email.present?
-        user = User.find_by(email: email)
-        hash.merge!({"user_id": user.id})
-      end
+      user = User.find_by(email: email)
+      hash.merge!({"user_id": user.id}) if user && email
       answers = []
       hash.each do |key, value|
         if (key.to_s.include? 'question') && (value.present?)
           value = JSON.parse(value)
           question = questions.find_by(question_text: value["question"].strip)
-          question_id = question.id.to_s if question.present?
-          question_type = question.question_type
-          sub_questions = question.sub_questions
-          if question_type == "long_text"
-            answer = value["answer"]
-          elsif value["answer"].class == Array
-            answer = value["answer"].map{|mc_ans| sub_questions.find_by(question_text: mc_ans.strip).id.to_s}
-          else
-            answer = nil
-            answer = sub_questions.find_by(question_text: value["answer"].strip) if value["answer"].present?
-            answer = answer.id if answer.present?
+          if question.present?
+            question_id = question.id.to_s
+            question_type = question.question_type
+            sub_questions = question.sub_questions
+            if question_type == "long_text"
+              answer = value["answer"]
+            elsif value["answer"].class == Array
+              answer = value["answer"].map{|mc_ans| sub_questions.find_by(question_text: mc_ans.strip).id.to_s}
+            else
+              answer = nil
+              answer = sub_questions.find_by(question_text: value["answer"].strip) if value["answer"].present?
+              answer = answer.id if answer.present?
+            end
+            answer_in_hash = {"answer": answer, "question_id": question_id}
+            answer_in_hash.merge!(other_option_answer: value["other_option_answer"], "is_other": "true") if value["other_option_answer"].present?
+            answers << answer_in_hash
           end
-          answer_in_hash = {"answer": answer, "question_id": question_id}
-          answer_in_hash.merge!(other_option_answer: value["other_option_answer"], "is_other": "true") if value["other_option_answer"].present?
-          answers << answer_in_hash
         end
         hash.delete key if key.to_s.include? 'question'
       end

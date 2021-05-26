@@ -73,6 +73,7 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
+        post :import_responses
       end
       collection do
         patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
