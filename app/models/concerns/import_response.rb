@@ -72,7 +72,7 @@ module ImportResponse
       hash.delete "product_interest"
       email = hash["email"]
       user = User.find_by(email: email)
-      hash.merge!({"user_id": user.id}) if user && email
+      hash.merge!({"user_id": user.id}) if user
       answers = []
       hash.each do |key, value|
         if (key.to_s.include? 'question') && (value.present?)
