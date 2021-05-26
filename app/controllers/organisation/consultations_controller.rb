@@ -1,9 +1,9 @@
 class Organisation::ConsultationsController < ApplicationController
 	layout "organisation_sidenav"
 	before_action :authenticate_user!
-  before_action :require_organisation_employee, only: [:index, :create, :show, :edit]
-  before_action :set_organisation, only: [:index, :create, :show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents]
-  before_action :set_consultation, only: [:show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents]
+  before_action :require_organisation_employee, only: [:index, :create, :show, :edit, :import_responses]
+  before_action :set_organisation, only: [:index, :create, :show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :import_responses]
+  before_action :set_consultation, only: [:show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :import_responses]
 
 	def index
     @consultation = Consultation.new
@@ -133,6 +133,19 @@ class Organisation::ConsultationsController < ApplicationController
     emails = params[:respondent][:emails].split(",")
     Respondent.invite_respondent(@consultation, @organisation, respondent_ids, emails, current_user)
     redirect_back fallback_location: root_path,  flash_success_info: "Respondent was successfully invited."
+  end
+
+  def import_responses
+    if params[:consultation][:file].present?
+      import = ConsultationResponse.import_responses(params[:consultation][:file])
+      if import == false
+        redirect_to organisation_consultation_path(@consultation), flash_info: "Something went wrong, please try again later."
+      else
+        redirect_to organisation_consultation_path(@consultation), flash_success_info: "Responses imported successfully"
+      end
+    else
+      redirect_to organisation_consultation_path(@consultation), flash_info: "File not found."
+    end
   end
 
 	private
