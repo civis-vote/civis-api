@@ -189,6 +189,9 @@ GEM
     hashie (4.1.0)
     highline (1.7.10)
     htmlentities (4.3.4)
+    httparty (0.18.1)
+      mime-types (~> 3.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.8.3)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
@@ -229,6 +232,9 @@ GEM
       mimemagic (~> 0.3.2)
     memoist (0.16.0)
     method_source (1.0.0)
+    mime-types (3.3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2021.0225)
     mimemagic (0.3.10)
       nokogiri (~> 1)
       rake
@@ -247,6 +253,8 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.11.3)
       mini_portile2 (~> 2.5.0)
+      racc (~> 1.4)
+    nokogiri (1.11.3-x64-mingw32)
       racc (~> 1.4)
     oauth2 (1.4.4)
       faraday (>= 0.8, < 2.0)
@@ -276,6 +284,7 @@ GEM
     parser (2.7.0.2)
       ast (~> 2.4.0)
     pg (1.1.4)
+    pg (1.1.4-x64-mingw32)
     postmark (1.21.3)
       json
     postmark-rails (0.21.0)
@@ -329,6 +338,8 @@ GEM
       thor (>= 0.20.3, < 2.0)
     rainbow (3.0.0)
     rake (13.0.3)
+    razorpay (2.4.1)
+      httparty (~> 0.14)
     rb-fsevent (0.10.3)
     rb-inotify (0.10.0)
       ffi (~> 1.0)
@@ -533,6 +544,7 @@ DEPENDENCIES
   rack-cors
   rails (~> 6.0.0.rc1)
   rails-erd
+  razorpay
   rb-readline
   react-rails (~> 2.6.0)
   redis
