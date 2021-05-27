@@ -194,10 +194,10 @@ class Admin::ConsultationsController < ApplicationController
   def import_responses
     if params[:consultation][:file].present?
       import = ConsultationResponse.import_responses(params[:consultation][:file])
-      if import == false
-        redirect_to admin_consultation_path(@consultation), flash_info: "Something went wrong, please try again later."
+      if import[:status] == "true"
+        redirect_to admin_consultation_path(@consultation), flash_success_info: "#{import[:records_count]} responses imported successfully"
       else
-        redirect_to admin_consultation_path(@consultation), flash_success_info: "#{import} responses imported successfully"
+        redirect_to admin_consultation_path(@consultation), flash_info: "Something went wrong, please try again later."
       end
     else
       redirect_to admin_consultation_path(@consultation), flash_info: "File not found."
