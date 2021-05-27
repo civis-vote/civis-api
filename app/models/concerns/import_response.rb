@@ -6,6 +6,7 @@ module ImportResponse
   module ClassMethods
     def import_fields_from_files(object)
       begin
+        result = {}
         file = csv_parse(object)
         headers = set_headers(file)
         required_headers = set_required_headers
@@ -21,11 +22,11 @@ module ImportResponse
             records << hash
           end
           import_records(records) if records.present?
-          return records.size
+          return result.merge!(status: "true", records_count: records.size)
         end
       rescue Exception => e
         Rollbar.error(e)
-        return false
+        return result.merge!(status: "false")
       end
     end
 
