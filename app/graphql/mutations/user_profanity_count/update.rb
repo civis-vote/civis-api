@@ -1,18 +1,13 @@
 module Mutations
   module UserProfanityCount
-    class Update < Mutations::BaseMutation
-      type Types::Objects::UserProfanityCount::ProfanityCount, null: false
+  class Update < Mutations::BaseMutation
+      type Types::Objects::UserProfanityCount::Base, null: false
 
-      argument :profanity_count, Types::Inputs::UserProfanityCount::Update, required: true
-
-      def resolve(profanity_count:)
-        current_user_id = context[:current_user_id]
-        current_user_id.update_attributes! profanity_count.to_h
-        return current_user_id
-      end
-
-      def self.authorized?(object, context)
-        context[:current_user_id].present?
+    argument :user_profanity_count, Types::Inputs::UserProfanityCount::Create, required: true
+    def resolve(user_profanity_count:)
+      currentProfaneCountMapping = ::UserProfanityCount.find_by(user_id:user_profanity_count.user_id)
+      currentProfaneCountMapping.update!(profanity_count: user_profanity_count[:profanity_count])
+      return currentProfaneCountMapping
       end
     end
   end
