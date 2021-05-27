@@ -21,6 +21,7 @@ module ImportResponse
             records << hash
           end
           import_records(records) if records.present?
+          return records.size
         end
       rescue Exception => e
         Rollbar.error(e)
