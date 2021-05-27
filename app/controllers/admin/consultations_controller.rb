@@ -197,7 +197,7 @@ class Admin::ConsultationsController < ApplicationController
       if import == false
         redirect_to admin_consultation_path(@consultation), flash_info: "Something went wrong, please try again later."
       else
-        redirect_to admin_consultation_path(@consultation), flash_success_info: "Responses imported successfully"
+        redirect_to admin_consultation_path(@consultation), flash_success_info: "#{import} responses imported successfully"
       end
     else
       redirect_to admin_consultation_path(@consultation), flash_info: "File not found."
