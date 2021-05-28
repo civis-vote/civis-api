@@ -136,7 +136,7 @@ class Organisation::ConsultationsController < ApplicationController
   end
 
   def import_responses
-    if params[:consultation][:file].present?
+    if (params[:consultation].present? && params[:consultation][:file].present?)
       import = ConsultationResponse.import_responses(params[:consultation][:file])
       if import[:status] == "true"
         redirect_to admin_consultation_path(@consultation), flash_success_info: "#{import[:records_count]} responses imported successfully"
