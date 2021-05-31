@@ -5,8 +5,8 @@ class Admin::GlossaryMappingsController < ApplicationController
 	before_action :set_wordindex, only: [:edit, :update, :show, :destroy]
 
 	def index
-    # @glossary_mappings = GlossaryMapping.all.includes(:created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
-	@glossary_mappings = GlossaryMapping.all.order(consultation_id: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+	# @glossary_mappings = GlossaryMapping.all.order(consultation_id: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+	@glossary_mappings = GlossaryMapping.filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
         format.html {render partial: "admin/wordindices/table_glossary_mapping", locals: { glossary_mappings: @glossary_mappings } }

@@ -18,4 +18,4 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Consultation_id", "show-page-input-details", "#{@glossary_mapping&.consultation&.title || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Glossary_id", "show-page-input-details", "#{@glossary_mapping&.wordindex&.word}")
   .admin-update-button-position
-    = link_to "Delete Mapping", admin_glossary_mapping_path(@glossary_mapping), method: :delete, data: { confirm: "Are you sure?" }, class: "buttn"
+    = link_to "Delete Mapping", admin_glossary_mapping_path(@glossary_mapping), method: :delete, data: { confirm: "Are you sure?" }, class: "button"
