@@ -1,4 +1,4 @@
-class GlossaryMapping < ApplicationRecord
+class GlossaryWordConsultationMapping < ApplicationRecord
     include SpotlightSearch
     include Paginator
 

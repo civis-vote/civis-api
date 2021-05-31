@@ -16,15 +16,6 @@ ActiveRecord::Schema.define(version: 2021_05_05_194649) do
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
-  create_table "action_mailbox_inbound_emails", force: :cascade do |t|
-    t.integer "status", default: 0, null: false
-    t.string "message_id", null: false
-    t.string "message_checksum", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["message_id", "message_checksum"], name: "index_action_mailbox_inbound_emails_uniqueness", unique: true
-  end
-
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
     t.text "body"
@@ -33,27 +24,6 @@ ActiveRecord::Schema.define(version: 2021_05_05_194649) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
-  end
-
-  create_table "active_storage_attachments", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "record_type", null: false
-    t.bigint "record_id", null: false
-    t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
-    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
-  end
-
-  create_table "active_storage_blobs", force: :cascade do |t|
-    t.string "key", null: false
-    t.string "filename", null: false
-    t.string "content_type"
-    t.text "metadata"
-    t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
-    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "api_keys", force: :cascade do |t|
@@ -187,9 +157,9 @@ ActiveRecord::Schema.define(version: 2021_05_05_194649) do
     t.index ["user_id"], name: "index_game_actions_on_user_id"
   end
 
-  create_table "glossary_mappings", force: :cascade do |t|
-    t.string "consultation_id"
-    t.string "glossary_id"
+  create_table "glossary_word_consultation_mappings", force: :cascade do |t|
+    t.integer "consultation_id"
+    t.integer "glossary_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -361,13 +331,6 @@ ActiveRecord::Schema.define(version: 2021_05_05_194649) do
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end
 
-  create_table "wordbooks", force: :cascade do |t|
-    t.string "word"
-    t.text "description"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "wordindices", force: :cascade do |t|
     t.string "word"
     t.string "description"
@@ -377,7 +340,6 @@ ActiveRecord::Schema.define(version: 2021_05_05_194649) do
     t.index ["word"], name: "index_wordindices_on_word"
   end
 
-  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "consultation_hindi_summaries", "consultations"
