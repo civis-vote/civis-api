@@ -61,45 +61,49 @@ module ImportResponse
     end
 
     def set_required_headers
-      required_headers = ["import_key", "consultation_id", "first_name", "last_name", "email", "phone_number", "responded_at", "visibility", "satisfaction_rating"]
+      required_headers = ["import_key", "consultation_id", "first_name", "last_name", "email", "phone_number", "responded_at", "visibility", "satisfaction_rating", "source", "response_text"]
     end
 
     def customized_hash_from_rows(hash)
-      hash = hash.transform_keys { |key| key.downcase.parameterize.underscore }
       consultation = Consultation.find(hash["consultation_id"])
       response_rounds = consultation.response_rounds.order(:created_at)
       response_round_id = response_rounds.last.id
       questions = response_rounds.last.questions
-      hash.merge!({"response_round_id": response_round_id})
-      hash.delete "product_interest"
       email = hash["email"]
       user = User.find_by(email: email)
-      hash.merge!({"user_id": user.id}) if user
       answers = []
       hash.each do |key, value|
-        if (key.to_s.include? 'question') && (value.present?)
-          value = JSON.parse(value)
-          question = questions.find_by(question_text: value["question"].strip)
+        if (!set_required_headers.include?(key)) && (value.present?)
+          key = key.split('_').join(' ').strip
+          question = questions.find_by(question_text: key)
           if question.present?
             question_id = question.id.to_s
             question_type = question.question_type
             sub_questions = question.sub_questions
             if question_type == "long_text"
-              answer = value["answer"]
-            elsif value["answer"].class == Array
-              answer = value["answer"].map{|mc_ans| sub_questions.find_by(question_text: mc_ans.strip).id.to_s}
+              answer = value
+            elsif question_type == "multiple_choice"
+              begin
+                answer = value.split(',').map{|mc_ans| sub_questions.find_by(question_text: mc_ans.strip).id.to_s}
+              rescue
+                other_option_answer = value
+              end
             else
               answer = nil
-              answer = sub_questions.find_by(question_text: value["answer"].strip) if value["answer"].present?
+              answer = sub_questions.find_by(question_text: value) if value.present?
               answer = answer.id if answer.present?
+              other_option_answer = value unless answer.present?
             end
             answer_in_hash = {"answer": answer, "question_id": question_id}
-            answer_in_hash.merge!(other_option_answer: value["other_option_answer"], "is_other": "true") if value["other_option_answer"].present?
+            answer_in_hash.merge!(other_option_answer: value, "is_other": "true") if (other_option_answer && question.supports_other == true)
             answers << answer_in_hash
           end
         end
-        hash.delete key if key.to_s.include? 'question'
+        hash.delete key unless set_required_headers.include?(key)
       end
+      hash = hash.transform_keys { |key| key.parameterize.underscore }
+      hash.merge!({"response_round_id": response_round_id})
+      hash.merge!({"user_id": user.id}) if user
       hash.merge!({"answers": answers})
       return hash
     end
