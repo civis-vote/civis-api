@@ -55,7 +55,7 @@ Rails.application.routes.draw do
     end
 
     resources :wordindices
-    resources :glossary_mappings
+    resources :glossary_word_consultation_mappings
     resources :case_studies
     resources :categories
     resources :organisations do

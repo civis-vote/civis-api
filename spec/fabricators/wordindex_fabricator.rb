@@ -1,4 +1,4 @@
 Fabricator(:wordindex) do
-  word        "MyString"
-  description "MyText"
+  word 											{ Faker::Name.first_name }
+  description               { Faker::Movies::StarWars.quote }
 end

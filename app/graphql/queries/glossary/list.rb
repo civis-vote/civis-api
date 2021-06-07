@@ -11,7 +11,7 @@ module Queries
 	    type Types::Objects::GlossaryMapping::List, null: true
 
 	    def resolve(search_filter:, per_page:, page:, sort:, sort_direction:)
-	    	::GlossaryMapping.search(search_filter).sort_records(sort, sort_direction).list(per_page, page)
+	    	::GlossaryWordConsultationMapping.search(search_filter).sort_records(sort, sort_direction).list(per_page, page)
 	    end
 		end
 	end
