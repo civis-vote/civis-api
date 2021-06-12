@@ -3,6 +3,6 @@ class UserProfilePictureUploadJob < ApplicationJob
 
   def perform(user, image)
   	file = open(image)
-  	user.profile_picture.attach(io: file, filename: user.first_name)
+  	user.profile_picture.attach(io: file, filename: user.first_name) if file.present?
   end
 end
