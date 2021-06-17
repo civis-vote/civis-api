@@ -25,6 +25,7 @@ module Types
 						super && context[:current_user].present?
 					end			
 				end
+				field :guest_user_name,										String, nil, null: true
 
 				def voted_as
 					object.voted_as(context[:current_user])
@@ -38,6 +39,10 @@ module Types
 
 				def is_verified
 					object.user.confirmed_at? if object.user
+				end
+
+				def guest_user_name
+					object.first_name
 				end
 			end
 		end
