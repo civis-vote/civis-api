@@ -25,7 +25,7 @@ module Types
 						super && context[:current_user].present?
 					end			
 				end
-				field :user_name,													String, nil, null: true
+				field :respondent_name,													String, nil, null: true
 
 				def voted_as
 					object.voted_as(context[:current_user])
