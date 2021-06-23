@@ -10,20 +10,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_25_161427) do
+ActiveRecord::Schema.define(version: 2021_06_23_080517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
-
-  create_table "action_mailbox_inbound_emails", force: :cascade do |t|
-    t.integer "status", default: 0, null: false
-    t.string "message_id", null: false
-    t.string "message_checksum", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.index ["message_id", "message_checksum"], name: "index_action_mailbox_inbound_emails_uniqueness", unique: true
-  end
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -130,7 +121,7 @@ ActiveRecord::Schema.define(version: 2021_04_25_161427) do
   end
 
   create_table "consultation_responses", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.bigint "consultation_id", null: false
     t.integer "satisfaction_rating"
     t.datetime "created_at", precision: 6, null: false
@@ -146,6 +137,13 @@ ActiveRecord::Schema.define(version: 2021_04_25_161427) do
     t.datetime "deleted_at"
     t.bigint "respondent_id"
     t.bigint "response_round_id"
+    t.string "import_key"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.bigint "phone_number"
+    t.date "responded_at"
+    t.integer "source", default: 0
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
@@ -288,6 +286,14 @@ ActiveRecord::Schema.define(version: 2021_04_25_161427) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "round_number"
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
+  end
+
+  create_table "user_profanity_counts", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "profanity_count"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_user_profanity_counts_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
