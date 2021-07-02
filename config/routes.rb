@@ -1,5 +1,6 @@
 require "sidekiq/web"
 Rails.application.routes.draw do
+  resources :orders, only: :create
   mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   mount ImageUploader.derivation_endpoint => "/derivations/image"
   mount CmPageBuilder::Rails::Engine => "/cm_page_builder"
@@ -53,6 +54,9 @@ Rails.application.routes.draw do
         post :reject
       end
     end
+
+    resources :wordindices
+    resources :glossary_word_consultation_mappings
     resources :case_studies
     resources :categories
     resources :organisations do
