@@ -74,15 +74,15 @@ module ImportResponse
       answers = []
       hash.each do |key, value|
         if (!set_required_headers.include?(key)) && (value.present?)
-          key = key.split('_').join(' ').strip
-          question = questions.find_by(question_text: key)
+          stripped_key = key.split('_').join(' ').strip
+          question = questions.find_by(question_text: stripped_key)
           if question.present?
             question_id = question.id.to_s
             question_type = question.question_type
             sub_questions = question.sub_questions
             if question_type == "long_text"
               answer = value
-            elsif question_type == "multiple_choice"
+            elsif question_type == "checkbox"
               begin
                 answer = value.split(',').map{|mc_ans| sub_questions.find_by(question_text: mc_ans.strip).id.to_s}
               rescue

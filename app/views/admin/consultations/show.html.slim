@@ -95,7 +95,6 @@
     | Basic Information
   .admin-list-bg.mt-4
     .p-4
-      = display_details("show-page-parent-details", "show-page-label-details", "Consultation ID", "show-page-input-details", "#{@consultation&.id || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Title of the consultation", "show-page-input-details", "#{@consultation&.title || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Consultation Feedback Email", "show-page-input-details", "#{@consultation&.consultation_feedback_email || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "URL of consultation pdf", "show-page-input-details", "#{@consultation&.url}")
@@ -331,6 +330,8 @@
                   .row.form-group.string.optional
                     .col-md-12.form-label-group
                       = link_to 'Click to download sample template' , "https://civis-production-api.s3.ap-south-1.amazonaws.com/Civis+-+Response+Import+Template.xlsx"
+                    .col-md-12.form-label-group
+                      | Use the consultation id #{@consultation&.id}
                     .col-md-10.form-label-group
                       = f.file_field :file, class: "p10"
                     #loader-for-file-upload.col-md-2.form-label-group.hidden
