@@ -21,6 +21,6 @@ module Types
     field :user_profile,                       resolver: Queries::User::Profile
     field :glossary_list,                      resolver: Queries::Glossary::List
     field :glossary_word,                      resolver: Queries::Glossary::Profile
-    field :user_profanity_count_user,          resolver: Queries::UserProfanityCount::User
+    field :user_count_user,                    resolver: Queries::UserCount::User
   end
 end

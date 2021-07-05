@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_06_23_080517) do
+ActiveRecord::Schema.define(version: 2021_07_05_080517) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -267,12 +267,13 @@ ActiveRecord::Schema.define(version: 2021_06_23_080517) do
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
 
-  create_table "user_profanity_counts", force: :cascade do |t|
+  create_table "user_counts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "profanity_count"
+    t.integer "short_response_count"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["user_id"], name: "index_user_profanity_counts_on_user_id"
+    t.index ["user_id"], name: "index_user_counts_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
