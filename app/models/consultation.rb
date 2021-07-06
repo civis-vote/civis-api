@@ -88,11 +88,17 @@ class Consultation < ApplicationRecord
   end
 
   def expire
-  	self.expired!
-    NotifyExpiredConsultationEmailJob.perform_later(self.consultation_feedback_email, self) if self.consultation_feedback_email
-    if self.consultation?
-      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
-      NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
+    if self.responses.under_review.count == 0
+  	  self.expired!
+      NotifyExpiredConsultationEmailJob.perform_later(self.consultation_feedback_email, self) if self.consultation_feedback_email
+      if self.consultation?
+        NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
+        NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
+      end
+      UserUpVoteResponsesEmailJob.perform_later(self)
+      UseResponseAsTemplateEmailJob.perform_later(self)
+    else
+      NotifyPendingReviewOfProfaneResponsesEmailToAdminJob.perform_later(self)
     end
   end
 

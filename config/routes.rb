@@ -54,6 +54,12 @@ Rails.application.routes.draw do
         post :reject
       end
     end
+    resources :consultation_responses do
+      member do
+        post :approve
+        post :reject
+      end
+    end
 
     resources :wordindices
     resources :glossary_word_consultation_mappings

@@ -54,6 +54,52 @@ class UserMailer < ApplicationMailer
 																						})
 	end
 
+	def notify_profane_response_email_to_admin(user, consultation_response)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "profane-response-notification",
+																						template_model:{
+																							user_name: consultation_response.user.first_name,
+																							consultation_title: consultation_response.consultation.title,
+																						})
+	end
+
+	def notify_pending_review_of_profane_responses_email_to_admin(user, consultation)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "pending-review-of-profane-responses-notification",
+																						template_model:{
+																							first_name: consultation.created_by.first_name,
+																							consultation_title: consultation.title,
+																						})
+	end
+
+	def user_up_vote_responses_email_job(user, consultation_response)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "user-up-vote-responses-email",
+																						template_model:{
+																							up_vote_count: consultation_response.up_vote_count,
+																							consultation_response: consultation_response.response_text.to_plain_text,
+																							consultation_title: consultation_response.consultation.title,
+																						})
+	end
+
+	def use_response_as_template_email_job(user, consultation_response)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "use-response-as-template-email",
+																						template_model:{
+																							templates_count: consultation_response.templates_count,
+																							consultation_response: consultation_response.response_text.to_plain_text,
+																							consultation_title: consultation_response.consultation.title,
+																						})
+	end
+
 	def notify_published_consultation_email(consultation)
 		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: consultation.created_by.email,

@@ -1,5 +1,6 @@
 class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
+  include SpotlightSearch
   include Paginator
   include Scorable::ConsultationResponse
   include ImportResponse
@@ -17,15 +18,20 @@ class ConsultationResponse < ApplicationRecord
   belongs_to :response_round
   before_commit :update_reading_time
   before_commit :validate_html_tags
+  before_commit :validate_answers
   before_commit :validate_answers, on: :create
+  after_commit :notify_admin_if_profane, on: :create
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
   enum visibility: { shared: 0, anonymous: 1 }
+  enum is_approved: { acceptable: 0, under_review: 1, unacceptable: 2 }
   enum source: { platform: 0, off_platform: 1 }
 
   # validations
   # validates_uniqueness_of :consultation_id, scope: :user_id  
+  
+  store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
   # scopes
   scope :consultation_filter, lambda { |consultation_id|
@@ -34,8 +40,21 @@ class ConsultationResponse < ApplicationRecord
   }
 
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
-  	order("#{sort} #{sort_direction}")
+    order("#{sort} #{sort_direction}")
   }
+
+  scope :published_consultation, lambda { 
+    joins(:consultation).where(consultations: { status: 'published'} )
+  }
+
+  scope :response_filter, lambda { |response_status|
+    return all unless response_status.present?
+    where(is_approved: response_status)
+  }
+
+  def self.acceptable_responses 
+    where(is_approved: 'acceptable')
+  end
 
   def self.public_consultation_response_filter
     joins(:consultation).where(consultations: { visibility: 'public_consultation'} )
@@ -102,6 +121,26 @@ class ConsultationResponse < ApplicationRecord
     end
   end
 
+  def notify_admin_if_profane
+    if self.is_approved == "under_review"
+      NotifyProfaneResponseEmailToAdminJob.perform_later(self)
+    end
+  end
+
+  def approve
+    self.approved_by_id = Current.user.id
+    self.is_approved = :acceptable
+    self.approved_at = DateTime.now
+    self.save!
+  end
+
+  def reject
+    self.rejected_by_id = Current.user.id
+    self.is_approved = :unacceptable
+    self.rejected_at = DateTime.now
+    self.save!
+  end
+  
   def self.import_responses(file)
     self.import_fields_from_files(file)
   end

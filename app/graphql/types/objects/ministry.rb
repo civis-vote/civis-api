@@ -8,6 +8,7 @@ module Types
 				argument :resolution, String, required: false, default_value: nil
 			end
 			field :name,								String, nil, null: false
+			field :location_id,                         Int, nil, null:false
 			field :poc_email_primary,		String, nil, null: false
 			field :poc_email_secondary,	String, nil, null: false
 
