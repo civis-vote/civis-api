@@ -14,11 +14,33 @@
       .admin-filter-child.width-100
         .col-md-2
           .filters data-filter-url="/admin/wordindices" data-replacement-class="wordindices_table"
-            / .input-group.search
-              / input.form-control.filter-box name=("search_term_for_word_indices") placeholder=("Search wordindices") type="text" data-behaviour="filter" data-scope="search" data-type="input-filter"
+            .input-group.search
+              input.form-control.filter-box name=("search_term_for_word_indices") placeholder=("Search wordindices") type="text" data-behaviour="filter" data-scope="search" data-type="input-filter"
     .admin-table.wordindices_table
       = render 'table'
     br
   .admin-update-button-position
     = link_to "Map Word", admin_glossary_word_consultation_mappings_path, class: "button"   
     = link_to "New Word", new_admin_wordindex_path, class: "button"
+    = link_to '', {class: "button", id: "import_glossary", 'data-target': "#importModal", 'data-toggle': "modal", 'type': "button"} do
+      | Import Glossary from csv file
+  
+  #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1" 
+    .modal-dialog.modal-dialog-centered role="document" 
+      = simple_form_for :some_symbol, url: import_glossary_admin_wordindices_path, method: :post do |f|        
+        .modal-content
+          .modal-header
+            h5.modal-title Upload File To Import Glossary
+            button.close aria-label="Close" data-dismiss="modal" type="button" 
+              span aria-hidden="true"  &times;
+          .modal-body
+                  .row.form-group.string.optional
+                    .col-md-12.form-label-group
+                      = link_to 'Click to download sample template' , "https://civis-production-api.s3.ap-south-1.amazonaws.com/Civis+-+Response+Import+Template.xlsx"
+                    .col-md-10.form-label-group
+                      = f.file_field :file, class: "p10"
+                    #loader-for-file-upload.col-md-2.form-label-group.hidden
+                      .loader
+          .modal-footer
+            button.btn.btn-secondary data-dismiss="modal" type="button"  Close
+            input.btn.square-btn-question id="file-upload-btn" type="submit" value="Import"

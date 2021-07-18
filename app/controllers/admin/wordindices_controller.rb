@@ -5,10 +5,12 @@ class Admin::WordindicesController < ApplicationController
 	before_action :set_wordindex, only: [:edit, :update, :show, :destroy]
 
 	def index
-    @wordindices = Wordindex.all.includes(:created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+    # @wordindices = Wordindex.all.includes(:created_by).order(created_at: :desc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+	@wordindices = Wordindex.all.includes(:created_by).order(word: :asc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
     respond_to do |format|
       if request.xhr?
-        format.html {render partial: "admin/wordindices/table", locals: { wordindices: @word_indices } }
+        # format.html {render partial: "admin/wordindices/table", locals: { wordindices: @word_indices } }
+		format.html {render partial: "admin/wordindices/table", locals: { wordindices: @wordindices } }
       else
         format.html
       end
@@ -36,19 +38,32 @@ class Admin::WordindicesController < ApplicationController
 	end
 
 	def create
-    @wordindex = Wordindex.new(secure_params.merge(created_by: current_user))
-	if Wordindex.where(word: secure_params[:word]).empty?
-    	if @wordindex.save 
-			redirect_to admin_wordindex_path(@wordindex), flash_success_info: "Word Index was successfully created."
+		@wordindex = Wordindex.new(secure_params.merge(created_by: current_user))
+		if Wordindex.where(word: secure_params[:word]).empty?
+			if @wordindex.save 
+				redirect_to admin_wordindex_path(@wordindex), flash_success_info: "Word Index was successfully created."
+			else
+				flash[:flash_info] = "Word Index was not successfully created."
+			render :new
+			end
 		else
-			flash[:flash_info] = "Word Index was not successfully created."
-		render :new
+			flash[:flash_info] = "Word is already present and duplicate words cannot be inserted. Please Update the word instead."
+			render :new
 		end
-	else
-		flash[:flash_info] = "Word is already present and duplicate words cannot be inserted. Please Update the word instead."
-		render :new
+  	end
+
+	def import_glossary
+		if (params[:some_symbol].present? && params[:some_symbol][:file].present?)
+		  import = Wordindex.import_glossary(params[:some_symbol][:file],current_user.id)
+		  if import[:status] == "true"
+			redirect_to admin_wordindices_path, flash_success_info: "#{import[:records_count]} responses imported successfully"
+		  else
+			redirect_to admin_wordindices_path, flash_info: "Something went wrong, please try again later."
+		  end
+		else
+		  redirect_to admin_wordindices_path, flash_info: "File not found."
+		end
 	end
-  end
 
 	private
 
