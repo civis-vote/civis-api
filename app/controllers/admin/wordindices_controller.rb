@@ -53,8 +53,8 @@ class Admin::WordindicesController < ApplicationController
   	end
 
 	def import_glossary
-		if (params[:some_symbol].present? && params[:some_symbol][:file].present?)
-		  import = Wordindex.import_glossary(params[:some_symbol][:file],current_user.id)
+		if (params[:glossary_placeholder].present? && params[:glossary_placeholder][:file].present?)
+		  import = Wordindex.import_glossary(params[:glossary_placeholder][:file],current_user.id)
 		  if import[:status] == "true"
 			redirect_to admin_wordindices_path, flash_success_info: "#{import[:records_count]} responses imported successfully"
 		  else

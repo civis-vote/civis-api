@@ -27,7 +27,7 @@
   
   #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1" 
     .modal-dialog.modal-dialog-centered role="document" 
-      = simple_form_for :some_symbol, url: import_glossary_admin_wordindices_path, method: :post do |f|        
+      = simple_form_for :glossary_placeholder, url: import_glossary_admin_wordindices_path, method: :post do |f|        
         .modal-content
           .modal-header
             h5.modal-title Upload File To Import Glossary
