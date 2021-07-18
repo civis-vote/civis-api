@@ -51,6 +51,10 @@ class Wordindex < ApplicationRecord
       order("#{sort} #{sort_direction}")
     }
  
+    def format_for_csv(field_name)
+      self[field_name.to_sym].present? ? self[field_name.to_sym] : "NA"
+    end
+        
     def self.import_glossary(file,user_id)
       self.import_fields_from_files(file,user_id)
     end

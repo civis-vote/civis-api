@@ -63,6 +63,7 @@ Rails.application.routes.draw do
 
     resources :wordindices do
       collection do
+        get :export_as_excel
         post :import_glossary
       end
     end

@@ -24,6 +24,7 @@
     = link_to "New Word", new_admin_wordindex_path, class: "button"
     = link_to '', {class: "button", id: "import_glossary", 'data-target': "#importModal", 'data-toggle': "modal", 'type': "button"} do
       | Import Glossary from csv file
+    = link_to "Export as excel", export_as_excel_admin_wordindices_path, class: "button"
   
   #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1" 
     .modal-dialog.modal-dialog-centered role="document" 
