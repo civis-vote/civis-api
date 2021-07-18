@@ -310,6 +310,40 @@ class UserMailer < ApplicationMailer
                                             )
 	end
 
+	def profanity_export_email_job(profanities, email)
+		size_arr = []
+    	profanities.size.times { size_arr << 22 }
+		excel_file = "#{Dir.tmpdir()}/profanities-sheet_#{Time.now.to_s}.xlsx"
+		file_name = "profanities-sheet_#{Time.now.to_s}.xlsx"
+		xlsx = Axlsx::Package.new
+		xlsx.workbook do |workbook|
+			workbook.add_worksheet(name: "Profanities") do |sheet|
+				center = workbook.styles.add_style alignment: { horizontal: :center, vertical: :center }
+			  sheet.add_row ["Profane Word"], b: true
+			  profanities.each do |profanity|
+			    sheet.add_row [profanity.format_for_csv("profane_word")], style: [center]*1
+			  end
+				sheet.column_widths *size_arr
+			end
+		end
+    xlsx.serialize(excel_file)
+    user = User.find_by(email: email)
+    file = File.open(excel_file)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_id: 13_651_891,
+																						template_model:{
+																							first_name: user.first_name,
+																						},
+                                              attachments: [{
+                                                name: file_name,
+                                                content: [file.read].pack("m"),
+                                                content_type: "application/vnd.ms-excel",
+                                              }],
+                                            )
+	end
+
 	def invite_organisation_employee(user, invitation_url)
 		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,

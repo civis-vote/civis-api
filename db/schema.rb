@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_05_142332) do
+ActiveRecord::Schema.define(version: 2021_07_18_071852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -258,6 +258,14 @@ ActiveRecord::Schema.define(version: 2021_07_05_142332) do
     t.float "points"
   end
 
+  create_table "profanities", force: :cascade do |t|
+    t.string "profane_word"
+    t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["profane_word"], name: "index_profanities_on_profane_word", unique: true
+  end
+
   create_table "questions", force: :cascade do |t|
     t.integer "parent_id"
     t.string "question_text"
@@ -369,7 +377,7 @@ ActiveRecord::Schema.define(version: 2021_07_05_142332) do
     t.integer "created_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["word"], name: "index_wordindices_on_word"
+    t.index ["word"], name: "index_wordindices_on_word", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

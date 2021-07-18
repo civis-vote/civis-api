@@ -67,6 +67,13 @@ Rails.application.routes.draw do
       end
     end
 
+    resources :profanities do
+      collection do
+        get :export_as_excel
+        post :import_profanities
+      end
+    end
+
     resources :glossary_word_consultation_mappings
     resources :case_studies
     resources :categories
