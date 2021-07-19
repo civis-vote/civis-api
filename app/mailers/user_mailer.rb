@@ -326,22 +326,22 @@ class UserMailer < ApplicationMailer
 				sheet.column_widths *size_arr
 			end
 		end
-    xlsx.serialize(excel_file)
-    user = User.find_by(email: email)
-    file = File.open(excel_file)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
-																						to: user.email,
-																						reply_to: "support@civis.vote",
-																						template_id: 13_651_891,
-																						template_model:{
-																							first_name: user.first_name,
-																						},
-                                              attachments: [{
-                                                name: file_name,
-                                                content: [file.read].pack("m"),
-                                                content_type: "application/vnd.ms-excel",
-                                              }],
-                                            )
+		xlsx.serialize(excel_file)
+		user = User.find_by(email: email)
+		file = File.open(excel_file)
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_id: 13_651_891,
+																							template_model:{
+																								first_name: user.first_name,
+																							},
+												attachments: [{
+													name: file_name,
+													content: [file.read].pack("m"),
+													content_type: "application/vnd.ms-excel",
+												}],
+												)
 	end
 
 	def invite_organisation_employee(user, invitation_url)
