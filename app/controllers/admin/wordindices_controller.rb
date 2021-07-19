@@ -65,6 +65,15 @@ class Admin::WordindicesController < ApplicationController
 		end
 	end
 
+	def export_as_excel
+		respond_to do |format|
+			@wordindices = Wordindex.all.order(word: :asc).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+			@wordindices = @wordindices.data.list(@wordindices.facets.filtered_count, nil, nil)
+			WordindexExportEmailJob.perform_later(@wordindices.data.to_a, current_user.email)
+			format.html { redirect_back fallback_location: admin_wordindices_path, flash_success_info: "Glossary details was successfully exported will email you shortly." }
+		end
+	end
+
 	private
 
 	def secure_params

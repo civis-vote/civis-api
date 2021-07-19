@@ -322,6 +322,36 @@ class UserMailer < ApplicationMailer
 			  sheet.add_row ["Profane Word"], b: true
 			  profanities.each do |profanity|
 			    sheet.add_row [profanity.format_for_csv("profane_word")], style: [center]*1
+				xlsx.serialize(excel_file)
+				user = User.find_by(email: email)
+				file = File.open(excel_file)
+					ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																									to: user.email,
+																									reply_to: "support@civis.vote",
+																									template_id: 13_651_891,
+																									template_model:{
+																										first_name: user.first_name,
+																									},
+														  attachments: [{
+															name: file_name,
+															content: [file.read].pack("m"),
+															content_type: "application/vnd.ms-excel",
+														  }],
+														)
+	end
+	
+	def wordindex_export_email_job(wordindices, email)
+		size_arr = []
+    	wordindices.size.times { size_arr << 22 }
+		excel_file = "#{Dir.tmpdir()}/glossary-sheet_#{Time.now.to_s}.xlsx"
+		file_name = "glossary-sheet_#{Time.now.to_s}.xlsx"
+		xlsx = Axlsx::Package.new
+		xlsx.workbook do |workbook|
+			workbook.add_worksheet(name: "Glossary") do |sheet|
+				center = workbook.styles.add_style alignment: { horizontal: :left, vertical: :center }
+			  sheet.add_row ["Word", "Description"], b: true
+			  wordindices.each do |wordindex|
+			    sheet.add_row [wordindex.format_for_csv("word"), wordindex.format_for_csv("description")], style: [center]*2
 			  end
 				sheet.column_widths *size_arr
 			end
