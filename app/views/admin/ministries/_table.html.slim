@@ -5,8 +5,9 @@ table.table.mt-3
         tr
           th.width-35 Name of Ministry
           th Created by
-          th Status
           th.text-center
+          th Status
+          th Location
       tbody
         - @ministries.data.each do |ministry|
           tr.pointer onclick='window.location="#{admin_ministry_path(ministry)}";'
@@ -18,5 +19,7 @@ table.table.mt-3
               = ministry&.category&.name
             td
               = "#{ ministry&.is_approved ? 'Approved' : 'Not Approved' }"
+            td
+              = "#{ ministry&.location_id == 0 ? 'None' : Location.find(ministry&.location_id).name }"
 .pagination-parent
   = cm_paginate(@ministries.facets)

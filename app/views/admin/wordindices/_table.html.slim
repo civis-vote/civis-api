@@ -16,8 +16,6 @@ table.table.mt-3
             td
               = wordindex&.description
             td
-              = wordindex&.id
-            td
               = wordindex&.created_by&.full_name
 .pagination-parent
   - if @wordindices.facets.total_count > 0

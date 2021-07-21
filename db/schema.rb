@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_07_05_080517) do
+ActiveRecord::Schema.define(version: 2021_07_18_071852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -144,6 +144,8 @@ ActiveRecord::Schema.define(version: 2021_07_05_080517) do
     t.bigint "phone_number"
     t.date "responded_at"
     t.integer "source", default: 0
+    t.integer "is_approved", default: 0
+    t.jsonb "meta"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
@@ -214,6 +216,7 @@ ActiveRecord::Schema.define(version: 2021_07_05_080517) do
     t.text "logo_data"
     t.jsonb "logo_versions_data"
     t.datetime "deleted_at"
+    t.integer "location_id", default: 0
     t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
@@ -253,6 +256,14 @@ ActiveRecord::Schema.define(version: 2021_07_05_080517) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.float "points"
+  end
+
+  create_table "profanities", force: :cascade do |t|
+    t.string "profane_word"
+    t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["profane_word"], name: "index_profanities_on_profane_word", unique: true
   end
 
   create_table "questions", force: :cascade do |t|
@@ -366,7 +377,7 @@ ActiveRecord::Schema.define(version: 2021_07_05_080517) do
     t.integer "created_by_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["word"], name: "index_wordindices_on_word"
+    t.index ["word"], name: "index_wordindices_on_word", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

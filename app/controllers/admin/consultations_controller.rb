@@ -149,7 +149,7 @@ class Admin::ConsultationsController < ApplicationController
 		respond_to do |format|
 			if params[:consultation_responses]
 				consultation = Consultation.find(params[:id].to_i)
-				consultation_responses = consultation.responses.order(created_at: :desc)
+        consultation_responses = consultation.responses.order(created_at: :desc)
 				ConsultationResponsesExportEmailJob.perform_later(consultation_responses.to_a, current_user.email)
       	format.html { redirect_back fallback_location: admin_consultations_path, flash_success_info: "Consultations Responses was successfully exported will email you shortly." }
 			else

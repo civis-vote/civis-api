@@ -54,8 +54,27 @@ Rails.application.routes.draw do
         post :reject
       end
     end
+    resources :consultation_responses do
+      member do
+        post :approve
+        post :reject
+      end
+    end
 
-    resources :wordindices
+    resources :wordindices do
+      collection do
+        get :export_as_excel
+        post :import_glossary
+      end
+    end
+
+    resources :profanities do
+      collection do
+        get :export_as_excel
+        post :import_profanities
+      end
+    end
+
     resources :glossary_word_consultation_mappings
     resources :case_studies
     resources :categories
