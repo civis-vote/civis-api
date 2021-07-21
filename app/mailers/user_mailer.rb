@@ -194,7 +194,7 @@ class UserMailer < ApplicationMailer
 			xlsx.workbook do |workbook|
 				workbook.add_worksheet(name: "Consultation Responses") do |sheet|
 					wrap = workbook.styles.add_style alignment: {wrap_text: true}
-				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified", "Source"]
+				  response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified", "Source", "Response_Status"]
 					question_headers = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:question_text)
 					question_ids = consultation_responses.last.consultation.response_rounds.last.questions.order(:created_at).pluck(:id)	
 					question_headers.each do | question |
@@ -202,7 +202,7 @@ class UserMailer < ApplicationMailer
 					end
 					sheet.add_row response_header, b: true
 				  consultation_responses.each do |consultation_response|
-				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source ]
+				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, consultation_response.is_approved]
 				    answers = []
 			  		question_ids.each do |id|
 			  			if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id })
@@ -322,6 +322,10 @@ class UserMailer < ApplicationMailer
 			  sheet.add_row ["Profane Word"], b: true
 			  profanities.each do |profanity|
 			    sheet.add_row [profanity.format_for_csv("profane_word")], style: [center]*1
+			  end
+			    sheet.column_widths *size_arr
+			end
+		end
 				xlsx.serialize(excel_file)
 				user = User.find_by(email: email)
 				file = File.open(excel_file)
