@@ -18,13 +18,14 @@ module ImportGlossary
           records = []
           file.each_with_index do |row, index|
             hash = row.to_h
-            hash.merge!({"created_by_id": user_id})
-            word_value = hash["word"]
+            new_hash = customized_hash_from_rows(hash)
+            new_hash.merge!({"created_by_id": user_id})
+            word_value = new_hash["word"]
             word = Wordindex.find_by(word: word_value)
             if word.present?
               Wordindex.delete(word.id)
             end
-            records << hash
+            records << new_hash
           end
           import_records(records) if records.present?
           return result.merge!(status: "true", records_count: records.size)
@@ -67,6 +68,16 @@ module ImportGlossary
 
     def set_required_headers
       required_headers = ["word", "description"]
+    end
+
+    def customized_hash_from_rows(hash)
+      hash.each do |key, value|
+        if !(value.nil?)
+          stripped_value = value.strip
+          hash[key] = stripped_value
+        end
+      end
+      return hash
     end
 
     def import_records(records)

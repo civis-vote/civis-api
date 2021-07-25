@@ -18,13 +18,14 @@ module ImportProfanities
           records = []
           file.each_with_index do |row, index|
             hash = row.to_h
-            hash.merge!({"created_by_id": user_id})
-            profane_word_value = hash["profane_word"]
+            new_hash = customized_hash_from_rows(hash)
+            new_hash.merge!({"created_by_id": user_id})
+            profane_word_value = new_hash["profane_word"]
             profane_word = Profanity.find_by(profane_word: profane_word_value)
             if profane_word.present?
               Profanity.delete(profane_word.id)
             end
-            records << hash
+            records << new_hash
           end
           import_records(records) if records.present?
           return result.merge!(status: "true", records_count: records.size)
@@ -67,6 +68,16 @@ module ImportProfanities
 
     def set_required_headers
       required_headers = ["profane_word"]
+    end
+
+    def customized_hash_from_rows(hash)
+      hash.each do |key, value|
+        if !(value.nil?)
+          stripped_value = value.strip
+          hash[key] = stripped_value
+        end
+      end
+      return hash
     end
 
     def import_records(records)
