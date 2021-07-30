@@ -10,7 +10,8 @@ module Queries
 	    type Types::Objects::Profanity::List, null: true
 
 	    def resolve(per_page:, page:, sort:, sort_direction:)
-	    	::Profanity.sort_records(sort, sort_direction).list(per_page, page)
+			total_count = ::Profanity.total_profanity_count
+	    	::Profanity.sort_records(sort, sort_direction).list(total_count, page)
 	    end
 		end
 	end

@@ -19,6 +19,10 @@ class Profanity < ApplicationRecord
       order("#{sort} #{sort_direction}")
     }
 
+    scope :total_profanity_count, lambda { 
+      return self.count
+    }
+
     def format_for_csv(field_name)
       self[field_name.to_sym].present? ? self[field_name.to_sym] : "NA"
     end
