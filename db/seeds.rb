@@ -28,9 +28,8 @@ puts "---> Fabricating API Team"
 Fabricate(:user, email: "mkv@commutatus.com", role: "admin")
 Fabricate(:user, email: "balaji@commutatus.com", role: "admin")
 
-puts "---> Importing Ministries"
-Rake::Task["import_records_from_csv:ministries"].invoke("")
-Rake::Task["import_records_from_csv:ministries"].reenable
+puts "---> Fabricating 50 ministries"
+Fabricate.times(50, :ministry)
 
 
 

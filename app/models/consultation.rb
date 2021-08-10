@@ -19,6 +19,8 @@ class Consultation < ApplicationRecord
   enum review_type: { consultation: 0, policy: 1 }
   enum visibility: { public_consultation: 0, private_consultation: 1 }
 
+  validates_presence_of :response_deadline
+
   after_commit :notify_admins, on: :create
   after_commit :create_response_round, on: :create
 

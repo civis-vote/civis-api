@@ -110,7 +110,7 @@ class Admin::ConsultationsController < ApplicationController
     if @consultation.save
       redirect_to edit_english_summary_admin_consultation_path(@consultation)
     else
-    	flash[:flash_info] = "Consultation was not successfully created."
+    	flash[:flash_info] = "#{@consultation.errors.full_messages.present? ? @consultation&.errors&.full_messages&.join("<br /> ") : 'Consultation was not successfully created.'}".html_safe
       render :new
     end
   end
