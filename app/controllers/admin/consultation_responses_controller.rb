@@ -5,7 +5,7 @@ class Admin::ConsultationResponsesController < ApplicationController
 	before_action :set_consultation_response, only: [:show, :approve, :reject]
 
 	def index
-	@consultation_responses = ConsultationResponse.all.order(created_at: :desc).published_consultation.filter_by(params[:page], filter_params.to_h, sort_params.to_h)
+	@consultation_responses = ConsultationResponse.order(created_at: :desc).published_consultation.filter_by(params[:page], filter_params.to_h, sort_params.to_h)
 	respond_to do |format|
       if request.xhr?
         format.html {render partial: "admin/consultation_responses/table", locals: { consultation_responses: @consultation_responses } }
