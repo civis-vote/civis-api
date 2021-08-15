@@ -26,19 +26,16 @@ class Admin::MinistriesController < ApplicationController
 			params[:ministry][:location_id] = 0
 		else
 			@location_type = Location.find(@location_id).location_type
-			if @ministry_level == "national"
-				flash[:flash_info] = "Location cannot be selected for national level Ministry."
-				redirect_to admin_ministry_path(@ministry) and return
-			else
-				if @ministry_level == "state" and @location_type != "state"
+			case 
+				when @ministry_level == "national" then
+					flash[:flash_info] = "Location cannot be selected for National level Ministry."
+					redirect_to admin_ministry_path(@ministry) and return				
+				when (@ministry_level == "state" and @location_type != "state") then
 					flash[:flash_info] = "Location is not a state for State level Ministry."
 					redirect_to admin_ministry_path(@ministry) and return
-				else
-					if @ministry_level == "local" and @location_type != "city"
-						flash[:flash_info] = "Location is not a city for Local level Ministry."
-						redirect_to admin_ministry_path(@ministry) and return
-					end
-				end
+				when (@ministry_level == "local" and @location_type != "city") then
+					flash[:flash_info] = "Location is not a city for Local level Ministry."
+					redirect_to admin_ministry_path(@ministry) and return
 			end
 		end
 		
@@ -65,19 +62,16 @@ class Admin::MinistriesController < ApplicationController
 			@ministry.location_id = 0
 		else
 			@location_type = Location.find(@ministry.location_id).location_type
-			if @ministry.level == "national"
-				flash[:flash_info] = "Location cannot be selected for national level Ministry."
-				redirect_to admin_ministries_path and return
-			else
-				if @ministry.level == "state" and @location_type != "state"
+			case
+				when @ministry.level == "national" then
+					flash[:flash_info] = "Location cannot be selected for National level Ministry."
+					redirect_to admin_ministries_path and return
+				when (@ministry.level == "state" and @location_type != "state") then
 					flash[:flash_info] = "Location is not a state for State level Ministry."
 					redirect_to admin_ministries_path and return
-				else
-					if @ministry.level == "local" and @location_type != "city"
-						flash[:flash_info] = "Location is not a city for Local level Ministry."
-						redirect_to admin_ministries_path and return
-					end
-				end
+				when (@ministry.level == "local" and @location_type != "city") then
+					flash[:flash_info] = "Location is not a city for Local level Ministry."
+					redirect_to admin_ministries_path and return
 			end
 		end
 
