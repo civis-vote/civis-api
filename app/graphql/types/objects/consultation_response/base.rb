@@ -12,7 +12,7 @@ module Types
 				field :points,														Float, "Points earned by submitting this response", null: false
 				field :reading_time,											Integer, "Reading time of this response", null: false
 				field :response_text,											String, nil, null: true
-				field :is_approved,												Integer, nil, null: false
+				field :response_status,												Integer, nil, null: false
 				field :round_number,											Integer, nil, null: true
 				field :satisfaction_rating,								Types::Enums::ConsultationResponseSatisfactionRatings, nil, null: false
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true

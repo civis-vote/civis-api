@@ -25,7 +25,7 @@ class ConsultationResponse < ApplicationRecord
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
   enum visibility: { shared: 0, anonymous: 1 }
-  enum is_approved: { acceptable: 0, under_review: 1, unacceptable: 2 }
+  enum response_status: { acceptable: 0, under_review: 1, unacceptable: 2 }
   enum source: { platform: 0, off_platform: 1 }
 
   # validations
@@ -49,11 +49,11 @@ class ConsultationResponse < ApplicationRecord
 
   scope :response_filter, lambda { |response_status|
     return all unless response_status.present?
-    where(is_approved: response_status)
+    where(response_status: response_status)
   }
 
   def self.acceptable_responses 
-    where(is_approved: 'acceptable')
+    where(response_status: 'acceptable')
   end
 
   def self.public_consultation_response_filter
@@ -122,21 +122,21 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def notify_admin_if_profane
-    if self.is_approved == "under_review"
+    if self.response_status == "under_review"
       NotifyProfaneResponseEmailToAdminJob.perform_later(self)
     end
   end
 
   def approve
     self.approved_by_id = Current.user.id
-    self.is_approved = :acceptable
+    self.response_status = :acceptable
     self.approved_at = DateTime.now
     self.save!
   end
 
   def reject
     self.rejected_by_id = Current.user.id
-    self.is_approved = :unacceptable
+    self.response_status = :unacceptable
     self.rejected_at = DateTime.now
     self.save!
   end

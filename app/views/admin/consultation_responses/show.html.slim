@@ -38,4 +38,4 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Consultation Title", "show-page-input-details", "#{@consultation_response&.consultation&.title || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "User Response", "show-page-input-details", "#{@consultation_response&.response_text.to_plain_text}")
         = display_details("show-page-parent-details", "show-page-label-details", "Given by", "show-page-input-details", "#{@consultation_response&.user&.full_name || '-'}")
-        = display_details("show-page-parent-details", "show-page-label-details", "Status", "show-page-input-details", "#{@consultation_response&.is_approved == "acceptable" ? 'Acceptable' : @consultation_response&.is_approved == "under_review" ? 'Under Review' : 'Unacceptable'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Status", "show-page-input-details", "#{@consultation_response&.response_status == "acceptable" ? 'Acceptable' : @consultation_response&.response_status == "under_review" ? 'Under Review' : 'Unacceptable'}")

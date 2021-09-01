@@ -18,11 +18,11 @@ table.table.mt-3
             td
               = consultation_response&.user&.full_name
             td
-              div class="#{consultation_response.is_approved}"
+              div class="#{consultation_response.response_status}"
                 .text-color
-                  - if consultation_response.is_approved == "acceptable"
+                  - if consultation_response.response_status == "acceptable"
                     | Acceptable
-                  - elsif consultation_response.is_approved == "under_review"
+                  - elsif consultation_response.response_status == "under_review"
                     | Under Review
                   - else
                     | Unacceptable
