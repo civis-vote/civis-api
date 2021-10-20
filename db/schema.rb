@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_19_101243) do
+ActiveRecord::Schema.define(version: 2021_06_04_090823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -121,7 +121,7 @@ ActiveRecord::Schema.define(version: 2021_01_19_101243) do
   end
 
   create_table "consultation_responses", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "user_id"
     t.bigint "consultation_id", null: false
     t.integer "satisfaction_rating"
     t.datetime "created_at", precision: 6, null: false
@@ -137,6 +137,13 @@ ActiveRecord::Schema.define(version: 2021_01_19_101243) do
     t.datetime "deleted_at"
     t.bigint "respondent_id"
     t.bigint "response_round_id"
+    t.string "import_key"
+    t.string "first_name"
+    t.string "last_name"
+    t.string "email"
+    t.bigint "phone_number"
+    t.date "responded_at"
+    t.integer "source", default: 0
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"

@@ -46,6 +46,8 @@ gem "whenever", require: false
 
 gem "roo", "~> 2.8.0"
 
+gem "roo-xls"
+
 gem "sitemap_generator"
 
 gem "aws-sdk-s3", require: false

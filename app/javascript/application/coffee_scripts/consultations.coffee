@@ -208,3 +208,5 @@ $(document).on 'turbolinks:load', ->
 		  	$('#add-option-btn').click()
 		  	return false
 	  return
+	$(document).on 'click', '#file-upload-btn', (e)->
+		$('#loader-for-file-upload').removeClass("hidden")

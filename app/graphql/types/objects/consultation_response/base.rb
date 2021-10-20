@@ -8,7 +8,7 @@ module Types
 				field :created_at,												Types::Objects::DateTime, nil, null: false
 				field :down_vote_count,										Integer, "Count of users that down-votes this response", null: false
 				field :id,																Integer, "ID of the consultation", null: false
-				field :is_verified,												Boolean, "Email verification of the user", null: false
+				field :is_verified,												Boolean, "Email verification of the user", null: true
 				field :points,														Float, "Points earned by submitting this response", null: false
 				field :reading_time,											Integer, "Reading time of this response", null: false
 				field :response_text,											String, nil, null: true
@@ -25,6 +25,7 @@ module Types
 						super && context[:current_user].present?
 					end			
 				end
+				field :user_name,													String, nil, null: true
 
 				def voted_as
 					object.voted_as(context[:current_user])
@@ -37,7 +38,11 @@ module Types
 				end
 
 				def is_verified
-					object.user.confirmed_at?
+					object.user.confirmed_at? if object.user
+				end
+
+				def user_name
+					object.user ? object.user.first_name : object.first_name
 				end
 			end
 		end
