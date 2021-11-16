@@ -1,7 +1,7 @@
 module Mutations
   module Auth
     class ForgotPassword < Mutations::BaseMutation
-      type Types::Objects::ApiKey, null: false
+      type String, null: true
 
       argument :email, String, nil, required: true
 
@@ -15,6 +15,7 @@ module Mutations
         forgot_password_url = user.forgot_password_url(raw_token)
         ForgotPasswordEmailJob.perform_later(user, forgot_password_url)
         user.find_or_generate_api_key
+        return "If you account is present in our system, you will receive an email to reset the password."
       end
     end
   end
