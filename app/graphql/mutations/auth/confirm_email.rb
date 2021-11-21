@@ -11,6 +11,7 @@ module Mutations
         user.confirm
         user.find_or_generate_api_key
         user.live_api_key
+        return "If you account exists, you will receive an email. If you haven’t received the email, please contact support for further help."
       end
     end
   end
