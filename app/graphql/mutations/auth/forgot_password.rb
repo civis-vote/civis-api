@@ -15,7 +15,7 @@ module Mutations
         forgot_password_url = user.forgot_password_url(raw_token)
         ForgotPasswordEmailJob.perform_later(user, forgot_password_url)
         user.find_or_generate_api_key
-        return "If you account exists, you will receive an email with Password reset instruction. If you haven’t received the email, please contact support for further help."
+        return "If you account exists, you will receive an email with password reset instructions. If you haven’t received the email, please contact support for further help."
       end
     end
   end
