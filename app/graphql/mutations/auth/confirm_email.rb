@@ -11,7 +11,7 @@ module Mutations
         user.confirm
         user.find_or_generate_api_key
         user.live_api_key
-        return "If you account exists, you will receive an email. If you haven’t received the email, please contact support for further help."
+        return "If your account exists, you will receive an email on your registered email address. If you haven’t received the email, please contact info@civis.vote for support"
       end
     end
   end
