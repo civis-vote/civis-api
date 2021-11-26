@@ -1,7 +1,7 @@
 module Mutations
   module Auth
     class ConfirmEmail < Mutations::BaseMutation
-      type Types::Objects::ApiKey, null: false
+      type String, null: true
 
       argument :confirmation_token, String, required: true
 
