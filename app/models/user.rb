@@ -21,6 +21,7 @@ class User < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
   validates :first_name, presence: true
+  validate :password_complexity
 
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
@@ -188,5 +189,11 @@ class User < ApplicationRecord
     self.active = false
     self.save(validate: false)
     Organisation.decrement_counter(:users_count, organisation_id)
+  end
+
+  def password_complexity
+    if password.present? && !password.match("^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$")
+      errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
+    end
   end
 end
