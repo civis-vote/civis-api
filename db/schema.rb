@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_11_20_150340) do
+ActiveRecord::Schema.define(version: 2021_06_04_090823) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -116,7 +116,6 @@ ActiveRecord::Schema.define(version: 2021_11_20_150340) do
     t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["consultation_response_id", "user_id"], name: "consultation_response_id_and_user_id_index", unique: true
     t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
     t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
   end
@@ -153,7 +152,7 @@ ActiveRecord::Schema.define(version: 2021_11_20_150340) do
   end
 
   create_table "consultations", force: :cascade do |t|
-    t.string "title", null: false
+    t.string "title"
     t.string "url"
     t.datetime "response_deadline"
     t.bigint "ministry_id", null: false
@@ -305,7 +304,7 @@ ActiveRecord::Schema.define(version: 2021_11_20_150340) do
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", default: -> { "(('now'::text)::date)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"
@@ -323,6 +322,7 @@ ActiveRecord::Schema.define(version: 2021_11_20_150340) do
     t.string "organization"
     t.string "callback_url"
     t.string "designation"
+    t.bigint "consultation_id"
     t.bigint "organisation_id"
     t.string "invitation_token"
     t.datetime "invitation_created_at"
@@ -335,6 +335,7 @@ ActiveRecord::Schema.define(version: 2021_11_20_150340) do
     t.boolean "active", default: true
     t.integer "referring_consultation_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+    t.index ["consultation_id"], name: "index_users_on_consultation_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
@@ -366,5 +367,6 @@ ActiveRecord::Schema.define(version: 2021_11_20_150340) do
   add_foreign_key "respondents", "response_rounds"
   add_foreign_key "respondents", "users"
   add_foreign_key "response_rounds", "consultations"
+  add_foreign_key "users", "consultations"
   add_foreign_key "users", "organisations"
 end
