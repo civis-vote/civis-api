@@ -10,6 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
+
 ActiveRecord::Schema.define(version: 2021_11_22_032403) do
 
 
@@ -146,6 +147,8 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.bigint "phone_number"
     t.date "responded_at"
     t.integer "source", default: 0
+    t.integer "response_status", default: 0
+    t.jsonb "meta"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
@@ -187,6 +190,13 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.index ["user_id"], name: "index_game_actions_on_user_id"
   end
 
+  create_table "glossary_word_consultation_mappings", force: :cascade do |t|
+    t.integer "consultation_id"
+    t.integer "glossary_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.integer "parent_id"
@@ -209,6 +219,7 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.text "logo_data"
     t.jsonb "logo_versions_data"
     t.datetime "deleted_at"
+    t.integer "location_id", default: 0
     t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
@@ -250,6 +261,14 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.float "points"
   end
 
+  create_table "profanities", force: :cascade do |t|
+    t.string "profane_word"
+    t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["profane_word"], name: "index_profanities_on_profane_word", unique: true
+  end
+
   create_table "questions", force: :cascade do |t|
     t.integer "parent_id"
     t.string "question_text"
@@ -283,7 +302,16 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
 
-  create_table "sessions", force: :cascade do |t|
+  create_table "user_counts", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "profanity_count"
+    t.integer "short_response_count"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
+  end
+
+    create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
     t.datetime "created_at", precision: 6, null: false
@@ -353,6 +381,15 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+  end
+
+  create_table "wordindices", force: :cascade do |t|
+    t.string "word"
+    t.string "description"
+    t.integer "created_by_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["word"], name: "index_wordindices_on_word", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

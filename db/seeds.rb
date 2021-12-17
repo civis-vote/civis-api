@@ -80,3 +80,6 @@ Organisation.all.each do |organisation|
 	puts "---> Creating Employees"
 	Fabricate.times(3, :user, role: :organisation_employee, organisation_id: organisation.id)
 end
+
+puts "---> Creating Glossary Word"
+Fabricate.times(10, :wordindex)

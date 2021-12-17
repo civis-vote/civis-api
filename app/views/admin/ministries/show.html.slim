@@ -54,3 +54,4 @@
         = display_details("show-page-parent-details", "show-page-label-details", "Category", "show-page-input-details", "#{@ministry&.category&.name || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Primary email address", "show-page-input-details", "#{@ministry&.poc_email_primary || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Secondary email address", "show-page-input-details", "#{@ministry&.poc_email_secondary || '-'}")
+        = display_details("show-page-parent-details", "show-page-label-details", "Location", "show-page-input-details", "#{@ministry&.location_id == 0 ? "None" : Location.find(@ministry&.location_id).name}")

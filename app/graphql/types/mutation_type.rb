@@ -15,6 +15,8 @@ module Types
     field :game_action_create,                      resolver: Mutations::GameAction::Create
     field :ministry_create,                         resolver: Mutations::Ministry::Create
     field :vote_create,                             resolver: Mutations::ConsultationResponseVote::Create
-    field :vote_delete,                   resolver: Mutations::ConsultationResponseVote::Delete
+    field :vote_delete,                             resolver: Mutations::ConsultationResponseVote::Delete
+    field :user_count_create,                       resolver: Mutations::UserCount::Create
+    field :user_count_update,                       resolver: Mutations::UserCount::Update
   end
 end

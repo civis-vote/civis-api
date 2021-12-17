@@ -1,0 +1,11 @@
+= simple_form_for [:admin, @wordindex], data: { id: "add_edit_wordindex_detail" } do |f|
+	.p-4
+		.admin-header-text
+			| Glossary Word Definition
+		.admin-details-box
+			= f.input :word, placeholder: "Word", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "word" }
+			= f.input :description, placeholder: "Description",  required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "description" }
+		.admin-update-button-position
+			= f.button :submit, "Save Glossary"
+
+
