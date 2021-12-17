@@ -113,8 +113,6 @@ class ConsultationResponse < ApplicationRecord
       mandatory_question_ids.each do |question_id|
       	if answers.class == Array
       		mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s }
-      	else
-        	mandatory_answer = YAML.load(answers).select { |answer| answer["question_id"] == question_id.to_s }
       	end
         raise CivisApi::Exceptions::IncompleteEntity, "Mandatory question with id #{question_id} should be answered." if ( !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?) )
       end
