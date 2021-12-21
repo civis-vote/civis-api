@@ -41,3 +41,19 @@
           div
             .fas.fa-tags.pointer.pr-4
             | Categories
+      
+      = link_to admin_wordindices_path, class: "#{current_class?(admin_wordindices_path)} #{params[:id].present? ? current_class?(admin_wordindex_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_wordindex_path(params[:id])) : '' }" do
+        li
+          div
+            .far.fa-newspaper.pointer.pr-4 
+            | Glossary
+      = link_to admin_profanities_path, class: "#{current_class?(admin_profanities_path)} #{params[:id].present? ? current_class?(admin_profanity_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_profanity_path(params[:id])) : '' }" do
+        li
+          div
+            .far.fa-newspaper.pointer.pr-4 
+            | Profanities
+      = link_to admin_consultation_responses_path, class: "#{current_class?(admin_consultation_responses_path)} #{params[:id].present? ? current_class?(admin_consultation_response_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_consultation_response_path(params[:id])) : '' }" do
+        li
+          div
+            .far.fa-newspaper.pointer.pr-4 
+            | User Responses

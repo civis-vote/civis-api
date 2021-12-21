@@ -19,6 +19,26 @@ class Admin::MinistriesController < ApplicationController
 	end
 
 	def update
+		@location_id = params[:ministry][:location_id]
+		@ministry_level = params[:ministry][:level]
+
+		if @location_id.blank?
+			params[:ministry][:location_id] = 0
+		else
+			@location_type = Location.find(@location_id).location_type
+			case 
+				when @ministry_level == "national" then
+					flash[:flash_info] = "Location cannot be selected for National level Ministry."
+					redirect_to admin_ministry_path(@ministry) and return				
+				when (@ministry_level == "state" and @location_type != "state") then
+					flash[:flash_info] = "Location is not a state for State level Ministry."
+					redirect_to admin_ministry_path(@ministry) and return
+				when (@ministry_level == "local" and @location_type != "city") then
+					flash[:flash_info] = "Location is not a city for Local level Ministry."
+					redirect_to admin_ministry_path(@ministry) and return
+			end
+		end
+		
 		if @ministry.update(secure_params)
 			redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry details was successfully updated."
 		else
@@ -36,14 +56,32 @@ class Admin::MinistriesController < ApplicationController
 	end
 
 	def create
-    @ministry = Ministry.new(secure_params.merge(created_by_id: current_user.id))
-    if @ministry.save
-      redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry was successfully created."
-    else
-    	flash[:flash_info] = "Ministry was not successfully created."
-      render :new
-    end
-  end
+		@ministry = Ministry.new(secure_params.merge(created_by_id: current_user.id))
+		
+		if @ministry.location_id.nil?
+			@ministry.location_id = 0
+		else
+			@location_type = Location.find(@ministry.location_id).location_type
+			case
+				when @ministry.level == "national" then
+					flash[:flash_info] = "Location cannot be selected for National level Ministry."
+					redirect_to admin_ministries_path and return
+				when (@ministry.level == "state" and @location_type != "state") then
+					flash[:flash_info] = "Location is not a state for State level Ministry."
+					redirect_to admin_ministries_path and return
+				when (@ministry.level == "local" and @location_type != "city") then
+					flash[:flash_info] = "Location is not a city for Local level Ministry."
+					redirect_to admin_ministries_path and return
+			end
+		end
+
+		if @ministry.save
+		  redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry was successfully created."
+		else
+			flash[:flash_info] = "Ministry was not successfully created."
+		  render :new
+		end
+	end
 
 	def approve
 		@ministry.approve
@@ -58,7 +96,7 @@ class Admin::MinistriesController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:ministry).permit(:name, :level, :poc_email_primary, :poc_email_secondary, :logo, :category_id)
+		params.require(:ministry).permit(:name, :level, :poc_email_primary, :poc_email_secondary, :logo, :category_id, :location_id)
 	end
 
 	def set_ministry

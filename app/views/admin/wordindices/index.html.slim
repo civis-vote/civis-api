@@ -1,0 +1,47 @@
+- navigation_add 'Word Indices', admin_wordindices_path
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+.bg-white.p-3
+  .admin-filter-bg.box-shadow-none
+    .admin-filter-parent
+      .admin-filter-child.width-75
+        .admin-filter-child-field
+          .admin-index-title-bold Word Index
+  .admin-filters-wrap
+    .admin-filter-parent.pl-0
+      .admin-filter-child.width-100
+        .col-md-2
+          .filters data-filter-url="/admin/wordindices" data-replacement-class="wordindices_table"
+            .input-group.search
+              input.form-control.filter-box name=("search_term_for_word_indices") placeholder=("Search wordindices") type="text" data-behaviour="filter" data-scope="search" data-type="input-filter"
+    .admin-table.wordindices_table
+      = render 'table'
+    br
+  .admin-update-button-position
+    = link_to "Map Word", admin_glossary_word_consultation_mappings_path, class: "button"   
+    = link_to "New Word", new_admin_wordindex_path, class: "button"
+    = link_to '', {class: "button", id: "import_glossary", 'data-target': "#importModal", 'data-toggle': "modal", 'type': "button"} do
+      | Import Glossary from csv file
+    = link_to "Export as excel", export_as_excel_admin_wordindices_path, class: "button"
+  
+  #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1" 
+    .modal-dialog.modal-dialog-centered role="document" 
+      = simple_form_for :glossary_placeholder, url: import_glossary_admin_wordindices_path, method: :post do |f|        
+        .modal-content
+          .modal-header
+            h5.modal-title Upload File To Import Glossary
+            button.close aria-label="Close" data-dismiss="modal" type="button" 
+              span aria-hidden="true"  &times;
+          .modal-body
+                  .row.form-group.string.optional
+                    .col-md-12.form-label-group
+                      = link_to 'Click to download sample template' , "https://civis-production-api.s3.ap-south-1.amazonaws.com/Civis+-+Response+Import+Template.xlsx"
+                    .col-md-10.form-label-group
+                      = f.file_field :file, class: "p10"
+                    #loader-for-file-upload.col-md-2.form-label-group.hidden
+                      .loader
+          .modal-footer
+            button.btn.btn-secondary data-dismiss="modal" type="button"  Close
+            input.btn.square-btn-question id="file-upload-btn" type="submit" value="Import"
