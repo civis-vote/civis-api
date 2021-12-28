@@ -42,6 +42,7 @@ module Types
 					object.user.confirmed_at? if object.user
 				end
 
+
 				def respondent_name
 					object.user ? object.user.first_name : object.first_name
 				end
