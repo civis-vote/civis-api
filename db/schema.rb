@@ -10,9 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-
-ActiveRecord::Schema.define(version: 2021_11_22_032403) do
+ActiveRecord::Schema.define(version: 2022_01_05_060951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -311,7 +309,7 @@ ActiveRecord::Schema.define(version: 2021_11_22_032403) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
-    create_table "sessions", force: :cascade do |t|
+  create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
     t.datetime "created_at", precision: 6, null: false
