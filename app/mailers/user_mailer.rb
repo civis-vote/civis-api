@@ -156,7 +156,7 @@ class UserMailer < ApplicationMailer
 					end
 					sheet.add_row response_header, b: true
 				  consultation_responses.each do |consultation_response|
-				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.platform? ? consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') : consultation_response.responded_at.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, consultation_response.user.organisation.present? ? consultation_response.user.organisation.name : "NA", consultation_response.user.designation.present? ? consultation_response.user.designation: "NA"]
+				    row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.platform? ? consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') : consultation_response.responded_at.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, consultation_response.user.organisation.present? ? consultation_response.user.organisation.name : "NA", consultation_response.user.designation.present? ? consultation_response.user.designation : "NA"]
 				    answers = []
 			  		question_ids.each do |id|
 			  			if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id })
@@ -180,7 +180,7 @@ class UserMailer < ApplicationMailer
 					if response_round.present?
 						workbook.add_worksheet(name: "Responses - Round #{index+1}") do |sheet|
 							wrap = workbook.styles.add_style alignment: {wrap_text: true}
-							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified", "Source"]
+							response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified", "Source", "Organisation/Department", "Designation"]
 							question_headers = response_round.questions.order(:created_at).pluck(:question_text)
 							question_ids = response_round.questions.order(:created_at).pluck(:id)	
 							question_headers.each do | question |
@@ -189,7 +189,7 @@ class UserMailer < ApplicationMailer
 						  sheet.add_row response_header, b: true
 						  consultation_responses.each do |consultation_response|
 						  	if consultation_response.response_round_id == response_round.id
-						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source ]
+						  		row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, consultation_response.user.organisation.present? ? consultation_response.user.organisation.name : "NA", consultation_response.user.designation.present? ? consultation_response.user.designation : "NA" ]
 						  		answers = []
 						  		question_ids.each do |id|
 						  			if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id } )
