@@ -22,6 +22,7 @@ gem "redis"
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 gem "kaminari"
+gem 'activerecord-session_store'
 
 gem "rack-cors"
 
@@ -77,7 +78,6 @@ gem 'react-rails', '~> 2.6.0'
 gem 'cm_page_builder-rails', '~> 0.2.1'
 gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
 gem "paranoia"
-gem 'activerecord-session_store'
 
 group :development, :test, :staging do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -109,6 +109,7 @@ group :test do
   gem "selenium-webdriver"
   # Easy installation and use of web drivers to run system tests with browsers
   gem "webdrivers"
+  gem "rspec-rails", "~> 3.7"
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

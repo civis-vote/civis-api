@@ -24,5 +24,34 @@ module CivisApi
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins '*'
+        resource '*', headers: :any, methods: [:get, :post, :options]
+      end
+    end
+
+    #Referrer Policy
+    Rails.application.configure do
+      config.action_dispatch.default_headers = {
+        'Referrer-Policy' => 'strict-origin-when-cross-origin'
+      }
+    end
+
+    #X-Content-Type-Options
+    Rails.application.configure do 
+      config.action_dispatch.default_headers = { 'X-Content-Type-Options' => 'nosniff' } 
+    end
+
+    #X-Frame-Options 
+    Rails.application.configure do 
+      config.action_dispatch.default_headers = { 'X-Frame-Options' => 'SAMEORIGIN' } 
+    end
+
+    #X-XSS-Protection
+    Rails.application.configure do 
+      config.action_dispatch.default_headers = { 'X-XSS-Protection' => '1; mode=block' } 
+    end
   end
 end
