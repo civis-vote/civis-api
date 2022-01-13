@@ -192,7 +192,7 @@ class User < ApplicationRecord
   end
 
   def password_complexity
-    if password.present? && !password.match("^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$")
+    if password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$/)
       errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
     end
   end
