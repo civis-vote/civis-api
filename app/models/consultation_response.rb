@@ -21,6 +21,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
+  before_commit :validate_consultation_expired, on: :create
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -141,5 +142,9 @@ class ConsultationResponse < ApplicationRecord
   
   def self.import_responses(file)
     self.import_fields_from_files(file)
+  end
+
+  def validate_consultation_expired
+    raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if consultation_response.platform && consultation.response_deadline < Date.Today
   end
 end
