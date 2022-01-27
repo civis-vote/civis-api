@@ -164,4 +164,8 @@ class Consultation < ApplicationRecord
     self.response_deadline = deadline_date
     self.publish
   end
+
+  def is_user_from_same_organisation?
+   return true if self.organisation_id == Current.user.organisation_id
+  end
 end
