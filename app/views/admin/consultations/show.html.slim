@@ -33,10 +33,9 @@
               = image_pack_tag "media/application/images/icons/copy-link.svg",class: "mr-2"
               .copy-public-url.mr-2
                 | Copy share link
-        - unless Rails.env == "production"
-          - if (@consultation.private_consultation?)
-              = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
-                p Invite
+        - if (@consultation.private_consultation?)
+            = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
+              p Invite
         - if (@consultation.private_consultation? && !(@consultation.published? || @consultation.expired?))
           = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline_2", 'data-toggle': "modal"}  do
             | Publish
