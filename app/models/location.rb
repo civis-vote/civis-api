@@ -20,24 +20,9 @@ class Location < ApplicationRecord
     where(parent_id: parent_id)
   }
 
-  scope :search, lambda { |query|
-      return nil  if query.blank?
-    terms = query.downcase.split(/\s+/)
-    # replace "*" with "%" for wildcard searches,
-    # append '%', remove duplicate '%'s
-    terms = terms.map { |e|
-      (e.gsub("*", "%").prepend("%") + "%").gsub(/%+/, "%")
-    }
-    # configure number of OR conditions for provision
-    # of interpolation arguments. Adjust this if you
-    # change the number of OR conditions.
-    num_or_conds = 1
-    where(
-      terms.map { |term|
-        "(LOWER(name) LIKE ?)"
-      }.join(" OR "),
-      *terms.map { |e| [e] * num_or_conds }.flatten,
-    )
+  scope :search, lambda { |query = nil|
+    return nil unless query
+    where("name ILIKE (?)", "%#{query}%")
   }
 
 end
