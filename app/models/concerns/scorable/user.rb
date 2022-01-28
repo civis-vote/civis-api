@@ -28,6 +28,7 @@ module Scorable
       end
 
       def update_state_rank(state)
+        return false unless state.present?
         state_users = ::User.citizen.where(city_id: state.child_ids)
         distinct_points = state_users.distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
