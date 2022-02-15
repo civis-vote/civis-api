@@ -144,7 +144,7 @@ class ConsultationResponse < ApplicationRecord
     self.import_fields_from_files(file)
   end
 
-  def validate_consultation_expired
+  def check_if_consultation_expired?
     raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if consultation_response.platform && consultation.response_deadline < Date.Today
   end
 end
