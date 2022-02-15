@@ -21,7 +21,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
-  before_commit :validate_consultation_expired, on: :create
+  before_commit :check_if_consultation_expired?, on: :create
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
