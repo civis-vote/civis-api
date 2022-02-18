@@ -1002,3 +1002,9 @@ background-color: #0e73b9 !important;
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+#validation_primary_email{
+  margin-top: -20px;
+  color: red;
+  padding-left: 10px;
+}
