@@ -145,6 +145,6 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def check_if_consultation_expired?
-    raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if consultation_response.platform && consultation.response_deadline < Date.Today
+    raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if self.platform? && consultation.response_deadline < Date.today
   end
 end
