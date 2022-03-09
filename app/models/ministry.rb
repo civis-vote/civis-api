@@ -7,7 +7,7 @@ class Ministry < ApplicationRecord
   include Paginator
   include ImageUploader::Attachment(:logo)
 
-	validates :name, :level,  presence: true
+	validates :name, :level, :poc_email_primary, presence: true
 
 	# enums
   enum level: [:national, :state, :local]
