@@ -11,6 +11,7 @@ module Types
 				field :notify_for_new_consultation, Boolean, 									nil, 	null: true
 				field :organization, 								String,										nil,	null: true
 				field :phone_number,								String,										nil, 	null: true
+        field :is_verified,                 Boolean,                  nil, null: true
 				field :responses,										Types::Connections::ConsultationResponse, nil, null: true do 
 					argument :sort,										Types::Enums::ConsultationResponseSorts, 	required: false, default_value: nil
 					argument :sort_direction,					Types::Enums::SortDirections, 						required: false, default_value: nil
@@ -19,6 +20,10 @@ module Types
 				def responses(sort:, sort_direction:)
 					object.responses.sort_records(sort, sort_direction)
 				end
+
+        def is_verified
+          object.user.confirmed_at? if object.user
+        end
 			end
 		end
 	end
