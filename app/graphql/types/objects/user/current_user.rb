@@ -22,7 +22,7 @@ module Types
 				end
 
         def is_verified
-          object.user.confirmed_at? if object.user
+          object.confirmed_at? if object
         end
 			end
 		end
