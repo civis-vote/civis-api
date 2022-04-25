@@ -1,0 +1,2 @@
+class UserNotification < ApplicationRecord
+end

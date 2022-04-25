@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_27_034746) do
+ActiveRecord::Schema.define(version: 2022_04_18_184949) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -201,7 +201,6 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.integer "location_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.boolean "is_international_city", default: false
   end
 
   create_table "ministries", force: :cascade do |t|
@@ -228,6 +227,10 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.text "notification_details"
   end
 
   create_table "organisations", force: :cascade do |t|
@@ -301,6 +304,15 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
   create_table "user_counts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "profanity_count"
@@ -310,13 +322,12 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
-  create_table "sessions", force: :cascade do |t|
-    t.string "session_id", null: false
-    t.text "data"
+  create_table "user_notifications", force: :cascade do |t|
+    t.bigint "user_id"
+    t.text "notificationDetails"
+    t.boolean "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
-    t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
   create_table "users", force: :cascade do |t|
