@@ -323,8 +323,10 @@ ActiveRecord::Schema.define(version: 2022_04_18_184949) do
   end
 
   create_table "user_notifications", force: :cascade do |t|
-    t.bigint "user_id"
-    t.text "notificationDetails"
+    t.integer "user_id"
+    t.text "notification_details"
+    t.string "type"
+    t.integer "old_rank"
     t.boolean "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
