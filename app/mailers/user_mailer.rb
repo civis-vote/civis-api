@@ -54,6 +54,52 @@ class UserMailer < ApplicationMailer
 																						})
 	end
 
+	def notify_profane_response_email_to_admin(user, consultation_response)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "profane-response-notification",
+																						template_model:{
+																							user_name: consultation_response.user.first_name,
+																							consultation_title: consultation_response.consultation.title,
+																						})
+	end
+
+	def notify_pending_review_of_profane_responses_email_to_admin(user, consultation)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "pending-review-of-profane-responses-notification",
+																						template_model:{
+																							first_name: consultation.created_by.first_name,
+																							consultation_title: consultation.title,
+																						})
+	end
+
+	def user_up_vote_responses_email_job(user, consultation_response)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "user-up-vote-responses-email",
+																						template_model:{
+																							up_vote_count: consultation_response.up_vote_count,
+																							consultation_response: consultation_response.response_text.to_plain_text,
+																							consultation_title: consultation_response.consultation.title,
+																						})
+	end
+
+	def use_response_as_template_email_job(user, consultation_response)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_alias: "use-response-as-template-email",
+																						template_model:{
+																							templates_count: consultation_response.templates_count,
+																							consultation_response: consultation_response.response_text.to_plain_text,
+																							consultation_title: consultation_response.consultation.title,
+																						})
+	end
+
 	def notify_published_consultation_email(consultation)
 		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: consultation.created_by.email,
@@ -262,6 +308,74 @@ class UserMailer < ApplicationMailer
                                                 content_type: "application/vnd.ms-excel",
                                               }],
                                             )
+	end
+
+	def profanity_export_email_job(profanities, email)
+		size_arr = []
+    	profanities.size.times { size_arr << 22 }
+		excel_file = "#{Dir.tmpdir()}/profanities-sheet_#{Time.now.to_s}.xlsx"
+		file_name = "profanities-sheet_#{Time.now.to_s}.xlsx"
+		xlsx = Axlsx::Package.new
+		xlsx.workbook do |workbook|
+			workbook.add_worksheet(name: "Profanities") do |sheet|
+				center = workbook.styles.add_style alignment: { horizontal: :center, vertical: :center }
+			  sheet.add_row ["Profane Word"], b: true
+			  profanities.each do |profanity|
+			    sheet.add_row [profanity.format_for_csv("profane_word")], style: [center]*1
+			  end
+			    sheet.column_widths *size_arr
+			end
+		end
+				xlsx.serialize(excel_file)
+				user = User.find_by(email: email)
+				file = File.open(excel_file)
+					ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																									to: user.email,
+																									reply_to: "support@civis.vote",
+																									template_id: 13_651_891,
+																									template_model:{
+																										first_name: user.first_name,
+																									},
+														  attachments: [{
+															name: file_name,
+															content: [file.read].pack("m"),
+															content_type: "application/vnd.ms-excel",
+														  }],
+														)
+	end
+	
+	def wordindex_export_email_job(wordindices, email)
+		size_arr = []
+    	wordindices.size.times { size_arr << 22 }
+		excel_file = "#{Dir.tmpdir()}/glossary-sheet_#{Time.now.to_s}.xlsx"
+		file_name = "glossary-sheet_#{Time.now.to_s}.xlsx"
+		xlsx = Axlsx::Package.new
+		xlsx.workbook do |workbook|
+			workbook.add_worksheet(name: "Glossary") do |sheet|
+				center = workbook.styles.add_style alignment: { horizontal: :left, vertical: :center }
+			  sheet.add_row ["Word", "Description"], b: true
+			  wordindices.each do |wordindex|
+			    sheet.add_row [wordindex.format_for_csv("word"), wordindex.format_for_csv("description")], style: [center]*2
+			  end
+				sheet.column_widths *size_arr
+			end
+		end
+		xlsx.serialize(excel_file)
+		user = User.find_by(email: email)
+		file = File.open(excel_file)
+			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																							to: user.email,
+																							reply_to: "support@civis.vote",
+																							template_id: 13_651_891,
+																							template_model:{
+																								first_name: user.first_name,
+																							},
+												attachments: [{
+													name: file_name,
+													content: [file.read].pack("m"),
+													content_type: "application/vnd.ms-excel",
+												}],
+												)
 	end
 
 	def invite_organisation_employee(user, invitation_url)

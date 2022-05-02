@@ -16,5 +16,6 @@
 			= f.input :poc_email_primary, placeholder: "Primary email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "ministry_poc_email_primary" }
             p#validation_primary_email.hidden Please enter Primary email address.
 			= f.input :poc_email_secondary, placeholder: "Secondary email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "ministry_poc_email_secondary" }
+			= f.input :location_id, as: :select, collection: Location.all.map {|u| [u.name, u.id]}, selected: @ministry&.location_id, label: 'Select location', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select location', id: "location -#{@ministry.id}"  } }
 		.admin-update-button-position
 			= f.button :submit, "Save Ministry", class: "submit-ministry"

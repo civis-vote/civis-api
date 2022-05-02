@@ -12,6 +12,7 @@ module Types
 				field :points,														Float, "Points earned by submitting this response", null: false
 				field :reading_time,											Integer, "Reading time of this response", null: false
 				field :response_text,											String, nil, null: true
+				field :response_status,												Integer, nil, null: false
 				field :round_number,											Integer, nil, null: true
 				field :satisfaction_rating,								Types::Enums::ConsultationResponseSatisfactionRatings, nil, null: false
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true
@@ -25,7 +26,7 @@ module Types
 						super && context[:current_user].present?
 					end			
 				end
-				field :user_name,													String, nil, null: true
+				field :respondent_name,													String, nil, null: true
 
 				def voted_as
 					object.voted_as(context[:current_user])
@@ -41,7 +42,8 @@ module Types
 					object.user.confirmed_at? if object.user
 				end
 
-				def user_name
+
+				def respondent_name
 					object.user ? object.user.first_name : object.first_name
 				end
 			end

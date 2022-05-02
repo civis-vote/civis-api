@@ -196,5 +196,4 @@ class User < ApplicationRecord
       errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
     end
   end
-  
 end

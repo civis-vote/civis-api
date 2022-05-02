@@ -101,6 +101,7 @@ module ImportResponse
         end
         hash.delete key unless set_required_headers.include?(key)
       end
+      answers = nil if answers == []
       hash = hash.transform_keys { |key| key.parameterize.underscore }
       hash.merge!({"response_round_id": response_round_id})
       hash.merge!({"user_id": user.id}) if user
