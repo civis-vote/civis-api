@@ -301,6 +301,7 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
 
+
   create_table "user_counts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "profanity_count"
@@ -309,7 +310,7 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
-
+  
   create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
