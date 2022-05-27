@@ -5,7 +5,7 @@ addons:
     - postgresql-server-dev-9.6
 language: ruby
 rvm:
-  - 3.1.0
+  - 3.0.0
 cache: bundler
 env:
   matrix:
