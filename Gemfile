@@ -118,3 +118,4 @@ gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem "graphiql-rails"
 gem 'psych', '< 4'
 gem 'net-smtp', require: false
+gem 'net-pop', require: false
