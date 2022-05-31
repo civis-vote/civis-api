@@ -24,5 +24,6 @@ module Types
     field :profanity_list,                     resolver: Queries::Profanity::List
     field :user_count_user,                    resolver: Queries::UserCount::User
     field :user_notification,                  resolver: Queries::UserNotification::List
-  end
+    field :new_consultation,           resolver: Queries::UserNotification::NewConsultation
+    end
 end

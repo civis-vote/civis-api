@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_04_25_154713) do
+ActiveRecord::Schema.define(version: 2022_05_21_080902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -231,7 +231,15 @@ ActiveRecord::Schema.define(version: 2022_04_25_154713) do
   end
 
   create_table "notifications", force: :cascade do |t|
-    t.text "notification_details"
+    t.bigint "datarefId"
+    t.string "dataref"
+    t.string "oldvalue"
+    t.datetime "lastchangedatetime"
+    t.string "datasource"
+    t.boolean "status"
+    t.bigint "userid"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "organisations", force: :cascade do |t|
@@ -312,6 +320,12 @@ ActiveRecord::Schema.define(version: 2022_04_25_154713) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
+  create_table "temps", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "user_counts", force: :cascade do |t|
