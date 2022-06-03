@@ -345,6 +345,7 @@ ActiveRecord::Schema.define(version: 2022_05_21_080902) do
     t.boolean "status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "consultation_id", default: 0
   end
 
   create_table "users", force: :cascade do |t|

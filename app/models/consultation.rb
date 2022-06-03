@@ -75,7 +75,7 @@ class Consultation < ApplicationRecord
   	self.status = :published
   	self.published_at = DateTime.now
   	self.save!
-    consultation_noooooooooooootificcccccccccccccation = UserNotification.consultation_id_filter(self.id, self.created_by_id)
+    consultation_notification = UserNotification.consultation_id_filter(self.id, self.created_by_id)
     #Check if user has an entry in the notification table if the consultation has be created
     #if selfcreatedby == user id in notification table
     user_notifications_new = ::UserNotification.new 
@@ -113,7 +113,7 @@ class Consultation < ApplicationRecord
     else
       NotifyPendingReviewOfProfaneResponsesEmailToAdminJob.perform_later(self)
     end
-  endaa
+  end
 
   def responded_on(user = Current.user)
     user_response = self.responses.find_by(user: user)

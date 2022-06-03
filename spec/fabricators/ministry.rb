@@ -1,6 +1,6 @@
 Fabricator(:ministry) do
 	name											{ Faker::Movies::StarWars.character }
-	category_id								{ Category.order("RANDOM()").first.id }
+	category_id                                { Constant.order("RANDOM()").first.id }
 	level											{ Ministry.levels.to_a.sample.first }
 	is_approved								{ true }
 	poc_email_primary					{ Faker::Internet.email }
