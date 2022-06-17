@@ -75,4 +75,5 @@ Rails.application.configure do
   enable_starttls_auto: true  }
 
   Rails.application.routes.default_url_options[:host] = "localhost:3000"
+  config.allowed_cors_origins = ['localhost:[0-9]+', 'https?://127.0.0.1:[0-9]+']
 end
