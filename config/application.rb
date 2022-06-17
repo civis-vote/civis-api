@@ -25,15 +25,6 @@ module CivisApi
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins Rails.application.config.allowed_cors_origins
-        resource '*',
-        methods: [:get, :post, :delete, :put, :patch, :options, :head],
-        headers: :any,
-        max_age: 600 
-      end
-    end
 
     #Referrer Policy
     Rails.application.configure do
