@@ -1,7 +1,7 @@
 module ImportGlossary
   extend ActiveSupport::Concern
   require 'roo'
-  require 'roo-xls' 
+  require 'roo-xls'
 
   module ClassMethods
     def import_fields_from_files(object,user_id)
@@ -37,11 +37,12 @@ module ImportGlossary
     end
 
     def csv_parse(file)
+      byebug
       content_type = File.extname(file.original_filename.to_s)
       if content_type.include?('csv')
         csv_file = open(file.path)
         csv_file = csv_file.string rescue csv_file.read
-        csv_file = csv_file.force_encoding("UTF-8").sub("\xEF\xBB\xBF", '').encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '') 
+        csv_file = csv_file.encode("UTF-8", "Windows-1252").sub("\xEF\xBB\xBF", '')
       else
         begin
           xlsx = Roo::Spreadsheet.open(file.path, extension: :xlsx)
