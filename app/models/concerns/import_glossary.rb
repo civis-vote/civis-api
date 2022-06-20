@@ -41,7 +41,7 @@ module ImportGlossary
       if content_type.include?('csv')
         csv_file = open(file.path)
         csv_file = csv_file.string rescue csv_file.read
-        csv_file = csv_file.force_encoding("UTF-8").sub("\xEF\xBB\xBF", '')
+        csv_file = csv_file.encode("UTF-8", 'Windows-1252').sub("\xEF\xBB\xBF", '')
       else
         begin
           xlsx = Roo::Spreadsheet.open(file.path, extension: :xlsx)
