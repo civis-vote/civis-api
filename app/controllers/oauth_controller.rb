@@ -1,16 +1,12 @@
 class OauthController < ApplicationController
-  skip_before_action :verify_authenticity_token
 
 	def redirect_to_provider
     if request.env["REQUEST_URI"].include?("signin_google")
-      res = HTTP.post("https://#{Rails.application.routes.default_url_options[:host]}/users/auth/google_oauth2")
-      redirect_to res.as_json['headers'].find('Location').first[1]
+    	redirect_to "/users/auth/google_oauth2"
     elsif request.env["REQUEST_URI"].include?("signin_linkedin")
-    	# redirect_to "/users/auth/linkedin"
+    	redirect_to "/users/auth/linkedin"
     elsif request.env["REQUEST_URI"].include?("signin_facebook")
-      # HTTP.post("http: //127.0.0.1:3003/users/auth/facebook")
-      # a = HTTP.post("http://localhost:3003/users/auth/facebook")
-      # redirect_to a.as_json['headers'].find('Location').first[1]
+    	redirect_to "/users/auth/facebook"
     end
   end
 
