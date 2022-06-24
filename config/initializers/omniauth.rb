@@ -4,3 +4,5 @@ Rails.application.config.middleware.use OmniAuth::Builder do
 	provider :linkedin, Rails.application.credentials.dig(:omniauth, :linkedin, :client_id), Rails.application.credentials.dig(:omniauth, :linkedin, :client_secret) 
 	on_failure { |env| OauthController.action(:failure).call(env) }
 end
+OmniAuth.config.allowed_request_methods = %i[get]
+OmniAuth.config.silence_get_warning = true
