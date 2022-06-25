@@ -4,10 +4,10 @@ module Types
             class Base < Types::BaseObject
                 graphql_name "BaseUserNotificationType"
                 field :user_id, Integer, nil, null: false
+                field :consultation_id, Integer, nil, null: false
+                field :notification_type, String, nil , null: false
                 field :notification_details, String, nil, null: false
-                field :type, String, nil , null: false
-                field :oldrank, Integer, nil,   null: false
-                field :status, Boolean, nil, null: false
+                field :old_rank, Integer, nil,   null: false
             end
         end
     end

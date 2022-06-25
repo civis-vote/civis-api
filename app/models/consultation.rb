@@ -75,11 +75,11 @@ class Consultation < ApplicationRecord
   	self.status = :published
   	self.published_at = DateTime.now
   	self.save!
-    consultation_notification = UserNotification.consultation_id_filter(self.id, self.created_by_id)
+    # consultation_notification = UserNotification.consultation_id_filter(self.id, self.created_by_id)
     #Check if user has an entry in the notification table if the consultation has be created
     #if selfcreatedby == user id in notification table
-    user_notifications_new = ::UserNotification.new 
-    user_notifications_new.create_notification('Consultation published ' + self.title, self.created_by_id)
+    # user_notifications_new = ::UserNotification.new 
+    # user_notifications_new.create_notification('Consultation published ' + self.title, self.created_by_id)
 
     if self.consultation?
       NotifyNewConsultationEmailJob.perform_later(self) if self.public_consultation?
