@@ -6,7 +6,17 @@ class UserNotification < ApplicationRecord
         return all unless user_id.present?
         where(user_id: user_id, notification_status: 0)
     }
+
+    scope :up_vote_filter, lambda { |user_id, notification_type|
+        return all unless user_id.present?
+        where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id)
+    }
     
+    scope :response_used_filter, lambda { |user_id, notification_type|
+        return all unless user_id.present?
+        where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id)
+    }
+
     scope :consultation_id_filter, lambda { |consultation_id, user_id|
         return all unless user_id.present?
         where(oldrank: consultation_id, user_id: user_id)
@@ -31,5 +41,12 @@ class UserNotification < ApplicationRecord
         self.notification_type = type
         self.notification_status = false
         self.save!
+    end
+
+    def create_up_vote_notification
+        up_vote_notification_string = ""
+        up_vote_main_text =  ::NotificationType.get_main_text('RESPONSE_UPVOTE')
+		up_vote_sub_text =  ::NotificationType.get_sub_text('RESPONSE_UPVOTE')
+		up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id)
     end
 end
