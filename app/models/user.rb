@@ -21,7 +21,7 @@ class User < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
   validates :first_name, presence: true
-  validate :password_complexity, on: :create
+  # validate :password_complexity, on: :create
 
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
@@ -74,6 +74,10 @@ class User < ApplicationRecord
   }
 
   scope :active, -> { where(active: true) }
+
+  scope :lastlogin, lambda{|user_id|
+      where(id: user_id).last_activity_at
+  }
 
   def self.notify_for_new_consultation_filter
     where("notification_settings->>'notify_for_new_consultation' = ?", "true")

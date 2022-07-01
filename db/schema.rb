@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_27_034746) do
+ActiveRecord::Schema.define(version: 2022_06_27_154713) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -230,6 +230,27 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
   end
 
+  create_table "notification_types", force: :cascade do |t|
+    t.string "notification_type"
+    t.string "notification_main_text"
+    t.string "notification_sub_text"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["notification_type"], name: "index_notification_types_on_notification_type", unique: true
+  end
+
+  create_table "notifications", force: :cascade do |t|
+    t.bigint "datarefId"
+    t.string "dataref"
+    t.string "oldvalue"
+    t.datetime "lastchangedatetime"
+    t.string "datasource"
+    t.boolean "status"
+    t.bigint "userid"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "organisations", force: :cascade do |t|
     t.string "name"
     t.text "logo_data"
@@ -301,6 +322,21 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.string "session_id", null: false
+    t.text "data"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
+  create_table "temps", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
   create_table "user_counts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "profanity_count"
@@ -310,13 +346,15 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
-  create_table "sessions", force: :cascade do |t|
-    t.string "session_id", null: false
-    t.text "data"
+  create_table "user_notifications", force: :cascade do |t|
+    t.integer "user_id"
+    t.string "notification_type"
+    t.integer "consultation_id"
+    t.integer "old_rank"
+    t.boolean "notification_status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
-    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+    t.index ["user_id", "notification_type", "consultation_id"], name: "user_id_notification_type_and_consultation_id_index", unique: true
   end
 
   create_table "users", force: :cascade do |t|

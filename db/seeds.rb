@@ -25,8 +25,10 @@ Rake::Task["import_records_from_csv:point_scale"].invoke("")
 Rake::Task["import_records_from_csv:point_scale"].reenable
 
 puts "---> Fabricating API Team"
-Fabricate(:user, email: "mkv@commutatus.com", role: "admin")
-Fabricate(:user, email: "balaji@commutatus.com", role: "admin")
+# Fabricate(:user, email: "mkv@commutatus.com", role: "admin")
+# Fabricate(:user, email: "balaji@commutatus.com", role: "admin")
+
+Fabricate(:user, email: "raj@tsgforce.com", password: "WHATEVER", role: "admin", confirmed_at: "2021-02-01")
 
 puts "---> Fabricating 50 ministries"
 Fabricate.times(50, :ministry)
