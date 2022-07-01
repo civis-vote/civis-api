@@ -7,12 +7,7 @@ class UserNotification < ApplicationRecord
         where(user_id: user_id, notification_status: 0)
     }
 
-    scope :up_vote_filter, lambda { |user_id, notification_type|
-        return all unless user_id.present?
-        where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id)
-    }
-    
-    scope :response_used_filter, lambda { |user_id, notification_type|
+    scope :notification_filter, lambda { |user_id, notification_type|
         return all unless user_id.present?
         where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id)
     }
@@ -28,14 +23,6 @@ class UserNotification < ApplicationRecord
     }
     
     def create_notification(user_id, consultation_id, type)
-        # notification_text = ""
-        # case
-        #     when type == "RESPONSE_UPVOTE"
-        #         notification_text = "Your response has been upvoted"
-        #     when type == "RESPONSE_USED"
-        #         notification_text = "Your response has been used"
-        # end
-        # self.notification_details = notification_text
         self.user_id = user_id
         self.consultation_id = consultation_id
         self.notification_type = type
@@ -43,10 +30,32 @@ class UserNotification < ApplicationRecord
         self.save!
     end
 
-    def create_up_vote_notification
-        up_vote_notification_string = ""
-        up_vote_main_text =  ::NotificationType.get_main_text('RESPONSE_UPVOTE')
-		up_vote_sub_text =  ::NotificationType.get_sub_text('RESPONSE_UPVOTE')
-		up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id)
+    # def check_up_votes(user_id, notification_type)
+    #     up_vote_notification_string = Hash.new
+    #     up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id, 'RESPONSE_UPVOTE')
+    #     if up_vote_consultation_list.exists?
+    #         up_vote_main_text =  ::NotificationType.get_main_text('RESPONSE_UPVOTE')
+	# 	    up_vote_sub_text =  ::NotificationType.get_sub_text('RESPONSE_UPVOTE')
+    #         up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id, 'RESPONSE_UPVOTE')
+    #         up_vote_notification_string["type"] = "RESPONSE_UPVOTE"
+    #         up_vote_notification_string["up_vote_main_text"] = up_vote_main_text[0]
+    #         up_vote_notification_string["up_vote_sub_text"] = up_vote_sub_text[0]
+    #         up_vote_notification_string["up_vote_consultation_list"] = up_vote_consultation_list
+    #         return up_vote_notification_string
+    #     end
+    # end
+
+    def check_notification(user_id, notification_type)
+        notification_string = Hash.new
+        consultation_list = ::UserNotification.notification_filter(user_id, notification_type)
+        if consultation_list.exists?
+            main_text =  ::NotificationType.get_main_text(notification_type)
+		    sub_text =  ::NotificationType.get_sub_text(notification_type)
+            notification_string["type"] = notification_type
+            notification_string["main_text"] = main_text[0]
+            notification_string["sub_text"] = sub_text[0]
+            notification_string["consultation_list"] = consultation_list
+            return notification_string
+        end
     end
 end
