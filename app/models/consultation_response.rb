@@ -169,7 +169,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def check_if_response_used_as_template
-    if self.template_id > 0
+    if !self.template_id.nil?
       response_template_user_id = self.template.user_id
       response_used_user_notification = ::UserNotification.new
       response_used_user_notification.create_notification(response_template_user_id, self.consultation_id, 'RESPONSE_USED')
