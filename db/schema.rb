@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_06_27_154713) do
+ActiveRecord::Schema.define(version: 2022_07_02_112300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -350,10 +350,12 @@ ActiveRecord::Schema.define(version: 2022_06_27_154713) do
     t.integer "user_id"
     t.string "notification_type"
     t.integer "consultation_id"
-    t.integer "old_rank"
     t.boolean "notification_status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "city_rank"
+    t.integer "state_rank"
+    t.integer "national_rank"
     t.index ["user_id", "notification_type", "consultation_id"], name: "user_id_notification_type_and_consultation_id_index", unique: true
   end
 
