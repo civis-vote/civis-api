@@ -117,3 +117,4 @@ gem "tzinfo-data", platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem "graphiql-rails"
 gem 'psych', '< 4'
+gem 'http'
