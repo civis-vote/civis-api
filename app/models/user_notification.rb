@@ -35,6 +35,14 @@ class UserNotification < ApplicationRecord
         self.save!
     end
 
+    def delete_notification(user_id,consultation_id,type)
+        user_notification = ::UserNotification.notification_exists(user_id,consultation_id,type)
+        if user_notification.exists?
+            user_notification.destroy(user_notification.ids[0])
+        end
+    end
+
+
     # def check_up_votes(user_id, notification_type)
     #     up_vote_notification_string = Hash.new
     #     up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id, 'RESPONSE_UPVOTE')
@@ -59,7 +67,7 @@ class UserNotification < ApplicationRecord
             notification_string["type"] = notification_type
             notification_string["main_text"] = main_text[0]
             notification_string["sub_text"] = sub_text[0]
-            notification_string["consultation_list"] = consultation_list
+            notification_string["consultation_list"] = JSON.parse(consultation_list.to_json)
             return notification_string
         end
     end

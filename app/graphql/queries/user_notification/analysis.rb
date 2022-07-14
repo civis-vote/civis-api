@@ -7,18 +7,26 @@ module Queries
 	    type GraphQL::Types::JSON, null: true
 
 			def resolve(user_id:)
+				# Call the notification approaching deadline from the user model
+				user = ::User.find(user_id)
+				user.notification_approaching_deadline
+				
 				user_notification = ::UserNotification.new
 				up_vote_json_string = user_notification.check_notification(user_id, 'RESPONSE_UPVOTE')
 				response_used_json_string = user_notification.check_notification(user_id, 'RESPONSE_USED')
 				rank_json_string = user_notification.check_rank_notification(user_id)
+				consultation_approaching_deadline_json_string = user_notification.check_notification(user_id, 'CONSULTATIONS_NEARING_DEADLINE')
 
 				return {
 					# NotificationsObject: [up_vote_json_string: up_vote_json_string]
 					# up_vote: up_vote_json_string,
 					# response_used: response_used_json_string
-					all: [up_vote: up_vote_json_string,
-					response_used: response_used_json_string,
-					leaderboard_update: rank_json_string]
+					# all: [up_vote: up_vote_json_string,
+					# response_used: response_used_json_string,
+					# leaderboard_update: rank_json_string, consultation_approaching_deadline:]
+					all: [up_vote_json_string,
+					response_used_json_string,
+					rank_json_string,consultation_approaching_deadline_json_string]
 				}
 				
 				# up_vote_main_text =  ::NotificationType.get_main_text('RESPONSE_UPVOTE')

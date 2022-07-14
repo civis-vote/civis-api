@@ -65,6 +65,10 @@ class Consultation < ApplicationRecord
     where("published_at > (?)", "#{lastlogin}")
   }
 
+  scope :deadline_approaching, lambda {
+    select("id").where(response_deadline:((Date.today)..Date.today + 5.day))
+  }
+
   def notify_admins
     self.response_token = SecureRandom.uuid unless self.response_token
     self.save!
