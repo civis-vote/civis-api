@@ -1,0 +1,4 @@
+staging:
+  rails:
+    configuration:
+      iam_instance_profile_name: ec2-rds-civis-staging
