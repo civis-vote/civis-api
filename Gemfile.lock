@@ -75,6 +75,9 @@ GEM
     aws-sdk-kms (1.56.0)
       aws-sdk-core (~> 3, >= 3.127.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-rds (1.148.0)
+      aws-sdk-core (~> 3, >= 3.127.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-s3 (1.114.0)
       aws-sdk-core (~> 3, >= 3.127.0)
       aws-sdk-kms (~> 1)
@@ -318,6 +321,9 @@ GEM
     parser (3.1.2.0)
       ast (~> 2.4.1)
     pg (1.3.5)
+    pg-aws_rds_iam (0.4.1)
+      aws-sdk-rds (~> 1.0)
+      pg (>= 0.18, < 2.0)
     postmark (1.22.0)
       json
     postmark-rails (0.22.0)
@@ -590,6 +596,7 @@ DEPENDENCIES
   omniauth-linkedin-oauth2
   paranoia
   pg (>= 0.18, < 2.0)
+  pg-aws_rds_iam
   postmark-rails
   psych (< 4)
   puma (~> 4.3)
