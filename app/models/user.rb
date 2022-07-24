@@ -102,10 +102,10 @@ class User < ApplicationRecord
   def notification_approaching_deadline
     # since this is inside the user schema it by default gets the user_responses for this user
     user_id = self.id
-    user_response_consultation_ids = responses.select("id")
+    user_response_consultation_ids = responses.pluck("consultation_id")
     consultation_ids = ::Consultation.deadline_approaching
-    common_consultations = consultation_ids.ids - user_response_consultation_ids.ids 
-    common_consultations.each do |consultation_id|
+    unresponded_consultations = consultation_ids.ids - user_response_consultation_ids
+    unresponded_consultations.each do |consultation_id|
       user_notification = UserNotification.notification_exists(user_id,consultation_id,"CONSULTATIONS_NEARING_DEADLINE")
       if user_notification.exists?
         user_notification.update(notification_status:false)
