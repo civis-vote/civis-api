@@ -9,5 +9,5 @@ staging:
   host: <%= ENV['POSTGRESQL_ADDRESS']%>
   port: 5432
   sslmode: 'verify-ca'
-  sslrootcert: 'config/amazon-rds-ca-cert.pem'
+  sslrootcert: "config/amazon-rds-ca-cert.pem"
   aws_rds_iam_auth_token_generator: default
