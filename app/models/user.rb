@@ -106,12 +106,12 @@ class User < ApplicationRecord
     consultation_ids = ::Consultation.deadline_approaching
     unresponded_consultations = consultation_ids.ids - user_response_consultation_ids
     unresponded_consultations.each do |consultation_id|
-      user_notification = UserNotification.notification_exists(user_id,consultation_id,"CONSULTATIONS_NEARING_DEADLINE")
+      user_notification = UserNotification.notification_exists(user_id,consultation_id,'CONSULTATIONS_NEARING_DEADLINE')
       if user_notification.exists?
         user_notification.update(notification_status:false)
       else
         new_notification = ::UserNotification.new
-        new_notification.create_notification(user_id,consultation_id,"CONSULTATIONS_NEARING_DEADLINE")
+        new_notification.create_notification(user_id,consultation_id,'CONSULTATIONS_NEARING_DEADLINE')
       end
     end
   end

@@ -1,0 +1,10 @@
+= simple_form_for [:admin, @notification_type], data: { id: "add_edit_notification_type" } do |f|
+	.p-4
+		.admin-header-text
+			| Notification Type
+		.admin-details-box
+			= f.input :notification_type, placeholder: "Notification Type", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "notification_type" }
+			= f.input :notification_main_text, placeholder: "Notification Main Text", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "notification_main_text" }
+			= f.input :notification_sub_text, placeholder: "Notification Sub text", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "notification_sub_text" }
+		.admin-update-button-position
+			= f.button :submit, "Save Notification Type"

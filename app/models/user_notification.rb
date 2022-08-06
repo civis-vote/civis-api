@@ -1,15 +1,10 @@
 class UserNotification < ApplicationRecord
-    include SpotlightSearch
-    include Paginator
-
-    scope :user_id_filter, lambda { |user_id|
-        return all unless user_id.present?
-        where(user_id: user_id, notification_status: 0)
-    }
+    # include SpotlightSearch
+    # include Paginator
 
     scope :notification_filter, lambda { |user_id, notification_type|
         return all unless user_id.present?
-        where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id)
+        where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id, :consultation_title)
     }
 
     scope :notification_rank_filter, lambda { |user_id, notification_type|
@@ -30,6 +25,7 @@ class UserNotification < ApplicationRecord
     def create_notification(user_id, consultation_id, type)
         self.user_id = user_id
         self.consultation_id = consultation_id
+        self.consultation_title = ::Consultation.where(id: consultation_id).pluck("title")[0]
         self.notification_type = type
         self.notification_status = false
         self.save!
@@ -41,22 +37,6 @@ class UserNotification < ApplicationRecord
             user_notification.destroy(user_notification.ids[0])
         end
     end
-
-
-    # def check_up_votes(user_id, notification_type)
-    #     up_vote_notification_string = Hash.new
-    #     up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id, 'RESPONSE_UPVOTE')
-    #     if up_vote_consultation_list.exists?
-    #         up_vote_main_text =  ::NotificationType.get_main_text('RESPONSE_UPVOTE')
-	# 	    up_vote_sub_text =  ::NotificationType.get_sub_text('RESPONSE_UPVOTE')
-    #         up_vote_consultation_list = ::UserNotification.up_vote_filter(user_id, 'RESPONSE_UPVOTE')
-    #         up_vote_notification_string["type"] = "RESPONSE_UPVOTE"
-    #         up_vote_notification_string["up_vote_main_text"] = up_vote_main_text[0]
-    #         up_vote_notification_string["up_vote_sub_text"] = up_vote_sub_text[0]
-    #         up_vote_notification_string["up_vote_consultation_list"] = up_vote_consultation_list
-    #         return up_vote_notification_string
-    #     end
-    # end
 
     def check_notification(user_id, notification_type)
         notification_string = Hash.new
@@ -178,6 +158,22 @@ class UserNotification < ApplicationRecord
             self.notification_type = 'LEADERBOARD_UPDATE'
             self.save!
         end   
+    end
+
+    def create_newly_created_consultation_notification(user_id, notification_type)
+        notification_string = Hash.new
+        user_last_login = ::User.where(id: user_id)
+        
+        consultation_list = ::Consultation.public_consultation.published_date_filter(user_last_login[0]["last_activity_at"])
+        if consultation_list.exists?
+            consultation_list.each { |item|
+                notification = ::UserNotification.where(user_id: user_id, consultation_id: item["id"], notification_type: notification_type, notification_status: false)
+                if !notification.exists?                    
+                    user_notification = UserNotification.new
+                    user_notification.create_notification(user_id, item["id"], notification_type)
+                end
+            }
+        end
     end
 
 end

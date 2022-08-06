@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_07_02_112300) do
+ActiveRecord::Schema.define(version: 2022_08_02_112300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -356,6 +356,7 @@ ActiveRecord::Schema.define(version: 2022_07_02_112300) do
     t.integer "city_rank"
     t.integer "state_rank"
     t.integer "national_rank"
+    t.string "consultation_title"
     t.index ["user_id", "notification_type", "consultation_id"], name: "user_id_notification_type_and_consultation_id_index", unique: true
   end
 

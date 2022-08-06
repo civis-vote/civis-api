@@ -60,13 +60,13 @@ class Consultation < ApplicationRecord
     where(visibility: visibility)
   }
 
+  scope :deadline_approaching, lambda {
+    select("id").where(response_deadline:((Date.today)..Date.today + 5.day))
+  }
+
   scope :published_date_filter, lambda { |lastlogin|
     return all unless lastlogin.present?
     where("published_at > (?)", "#{lastlogin}")
-  }
-
-  scope :deadline_approaching, lambda {
-    select("id").where(response_deadline:((Date.today)..Date.today + 5.day))
   }
 
   def notify_admins
@@ -79,11 +79,11 @@ class Consultation < ApplicationRecord
   	self.status = :published
   	self.published_at = DateTime.now
   	self.save!
-    # consultation_notification = UserNotification.consultation_id_filter(self.id, self.created_by_id)
-    #Check if user has an entry in the notification table if the consultation has be created
-    #if selfcreatedby == user id in notification table
-    # user_notifications_new = ::UserNotification.new 
-    # user_notifications_new.create_notification('Consultation published ' + self.title, self.created_by_id)
+
+    if self.created_by.citizen?
+      user_notification = ::UserNotification.new 
+      user_notification.create_notification(self.created_by_id, self.id, 'CITIZEN_SUBMITTED_CONSULTATION_STATUS')
+    end
 
     if self.consultation?
       NotifyNewConsultationEmailJob.perform_later(self) if self.public_consultation?

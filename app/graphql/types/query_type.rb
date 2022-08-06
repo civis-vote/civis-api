@@ -23,8 +23,8 @@ module Types
     field :glossary_word,                      resolver: Queries::Glossary::Profile
     field :profanity_list,                     resolver: Queries::Profanity::List
     field :user_count_user,                    resolver: Queries::UserCount::User
-    field :user_notification,                  resolver: Queries::UserNotification::List
+    # field :user_notification,                  resolver: Queries::UserNotification::List
     field :user_notification_analysis,         resolver: Queries::UserNotification::Analysis
-    field :new_consultation,           resolver: Queries::UserNotification::NewConsultation
+    # field :new_consultation,           resolver: Queries::UserNotification::NewConsultation
     end
 end

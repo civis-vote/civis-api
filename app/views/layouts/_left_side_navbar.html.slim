@@ -57,3 +57,8 @@
           div
             .far.fa-newspaper.pointer.pr-4 
             | User Responses
+      = link_to admin_notification_types_path, class: "#{current_class?(admin_notification_types_path)} #{params[:id].present? ? current_class?(admin_notification_types_path(params[:id])) : '' } #{params[:id].present? ? current_class?(edit_admin_notification_type_path(params[:id])) : '' }" do
+        li
+          div
+            .far.fa-newspaper.pointer.pr-4 
+            | Notification Types
