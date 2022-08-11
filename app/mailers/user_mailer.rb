@@ -448,4 +448,45 @@ class UserMailer < ApplicationMailer
 		end
 	end
 
+	def export_all_subjective_responses(email)
+		consultation_list = Consultation.includes(:responses).select { |con| con.response_rounds.last.questions.count == 0}
+		excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
+		file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
+		xlsx = Axlsx::Package.new
+		response_header = ["Consultation Title", "Consultation Response Text", "Submitted By", "Responder Email", "City", "Phone Number", "Satisfication Rating", "Visibility", "Submitted At", "Is Verified", "Source", "Organisation/Department", "Designation"]
+		xlsx.workbook do |workbook|
+			workbook.add_worksheet(name: "Consultation Responses") do |sheet|
+				wrap = workbook.styles.add_style alignment: {wrap_text: true}
+				sheet.add_row response_header, b: true
+				size_arr = []
+				consultation_list.each do |consultation|
+					consultation_responses = consultation.responses
+					consultation_responses.size.times { size_arr << 22 }
+					consultation_responses.each do |consultation_response|
+						row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, (consultation_response.user.present? && consultation_response.user.city.present?) ? consultation_response.user.city.name : "NA", (consultation_response.user.present? && consultation_response.user.phone_number.present?) ? consultation_response.user.phone_number : "NA", consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.platform? ? consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') : consultation_response.responded_at.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if (consultation_response.user.present? && consultation_response.user.organisation.present?) then consultation_response.user.organisation.name elsif (consultation_response.user.present? && consultation_response.user.organization.present?) then consultation_response.user.organization else "NA" end, (consultation_response.user.present? && consultation_response.user.designation.present?) ? consultation_response.user.designation : "NA"]
+						sheet.add_row row_data, style: wrap
+					end
+					sheet.column_widths *size_arr
+				end
+			end
+		end
+		xlsx.use_shared_strings = true
+		xlsx.serialize(excel_file)
+		user = User.find_by(email: email)
+		file = File.open(excel_file)
+		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+																						to: user.email,
+																						reply_to: "support@civis.vote",
+																						template_id: 13_651_891,
+																						template_model:{
+																							first_name: user.first_name,
+																						},
+                                              attachments: [{
+                                                name: file_name,
+                                                content: [file.read].pack("m"),
+                                                content_type: "application/vnd.ms-excel",
+                                              }],
+                                            )
+	end
+
 end
