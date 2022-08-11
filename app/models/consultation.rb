@@ -168,4 +168,8 @@ class Consultation < ApplicationRecord
   def is_user_from_same_organisation?
    return true if self.organisation_id == Current.user.organisation_id
   end
+
+  def english_summary_text
+    page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' ')
+  end
 end
