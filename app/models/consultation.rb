@@ -170,6 +170,8 @@ class Consultation < ApplicationRecord
   end
 
   def english_summary_text
-    page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' ')
+    return summary.to_plain_text if summary.to_plain_text.present?
+    
+    ActionView::Base.full_sanitizer.sanitize(page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' '))
   end
 end
