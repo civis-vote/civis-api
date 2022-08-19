@@ -449,7 +449,8 @@ class UserMailer < ApplicationMailer
 	end
 
 	def export_all_subjective_responses(email)
-		consultation_list = Consultation.includes(:responses).select { |con| con.response_rounds.last.questions.count == 0}
+		consultation_list = Consultation.includes(responses: {user: :city}, response_rounds: :questions)
+		question_ids = Question.where(question_type: 'long_text').pluck(:id)
 		excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
 		file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
 		xlsx = Axlsx::Package.new
@@ -460,10 +461,12 @@ class UserMailer < ApplicationMailer
 				sheet.add_row response_header, b: true
 				size_arr = []
 				consultation_list.each do |consultation|
+					next if consultation.response_rounds.last.questions.count != 0 && (question_ids & consultation.response_rounds.last.questions.pluck(:id)).empty?
+
 					consultation_responses = consultation.responses
 					consultation_responses.size.times { size_arr << 22 }
 					consultation_responses.each do |consultation_response|
-						row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, (consultation_response.user.present? && consultation_response.user.city.present?) ? consultation_response.user.city.name : "NA", (consultation_response.user.present? && consultation_response.user.phone_number.present?) ? consultation_response.user.phone_number : "NA", consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.platform? ? consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') : consultation_response.responded_at.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if (consultation_response.user.present? && consultation_response.user.organisation.present?) then consultation_response.user.organisation.name elsif (consultation_response.user.present? && consultation_response.user.organization.present?) then consultation_response.user.organization else "NA" end, (consultation_response.user.present? && consultation_response.user.designation.present?) ? consultation_response.user.designation : "NA"]
+						row_data = [consultation_response.consultation.title, response_text(consultation_response, question_ids), consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, (consultation_response.user.present? && consultation_response.user.city.present?) ? consultation_response.user.city.name : "NA", (consultation_response.user.present? && consultation_response.user.phone_number.present?) ? consultation_response.user.phone_number : "NA", consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.platform? ? consultation_response.created_at.localtime.try(:strftime, '%e %b %Y') : consultation_response.responded_at.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if (consultation_response.user.present? && consultation_response.user.organisation.present?) then consultation_response.user.organisation.name elsif (consultation_response.user.present? && consultation_response.user.organization.present?) then consultation_response.user.organization else "NA" end, (consultation_response.user.present? && consultation_response.user.designation.present?) ? consultation_response.user.designation : "NA"]
 						sheet.add_row row_data, style: wrap
 					end
 					sheet.column_widths *size_arr
@@ -487,6 +490,10 @@ class UserMailer < ApplicationMailer
                                                 content_type: "application/vnd.ms-excel",
                                               }],
                                             )
+	end
+
+	def response_text(response, question_ids)
+		response.response_text.to_plain_text.presence || (response.answers && response.answers.detect { |an| question_ids.include? an['question_id'].to_i}&.dig('answer'))
 	end
 
 end
