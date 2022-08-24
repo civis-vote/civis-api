@@ -18,5 +18,6 @@ module Types
     field :vote_delete,                             resolver: Mutations::ConsultationResponseVote::Delete
     field :user_count_create,                       resolver: Mutations::UserCount::Create
     field :user_count_update,                       resolver: Mutations::UserCount::Update
+    field :user_notification,                       resolver: Mutations::UserNotification::Update
   end
 end
