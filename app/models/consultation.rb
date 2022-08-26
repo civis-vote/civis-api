@@ -66,7 +66,7 @@ class Consultation < ApplicationRecord
 
   scope :published_date_filter, lambda { |lastlogin|
     return all unless lastlogin.present?
-    where("published_at > (?)", "#{lastlogin}")
+    where("published_at > (?) and response_deadline >= (?)", "#{lastlogin}", Date.today)
   }
 
   def notify_admins

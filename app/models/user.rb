@@ -103,13 +103,14 @@ class User < ApplicationRecord
     # since this is inside the user schema it by default gets the user_responses for this user
     user_id = self.id
     user_response_consultation_ids = responses.pluck("consultation_id")
-    consultation_ids = ::Consultation.deadline_approaching
+    consultation_ids = ::Consultation.status_filter('published').deadline_approaching
     unresponded_consultations = consultation_ids.ids - user_response_consultation_ids
     unresponded_consultations.each do |consultation_id|
       user_notification = UserNotification.notification_exists(user_id,consultation_id,'CONSULTATIONS_NEARING_DEADLINE')
-      if user_notification.exists?
-        user_notification.update(notification_status:false)
-      else
+      # if user_notification.exists?
+      #   user_notification.update(notification_status:false)
+      # else
+      if !user_notification.exists?
         new_notification = ::UserNotification.new
         new_notification.create_notification(user_id,consultation_id,'CONSULTATIONS_NEARING_DEADLINE')
       end

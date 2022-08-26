@@ -4,7 +4,7 @@ class UserNotification < ApplicationRecord
 
     scope :notification_filter, lambda { |user_id, notification_type|
         return all unless user_id.present?
-        where(user_id: user_id, notification_type: notification_type).select(:id, :consultation_id, :consultation_title)
+        where(user_id: user_id, notification_type: notification_type, notification_status: false).select(:id, :consultation_id, :consultation_title)
     }
 
     scope :notification_rank_filter, lambda { |user_id, notification_type|

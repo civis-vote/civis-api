@@ -67,9 +67,10 @@ class ConsultationResponse < ApplicationRecord
     new_up_vote_count = up_votes.size
     if new_up_vote_count > current_up_vote_count
       user_notification_1 = UserNotification.notification_exists(self.user_id, self.consultation_id, 'RESPONSE_UPVOTE')
-      if user_notification_1.exists?
-        user_notification_1.update(notification_status: false)
-      else
+      # if user_notification_1.exists?
+      #   user_notification_1.update(notification_status: false)
+      # else
+      if !user_notification_1.exists?
         up_vote_user_notification = ::UserNotification.new
         up_vote_user_notification.create_notification(self.user_id, self.consultation_id, 'RESPONSE_UPVOTE')
       end
