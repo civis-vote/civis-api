@@ -35,10 +35,10 @@ end
 
 buffer << "}\nexports.add_paths_to_environment = add_paths_to_environment\n"
 
-File.write(
-  output_path,
-  buffer.join,
-)
+# File.write(
+#   output_path,
+#   buffer.join,
+# )
 
 module WebpackerGemAssets
   def resolved_paths
