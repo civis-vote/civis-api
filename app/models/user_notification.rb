@@ -135,7 +135,8 @@ class UserNotification < ApplicationRecord
                 notification_string["sub_text"] = sub_text[0]
             
             end
-            
+            notification_string["consultation_list"] = []
+            notification_string["notification_id"] = rank_notification.first.id
             return notification_string
         end
     end
