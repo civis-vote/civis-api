@@ -133,6 +133,9 @@ class User < ApplicationRecord
   end
 
   def update_last_activity
+    user_id = self.id
+    user_notification = ::UserNotification.new
+    user_notification.check_for_newly_published_consultations(user_id, 'NEWLY_PUBLISHED_CONSULTATIONS')
     update last_activity_at: Date.today
   end
 

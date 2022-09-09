@@ -20,8 +20,6 @@ module Queries
 				
 				consultation_approaching_deadline_json_string = user_notification.check_notification(user_id, 'CONSULTATIONS_NEARING_DEADLINE')
 				
-				user_notification.create_newly_created_consultation_notification(user_id, 'NEWLY_PUBLISHED_CONSULTATIONS')
-				
 				new_consultation_json_string = user_notification.check_notification(user_id, 'NEWLY_PUBLISHED_CONSULTATIONS')
 				consultation_status_json_string = user_notification.check_notification(user_id,'CITIZEN_SUBMITTED_CONSULTATION_STATUS')
 

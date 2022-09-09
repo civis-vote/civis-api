@@ -9,7 +9,7 @@ class UserNotification < ApplicationRecord
 
     scope :notification_rank_filter, lambda { |user_id, notification_type|
         return all unless user_id.present?
-        where(user_id: user_id, notification_type: notification_type).select(:id, :city_rank, :state_rank, :national_rank)
+        where(user_id: user_id, notification_type: notification_type, notification_status: false).select(:id, :city_rank, :state_rank, :national_rank)
     }
 
     scope :consultation_id_filter, lambda { |consultation_id, user_id|
@@ -161,7 +161,7 @@ class UserNotification < ApplicationRecord
         end   
     end
 
-    def create_newly_created_consultation_notification(user_id, notification_type)
+    def check_for_newly_published_consultations(user_id, notification_type)
         notification_string = Hash.new
         user_last_login = ::User.where(id: user_id)
         
