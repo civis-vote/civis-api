@@ -60,10 +60,9 @@ class UserNotification < ApplicationRecord
         if rank_notification.exists?
             
             notification_string["type"] = 'LEADERBOARD_UPDATE'
+            
             if user_data.first.city_rank < rank_notification.first.city_rank && 
-                user_data.first.city_rank > 100 &&
-                user_data.first.state_rank > 10 &&
-                user_data.first.rank > 20
+                user_data.first.city_rank > 100 
                 #"Congratulations! Thanks to your active partIcipation, your Rank in (city) has increased by (diff) notches!!
                  # You now stand at (position) position! Keep it up and see your Rank scale up!"
                 main_text =  ::NotificationType.get_main_text('LEADERBOARD_UPDATE_1')
@@ -75,7 +74,9 @@ class UserNotification < ApplicationRecord
 
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
-            elsif user_data.first.city_rank < 101 &&
+            end
+            if user_data.first.city_rank < rank_notification.first.city_rank && 
+                    user_data.first.city_rank < 101 &&
                     user_data.first.state_rank > 10 &&
                     user_data.first.rank > 20
                 #"Woohoo!! You now feature in the top 100 Civisens of (city)...the excitement is building up!! 
@@ -84,8 +85,10 @@ class UserNotification < ApplicationRecord
                 sub_text =  ::NotificationType.get_sub_text('LEADERBOARD_UPDATE_2')  
                 sub_text.first['(city)'] = user_data.first.city.name    
                 notification_string["main_text"] = main_text[0]
-                notification_string["sub_text"] = sub_text[0] 
-            elsif user_data.first.state_rank < 11 &&
+                notification_string["sub_text"] = sub_text[0]
+            end 
+            if user_data.first.city_rank < rank_notification.first.city_rank &&
+                user_data.first.state_rank < 11 &&
                     user_data.first.rank > 20
                 #    "You are an inspiration (First Name)! 
                 #    You Rank (State Rank) in (State) and (Local Rank) in (City) and that is truly commendable. Keep it up!!"
@@ -100,8 +103,10 @@ class UserNotification < ApplicationRecord
 
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
-            elsif user_data.first.rank < 21
-                #Congratulations (First Name)!!!!
+            end
+            if user_data.first.city_rank < rank_notification.first.city_rank && 
+                user_data.first.rank < 21
+                #CongratNoulations (First Name)!!!!
                 #You have topped the charts!
                 #Your Rank is (National Rank) in India. We truly appreciate your partcipation!
                 #Everyone draws inspiration from you! View your Rank here https://www.civis.vote/leader-board
@@ -111,32 +116,40 @@ class UserNotification < ApplicationRecord
                 sub_text.first['(National Rank)'] = user_data.first.rank.to_s
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
-            elsif user_data.first.city_rank <= rank_notification.first.city_rank &&
-                    user_data.first.state_rank < 11 &&
-                        user_data.first.rank < 21
-                #"Your position stands maintained in the top 10 of (city)..
+            end
+            if user_data.first.city_rank >= rank_notification.first.city_rank &&
+                user_data.first.city_rank < 101
+                #"Your position stands maintained in the top 100 of (city)..
                 #Engage more with Consultations and build up the competition! You are doing great : ) "
                 main_text =  ::NotificationType.get_main_text('LEADERBOARD_UPDATE_5')
                 sub_text =  ::NotificationType.get_sub_text('LEADERBOARD_UPDATE_5')
                 sub_text.first['(city)'] = user_data.first.city.name
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
-            elsif ( 
-                    user_data.first.city_rank <= rank_notification.first.city_rank || 
-                    user_data.first.state_rank <= rank_notification.first.state_rank ||
-                    user_data.first.rank <= rank_notification.first.national_rank
-                ) &&
-                    user_data.first.state_rank > 10
+            end
+            if user_data.first.city_rank >= rank_notification.first.city_rank &&
+                user_data.first.city_rank > 100 &&
+                user_data.first.state_rank > rank_notification.first.state_rank &&
+                user_data.first.rank > rank_notification.first.national_rank
                     #"The competition is getting intense! Participate more with Consultations and up your Rank!Would you like to see how other Civisens are faring? 
                     #You can view the Leaderboard here https://www.civis.vote/leader-board"
                 main_text =  ::NotificationType.get_main_text('LEADERBOARD_UPDATE_6')
                 sub_text =  ::NotificationType.get_sub_text('LEADERBOARD_UPDATE_6')
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
-            
             end
-            notification_string["consultation_list"] = []
-            notification_string["notification_id"] = rank_notification.first.id
+            if rank_notification.first.city_rank < 1  
+                #Hello and welcome to Civis! 
+                #Your rank is ___ in (City). Participate actively with Consultations and see your rank climb up the Leaderboard!
+                main_text =  ::NotificationType.get_main_text('LEADERBOARD_UPDATE_0')
+                sub_text =  ::NotificationType.get_sub_text('LEADERBOARD_UPDATE_0')
+
+                sub_text.first['(Local Rank)'] = user_data.first.city_rank.to_s
+                sub_text.first['(City)'] = user_data.first.city.name
+
+                notification_string["main_text"] = main_text[0]
+                notification_string["sub_text"] = sub_text[0]
+            end
             return notification_string
         end
     end

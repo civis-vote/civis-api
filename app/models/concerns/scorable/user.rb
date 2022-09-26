@@ -70,6 +70,11 @@ module Scorable
               user_notifications_new = ::UserNotification.new
               user_notifications_new.create_rank_notification(self.id, current_city_rank, current_state_rank, current_national_rank)
           end
+
+        else
+          #User current rank does not exist i.e. new user
+          user_notifications_new = ::UserNotification.new
+          user_notifications_new.create_rank_notification(self.id, 0, 0, 0)
         end
 
       end
