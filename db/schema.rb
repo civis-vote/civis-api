@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_02_112300) do
+ActiveRecord::Schema.define(version: 2022_10_04_135849) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -353,9 +353,6 @@ ActiveRecord::Schema.define(version: 2022_08_02_112300) do
     t.boolean "notification_status"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "city_rank"
-    t.integer "state_rank"
-    t.integer "national_rank"
     t.string "consultation_title"
     t.index ["user_id", "notification_type", "consultation_id"], name: "user_id_notification_type_and_consultation_id_index", unique: true
   end
@@ -412,6 +409,9 @@ ActiveRecord::Schema.define(version: 2022_08_02_112300) do
     t.integer "invitations_count", default: 0
     t.boolean "active", default: true
     t.integer "referring_consultation_id"
+    t.integer "old_city_rank"
+    t.integer "old_state_rank"
+    t.integer "old_rank"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

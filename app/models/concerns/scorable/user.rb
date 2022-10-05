@@ -21,6 +21,9 @@ module Scorable
 
     class << self
       def update_national_rank
+        ::User.citizen.update_all("old_rank=rank")
+
+        # User.update_all("old_rank: rank")
         distinct_points = ::User.citizen.where.not(city_id: nil).distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
           ::User.where(points: point_value).update_all(rank: index + 1)
@@ -28,6 +31,7 @@ module Scorable
       end
 
       def update_state_rank(state)
+        ::User.citizen.update_all("old_state_rank=state_rank")
         return false unless state.present?
         state_users = ::User.citizen.where(city_id: state.child_ids)
         distinct_points = state_users.distinct(:points).pluck(:points).sort.reverse
@@ -37,6 +41,7 @@ module Scorable
       end
 
       def update_city_rank(city)
+        ::User.citizen.update_all("old_city_rank=city_rank")
         city_users = ::User.citizen.where(city_id: city.id)
         distinct_points = city_users.distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
@@ -46,11 +51,11 @@ module Scorable
     end    
 
     def add_points(action)
-      current_city_rank = self.city_rank
-      current_state_rank = self.state_rank
-      current_national_rank = self.rank
-      current_best_rank = self.best_rank   
-      current_best_rank_type = self.best_rank_type
+      # current_city_rank = self.city_rank
+      # current_state_rank = self.state_rank
+      # current_national_rank = self.rank
+      # current_best_rank = self.best_rank   
+      # current_best_rank_type = self.best_rank_type
 
     	point_scale = calculate_point_scale(action)
     	point_event = self.point_events.create(point_scale: point_scale, points: point_scale.points)
@@ -60,22 +65,25 @@ module Scorable
         User.update_city_rank(city)
         self.check_for_new_best_rank
 
-        updated_user = ::User.citizen.where(id: self.id) 
-                
-        if !current_national_rank.nil? && !current_state_rank.nil? && !current_city_rank.nil?
-          
-          if updated_user.first.rank < current_national_rank || 
-                updated_user.first.state_rank < current_state_rank ||
-                    updated_user.first.city_rank < current_city_rank
-              user_notifications_new = ::UserNotification.new
-              user_notifications_new.create_rank_notification(self.id, current_city_rank, current_state_rank, current_national_rank)
-          end
+        user_notifications_new = ::UserNotification.new
+        user_notifications_new.create_rank_notification(self.id)
 
-        else
-          #User current rank does not exist i.e. new user
-          user_notifications_new = ::UserNotification.new
-          user_notifications_new.create_rank_notification(self.id, 0, 0, 0)
-        end
+        # updated_user = ::User.citizen.where(id: self.id) 
+                
+        # if !current_national_rank.nil? && !current_state_rank.nil? && !current_city_rank.nil?
+          
+        #   if updated_user.first.rank < current_national_rank || 
+        #         updated_user.first.state_rank < current_state_rank ||
+        #             updated_user.first.city_rank < current_city_rank
+        #       user_notifications_new = ::UserNotification.new
+        #       user_notifications_new.create_rank_notification(self.id, current_city_rank, current_state_rank, current_national_rank)
+        #   end
+
+        # else
+        #   #User current rank does not exist i.e. new user
+        #   user_notifications_new = ::UserNotification.new
+        #   user_notifications_new.create_rank_notification(self.id, 0, 0, 0)
+        # end
 
       end
       return point_event

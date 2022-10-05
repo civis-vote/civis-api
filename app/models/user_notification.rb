@@ -9,7 +9,7 @@ class UserNotification < ApplicationRecord
 
     scope :notification_rank_filter, lambda { |user_id, notification_type|
         return all unless user_id.present?
-        where(user_id: user_id, notification_type: notification_type, notification_status: false).select(:id, :city_rank, :state_rank, :national_rank)
+        where(user_id: user_id, notification_type: notification_type, notification_status: false).select(:id)
     }
 
     scope :consultation_id_filter, lambda { |consultation_id, user_id|
@@ -56,12 +56,12 @@ class UserNotification < ApplicationRecord
         notification_string = Hash.new
         rank_notification = ::UserNotification.notification_rank_filter(user_id, 'LEADERBOARD_UPDATE')
         user_data = ::User.where(id: user_id) 
-        
-        if rank_notification.exists?
-            
+                   
             notification_string["type"] = 'LEADERBOARD_UPDATE'
             
-            if user_data.first.city_rank < rank_notification.first.city_rank && 
+            
+            if !user_data.first.old_city_rank.nil? && 
+                user_data.first.city_rank < user_data.first.old_city_rank && 
                 user_data.first.city_rank > 100 
                 #"Congratulations! Thanks to your active partIcipation, your Rank in (city) has increased by (diff) notches!!
                  # You now stand at (position) position! Keep it up and see your Rank scale up!"
@@ -69,13 +69,14 @@ class UserNotification < ApplicationRecord
                 sub_text =  ::NotificationType.get_sub_text('LEADERBOARD_UPDATE_1')
                 
                 sub_text.first['(city)'] = user_data.first.city.name
-                sub_text.first['(diff)'] = (rank_notification.first.city_rank - user_data.first.city_rank).to_s
+                sub_text.first['(diff)'] = (user_data.first.old_city_rank - user_data.first.city_rank).to_s
                 sub_text.first['(position)'] = user_data.first.city_rank.to_s
 
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
             end
-            if user_data.first.city_rank < rank_notification.first.city_rank && 
+            if !user_data.first.old_city_rank.nil? &&
+                user_data.first.city_rank < user_data.first.old_city_rank && 
                     user_data.first.city_rank < 101 &&
                     user_data.first.state_rank > 10 &&
                     user_data.first.rank > 20
@@ -87,7 +88,8 @@ class UserNotification < ApplicationRecord
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
             end 
-            if user_data.first.city_rank < rank_notification.first.city_rank &&
+            if !user_data.first.old_city_rank.nil? &&
+                user_data.first.city_rank < user_data.first.old_city_rank &&
                 user_data.first.state_rank < 11 &&
                     user_data.first.rank > 20
                 #    "You are an inspiration (First Name)! 
@@ -104,7 +106,8 @@ class UserNotification < ApplicationRecord
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
             end
-            if user_data.first.city_rank < rank_notification.first.city_rank && 
+            if !user_data.first.old_city_rank.nil? && 
+                user_data.first.city_rank < user_data.first.old_city_rank && 
                 user_data.first.rank < 21
                 #CongratNoulations (First Name)!!!!
                 #You have topped the charts!
@@ -117,7 +120,8 @@ class UserNotification < ApplicationRecord
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
             end
-            if user_data.first.city_rank >= rank_notification.first.city_rank &&
+            if !user_data.first.old_city_rank.nil? && 
+                user_data.first.city_rank >= user_data.first.old_city_rank &&
                 user_data.first.city_rank < 101
                 #"Your position stands maintained in the top 100 of (city)..
                 #Engage more with Consultations and build up the competition! You are doing great : ) "
@@ -127,10 +131,11 @@ class UserNotification < ApplicationRecord
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
             end
-            if user_data.first.city_rank >= rank_notification.first.city_rank &&
+            if !user_data.first.old_city_rank.nil? &&
+                user_data.first.city_rank >= user_data.first.old_city_rank &&
                 user_data.first.city_rank > 100 &&
-                user_data.first.state_rank > rank_notification.first.state_rank &&
-                user_data.first.rank > rank_notification.first.national_rank
+                user_data.first.state_rank > user_data.first.old_state_rank &&
+                user_data.first.rank > user_data.first.old_rank
                     #"The competition is getting intense! Participate more with Consultations and up your Rank!Would you like to see how other Civisens are faring? 
                     #You can view the Leaderboard here https://www.civis.vote/leader-board"
                 main_text =  ::NotificationType.get_main_text('LEADERBOARD_UPDATE_6')
@@ -138,7 +143,7 @@ class UserNotification < ApplicationRecord
                 notification_string["main_text"] = main_text[0]
                 notification_string["sub_text"] = sub_text[0]
             end
-            if rank_notification.first.city_rank < 1  
+            if user_data.first.old_city_rank.nil? 
                 #Hello and welcome to Civis! 
                 #Your rank is ___ in (City). Participate actively with Consultations and see your rank climb up the Leaderboard!
                 main_text =  ::NotificationType.get_main_text('LEADERBOARD_UPDATE_0')
@@ -153,24 +158,24 @@ class UserNotification < ApplicationRecord
             notification_string["consultation_list"] = []
             notification_string["notification_id"] = rank_notification.first.id
             return notification_string
-        end
+        
     end
 
-    def create_rank_notification(user_id,city_rank,state_rank, national_rank)
+    def create_rank_notification(user_id)
         rank_notification = ::UserNotification.where(user_id: user_id, notification_type: 'LEADERBOARD_UPDATE')
         
         if rank_notification.exists?
-            rank_notification.first.city_rank = city_rank
-            rank_notification.first.state_rank = state_rank
-            rank_notification.first.national_rank = national_rank
+            # rank_notification.first.city_rank = city_rank
+            # rank_notification.first.state_rank = state_rank
+            # rank_notification.first.national_rank = national_rank
             rank_notification.first.notification_status = false
-            rank_notification.first.update(city_rank: city_rank, state_rank: state_rank, national_rank: national_rank, notification_status: false)
+            rank_notification.first.update(notification_status: false)
         elsif
             self.user_id = user_id
             self.notification_status = false
-            self.city_rank = city_rank
-            self.state_rank = state_rank
-            self.national_rank = national_rank
+            # self.city_rank = city_rank
+            # self.state_rank = state_rank
+            # self.national_rank = national_rank
             self.notification_type = 'LEADERBOARD_UPDATE'
             self.save!
         end   
