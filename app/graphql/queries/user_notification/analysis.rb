@@ -15,7 +15,13 @@ module Queries
 				
 				up_vote_json_string = user_notification.check_notification(user_id, 'RESPONSE_UPVOTE')
 				response_used_json_string = user_notification.check_notification(user_id, 'RESPONSE_USED')
-				
+
+				check_leaderboard_update_notification = ::UserNotification.notification_exists(user_id,0,'LEADERBOARD_UPDATE')
+
+				if !check_leaderboard_update_notification.exists?
+					user_notification.create_rank_notification(user_id)
+				end
+
 				rank_json_string = user_notification.check_rank_notification(user_id)
 				
 				consultation_approaching_deadline_json_string = user_notification.check_notification(user_id, 'CONSULTATIONS_NEARING_DEADLINE')
