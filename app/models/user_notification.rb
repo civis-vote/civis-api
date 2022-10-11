@@ -143,17 +143,11 @@ class UserNotification < ApplicationRecord
         rank_notification = ::UserNotification.where(user_id: user_id, notification_type: 'LEADERBOARD_UPDATE')
         
         if rank_notification.exists?
-            # rank_notification.first.city_rank = city_rank
-            # rank_notification.first.state_rank = state_rank
-            # rank_notification.first.national_rank = national_rank
             rank_notification.first.notification_status = false
             rank_notification.first.update(notification_status: false)
         elsif
             self.user_id = user_id
             self.notification_status = false
-            # self.city_rank = city_rank
-            # self.state_rank = state_rank
-            # self.national_rank = national_rank
             self.consultation_id = 0
             self.notification_type = 'LEADERBOARD_UPDATE'
             self.save!

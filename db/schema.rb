@@ -239,18 +239,6 @@ ActiveRecord::Schema.define(version: 2022_10_10_135849) do
     t.index ["notification_type"], name: "index_notification_types_on_notification_type", unique: true
   end
 
-  create_table "notifications", force: :cascade do |t|
-    t.bigint "datarefId"
-    t.string "dataref"
-    t.string "oldvalue"
-    t.datetime "lastchangedatetime"
-    t.string "datasource"
-    t.boolean "status"
-    t.bigint "userid"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
   create_table "organisations", force: :cascade do |t|
     t.string "name"
     t.text "logo_data"

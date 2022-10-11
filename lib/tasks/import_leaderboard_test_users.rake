@@ -19,5 +19,14 @@ namespace :import_records_from_csv do
 				puts "Fabricating user " + leaderboard_test_user_email + " end"
 			end
 		end
+
+		CSV.foreach(filepath, headers: true) do |csv_leaderboard_test_users|
+			if csv_leaderboard_test_users["email"].present?
+				leaderboard_test_user_email = csv_leaderboard_test_users["email"].strip
+				puts "Calculating best rank for user " + leaderboard_test_user_email + " start"
+				User.find_by(email: leaderboard_test_user_email).check_for_new_best_rank
+				puts "Calculating best rank for user " + leaderboard_test_user_email + " end"
+			end
+		end
 	end
 end

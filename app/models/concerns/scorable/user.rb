@@ -49,12 +49,6 @@ module Scorable
     end    
 
     def add_points(action)
-      # current_city_rank = self.city_rank
-      # current_state_rank = self.state_rank
-      # current_national_rank = self.rank
-      # current_best_rank = self.best_rank   
-      # current_best_rank_type = self.best_rank_type
-
     	point_scale = calculate_point_scale(action)
     	point_event = self.point_events.create(point_scale: point_scale, points: point_scale.points)
       if !self.admin? && self.city.present?
@@ -65,24 +59,6 @@ module Scorable
 
         user_notifications_new = ::UserNotification.new
         user_notifications_new.create_or_update_rank_notification(self.id)
-
-        # updated_user = ::User.citizen.where(id: self.id) 
-                
-        # if !current_national_rank.nil? && !current_state_rank.nil? && !current_city_rank.nil?
-          
-        #   if updated_user.first.rank < current_national_rank || 
-        #         updated_user.first.state_rank < current_state_rank ||
-        #             updated_user.first.city_rank < current_city_rank
-        #       user_notifications_new = ::UserNotification.new
-        #       user_notifications_new.create_rank_notification(self.id, current_city_rank, current_state_rank, current_national_rank)
-        #   end
-
-        # else
-        #   #User current rank does not exist i.e. new user
-        #   user_notifications_new = ::UserNotification.new
-        #   user_notifications_new.create_rank_notification(self.id, 0, 0, 0)
-        # end
-
       end
       return point_event
     end
