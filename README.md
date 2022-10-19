@@ -23,7 +23,7 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
 
   **System Requirements**
 
-  - [Ruby](https://www.ruby-lang.org/en/downloads/) version **2.4.0** or above.
+  - [Ruby](https://www.ruby-lang.org/en/downloads/) version **3.0.0** or above.
   - [Imagemagick](https://imagemagick.org/) for image processing
 
 ---
@@ -83,3 +83,6 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
     - `rails import_records_from_csv:consultations`
     - `rails import_records_from_csv:point_scale`
   * The API is based on GraphQL and hosted on `BASE_URL/graphql`
+  * If you encountered active storage attachment errors
+    - `PG::UndefinedTable - ERROR: relation "active_storage_attachments" does not exist`
+    - run `rails active_storage:install` and `migrate`

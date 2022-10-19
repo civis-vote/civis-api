@@ -8,12 +8,10 @@ Fabricator(:ministry) do
 	created_by_id							{ User.admin.first.id }
 
 	after_save do |ministry|
-		require 'open-uri'
-		url = URI.parse(Faker::Company.logo)
-		logo_image = open(url)
+		logo_image = open(Rails.root + "app/javascript/application/images/user_profile_picture.png")
 		uploader = ImageUploader.new(:store) 
 		uploaded_file = uploader.upload(logo_image)
-		uploaded_file.metadata["filename"] = File.basename(url.path)
+		uploaded_file.metadata["filename"] = File.basename(logo_image.path)
     ministry.update(logo_data: uploaded_file.to_json)
 	end
 end
