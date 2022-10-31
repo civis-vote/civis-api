@@ -75,6 +75,10 @@ class User < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  scope :lastlogin, lambda{|user_id|
+      where(id: user_id).last_activity_at
+  }
+
   def self.notify_for_new_consultation_filter
     where("notification_settings->>'notify_for_new_consultation' = ?", "true")
   end
@@ -95,6 +99,21 @@ class User < ApplicationRecord
   	api_keys.create
   end
 
+  def notification_approaching_deadline
+    # since this is inside the user schema it by default gets the user_responses for this user
+    user_id = self.id
+    user_response_consultation_ids = responses.pluck("consultation_id")
+    consultation_ids = ::Consultation.status_filter('published').deadline_approaching
+    unresponded_consultations = consultation_ids.ids - user_response_consultation_ids
+    unresponded_consultations.each do |consultation_id|
+      user_notification = UserNotification.notification_exists(user_id,consultation_id,'CONSULTATIONS_NEARING_DEADLINE')
+      if !user_notification.exists?
+        new_user_notification = ::UserNotification.new
+        new_user_notification.create_notification(user_id,consultation_id,'CONSULTATIONS_NEARING_DEADLINE')
+      end
+    end
+  end
+
   def confirmation_url
   	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/confirm", query: "token=#{self.confirmation_token}&callback_url=#{self.callback_url}"}))
   	confirmation_url.to_s
@@ -110,6 +129,9 @@ class User < ApplicationRecord
   end
 
   def update_last_activity
+    user_id = self.id
+    user_notification = ::UserNotification.new
+    user_notification.check_for_newly_published_consultations(user_id, 'NEWLY_PUBLISHED_CONSULTATIONS')
     update last_activity_at: Date.today
   end
 

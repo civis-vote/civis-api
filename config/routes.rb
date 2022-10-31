@@ -78,6 +78,9 @@ Rails.application.routes.draw do
     end
 
     resources :glossary_word_consultation_mappings
+
+    resources :notification_types
+    
     resources :case_studies
     resources :categories
     resources :organisations do

@@ -21,6 +21,7 @@ module Scorable
 
     class << self
       def update_national_rank
+        ::User.citizen.update_all("old_rank=rank")
         distinct_points = ::User.citizen.where.not(city_id: nil).distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
           ::User.where(points: point_value).update_all(rank: index + 1)
@@ -28,6 +29,7 @@ module Scorable
       end
 
       def update_state_rank(state)
+        ::User.citizen.where(city_id: state.child_ids).update_all("old_state_rank=state_rank")
         return false unless state.present?
         state_users = ::User.citizen.where(city_id: state.child_ids)
         distinct_points = state_users.distinct(:points).pluck(:points).sort.reverse
@@ -37,6 +39,7 @@ module Scorable
       end
 
       def update_city_rank(city)
+        ::User.citizen.where(city_id: city.id).update_all("old_city_rank=city_rank")
         city_users = ::User.citizen.where(city_id: city.id)
         distinct_points = city_users.distinct(:points).pluck(:points).sort.reverse
         distinct_points.each_with_index do |point_value, index|
@@ -53,6 +56,8 @@ module Scorable
         User.update_state_rank(self.city.parent)
         User.update_city_rank(city)
         self.check_for_new_best_rank
+        user_notification = ::UserNotification.new
+        user_notification.create_or_update_rank_notification(self.id)
       end
       return point_event
     end
