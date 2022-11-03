@@ -167,11 +167,19 @@ class UserNotification < ApplicationRecord
         consultation_list = ::Consultation.public_consultation.published_date_filter(user_last_login[0]["last_activity_at"])
         if consultation_list.exists?
             consultation_list.each { |item|
+
+            # check if the user has responded to this consultation. If so, there is no need to create the notificaiton
+            consultation_response = item.responses.find_by(user: user_id)
+            if consultation_response.nil?
+
                 notification = ::UserNotification.where(user_id: user_id, consultation_id: item["id"], notification_type: notification_type)
                 if !notification.exists?                    
                     user_notification = UserNotification.new
                     user_notification.create_notification(user_id, item["id"], notification_type)
                 end
+
+            end
+
             }
         end
     end
