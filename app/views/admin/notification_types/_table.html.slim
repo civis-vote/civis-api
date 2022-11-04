@@ -1,0 +1,22 @@
+.admin-index-records-found
+  = total_no_of_records_found(@notification_types, "notification_types", "facets")
+.admin-index-records-found-text
+  | Showing #{@notification_types.data.size} notification types
+table.table.mt-3
+      thead
+        tr
+          th.width-35 Notification Type
+          th Notification Main Text
+          th Notification Sub Text
+      tbody
+        - @notification_types.data.each do |notification_type|
+          tr.pointer onclick='window.location="#{admin_notification_type_path(notification_type)}";'
+            td.table-bold-title
+              = notification_type&.notification_type
+            td
+              = notification_type&.notification_main_text
+            td
+              = notification_type&.notification_sub_text
+.pagination-parent
+  - if @notification_types.facets.total_count > 0
+    = cm_paginate(@notification_types.facets)

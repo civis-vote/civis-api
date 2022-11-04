@@ -82,4 +82,5 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
     - `rails import_records_from_csv:locations`
     - `rails import_records_from_csv:consultations`
     - `rails import_records_from_csv:point_scale`
+    - `rails import_records_from_csv:notification_types`
   * The API is based on GraphQL and hosted on `BASE_URL/graphql`

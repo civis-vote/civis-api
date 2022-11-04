@@ -21,6 +21,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
+  after_commit :check_if_response_used_as_template, on: :create
   before_commit :check_if_consultation_expired?, on: :create
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
@@ -62,7 +63,23 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def refresh_consultation_response_up_vote_count
-    update(up_vote_count: up_votes.size)
+    current_up_vote_count = self.up_vote_count
+    new_up_vote_count = up_votes.size
+    if new_up_vote_count > current_up_vote_count
+      user_notification_1 = UserNotification.notification_exists(self.user_id, self.consultation_id, 'RESPONSE_UPVOTE')
+      if !user_notification_1.exists?
+        up_vote_user_notification = ::UserNotification.new
+        up_vote_user_notification.create_notification(self.user_id, self.consultation_id, 'RESPONSE_UPVOTE')
+      end
+    else
+      if new_up_vote_count < current_up_vote_count
+        user_notification_2 = UserNotification.notification_exists(self.user_id, self.consultation_id, 'RESPONSE_UPVOTE')
+        if !user_notification_2.exists?
+          user_notification_2.delete_all
+        end
+      end  
+    end
+    update(up_vote_count: new_up_vote_count)
   end
 
   def refresh_consultation_response_down_vote_count
@@ -146,5 +163,13 @@ class ConsultationResponse < ApplicationRecord
 
   def check_if_consultation_expired?
     raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if self.platform? && consultation.response_deadline < Date.today
+  end
+
+  def check_if_response_used_as_template
+    if !self.template_id.nil?
+      response_template_user_id = self.template.user_id
+      response_used_user_notification = ::UserNotification.new
+      response_used_user_notification.create_notification(response_template_user_id, self.consultation_id, 'RESPONSE_USED')
+    end
   end
 end

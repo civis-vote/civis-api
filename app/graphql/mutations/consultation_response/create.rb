@@ -8,6 +8,12 @@ module Mutations
       def resolve(consultation_response:)
         created_consultation_response = ::ConsultationResponse.new consultation_response.to_h
         created_consultation_response.user = context[:current_user]
+
+        # Since a user has submitted a response, delete the notifications from nearing deadline and newly published categories
+        user_notification = ::UserNotification.new
+        user_notification.delete_notification(created_consultation_response.user_id,created_consultation_response.consultation_id,"CONSULTATIONS_NEARING_DEADLINE")
+        user_notification.delete_notification(created_consultation_response.user_id,created_consultation_response.consultation_id,"NEWLY_PUBLISHED_CONSULTATIONS")
+        
         @consultation = ::Consultation.find(consultation_response.consultation_id)
         active_response_round = @consultation.response_rounds.order(:created_at).last
         created_consultation_response.response_round = active_response_round
