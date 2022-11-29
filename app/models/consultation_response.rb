@@ -21,7 +21,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
-  before_commit :check_if_consultation_expired?, on: :create
+  before_commit :check_if_consultation_expired?, :set_subjective_objective_response_count, on: :create
 
   enum satisfaction_rating: [:dissatisfied, :somewhat_dissatisfied, :somewhat_satisfied, :satisfied]
 
@@ -146,5 +146,17 @@ class ConsultationResponse < ApplicationRecord
 
   def check_if_consultation_expired?
     raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if self.platform? && consultation.response_deadline < Date.today
+  end
+
+  def set_subjective_objective_response_count
+    if self.response_round.questions.present?
+      # question_type can be regarded as response types
+      response_types = self.response_round.questions.where(id: self.answers.map {|a| a["question_id"]}).pluck(:question_type)
+      self.subjective_answer_count = response_types.count("long_text")
+      self.objective_answer_count = response_types.count - self.subjective_answer_count
+    else
+      # if no questions present then it's a generic subjective response
+      self.subjective_answer_count = 1
+    end
   end
 end
