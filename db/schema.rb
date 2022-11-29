@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_01_27_034746) do
+ActiveRecord::Schema.define(version: 2022_11_29_101148) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -147,6 +147,8 @@ ActiveRecord::Schema.define(version: 2022_01_27_034746) do
     t.integer "source", default: 0
     t.integer "response_status", default: 0
     t.jsonb "meta"
+    t.integer "subjective_answer_count"
+    t.integer "objective_answer_count"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
