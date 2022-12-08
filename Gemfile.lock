@@ -614,6 +614,7 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails
+  ruby-progressbar
   sass-rails (~> 5)
   scout_apm
   selenium-webdriver

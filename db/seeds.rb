@@ -28,17 +28,23 @@ puts "---> Fabricating API Team"
 Fabricate(:user, email: "mkv@commutatus.com", role: "admin")
 Fabricate(:user, email: "balaji@commutatus.com", role: "admin")
 
-puts "---> Fabricating 50 ministries"
-Fabricate.times(50, :ministry)
+puts "---> Fabricating 50 categories"
+progressbar = ProgressBar.create
+50.times { Fabricate(:category); progressbar.increment}
 
+puts "---> Fabricating 50 ministries"
+progressbar = ProgressBar.create
+50.times { Fabricate(:ministry); progressbar.increment}
 
 
 puts "---> Fabricating 50 users"
-Fabricate.times(50, :user)
+progressbar = ProgressBar.create
+50.times { Fabricate(:user); progressbar.increment}
 
 
 puts "---> Fabricating 10 consultations"
-Fabricate.times(50, :consultation)
+progressbar = ProgressBar.create
+50.times { Fabricate(:consultation); progressbar.increment}
 
 puts "---> Publish some consultations"
 Consultation.where(status: :submitted).order("RANDOM()").limit(30).each do |consultation|
