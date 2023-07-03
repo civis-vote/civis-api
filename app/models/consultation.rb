@@ -68,7 +68,7 @@ class Consultation < ApplicationRecord
 
   def publish
   	self.status = :published
-  	self.published_at = DateTime.now
+  	self.published_at = DateTime.now unless self.published_at.present?
   	self.save!
     if self.consultation?
       NotifyNewConsultationEmailJob.perform_later(self) if self.public_consultation?
