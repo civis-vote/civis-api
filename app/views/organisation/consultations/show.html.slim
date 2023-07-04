@@ -79,7 +79,7 @@
             .text-color.m-1
               = consultation_status_text(@consultation)
       = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
-      = display_details("show-page-parent-details", "show-page-label-details", "Response Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y') || '-'}")
+      = display_details("show-page-parent-details", "show-page-label-details", "Response Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y %I:%M %p') || '-'}")
       .show-page-parent-details
         .show-page-label-details Consultation Page link
         .show-page-input-details

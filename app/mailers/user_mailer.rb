@@ -49,7 +49,7 @@ class UserMailer < ApplicationMailer
 																						template_alias: "notify-new-consultation-to-admin",
 																						template_model:{
 																							consultation_name: consultation.title,
-																							deadline: consultation.response_deadline.strftime("%e-%m-%Y"),
+																							deadline: consultation.response_deadline.strftime("%e-%m-%Y %I:%M %p"),
 																							review_url: consultation.review_url,
 																						})
 	end
@@ -162,7 +162,7 @@ class UserMailer < ApplicationMailer
 		xlsx.workbook.add_worksheet(name: "Consultations") do |sheet|
 		  sheet.add_row ["Title", "Url", "Response Deadline", "Ministry", "Status", "Summary", "Response Count", "Featured", "Reading Time", "Created At"], b: true
 		  consultations.each do |consultation|
-		    sheet.add_row [consultation.title, consultation.url, consultation.response_deadline&.strftime("%d %b %Y"), consultation.ministry.name, consultation.status, consultation.english_summary_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime("%d %b %Y")]
+		    sheet.add_row [consultation.title, consultation.url, consultation.response_deadline&.strftime("%d %b %Y %I:%M %p"), consultation.ministry.name, consultation.status, consultation.english_summary_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime("%d %b %Y")]
 		  end
 			sheet.column_widths *size_arr
 		end
