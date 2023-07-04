@@ -40,9 +40,18 @@ $(document).on 'turbolinks:load', ->
 $(document).on 'turbolinks:load', ->
   $ ->
     $('.datepicker').datetimepicker
-      format: 'YYYY-MM-DD'
+      format: 'YYYY-MM-DD hh:mm A'
+      icons: {
+        time: "fa fa-clock",
+        date: "fa fa-calendar",
+        up: "fa fa-chevron-up",
+        down: "fa fa-chevron-down"
+      }
       minDate: new Date
     return
+    $.each($(".datepicker"), () -> 
+      $(this).val($(this).attr("data-value"))
+    )
   fasterPreview = (uploader) ->
     if uploader.files and uploader.files[0]
       $('#profileImage').attr 'src', window.URL.createObjectURL(uploader.files[0])

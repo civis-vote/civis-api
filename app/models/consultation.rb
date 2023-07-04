@@ -23,6 +23,7 @@ class Consultation < ApplicationRecord
 
   after_commit :notify_admins, on: :create
   after_commit :create_response_round, on: :create
+  after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -173,5 +174,9 @@ class Consultation < ApplicationRecord
     return summary.to_plain_text if summary.to_plain_text.present?
     
     ActionView::Base.full_sanitizer.sanitize(page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' '))
+  end
+
+  def set_consultation_expiry_job
+    ConsultationExpiryJob.set(wait_until: TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(self.response_deadline.to_datetime.to_s))).perform_later(self)
   end
 end

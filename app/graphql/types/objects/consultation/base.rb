@@ -72,6 +72,10 @@ module Types
 				def enforce_private_response
 					object.private_response?
 				end
+
+				def response_deadline
+					TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(object.response_deadline.to_s))						
+				end
 			end
 		end
 	end

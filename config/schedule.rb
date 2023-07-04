@@ -29,7 +29,6 @@ end
 job_type :stack_path,    "cd $STACK_PATH && :task"
 
 every :day, at: local('12:00am') do
-  stack_path "bundle exec rails expire:consultations"
   stack_path "bundle exec rails sitemap:refresh"
   stack_path "backup perform -t civis_backup"
 end
