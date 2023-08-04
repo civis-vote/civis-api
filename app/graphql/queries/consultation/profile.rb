@@ -9,8 +9,9 @@ module Queries
 
 	    def resolve(id:, response_token:)
 	    	consultation = ::Consultation.find(id)
-	    	raise CivisApi::Exceptions::Unauthorized if ((!context[:current_user].present? && response_token != consultation.response_token) && consultation.private_consultation?) 
-	    	return consultation
+	    	raise CivisApi::Exceptions::Unauthorized if ((!context[:current_user].present? && response_token != consultation.response_token))
+
+				return consultation
 	    end
 		end
 	end

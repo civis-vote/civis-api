@@ -39,3 +39,6 @@ config/environments/_add_gem_paths.js
 /config/credentials/production.key
 /config/database.yml
 /public/uploads/
+
+# Created and maintained by the Finder application in every folder in macOS
+.DS_Store
