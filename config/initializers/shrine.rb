@@ -10,12 +10,7 @@ Shrine.plugin :remote_url, max_size: nil
 Shrine.plugin :derivation_endpoint, secret_key: Rails.env.test? ? test_secret_key : Rails.application.credentials.dig(:secret_key_base)
 
 def production_storages
-  s3_options = {
-    access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
-    secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
-    bucket: 'civis-production-api',
-    region: 'ap-south-1'
-  }
+  s3_options = Rails.application.credentials.dig(:aws)
 
   Shrine.plugin :url_options, store: { host: "https://production.cdn.civis.vote/" }
 
@@ -26,12 +21,7 @@ def production_storages
 end
 
 def staging_storages
-  s3_options = {
-    access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
-    secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
-    bucket: 'civis-staging-api',
-    region: 'ap-south-1'
-  }
+  s3_options = Rails.application.credentials.dig(:aws)
 
   Shrine.plugin :url_options, store: { host: "https://staging.cdn.civis.vote/" }
 
