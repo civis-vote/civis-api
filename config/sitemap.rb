@@ -27,11 +27,11 @@ SitemapGenerator::Sitemap.create(include_index: false, filename: "sitemap", comp
 end
 
 #uploading to aws-cloud-storage
-  bucket_name = "civis-sitemaps-#{Rails.env}"
-  aws_client = Aws::S3::Client.new(
+bucket_name = "civis-sitemaps-#{Rails.env}"
+aws_client = Aws::S3::Client.new(
   access_key_id: Rails.application.credentials.dig(:aws, :access_key_id),
   secret_access_key: Rails.application.credentials.dig(:aws, :secret_access_key),
-  region: "ap-south-1",
+  region: Rails.application.credentials.dig(:aws, :region),
 )
 
 s3 = Aws::S3::Resource.new(client: aws_client)
