@@ -2,7 +2,7 @@ class UserMailer < ApplicationMailer
 	require "axlsx"
 
 	def verify_email(user)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "user-confirmation",
@@ -15,7 +15,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_new_consultation_email(user, consultation)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "notify-new-consultation",
@@ -30,7 +30,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_new_consultation_policy_review_email(user, consultation)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "notify-new-consultation-policy-review",
@@ -43,7 +43,7 @@ class UserMailer < ApplicationMailer
 																						})
 	end
 	def notify_new_consultation_email_to_admin(user, consultation)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "notify-new-consultation-to-admin",
@@ -55,7 +55,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_profane_response_email_to_admin(user, consultation_response)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "profane-response-notification",
@@ -66,7 +66,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_pending_review_of_profane_responses_email_to_admin(user, consultation)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "pending-review-of-profane-responses-notification",
@@ -77,7 +77,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def user_up_vote_responses_email_job(user, consultation_response)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "user-up-vote-responses-email",
@@ -89,7 +89,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def use_response_as_template_email_job(user, consultation_response)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "use-response-as-template-email",
@@ -101,7 +101,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_published_consultation_email(consultation)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: consultation.created_by.email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "notify-published-consultation",
@@ -114,7 +114,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def notify_expired_consultation_email(email, consultation)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: email,
 																						reply_to: "support@civis.vote",
 																						template_alias: "notify-expired-consultation",
@@ -128,7 +128,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def forgot_password_email(user, url)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "forgot-password",
@@ -140,7 +140,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def existing_user_email(user, password, client_url)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "invite-existing-user-with-credentials",
@@ -169,7 +169,7 @@ class UserMailer < ApplicationMailer
     xlsx.serialize(excel_file)
     user = User.find_by(email: email)
     file = File.open(excel_file)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_id: 13_651_891,
@@ -261,7 +261,7 @@ class UserMailer < ApplicationMailer
     xlsx.serialize(excel_file)
     user = User.find_by(email: email)
     file = File.open(excel_file)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_id: 13_651_891,
@@ -295,7 +295,7 @@ class UserMailer < ApplicationMailer
     xlsx.serialize(excel_file)
     user = User.find_by(email: email)
     file = File.open(excel_file)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_id: 13_651_891,
@@ -329,7 +329,7 @@ class UserMailer < ApplicationMailer
 				xlsx.serialize(excel_file)
 				user = User.find_by(email: email)
 				file = File.open(excel_file)
-					ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+					@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																									to: user.email,
 																									reply_to: "support@civis.vote",
 																									template_id: 13_651_891,
@@ -363,7 +363,7 @@ class UserMailer < ApplicationMailer
 		xlsx.serialize(excel_file)
 		user = User.find_by(email: email)
 		file = File.open(excel_file)
-			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+			@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_id: 13_651_891,
@@ -379,7 +379,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def invite_organisation_employee(user, invitation_url)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "organisation-user-invite",
@@ -391,7 +391,7 @@ class UserMailer < ApplicationMailer
 	end
 
 	def invite_respondent(consultation, user, consultation_url)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "invite-respondent",
@@ -406,7 +406,7 @@ class UserMailer < ApplicationMailer
 		user = User.find(user_id)
 		consultation = Consultation.find(consultation_id)
 		unless user.confirmed_at?
-			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+			@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "user-confirmation-after-8-hours",
@@ -422,7 +422,7 @@ class UserMailer < ApplicationMailer
 	def verify_email_after_72_hours(user_id)
 		user = User.find(user_id)
 		unless user.confirmed_at?
-			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+			@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "user-confirmation-after-72-hours",
@@ -436,7 +436,7 @@ class UserMailer < ApplicationMailer
 	def verify_email_after_120_hours(user_id)
 		user = User.find(user_id)
 		unless user.confirmed_at?
-			ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+			@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																							to: user.email,
 																							reply_to: "support@civis.vote",
 																							template_alias: "user-confirmation-after-120-hours",
@@ -477,7 +477,7 @@ class UserMailer < ApplicationMailer
 		xlsx.serialize(excel_file)
 		user = User.find_by(email: email)
 		file = File.open(excel_file)
-		ApplicationMailer.postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
+		@postmark_client.deliver_with_template(from: "Civis"+ (Rails.env.production? ? "" : +" - " + Rails.env.titleize)  + "<support@platform.civis.vote>",
 																						to: user.email,
 																						reply_to: "support@civis.vote",
 																						template_id: 13_651_891,
