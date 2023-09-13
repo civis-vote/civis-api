@@ -6,7 +6,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'user-confirmation',
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                               confirmation_url: user.confirmation_url,
                                               unsubscribe_url: user.unsubscribe_url,
@@ -19,7 +19,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'notify-new-consultation',
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                               consultation_name: consultation.title,
                                               days_left: consultation.days_left,
@@ -34,7 +34,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'notify-new-consultation-policy-review',
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                               consultation_name: consultation.title,
                                               ministry_name: consultation.ministry.name,
@@ -47,7 +47,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'notify-new-consultation-to-admin',
-                                            template_model:{
+                                            template_model: {
                                               consultation_name: consultation.title,
                                               deadline: consultation.response_deadline.strftime('%e-%m-%Y %I:%M %p'),
                                               review_url: consultation.review_url,
@@ -59,7 +59,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'profane-response-notification',
-                                            template_model:{
+                                            template_model: {
                                               user_name: consultation_response.user.first_name,
                                               consultation_title: consultation_response.consultation.title,
                                             })
@@ -70,7 +70,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'pending-review-of-profane-responses-notification',
-                                            template_model:{
+                                            template_model: {
                                               first_name: consultation.created_by.first_name,
                                               consultation_title: consultation.title,
                                             })
@@ -81,7 +81,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'user-up-vote-responses-email',
-                                            template_model:{
+                                            template_model: {
                                               up_vote_count: consultation_response.up_vote_count,
                                               consultation_response: consultation_response.response_text.to_plain_text,
                                               consultation_title: consultation_response.consultation.title,
@@ -93,7 +93,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'use-response-as-template-email',
-                                            template_model:{
+                                            template_model: {
                                               templates_count: consultation_response.templates_count,
                                               consultation_response: consultation_response.response_text.to_plain_text,
                                               consultation_title: consultation_response.consultation.title,
@@ -105,7 +105,7 @@ class UserMailer < ApplicationMailer
                                             to: consultation.created_by.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'notify-published-consultation',
-                                            template_model:{
+                                            template_model: {
                                               first_name: consultation.created_by.first_name,
                                               consultation_name: consultation.title,
                                               feedback_url: consultation.feedback_url,
@@ -118,7 +118,7 @@ class UserMailer < ApplicationMailer
                                             to: email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'notify-expired-consultation',
-                                            template_model:{
+                                            template_model: {
                                               first_name: consultation.created_by.first_name,
                                               consultation_name: consultation.title,
                                               responses: consultation.consultation_responses_count,
@@ -129,28 +129,28 @@ class UserMailer < ApplicationMailer
 
   def forgot_password_email(user, url)
     @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'forgot-password',
-                                              template_model:{
-                                                email: user.email,
-                                                url: url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'forgot-password',
+                                            template_model: {
+                                              email: user.email,
+                                              url: url,
+                                              unsubscribe_url: user.unsubscribe_url,
+                                            })
   end
 
   def existing_user_email(user, password, client_url)
     @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'invite-existing-user-with-credentials',
-                                              template_model:{
-                                                first_name: user.first_name,
-                                                email: user.email,
-                                                password: password,
-                                                url: client_url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'invite-existing-user-with-credentials',
+                                            template_model: {
+                                              first_name: user.first_name,
+                                              email: user.email,
+                                              password: password,
+                                              url: client_url,
+                                              unsubscribe_url: user.unsubscribe_url,
+                                            })
   end
 
   def consultation_export_email_job(consultations, email)
@@ -173,15 +173,15 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_id: 13_651_891,
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                             },
-                                              attachments: [{
-                                                name: file_name,
-                                                content: [file.read].pack('m'),
-                                                content_type: 'application/vnd.ms-excel',
-                                              }],
-                                            )
+                                            attachments: [{
+                                              name: file_name,
+                                              content: [file.read].pack('m'),
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def 	consultation_responses_export_email_job(consultation_responses, email)
@@ -241,26 +241,26 @@ class UserMailer < ApplicationMailer
             sheet.add_row response_header, b: true
             consultation_responses.each do |consultation_response|
               next unless consultation_response.response_round_id == response_round.id
-                row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, (consultation_response.user.present? && consultation_response.user.city.present?) ? consultation_response.user.city.name : 'NA', (consultation_response.user.present? && consultation_response.user.phone_number.present?) ? consultation_response.user.phone_number : 'NA', consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if (consultation_response.user.present? && consultation_response.user.organisation.present?)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            consultation_response.user.organisation.name
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          elsif (consultation_response.user.present? && consultation_response.user.organization.present?)
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            consultation_response.user.organization
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          else
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'NA'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          end, (consultation_response.user.present? && consultation_response.user.designation.present?) ? consultation_response.user.designation : 'NA' ]
-                answers = []
-                question_ids.each do |id|
-                  if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id } )
-                    answers << answer
-                  else
-                    answers << ''
-                  end
+              row_data = [consultation_response.consultation.title, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, (consultation_response.user.present? && consultation_response.user.city.present?) ? consultation_response.user.city.name : 'NA', (consultation_response.user.present? && consultation_response.user.phone_number.present?) ? consultation_response.user.phone_number : 'NA', consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if (consultation_response.user.present? && consultation_response.user.organisation.present?)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          consultation_response.user.organisation.name
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        elsif (consultation_response.user.present? && consultation_response.user.organization.present?)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          consultation_response.user.organization
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'NA'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        end, (consultation_response.user.present? && consultation_response.user.designation.present?) ? consultation_response.user.designation : 'NA' ]
+              answers = []
+              question_ids.each do |id|
+                if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id } )
+                  answers << answer
+                else
+                  answers << ''
                 end
-                answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',') : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
-                answers.each do | answer |
-                  row_data << answer
-                end
-                sheet.add_row row_data, style: wrap
+              end
+              answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',') : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+              answers.each do | answer |
+                row_data << answer
+              end
+              sheet.add_row row_data, style: wrap
             end
             sheet.column_widths *size_arr
           end
@@ -275,15 +275,15 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_id: 13_651_891,
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                             },
-                                              attachments: [{
-                                                name: file_name,
-                                                content: [file.read].pack('m'),
-                                                content_type: 'application/vnd.ms-excel',
-                                              }],
-                                            )
+                                            attachments: [{
+                                              name: file_name,
+                                              content: [file.read].pack('m'),
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def user_export_email_job(users, email)
@@ -315,20 +315,20 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_id: 13_651_891,
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                             },
-                                              attachments: [{
-                                                name: file_name,
-                                                content: [file.read].pack('m'),
-                                                content_type: 'application/vnd.ms-excel',
-                                              }],
-                                            )
+                                            attachments: [{
+                                              name: file_name,
+                                              content: [file.read].pack('m'),
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def profanity_export_email_job(profanities, email)
     size_arr = []
-      profanities.size.times { size_arr << 22 }
+    profanities.size.times { size_arr << 22 }
     excel_file = "#{Dir.tmpdir()}/profanities-sheet_#{Time.now.to_s}.xlsx"
     file_name = "profanities-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
@@ -342,27 +342,27 @@ class UserMailer < ApplicationMailer
           sheet.column_widths *size_arr
       end
     end
-        xlsx.serialize(excel_file)
-        user = User.find_by(email: email)
-        file = File.open(excel_file)
-          @postmark_client.deliver_with_template(from: @from_email,
-                                                  to: user.email,
-                                                  reply_to: 'support@civis.vote',
-                                                  template_id: 13_651_891,
-                                                  template_model:{
-                                                    first_name: user.first_name,
-                                                  },
-                              attachments: [{
-                              name: file_name,
-                              content: [file.read].pack('m'),
-                              content_type: 'application/vnd.ms-excel',
-                              }],
-                            )
+    xlsx.serialize(excel_file)
+    user = User.find_by(email: email)
+    file = File.open(excel_file)
+    @postmark_client.deliver_with_template(from: @from_email,
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_id: 13_651_891,
+                                            template_model: {
+                                              first_name: user.first_name,
+                                            },
+                                            attachments: [{
+                                              name: file_name,
+                                              content: [file.read].pack('m'),
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def wordindex_export_email_job(wordindices, email)
     size_arr = []
-      wordindices.size.times { size_arr << 22 }
+    wordindices.size.times { size_arr << 22 }
     excel_file = "#{Dir.tmpdir()}/glossary-sheet_#{Time.now.to_s}.xlsx"
     file_name = "glossary-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
@@ -379,19 +379,19 @@ class UserMailer < ApplicationMailer
     xlsx.serialize(excel_file)
     user = User.find_by(email: email)
     file = File.open(excel_file)
-      @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_id: 13_651_891,
-                                              template_model:{
-                                                first_name: user.first_name,
-                                              },
-                        attachments: [{
-                          name: file_name,
-                          content: [file.read].pack('m'),
-                          content_type: 'application/vnd.ms-excel',
-                        }],
-                        )
+    @postmark_client.deliver_with_template(from: @from_email,
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_id: 13_651_891,
+                                            template_model: {
+                                              first_name: user.first_name,
+                                            },
+                                            attachments: [{
+                                              name: file_name,
+                                              content: [file.read].pack('m'),
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def invite_organisation_employee(user, invitation_url)
@@ -399,7 +399,7 @@ class UserMailer < ApplicationMailer
                                               to: user.email,
                                               reply_to: 'support@civis.vote',
                                               template_alias: 'organisation-user-invite',
-                                              template_model:{
+                                              template_model: {
                                                 first_name: user.first_name,
                                                 invitation_url: invitation_url,
                                                 unsubscribe_url: user.unsubscribe_url,
@@ -408,59 +408,62 @@ class UserMailer < ApplicationMailer
 
   def invite_respondent(consultation, user, consultation_url)
     @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'invite-respondent',
-                                              template_model:{
-                                                consultation_name: consultation.title,
-                                                consultation_url: consultation_url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'invite-respondent',
+                                            template_model: {
+                                              consultation_name: consultation.title,
+                                              consultation_url: consultation_url,
+                                              unsubscribe_url: user.unsubscribe_url,
+                                            })
   end
 
   def verify_email_after_8_hours(user_id, consultation_id)
     user = User.find(user_id)
     consultation = Consultation.find(consultation_id)
     return if user.confirmed_at?
-      @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'user-confirmation-after-8-hours',
-                                              template_model:{
-                                                consultation_name: consultation.title,
-                                                first_name: user.first_name,
-                                                confirmation_url: user.confirmation_url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+
+    @postmark_client.deliver_with_template(from: @from_email,
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'user-confirmation-after-8-hours',
+                                            template_model: {
+                                              consultation_name: consultation.title,
+                                              first_name: user.first_name,
+                                              confirmation_url: user.confirmation_url,
+                                              unsubscribe_url: user.unsubscribe_url,
+                                            })
 
   end
 
   def verify_email_after_72_hours(user_id)
     user = User.find(user_id)
     return if user.confirmed_at?
-      @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'user-confirmation-after-72-hours',
-                                              template_model:{
-                                                confirmation_url: user.confirmation_url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+
+    @postmark_client.deliver_with_template(from: @from_email,
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'user-confirmation-after-72-hours',
+                                            template_model: {
+                                              confirmation_url: user.confirmation_url,
+                                              unsubscribe_url: user.unsubscribe_url,
+                                            })
 
   end
 
   def verify_email_after_120_hours(user_id)
     user = User.find(user_id)
     return if user.confirmed_at?
-      @postmark_client.deliver_with_template(from: @from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'user-confirmation-after-120-hours',
-                                              template_model:{
-                                                first_name: user.first_name,
-                                                confirmation_url: user.confirmation_url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+
+    @postmark_client.deliver_with_template(from: @from_email,
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'user-confirmation-after-120-hours',
+                                            template_model: {
+                                              first_name: user.first_name,
+                                              confirmation_url: user.confirmation_url,
+                                              unsubscribe_url: user.unsubscribe_url,
+                                            })
 
   end
 
@@ -503,7 +506,7 @@ class UserMailer < ApplicationMailer
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_id: 13_651_891,
-                                            template_model:{
+                                            template_model: {
                                               first_name: user.first_name,
                                             },
                                               attachments: [{
