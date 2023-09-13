@@ -15,7 +15,7 @@ module SpotlightSearch
       # mail(to: email, subject: subject)
       ExportMailer.postmark_client.deliver_with_template(from: 'support@civis.vote',
                                                           to: email,
-                                                          template_id: 13_651_891,
+                                                          template_alias: 'export-spotlight-search',
                                                           template_model: {
                                                             first_name: user.first_name,
                                                           },

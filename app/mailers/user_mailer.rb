@@ -172,7 +172,7 @@ class UserMailer < ApplicationMailer
     @postmark_client.deliver_with_template(from: @from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
-                                            template_id: 13_651_891,
+                                            template_alias: 'export-spotlight-search',
                                             template_model: {
                                               first_name: user.first_name,
                                             },
@@ -274,7 +274,7 @@ class UserMailer < ApplicationMailer
     @postmark_client.deliver_with_template(from: @from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
-                                            template_id: 13_651_891,
+                                            template_alias: 'export-spotlight-search',
                                             template_model: {
                                               first_name: user.first_name,
                                             },
@@ -314,7 +314,7 @@ class UserMailer < ApplicationMailer
     @postmark_client.deliver_with_template(from: @from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
-                                            template_id: 13_651_891,
+                                            template_alias: 'export-spotlight-search',
                                             template_model: {
                                               first_name: user.first_name,
                                             },
@@ -348,7 +348,7 @@ class UserMailer < ApplicationMailer
     @postmark_client.deliver_with_template(from: @from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
-                                            template_id: 13_651_891,
+                                            template_alias: 'export-spotlight-search',
                                             template_model: {
                                               first_name: user.first_name,
                                             },
@@ -382,7 +382,7 @@ class UserMailer < ApplicationMailer
     @postmark_client.deliver_with_template(from: @from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
-                                            template_id: 13_651_891,
+                                            template_alias: 'export-spotlight-search',
                                             template_model: {
                                               first_name: user.first_name,
                                             },
@@ -505,7 +505,7 @@ class UserMailer < ApplicationMailer
     @postmark_client.deliver_with_template(from: @from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
-                                            template_id: 13_651_891,
+                                            template_alias: 'export-spotlight-search',
                                             template_model: {
                                               first_name: user.first_name,
                                             },
