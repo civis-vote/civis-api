@@ -1,4 +1,4 @@
-import 'jquery/dist/jquery.min';
+import 'jquery/dist/jquery.min'
 import 'bootstrap/js/dist/alert'
 import 'bootstrap/js/dist/button'
 import 'bootstrap/js/dist/carousel'
@@ -12,10 +12,10 @@ import 'bootstrap/js/dist/tab'
 import 'bootstrap/js/dist/toast'
 import 'bootstrap/js/dist/tooltip'
 import 'bootstrap/js/dist/util'
-import 'select2';
-import 'pc-bootstrap4-datetimepicker';
-import 'trix/dist/trix';
-import 'cocoon-js';
+import 'select2'
+import 'pc-bootstrap4-datetimepicker'
+import 'trix/dist/trix'
+import 'cocoon-js'
 
 current_request = null
 select2_form_input_ui = ->
@@ -29,7 +29,7 @@ select2_form_input_ui = ->
     if $(this).data("id") && $(this).data("value")
       id = $(this).data("id")
       value = $(this).data("value")
-      selectedOption = $('<option selected=\'selected\'></option>').val(id).text(value) 
+      selectedOption = $('<option selected=\'selected\'></option>').val(id).text(value)
       $(this).append(selectedOption).trigger 'change'
 
 $(document).on 'turbolinks:load', ->
@@ -49,7 +49,7 @@ $(document).on 'turbolinks:load', ->
       }
       minDate: new Date
     return
-    $.each($(".datepicker"), () -> 
+    $.each($(".datepicker"), () ->
       $(this).val($(this).attr("data-value"))
     )
   fasterPreview = (uploader) ->
@@ -68,7 +68,7 @@ $(document).on 'turbolinks:load', ->
   $(window).on 'load', ->
     $ -> select2_form_input_ui()
   $('.select2').select2()
-  $(document).on 'change', '.form-select-label-group select', () -> 
+  $(document).on 'change', '.form-select-label-group select', () ->
     if $(this).val().length != 0
       $(this).parent().find('.select2-container--default').addClass('placeholder-padding')
       $(this).parent().find('label').removeClass('d-none slidedown')
@@ -114,7 +114,7 @@ $(document).on 'turbolinks:load', ->
     # Requires Bootstrap 3 for functionality
     $('.js-tooltip').tooltip()
     # Copy to clipboard
-    # Grab any text in the attribute 'data-copy' and pass it to the 
+    # Grab any text in the attribute 'data-copy' and pass it to the
     # copy function
     $('.js-copy').click ->
       text = $(this).attr('data-copy')
