@@ -114,7 +114,7 @@ class UserMailer < ApplicationMailer
   end
 
   def notify_expired_consultation_email(email, consultation)
-    @@postmark_client.deliver_with_template(from: @@from_email,
+    @@postmark_client.deliver_with_template(from: 'antaraa.vasudev@civis.vote',
                                             to: email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'notify-expired-consultation',
