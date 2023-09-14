@@ -6,7 +6,7 @@ class Consultation < ApplicationRecord
   has_rich_text :summary
   include CmPageBuilder::Rails::HasCmContent
   has_rich_text :response_submission_message
-  
+
   belongs_to :ministry
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :organisation, optional: true
@@ -81,7 +81,7 @@ class Consultation < ApplicationRecord
       respondents = Respondent.where(response_round_id: self.response_round_ids)
       respondents.each do |respondent|
         url = Respondent.respondent_invite_url(self, respondent.user)
-        InviteRespondentJob.perform_later(self, respondent.user, url)  
+        InviteRespondentJob.perform_later(self, respondent.user, url)
       end
     end
   end
@@ -91,12 +91,20 @@ class Consultation < ApplicationRecord
   end
 
   def expire
-    if self.responses.under_review.count == 0
-  	  self.expired!
-      NotifyExpiredConsultationEmailJob.perform_later(self.consultation_feedback_email, self) if self.consultation_feedback_email
-      if self.consultation?
-        NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_primary, self) if self.ministry.poc_email_primary
-        NotifyExpiredConsultationEmailJob.perform_later(self.ministry.poc_email_secondary, self) if self.ministry.poc_email_secondary
+    if responses.under_review.count == 0
+  	  expired!
+      NotifyExpiredConsultationEmailJob.perform_later(consultation_feedback_email, self) if consultation_feedback_email
+      if consultation?
+        if ministry.poc_email_primary
+          officer_name = ministry.primary_officer_name
+          officer_designation = ministry.primary_officer_designation
+          NotifyExpiredConsultationEmailJob.perform_later(ministry.poc_email_primary, self, officer_name, officer_designation)
+        end
+        if ministry.poc_email_secondary
+          officer_name = ministry.secondary_officer_name
+          officer_designation = ministry.secondary_officer_designation
+          NotifyExpiredConsultationEmailJob.perform_later(ministry.poc_email_secondary, self, officer_name, officer_designation)
+        end
       end
       UserUpVoteResponsesEmailJob.perform_later(self)
       UseResponseAsTemplateEmailJob.perform_later(self)
@@ -172,7 +180,7 @@ class Consultation < ApplicationRecord
 
   def english_summary_text
     return summary.to_plain_text if summary.to_plain_text.present?
-    
+
     ActionView::Base.full_sanitizer.sanitize(page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' '))
   end
 

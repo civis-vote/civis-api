@@ -26,10 +26,10 @@ class Admin::MinistriesController < ApplicationController
 			params[:ministry][:location_id] = 0
 		else
 			@location_type = Location.find(@location_id).location_type
-			case 
+			case
 				when @ministry_level == "national" then
 					flash[:flash_info] = "Location cannot be selected for National level Ministry."
-					redirect_to admin_ministry_path(@ministry) and return				
+					redirect_to admin_ministry_path(@ministry) and return
 				when (@ministry_level == "state" and @location_type != "state") then
 					flash[:flash_info] = "Location is not a state for State level Ministry."
 					redirect_to admin_ministry_path(@ministry) and return
@@ -38,7 +38,7 @@ class Admin::MinistriesController < ApplicationController
 					redirect_to admin_ministry_path(@ministry) and return
 			end
 		end
-		
+
 		if @ministry.update(secure_params)
 			redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry details was successfully updated."
 		else
@@ -57,7 +57,7 @@ class Admin::MinistriesController < ApplicationController
 
 	def create
 		@ministry = Ministry.new(secure_params.merge(created_by_id: current_user.id))
-		
+
 		if @ministry.location_id.nil?
 			@ministry.location_id = 0
 		else
@@ -96,7 +96,7 @@ class Admin::MinistriesController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:ministry).permit(:name, :level, :poc_email_primary, :poc_email_secondary, :logo, :category_id, :location_id)
+		params.require(:ministry).permit(:name, :level, :poc_email_primary, :primary_officer_name, :primary_officer_designation, :poc_email_secondary, :secondary_officer_name, :secondary_officer_designation, :logo, :category_id, :location_id)
 	end
 
 	def set_ministry
