@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_14_084913) do
+ActiveRecord::Schema.define(version: 2023_09_14_093631) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -221,8 +221,10 @@ ActiveRecord::Schema.define(version: 2023_09_14_084913) do
     t.jsonb "logo_versions_data"
     t.datetime "deleted_at"
     t.integer "location_id", default: 0
-    t.string "officer_name"
-    t.string "officer_designation"
+    t.string "primary_officer_name"
+    t.string "primary_officer_designation"
+    t.string "secondary_officer_name"
+    t.string "secondary_officer_designation"
     t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
