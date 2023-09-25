@@ -9,6 +9,8 @@
       .private-consultation
         = f.input :private_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Enforce Private Response"
       = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
+      = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
+      = f.input :officer_designation, placeholder: "Officer designation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_designation" }
       #consultation-ministry
         = render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: nil }
       = f.input :ministry_id, as: :select, collection: Ministry.all.map {|u| [u.name, u.id]}, selected: @consultation&.ministry_id, label: 'Select ministry', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry', id: "#{@consultation.id}"  } }
