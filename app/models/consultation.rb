@@ -93,7 +93,7 @@ class Consultation < ApplicationRecord
   def expire
     if responses.under_review.count == 0
   	  expired!
-      NotifyExpiredConsultationEmailJob.perform_later(consultation_feedback_email, self) if consultation_feedback_email
+      NotifyExpiredConsultationEmailJob.perform_later(consultation_feedback_email, self, officer_name, officer_designation) if consultation_feedback_email
       if consultation?
         if ministry.poc_email_primary
           officer_name = ministry.primary_officer_name
