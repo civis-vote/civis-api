@@ -92,23 +92,15 @@ class Consultation < ApplicationRecord
 
   def expire
     expired!
-    if responses.acceptable.size.positive?
-      NotifyExpiredConsultationEmailJob.perform_later(consultation_feedback_email, self, officer_name, officer_designation) if consultation_feedback_email
-      if consultation?
-        if ministry.poc_email_primary
-          officer_name = ministry.primary_officer_name
-          officer_designation = ministry.primary_officer_designation
-          NotifyExpiredConsultationEmailJob.perform_later(ministry.poc_email_primary, self, officer_name, officer_designation)
-        end
-        if ministry.poc_email_secondary
-          officer_name = ministry.secondary_officer_name
-          officer_designation = ministry.secondary_officer_designation
-          NotifyExpiredConsultationEmailJob.perform_later(ministry.poc_email_secondary, self, officer_name, officer_designation)
-        end
-      end
-      UserUpVoteResponsesEmailJob.perform_later(self)
-      UseResponseAsTemplateEmailJob.perform_later(self)
+    return unless responses.acceptable.size.positive?
+
+    feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
+    if consultation?
+      feedback_report_email(ministry.poc_email_primary, ministry.primary_officer_name, ministry.primary_officer_designation) if ministry.poc_email_primary
+      feedback_report_email(ministry.poc_email_secondary, ministry.secondary_officer_name, ministry.secondary_officer_designation) if ministry.poc_email_secondary
     end
+    UserUpVoteResponsesEmailJob.perform_later(self)
+    UseResponseAsTemplateEmailJob.perform_later(self)
   end
 
   def responded_on(user = Current.user)
@@ -184,5 +176,11 @@ class Consultation < ApplicationRecord
 
   def set_consultation_expiry_job
     ConsultationExpiryJob.set(wait_until: TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(self.response_deadline.to_datetime.to_s))).perform_later(self)
+  end
+
+  private
+
+  def feedback_report_email(email, officer_name, officer_designation)
+    NotifyExpiredConsultationEmailJob.perform_later(email, self, officer_name, officer_designation)
   end
 end
