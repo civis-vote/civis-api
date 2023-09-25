@@ -91,8 +91,8 @@ class Consultation < ApplicationRecord
   end
 
   def expire
-    if responses.under_review.count == 0
-  	  expired!
+    expired!
+    if responses.acceptable.size.positive?
       NotifyExpiredConsultationEmailJob.perform_later(consultation_feedback_email, self, officer_name, officer_designation) if consultation_feedback_email
       if consultation?
         if ministry.poc_email_primary
@@ -108,8 +108,6 @@ class Consultation < ApplicationRecord
       end
       UserUpVoteResponsesEmailJob.perform_later(self)
       UseResponseAsTemplateEmailJob.perform_later(self)
-    else
-      NotifyPendingReviewOfProfaneResponsesEmailToAdminJob.perform_later(self)
     end
   end
 
