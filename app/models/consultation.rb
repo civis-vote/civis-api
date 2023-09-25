@@ -181,6 +181,6 @@ class Consultation < ApplicationRecord
   private
 
   def feedback_report_email(email, officer_name, officer_designation)
-    NotifyExpiredConsultationEmailJob.perform_later(email, self, officer_name, officer_designation)
+    ConsultationFeedbackReportEmailJob.perform_later(email, self, officer_name, officer_designation)
   end
 end
