@@ -1,17 +1,19 @@
 = simple_form_for [:admin, @consultation], data: {id: "new_edit_consultation" } do |f|
-	.p-4
-		.admin-header-text
-			| Basic Information
-		.admin-details-box
-			= f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
-			.private-consultation
-				= f.input :visibility, as: :boolean, checked_value: "private_consultation", unchecked_value: "public_consultation", label: "Private Consultation"
-			.private-consultation
-				= f.input :private_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Enforce Private Response"
-			= f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
-			#consultation-ministry
-				= render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: nil }
-			= f.input :ministry_id, as: :select, collection: Ministry.all.map {|u| [u.name, u.id]}, selected: @consultation&.ministry_id, label: 'Select ministry', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry', id: "#{@consultation.id}"  } }
-			= f.input :url, placeholder: "URL of consultation PDF", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation url" }
-			= f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "admin-event-from-to-date", class: "datepicker", value: "#{@consultation.response_deadline}", data: { toggle: "datetimepicker", target: "#event_scheduled_till" }}, id: "event_scheduled_till"
-			= f.input :review_type, as: :select, collection: Consultation.review_types.map {|review_type| [Consultation.formatted_enum_name(:review_type, review_type[0]), review_type[0]] }, selected: "#{@consultation.review_type}", label: 'Select Review Type', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select Review Type', id: "#{@consultation.id}_review_type"  } }
+  .p-4
+    .admin-header-text
+      | Basic Information
+    .admin-details-box
+      = f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
+      .private-consultation
+        = f.input :visibility, as: :boolean, checked_value: "private_consultation", unchecked_value: "public_consultation", label: "Private Consultation"
+      .private-consultation
+        = f.input :private_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Enforce Private Response"
+      = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
+      = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
+      = f.input :officer_designation, placeholder: "Officer designation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_designation" }
+      #consultation-ministry
+        = render partial: 'consultation_ministry', locals: { consultation: @consultation, selected_ministry: nil }
+      = f.input :ministry_id, as: :select, collection: Ministry.all.map {|u| [u.name, u.id]}, selected: @consultation&.ministry_id, label: 'Select ministry', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select ministry', id: "#{@consultation.id}"  } }
+      = f.input :url, placeholder: "URL of consultation PDF", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation url" }
+      = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "admin-event-from-to-date", class: "datepicker", value: "#{@consultation.response_deadline}", data: { toggle: "datetimepicker", target: "#event_scheduled_till" }}, id: "event_scheduled_till"
+      = f.input :review_type, as: :select, collection: Consultation.review_types.map {|review_type| [Consultation.formatted_enum_name(:review_type, review_type[0]), review_type[0]] }, selected: "#{@consultation.review_type}", label: 'Select Review Type', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, data: { placeholder: 'Select Review Type', id: "#{@consultation.id}_review_type"  } }

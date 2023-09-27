@@ -66,7 +66,7 @@ class Admin::ConsultationsController < ApplicationController
   def hindi_page_component
 		@consultation = Consultation.find(params[:id])
 		@consultation_hindi_summary = ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
-		
+
     components = page_params.delete(:components)
     if @consultation_hindi_summary.page.present?
       @hindi_summary_page = @consultation_hindi_summary.page
@@ -83,7 +83,7 @@ class Admin::ConsultationsController < ApplicationController
   end
 
   def edit
-  	@page = @consultation.page	
+  	@page = @consultation.page
   end
 
 	def update
@@ -128,7 +128,7 @@ class Admin::ConsultationsController < ApplicationController
 	def reject
 		@consultation.reject
 		redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully rejected."
-	end	
+	end
 
 	def featured
 		@consultation.featured
@@ -180,7 +180,7 @@ class Admin::ConsultationsController < ApplicationController
   end
 
   def show_response_submission_message
-    
+
   end
 
   def update_response_submission_message
@@ -207,7 +207,7 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response)
+		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response, :officer_name, :officer_designation)
 	end
 
 	def set_consultation
