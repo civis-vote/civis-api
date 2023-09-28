@@ -7,8 +7,8 @@ class NotifyPendingReviewOfProfaneResponsesEmailToAdminJob < ApplicationJob
 
     url = Rails.application.routes.url_helpers.admin_consultation_responses_url(filters: { response_filter: 1 })
     consultation_expiring_today_count = ::Consultation.joins(:responses)
-                                                      .where(response_deadline: ..Date.today,
-                                                             consultation_responses: {response_status: 1})
+                                                      .where('DATE(response_deadline) <= ?', Date.today)
+                                                      .where(consultation_responses: {response_status: 1})
                                                       .distinct.size
     # Set the value to nil so that the conditional statement can be added in the postmark template.
     consultation_expiring_today_count = nil if consultation_expiring_today_count.zero?
