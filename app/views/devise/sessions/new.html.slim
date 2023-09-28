@@ -6,7 +6,7 @@
       .login-panel-input-width
         .login-form
           .company-logo
-            / = image_pack_tag "media/application/images/civis_logo.png"
+            = image_pack_tag "media/application/images/civis_logo.png"
           .sign-up-text.text-center LOGIN
           = simple_form_for(User.new, as: :user, url: session_path(User.new), html: { method: :post, class: "user_login p-4" })do |f|
             / = render partial: "devise/shared/error_messages"
