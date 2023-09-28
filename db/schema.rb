@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_14_093631) do
+ActiveRecord::Schema.define(version: 2023_09_25_125754) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -176,6 +176,8 @@ ActiveRecord::Schema.define(version: 2023_09_14_093631) do
     t.integer "organisation_id"
     t.integer "private_response", default: 0
     t.datetime "deleted_at"
+    t.string "officer_name"
+    t.string "officer_designation"
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end

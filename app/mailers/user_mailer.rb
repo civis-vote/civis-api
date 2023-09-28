@@ -65,14 +65,16 @@ class UserMailer < ApplicationMailer
                                             })
   end
 
-  def notify_pending_review_of_profane_responses_email_to_admin(user, consultation)
+  def notify_pending_review_of_profane_responses_email_to_admin(user, response_under_review_count, consultation_expiring_today_count, url)
     @@postmark_client.deliver_with_template(from: @@from_email,
                                             to: user.email,
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'pending-review-of-profane-responses-notification',
                                             template_model: {
-                                              first_name: consultation.created_by.first_name,
-                                              consultation_title: consultation.title,
+                                              name: user.full_name,
+                                              response_under_review_count: response_under_review_count,
+                                              consultation_expiring_today_count: consultation_expiring_today_count,
+                                              url: url,
                                             })
   end
 

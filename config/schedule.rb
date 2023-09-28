@@ -32,3 +32,7 @@ every :day, at: local('12:00am') do
   stack_path "bundle exec rails sitemap:refresh"
   stack_path "backup perform -t civis_backup"
 end
+
+every :day, at: local('10:00am') do
+  rake 'email:review_pending_profane_response'
+end

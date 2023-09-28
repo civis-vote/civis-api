@@ -1,4 +1,4 @@
-class NotifyExpiredConsultationEmailJob < ApplicationJob
+class ConsultationFeedbackReportEmailJob < ApplicationJob
   queue_as :default
 
   def perform(email, consultation, officer_name = nil, officer_designation = nil)

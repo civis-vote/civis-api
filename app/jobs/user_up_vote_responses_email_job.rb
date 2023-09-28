@@ -3,7 +3,7 @@ class UserUpVoteResponsesEmailJob < ApplicationJob
 
   def perform(consultation)
   	consultation.responses.where("up_vote_count > ?",0).each do |response|
-      user=User.find(response.user_id)
+      user = User.find(response.user_id)
       begin
     	 UserMailer.user_up_vote_responses_email_job(user, response).deliver_now
       rescue
