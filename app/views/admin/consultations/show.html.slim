@@ -96,6 +96,8 @@
     .p-4
       = display_details("show-page-parent-details", "show-page-label-details", "Title of the consultation", "show-page-input-details", "#{@consultation&.title || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Consultation Feedback Email", "show-page-input-details", "#{@consultation&.consultation_feedback_email || '-'}")
+      = display_details("show-page-parent-details", "show-page-label-details", "Officer Name", "show-page-input-details", "#{@consultation&.officer_name.presence || '-'}")
+      = display_details("show-page-parent-details", "show-page-label-details", "Officer Designation", "show-page-input-details", "#{@consultation&.officer_designation.presence || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "URL of consultation pdf", "show-page-input-details", "#{@consultation&.url}")
       = display_details("show-page-parent-details", "show-page-label-details", "Ministry", "show-page-input-details", "#{@consultation.ministry ? @consultation.ministry.name : "-" }")
       = display_details("show-page-parent-details", "show-page-label-details", "Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y %I:%M %p') || '-'}")
