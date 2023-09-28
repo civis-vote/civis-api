@@ -34,8 +34,8 @@
               .copy-public-url.mr-2
                 | Copy share link
         - if (@consultation.private_consultation?)
-            = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
-              p Invite
+          = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
+            p Invite
         - if (@consultation.private_consultation? && !(@consultation.published? || @consultation.expired?))
           = link_to '', {class: "square-btn-question btn mb-0 mr-3 ml-0", id: "", 'data-target': "#extend_deadline_2", 'data-toggle': "modal"}  do
             | Publish
@@ -45,31 +45,31 @@
         .dropdown#dropdown-container
           ul.dropdown-menu.icon-list#show-page-dropdown
             - if current_user.role == "admin" && @consultation.responses.present?
-                li
-                  .dropdown-without-icon
-                    = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
+              li
+                .dropdown-without-icon
+                  = link_to "Export responses as excel", export_as_excel_admin_consultations_path(consultation_responses: true, id: "#{@consultation.id}"), class: "btn mr-3"
             - if current_user.role == "admin"
-                li
-                  .dropdown-without-icon
-                    button.btn.mr-3 data-target="#importModal" data-toggle="modal" type="button"
-                      | Import Responses
+              li
+                .dropdown-without-icon
+                  button.btn.mr-3 data-target="#importModal" data-toggle="modal" type="button"
+                    | Import Responses
             - if @consultation.submitted?
-                li
-                  .dropdown-without-icon
-                    = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
+              li
+                .dropdown-without-icon
+                  = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
             - if @consultation.published?
+              li
+                .dropdown-without-icon
+                  = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
+            - else
+              - if (@consultation&.ministry&.is_approved && @consultation.public_consultation?)
                 li
                   .dropdown-without-icon
-                    = link_to "Reject", reject_admin_consultation_path(@consultation), method: :post
-            - else
-                - if (@consultation&.ministry&.is_approved && @consultation.public_consultation?)
-                  li
-                    .dropdown-without-icon
-                      = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
-                - elsif (!@consultation&.ministry&.is_approved && @consultation.public_consultation?)
-                  li
-                    .dropdown-without-icon
-                      = link_to "Publish", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Approve ministry"
+                    = link_to "Publish", publish_admin_consultation_path(@consultation), method: :post
+              - elsif (!@consultation&.ministry&.is_approved && @consultation.public_consultation?)
+                li
+                  .dropdown-without-icon
+                    = link_to "Publish", admin_ministry_path(@consultation&.ministry_id), class: "float-right", 'data-toggle': "tooltip", 'data-placement': "bottom", title: "Approve ministry"
             - if @consultation.is_featured?
               li
                 .dropdown-without-icon
@@ -202,8 +202,8 @@
                           .icon-bg-question
                             = link_to '' , admin_consultation_question_path(@consultation, question), data: { confirm: 'Are you sure?' }, method: :delete, class:"fa fa-trash"
                   - if (@consultation.public_consultation? && ( @consultation.submitted? || @consultation.published? ) && response_round.id == @response_rounds.last.id)
-                      = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{response_round.id}", 'data-toggle': "modal"}  do
-                        p + Add question
+                    = link_to '', {class: "square-btn-with-border square-btn-question", id: "edit_question_icon", 'data-target': "#create_question_collapse_#{response_round.id}", 'data-toggle': "modal"}  do
+                      p + Add question
               - else
                 .feedback-flex.p-3
                   = image_pack_tag "media/application/images/no_questions_illustration.svg", class: "p-2"
@@ -240,84 +240,84 @@
       .modal-content
         .question-pop-up
           .question-pop-up-content.model-pop-up-overflow-none
-              .pop-up-head
-                  .head-text
-                      p Extend deadline
-                  .close-symbol data-dismiss="modal" type="button"
-                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
-                      </svg>
-              .d-flex.pt-1.pb-3
-                = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
-                .extend-deadline-sub-text
-                  | Extended the response deadline date for this consultation
-              = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|
-                .row.form-group.string.optional.consultation_response_deadline
-                  .col-md-12.form-label-group
-                    = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
-                    label.string.optional for="admin-event-from-to-date"  Response deadline
-                .modal-footer
-                  .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
-                  input.btn.square-btn-question type="submit" value="Publish"
+            .pop-up-head
+              .head-text
+                p Extend deadline
+              .close-symbol data-dismiss="modal" type="button"
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                </svg>
+            .d-flex.pt-1.pb-3
+              = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
+              .extend-deadline-sub-text
+                | Extended the response deadline date for this consultation
+            = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|
+              .row.form-group.string.optional.consultation_response_deadline
+                .col-md-12.form-label-group
+                  = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
+                  label.string.optional for="admin-event-from-to-date"  Response deadline
+              .modal-footer
+                .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                input.btn.square-btn-question type="submit" value="Publish"
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="extend_deadline_2"
     .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content.model-pop-up-overflow-none
-              .pop-up-head
-                  .head-text
-                      p Extend deadline
-                  .close-symbol data-dismiss="modal" type="button"
-                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
-                      </svg>
-              .d-flex.pt-1.pb-3
-                = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
-                .extend-deadline-sub-text
-                  | Choose a response deadline for this round of feedback
-              = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|
-                .row.form-group.string.optional.consultation_response_deadline
-                  .col-md-12.form-label-group
-                    = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
-                    label.string.optional for="admin-event-from-to-date"  Response deadline
-                .modal-footer
-                  .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
-                  input.btn.square-btn-question type="submit" value="Publish"
+            .pop-up-head
+              .head-text
+                p Extend deadline
+              .close-symbol data-dismiss="modal" type="button"
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                </svg>
+            .d-flex.pt-1.pb-3
+              = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
+              .extend-deadline-sub-text
+                | Choose a response deadline for this round of feedback
+            = simple_form_for @consultation, url: extend_deadline_admin_consultation_path(@consultation) do |f|
+              .row.form-group.string.optional.consultation_response_deadline
+                .col-md-12.form-label-group
+                  = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
+                  label.string.optional for="admin-event-from-to-date"  Response deadline
+              .modal-footer
+                .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                input.btn.square-btn-question type="submit" value="Publish"
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="make_changes"
     .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content
-              .pop-up-head
-                  .head-text
-                      p Make changes
-                  .close-symbol data-dismiss="modal" type="button"
-                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
-                      </svg>
-              = simple_form_for @consultation, url: create_response_round_admin_consultation_path(@consultation) do |f|
-                .row.form-group.string.optional
-                  .col-md-12.form-label-group
-                    p
-                      | Are you sure want to make changes to this consultation? If you make any changes then a new round will be created by automatically closing the first round.
-                .modal-footer
-                  .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
-                  input.btn.square-btn-question type="submit" value="Make changes"
+            .pop-up-head
+              .head-text
+                p Make changes
+              .close-symbol data-dismiss="modal" type="button"
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                </svg>
+            = simple_form_for @consultation, url: create_response_round_admin_consultation_path(@consultation) do |f|
+              .row.form-group.string.optional
+                .col-md-12.form-label-group
+                  p
+                    | Are you sure want to make changes to this consultation? If you make any changes then a new round will be created by automatically closing the first round.
+              .modal-footer
+                .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
+                input.btn.square-btn-question type="submit" value="Make changes"
   = render partial: 'users/admin/invite_respondents'
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="invited_respondents"
     .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content
-              .pop-up-head
-                  .head-text
-                      p Invited respondents
-                  .close-symbol data-dismiss="modal" type="button"
-                      <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
-                      </svg>
-              .col-md-12.p-0.mb-3
-              = render partial: 'users/invited_respondents_table'
+            .pop-up-head
+              .head-text
+                p Invited respondents
+              .close-symbol data-dismiss="modal" type="button"
+                <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
+                </svg>
+            .col-md-12.p-0.mb-3
+            = render partial: 'users/invited_respondents_table'
 
   #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1"
     .modal-dialog.modal-dialog-centered role="document"
@@ -328,15 +328,15 @@
             button.close aria-label="Close" data-dismiss="modal" type="button"
               span aria-hidden="true"  &times;
           .modal-body
-                  .row.form-group.string.optional
-                    .col-md-12.form-label-group
-                      = link_to 'Click to download sample template' , "https://civis-production-api.s3.ap-south-1.amazonaws.com/Civis+-+Response+Import+Template.xlsx"
-                    .col-md-12.form-label-group
-                      | Use the consultation id #{@consultation&.id}
-                    .col-md-10.form-label-group
-                      = f.file_field :file, class: "p10"
-                    #loader-for-file-upload.col-md-2.form-label-group.hidden
-                      .loader
+            .row.form-group.string.optional
+              .col-md-12.form-label-group
+                = link_to 'Click to download sample template' , "https://civis-production-api.s3.ap-south-1.amazonaws.com/Civis+-+Response+Import+Template.xlsx"
+              .col-md-12.form-label-group
+                | Use the consultation id #{@consultation&.id}
+              .col-md-10.form-label-group
+                = f.file_field :file, class: "p10"
+              #loader-for-file-upload.col-md-2.form-label-group.hidden
+                .loader
           .modal-footer
             button.btn.btn-secondary data-dismiss="modal" type="button"  Close
             input.btn.square-btn-question id="file-upload-btn" type="submit" value="Import"
