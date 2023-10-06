@@ -79,7 +79,7 @@ gem 'cm_page_builder-rails', '~> 0.2.1'
 gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
 gem "paranoia"
 
-group :development, :test, :staging do
+group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
   gem "fabrication"
