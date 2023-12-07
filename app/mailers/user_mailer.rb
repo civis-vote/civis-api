@@ -14,21 +14,6 @@ class UserMailer < ApplicationMailer
 
   end
 
-  def notify_new_consultation_email(user, consultation)
-    @@postmark_client.deliver_with_template(from: @@from_email,
-                                            to: user.email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'notify-new-consultation',
-                                            template_model: {
-                                              first_name: user.first_name,
-                                              consultation_name: consultation.title,
-                                              days_left: consultation.days_left,
-                                              ministry_name: consultation.ministry.name,
-                                              feedback_url: consultation.feedback_url,
-                                              unsubscribe_url: user.unsubscribe_url,
-                                            })
-  end
-
   def notify_new_consultation_policy_review_email(user, consultation)
     @@postmark_client.deliver_with_template(from: @@from_email,
                                             to: user.email,

@@ -71,11 +71,7 @@ class Consultation < ApplicationRecord
   	self.status = :published
   	self.published_at = DateTime.now unless self.published_at.present?
   	self.save!
-    if self.consultation?
-      NotifyNewConsultationEmailJob.perform_later(self) if self.public_consultation?
-    else
-      NotifyNewConsultationPolicyReviewEmailJob.perform_later(self)
-    end
+    NotifyNewConsultationPolicyReviewEmailJob.perform_later(self) unless self.consultation?
     NotifyPublishedConsultationEmailJob.perform_later(self) if self.created_by.citizen?
     if self.private_consultation?
       respondents = Respondent.where(response_round_id: self.response_round_ids)
