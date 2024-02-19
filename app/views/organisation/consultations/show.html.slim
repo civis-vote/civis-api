@@ -11,7 +11,7 @@
       .admin-filter-parent
         .admin-filter-child.width-100
           .mr-3
-            svg fill="none" height="24" viewbox=("0 0 21 24") width="21" xmlns="http://www.w3.org/2000/svg" 
+            svg fill="none" height="24" viewbox=("0 0 21 24") width="21" xmlns="http://www.w3.org/2000/svg"
               path d=("M20.25 14.25C20.25 19.6359 15.8859 24 10.5 24C5.11406 24 0.75 19.6359 0.75 14.25C0.75 9.375 4.32656 5.33437 9 4.61719V3H7.6875C7.37813 3 7.125 2.74688 7.125 2.4375V0.5625C7.125 0.253125 7.37813 0 7.6875 0H13.3125C13.6219 0 13.875 0.253125 13.875 0.5625V2.4375C13.875 2.74688 13.6219 3 13.3125 3H12V4.61719C13.7578 4.88906 15.3609 5.62969 16.6734 6.70781L17.9625 5.41875C18.1828 5.19844 18.5391 5.19844 18.7594 5.41875L20.0859 6.74531C20.3062 6.96562 20.3062 7.32187 20.0859 7.54219L18.7078 8.92031L18.6797 8.94844C19.6734 10.4672 20.25 12.2906 20.25 14.25ZM12 15.9375V8.83594C12 8.52656 11.7469 8.27344 11.4375 8.27344H9.5625C9.25313 8.27344 9 8.52656 9 8.83594V15.9375C9 16.2469 9.25313 16.5 9.5625 16.5H11.4375C11.7469 16.5 12 16.2469 12 15.9375Z") fill="white" /
           div
             .deadline-title Deadline Passed
@@ -188,7 +188,7 @@
           = display_details("show-page-parent-details", "show-page-label-details", "Responses", "show-page-input-details", "#{@responses_count || '-'} responses")
   .h-20
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="extend_deadline"
-    .modal-dialog role="document" 
+    .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content.model-pop-up-overflow-none
@@ -203,7 +203,7 @@
                 = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
                 .extend-deadline-sub-text
                   | Extended the response deadline date for this consultation
-              = simple_form_for @consultation, url: extend_deadline_organisation_consultation_path(@consultation) do |f|        
+              = simple_form_for @consultation, url: extend_deadline_organisation_consultation_path(@consultation) do |f|
                 .row.form-group.string.optional.consultation_response_deadline
                   .col-md-12.form-label-group
                     = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
@@ -212,7 +212,7 @@
                   .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
                   input.btn.square-btn-question type="submit" value="Publish"
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="extend_deadline_2"
-    .modal-dialog role="document" 
+    .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content.model-pop-up-overflow-none
@@ -227,7 +227,7 @@
                 = image_pack_tag "media/application/images/icons/info.svg", class: "pr-2"
                 .extend-deadline-sub-text
                   | Choose a response deadline for this round of feedback
-              = simple_form_for @consultation, url: extend_deadline_organisation_consultation_path(@consultation) do |f|        
+              = simple_form_for @consultation, url: extend_deadline_organisation_consultation_path(@consultation) do |f|
                 .row.form-group.string.optional.consultation_response_deadline
                   .col-md-12.form-label-group
                     = f.input :response_deadline, as: :string, placeholder: "Deadline", required: false, wrapper: false, autofocus: true, label: false, input_html: { id: "admin-event-from-to-date", style: "height: 48px;", class: "datepicker", value: "#{@consultation.response_deadline}" }
@@ -236,7 +236,7 @@
                   .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
                   input.btn.square-btn-question type="submit" value="Publish"
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="make_changes"
-    .modal-dialog role="document" 
+    .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content
@@ -247,16 +247,16 @@
                       <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
                       </svg>
-              = simple_form_for @consultation, url: create_response_round_organisation_consultation_path(@consultation) do |f|        
+              = simple_form_for @consultation, url: create_response_round_organisation_consultation_path(@consultation) do |f|
                 .row.form-group.string.optional
                   .col-md-12.form-label-group
-                    p 
+                    p
                       | Are you sure want to make changes to this consultation? If you make any changes then a new round will be created by automatically closing the first round.
                 .modal-footer
                   .square-btn-question.cancel-btn#modal-close-two data-dismiss="modal" type="button"  Cancel
                   input.btn.square-btn-question type="submit" value="Make changes"
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="edit_consultation"
-    .modal-dialog role="document" 
+    .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content.model-pop-up-overflow-none
@@ -267,7 +267,7 @@
                       <svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
                       </svg>
-              = simple_form_for [:organisation, @consultation], url: organisation_consultation_path(@consultation) do |f|  
+              = simple_form_for [:organisation, @consultation], url: organisation_consultation_path(@consultation) do |f|
                 = f.input :title, placeholder: "Consultation title", required: true, autofocus: true, label: false, input_html: { id: "title", style: "height: 48px;", placeholder: "Consultation title"}
                 = f.input :consultation_feedback_email, placeholder: "Feedback email", required: true, autofocus: true, label: false, input_html: { id: "email", style: "height: 48px;", placeholder: "Feedback email"}
                 = f.input :organisation_id, as: :hidden, input_html: { value: @organisation.id }
@@ -290,7 +290,7 @@
                     button.btn.square-btn-question type="submit" Save changes
   = render partial: 'users/invite_respondents'
   .modal.fade aria-hidden="true" aria-labelledby="exampleModalLabel" role="dialog" tabindex="-1" id="invited_respondents"
-    .modal-dialog role="document" 
+    .modal-dialog role="document"
       .modal-content
         .question-pop-up
           .question-pop-up-content
@@ -303,13 +303,13 @@
                       </svg>
               .col-md-12.p-0.mb-3
               = render partial: 'users/invited_respondents_table'
-  #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1" 
-    .modal-dialog.modal-dialog-centered role="document" 
-      = simple_form_for @consultation, url: import_responses_organisation_consultation_path(@consultation.id), method: :post do |f|        
+  #importModal.modal.fade aria-hidden="true" aria-labelledby="ModalCenterTitle" role="dialog" tabindex="-1"
+    .modal-dialog.modal-dialog-centered role="document"
+      = simple_form_for @consultation, url: import_responses_organisation_consultation_path(@consultation.id), method: :post do |f|
         .modal-content
           .modal-header
             h5.modal-title Upload File To Import Response
-            button.close aria-label="Close" data-dismiss="modal" type="button" 
+            button.close aria-label="Close" data-dismiss="modal" type="button"
               span aria-hidden="true"  &times;
           .modal-body
                   .row.form-group.string.optional
