@@ -34,7 +34,7 @@
               = image_pack_tag "media/application/images/icons/copy-link.svg",class: "mr-2"
               .copy-public-url.mr-2
                 | Copy share link
-        - unless Rails.env == "production"
+        - if (@consultation.private_consultation?)
           = link_to '', {class: "square-btn-with-border square-btn-question mr-3", id: "edit_question_icon", 'data-target': "#invite_respondents", 'data-toggle': "modal"}  do
             p Invite
         - unless ( @consultation.published? || @consultation.expired? )
