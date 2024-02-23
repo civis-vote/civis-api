@@ -9,8 +9,8 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :invitable, :database_authenticatable, :confirmable,
-         :recoverable, :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
+  devise :invitable, :database_authenticatable, :confirmable, :recoverable,
+         :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
 
 	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
 	has_many :api_keys, dependent: :destroy
@@ -103,7 +103,7 @@ class User < ApplicationRecord
   def send_email_verification
   	VerifyUserEmailJob.perform_later(self) unless confirmed_at
     if (!confirmed_at && referring_consultation_id)
-      VerifyUserEmailAfter8HoursJob.set(wait: 8.hours).perform_later(self.id, self.referring_consultation_id) 
+      VerifyUserEmailAfter8HoursJob.set(wait: 8.hours).perform_later(self.id, self.referring_consultation_id)
       VerifyUserEmailAfter72HoursJob.set(wait: 80.hours).perform_later(self.id)
       VerifyUserEmailAfter120HoursJob.set(wait: 200.hours).perform_later(self.id)
     end
@@ -174,12 +174,12 @@ class User < ApplicationRecord
         url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/users/edit_invite", query: "invitation_token=#{raw_token}"})).to_s
       end
       InviteOrganisationEmployeeJob.perform_later(user_record, url)
-    end 
+    end
   end
 
   def picture_url
     if self.profile_picture.present?
-      self.profile_picture_url  
+      self.profile_picture_url
     else
       "media/application/images/defalut-user.svg"
     end
