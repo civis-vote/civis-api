@@ -47,3 +47,5 @@ en:
           national: "National"
           state: "State"
           local: "Local"
+  auth:
+    reset_pasword_token: "The reset password token is no longer valid, either expired after 7 days or has already been used. Please request a new one."

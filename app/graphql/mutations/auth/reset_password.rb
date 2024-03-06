@@ -6,9 +6,9 @@ module Mutations
       argument :auth, Types::Inputs::Auth::ResetPassword, required: true
 
       def resolve(auth:)
-        token = Devise.token_generator.digest(::User,:reset_password_token, auth[:reset_password_token])
+        token = Devise.token_generator.digest(::User, :reset_password_token, auth[:reset_password_token])
         user = ::User.find_by(reset_password_token: token)
-        raise CivisApi::Exceptions::Unauthorized unless user
+        raise CivisApi::Exceptions::Unauthorized, I18n.t('auth.reset_pasword_token') unless user
         user.reset_password_sent_at = nil
         user.reset_password_token = nil
         user.password = auth[:password]
@@ -18,4 +18,4 @@ module Mutations
       end
     end
   end
-end 
+end
