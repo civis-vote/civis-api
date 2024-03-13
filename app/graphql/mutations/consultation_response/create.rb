@@ -7,6 +7,8 @@ module Mutations
 
       def resolve(consultation_response:)
         user = context[:current_user]
+        raise CivisApi::Exceptions::Unauthorized, I18n.t('consultation_response.unauthorized') unless user.present?
+
         created_consultation_response = ::ConsultationResponse.new consultation_response.to_h
         created_consultation_response.user = user
         @consultation = ::Consultation.find(consultation_response.consultation_id)
@@ -19,10 +21,6 @@ module Mutations
         end
         created_consultation_response.save!
         return created_consultation_response
-      end
-
-      def self.accessible?(context)
-        context[:current_user].present?
       end
     end
   end
