@@ -7,7 +7,7 @@ module Mutations
 
       def resolve(consultation_response:)
         user = context[:current_user]
-        raise CivisApi::Exceptions::Unauthorized, I18n.t('consultation_response.unauthorized') unless user.present?
+        raise CivisApi::Exceptions::Unauthorized, I18n.t('consultation_response.unauthorized') unless user.present? || submission_allowed?(consultation_response.consultation_id)
 
         created_consultation_response = ::ConsultationResponse.new consultation_response.to_h
         created_consultation_response.user = user
@@ -21,6 +21,12 @@ module Mutations
         end
         created_consultation_response.save!
         return created_consultation_response
+      end
+
+      def submission_allowed?(consultation_id)
+        return true if (Rails.env.staging? && consultation_id.eql?(404)) || (Rails.env.staging? && consultation_id.eql?(707))
+
+        return false
       end
     end
   end
