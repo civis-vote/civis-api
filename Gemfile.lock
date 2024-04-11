@@ -278,7 +278,7 @@ GEM
       rake
     mini_magick (4.11.0)
     mini_mime (1.1.2)
-    mini_portile2 (2.8.0)
+    mini_portile2 (2.8.5)
     minitest (5.17.0)
     msgpack (1.5.1)
     multi_json (1.15.0)
@@ -288,8 +288,8 @@ GEM
       connection_pool (~> 2.2)
     net-http-pipeline (1.0.1)
     nio4r (2.5.8)
-    nokogiri (1.13.6)
-      mini_portile2 (~> 2.8.0)
+    nokogiri (1.16.4)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     oauth2 (1.4.9)
       faraday (>= 0.17.3, < 3.0)
@@ -336,7 +336,7 @@ GEM
     pusher-client (0.6.2)
       json
       websocket (~> 1.0)
-    racc (1.6.0)
+    racc (1.7.3)
     rack (2.2.6.2)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
