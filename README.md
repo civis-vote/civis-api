@@ -50,7 +50,7 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
 
   - Postmark API Key
   - AWS Access Key & Secret
-  - Rollbar Access Token
+  - Sentry DSN link
   - Google Client ID and Secret
   - Facebook App ID and Secret
 

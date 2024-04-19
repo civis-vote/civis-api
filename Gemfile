@@ -63,6 +63,9 @@ gem "google-cloud-storage"
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.4.2", require: false
 
+gem 'sentry-ruby'
+gem 'sentry-rails'
+
 gem "spotlight_search", "~> 0.1.7"
 
 gem "slim-rails"

@@ -25,7 +25,7 @@ module ImportResponse
           return result.merge!(status: "true", records_count: records.size)
         end
       rescue Exception => e
-        Rollbar.error(e)
+        Sentry.capture_exception(e)
         return result.merge!(status: "false")
       end
     end
