@@ -32,8 +32,8 @@ GraphQL::Errors.configure(CivisApiSchema) do
   
   unless Rails.env.development?
 	  rescue_from StandardError do |exception|
-      rollbar_error = Rollbar.error(exception)
-	    GraphQL::ExecutionError.new("Please try to execute the query for this field later", extensions: {code: :internal_server_error, uuid: rollbar_error[:uuid]})
+      sentry_error = Sentry.capture_exception(exception)
+	    GraphQL::ExecutionError.new("Please try to execute the query for this field later", extensions: {code: :internal_server_error, event_id: sentry_error.event_id})
 	  end
 	end
 end
