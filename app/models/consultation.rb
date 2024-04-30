@@ -4,8 +4,10 @@ class Consultation < ApplicationRecord
 	include Paginator
   include Scorable::Consultation
   has_rich_text :summary
-  include CmPageBuilder::Rails::HasCmContent
   has_rich_text :response_submission_message
+
+  has_rich_text :english_summary
+  has_rich_text :hindi_summary
 
   belongs_to :ministry
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
@@ -14,15 +16,14 @@ class Consultation < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :response_rounds
-  has_one :consultation_hindi_summary, dependent: :destroy
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
   enum visibility: { public_consultation: 0, private_consultation: 1 }
 
   validates_presence_of :response_deadline
 
-  after_commit :notify_admins, on: :create
-  after_commit :create_response_round, on: :create
+  after_create :notify_admins
+  after_create :create_response_round
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
 
   scope :status_filter, lambda { |status|
@@ -118,8 +119,8 @@ class Consultation < ApplicationRecord
   end
 
   def update_reading_time
-    contents = self.page.components.map{|c| c["content"] }*" "
-    total_word_count = contents.scan(/\w+/).size
+    contents = english_summary.to_s.gsub(/<[^>]*>/,' ')
+    total_word_count = contents.split.size
     time = total_word_count.to_f / 200
     time_with_divmod = time.divmod 1
     array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
@@ -167,7 +168,7 @@ class Consultation < ApplicationRecord
   def english_summary_text
     return summary.to_plain_text if summary.to_plain_text.present?
 
-    ActionView::Base.full_sanitizer.sanitize(page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' '))
+    english_summary.to_plain_text if english_summary.present?
   end
 
   def set_consultation_expiry_job

@@ -15,7 +15,7 @@ table.table.employee-table
               - if ( employee.invitation_accepted? && employee.profile_picture.present? )
                 = image_tag employee.picture_url, class: "user-timeline-profile-picture-bg"
               - else
-                = image_pack_tag employee.picture_url
+                = image_tag employee.picture_url
             td.employee-td-box-shadow.width-85
               - if employee.invitation_accepted?
                 .employee-name
@@ -27,7 +27,7 @@ table.table.employee-table
                   = employee.email
                 span.child-invite-span Invited
             td.employee-td-box-shadow.width-10
-              = link_to deactivate_admin_organisation_path(@organisation.id, employee.id), method: :delete, data: { confirm: "Are you sure?" } do
+              = link_to deactivate_admin_organisation_path(@organisation.id, employee.id), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do
                 .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
 
 .pagination-parent.width-50

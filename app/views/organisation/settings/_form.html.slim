@@ -9,6 +9,6 @@
 				- if @organisation.logo
 					= image_tag @organisation.picture_url, class: "pointer", id: "profileImage"
 				- else
-					= image_pack_tag @organisation.picture_url, class: "pointer", id: "profileImage"
+					= image_tag @organisation.picture_url, class: "pointer", id: "profileImage"
 		.admin-update-button-position
 			= f.button :submit, "Save Organisation"

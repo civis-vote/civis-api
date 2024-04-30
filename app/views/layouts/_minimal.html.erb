@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <%= stylesheet_link_tag "https://fonts.googleapis.com/css?family=Encode+Sans&display=swap" %>
     <!-- Le styles -->
-    <%= stylesheet_pack_tag "application", :media => "all" %>
+    <%= stylesheet_link_tag "application", :media => "all", 'data-turbo-track': 'reload' %>
+    <%= javascript_importmap_tags %>
     <%= yield :styles %>
 
     <!-- Le fav and touch icons -->
     <%#= favicon_link_tag 'Favicon.png' %>
     <%# favicon_link_tag "apple-touch-icon.png", :rel => "apple-touch-icon" %>
-    <%= javascript_pack_tag "application" %>
-    <link rel="shortcut icon" type="image/x-icon" href="<%= asset_pack_path 'media/application/images/icons/favicon.ico' %>" >
+    <link rel="shortcut icon" type="image/x-icon" href="<%= asset_path 'icons/favicon.ico' %>" >
     <%#= javascript_include_tag "highcharts" %>
     <%= yield :javascript %>
     <%= yield :head %>

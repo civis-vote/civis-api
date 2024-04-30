@@ -3,7 +3,7 @@
     .navbar-header.organisation-navbar-header
       .text-center
           span
-            = image_pack_tag "media/application/images/civis_organisation_logo.svg"
+            = image_tag "civis_organisation_logo.svg"
       i.navbar-toggle.collapsed.fa.fa-bars data-target="#menu-content" data-toggle="collapse"
     ul#menu-content
       = link_to organisation_consultations_path(sort:{sort_column: "created_at", sort_direction: "desc"}), class: "#{current_class?(organisation_consultations_path(sort:{sort_column: "created_at", sort_direction: "desc"}))} #{params[:id].present? ? current_class?(edit_organisation_consultation_path(params[:id])) : ''} #{params[:id].present? ? current_class?(organisation_consultation_path(params[:id])) : ''} #{params[:id].present? ? current_class?(edit_hindi_summary_organisation_consultation_path(params[:id])) : ''}" do

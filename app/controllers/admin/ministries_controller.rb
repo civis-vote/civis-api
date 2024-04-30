@@ -79,7 +79,7 @@ class Admin::MinistriesController < ApplicationController
 		  redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry was successfully created."
 		else
 			flash[:flash_info] = "Ministry was not successfully created."
-		  render :new
+		  render :new, status: :unprocessable_entity
 		end
 	end
 

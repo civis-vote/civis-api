@@ -42,11 +42,11 @@ class Admin::ProfanitiesController < ApplicationController
 				redirect_to admin_profanity_path(@profanity), flash_success_info: "Profane word was successfully created."
 			else
 				flash[:flash_info] = "Profane word was not successfully created."
-			render :new
+			render :new, status: :unprocessable_entity
 			end
 		else
 			flash[:flash_info] = "Profane word is already present and duplicate profane words cannot be inserted. Please Update the profane word instead."
-			render :new
+			render :new, status: :unprocessable_entity
 		end
   	end
 
