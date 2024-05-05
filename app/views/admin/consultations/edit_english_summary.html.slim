@@ -24,11 +24,11 @@
                 ul
                   - @english_summary.errors.full_messages.each do |message|
                     li = message
-            input type='hidden' id="content-editor" name="consultation_create" value="true"
             = f.rich_text_area :english_summary
             .admin-update-button-position
-              - if @english_summary.present?
+              - if @english_summary.to_s.present?
                 button class="btn square-btn-question" type="submit" Save Changes
               - else
+                input type='hidden' id="content-editor" name="consultation_create" value="true"
                 button class="btn square-btn-question" type="submit" Save Consultation
   .h-20

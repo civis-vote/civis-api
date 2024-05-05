@@ -142,6 +142,14 @@ class Consultation < ApplicationRecord
     feedback_url.to_s
   end
 
+  def english_summary_rich_text
+    convert_to_rich_text(english_summary.to_s)
+  end
+
+  def hindi_summary_rich_text
+    convert_to_rich_text(hindi_summary.to_s)
+  end
+
   def response_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/" + "#{self.id}" +"/summary", query: "response_token=#{self.response_token}" } ))
     response_url.to_s
@@ -179,5 +187,19 @@ class Consultation < ApplicationRecord
 
   def feedback_report_email(email, officer_name, officer_designation)
     ConsultationFeedbackReportEmailJob.perform_later(email, self, officer_name, officer_designation)
+  end
+
+  def convert_to_rich_text(text)
+    match = '<action-text-attachment content="<div style=&quot;width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;&quot;><div style=&quot;width: 100%; border: 1px solid #ececec;&quot;></div></div>">☒</action-text-attachment>'
+    # regex to replace action-text-attachement with divider
+    text.gsub!(match, '<div style="width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;"><div style="width: 100%; border: 1px solid #ececec;"></div></div>')
+    # regex to replace action-text-attachement with image
+    text.gsub!(%r{<action-text-attachment[^>]*>|</action-text-attachment>|<figure[^>]*>|</figure>}, '')
+    # regex to replace youtube image link with iframe
+    youtube_img_regex = %r{<img(?:\s+[\w-]+="[^"]*")*\s+src="https://img\.youtube\.com/vi/([\w-]+)/0\.jpg">}
+    text.gsub(youtube_img_regex) do |_match|
+      video_id = ::Regexp.last_match(1)
+      "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
+    end
   end
 end

@@ -46,6 +46,18 @@ module Types
 				field :response_rounds,										[Types::Objects::ResponseRoundType], nil, null: true
 				field :english_summary,										String, nil, null: true
 				field :hindi_summary,											String, nil, null: true
+
+				def english_summary
+					return unless object.english_summary.to_s.present?
+
+					object.english_summary_rich_text
+				end
+
+				def hindi_summary
+					return unless object.hindi_summary.to_s.present?
+
+					object.hindi_summary_rich_text
+				end
 				
 				def shared_responses(sort:, sort_direction:)
 					object.shared_responses.sort_records(sort, sort_direction)

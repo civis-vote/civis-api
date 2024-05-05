@@ -92,7 +92,7 @@
         .show-page-label-details English Summary
         .show-page-input-details
           - if @consultation.english_summary.present?
-            = raw @consultation.english_summary
+            = raw @consultation.english_summary_rich_text
           - else
             | --
         = link_to edit_english_summary_organisation_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
@@ -101,7 +101,7 @@
         .show-page-label-details Hindi Summary
         .show-page-input-details
           - if @consultation.hindi_summary.present?
-            = raw @consultation.hindi_summary
+            = raw @consultation.hindi_summary_rich_text
           - else
             | --
         = link_to edit_hindi_summary_organisation_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
