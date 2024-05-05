@@ -14,10 +14,10 @@ def list_end?(components, index)
   false
 end
 
-def content_type(filename)
-  return 'jpeg' if filename =~ /\.(jpeg|jpg)$/i
-
-  'png'
+def video_id(url)
+  regex = %r{(?:https?://)?(?:www\.)?(?:youtube\.com/(?:[^/\n\s]+/\S+/|(?:v|e(?:mbed)?)/|\S*?[?&]v=)|youtu\.be/)([a-zA-Z0-9_-]{11})}
+  match = url.match(regex)
+  match ? match[1] : nil
 end
 
 def create_html_element(components, index)
@@ -26,7 +26,7 @@ def create_html_element(components, index)
 
   case component['componentType']
   when 'Text'
-    html_string += "<p>#{component['content']}</p>\n"
+    html_string += component['content'].present? ? "<p>#{component['content']}</p>\n" : '<br>'
   when 'Olist'
     html_string += '<ol>' if list_start?(components, index)
     html_string += "<li>#{component['content']}</li>"
@@ -39,12 +39,16 @@ def create_html_element(components, index)
     src = component['component_attachment']['url']
     filename = component['component_attachment']['filename']
     filesize = component['component_attachment']['filesize']
-    content_type = "image/#{content_type(filename)}"
     width = component['component_attachment']['dimensions']['width']
     height = component['component_attachment']['dimensions']['height']
-    html_string = "<action-text-attachment content-type=\"#{content_type}\" url=\"#{src}\" filename=\"#{filename}\" filesize=\"#{filesize}\" width=\"#{width}\" height=\"#{height}\" previewable=\"true\" presentation=\"gallery\"><figure class=\"attachment attachment--preview attachment--jpeg\"> <img src=\"#{src}\" /> <figcaption class=\"attachment__caption\"> <span class=\"attachment__name\">#{filename}</span> </figcaption> </figure></action-text-attachment>\n"
+    html_string = "<action-text-attachment content-type=\"image\" url=\"#{src}\" filename=\"#{filename}\" filesize=\"#{filesize}\" width=\"#{width}\" height=\"#{height}\" previewable=\"true\" presentation=\"gallery\"><figure class=\"attachment attachment--preview\"> <img src=\"#{src}\" />  </figure></action-text-attachment>\n"
+  when 'Divider'
+    html_string = '<div><action-text-attachment content="<div style=&quot;width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;&quot;><div style=&quot;width: 100%; border: 1px solid #ececec;&quot;></div></div>">☒</action-text-attachment></div>'
+  when 'Embed'
+    src = "https://img.youtube.com/vi/#{video_id(component['content'])}/0.jpg"
+    html_string = "<action-text-attachment content-type=\"image\" url=\"#{src}\"  previewable=\"true\" presentation=\"gallery\"><figure class=\"attachment attachment--preview\"> <img src=\"#{src}\" />  </figure></action-text-attachment>\n"
   else
-    raise "Invalid element #{index} #{component['componentType']}"
+    puts "Invalid element #{index} #{component['componentType']}"
   end
   html_string
 end
@@ -65,6 +69,8 @@ namespace :consultation do
     Consultation.all.each do |consultation|
       english_summary = action_text_string(consultation.page&.components)
       hindi_summary = action_text_string(consultation.consultation_hindi_summary&.page&.components)
+      consultation.update!(english_summary: nil)
+      consultation.update!(hindi_summary: nil)
       consultation.update!(english_summary: english_summary)
       consultation.update!(hindi_summary: hindi_summary)
     end
