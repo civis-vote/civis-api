@@ -23,8 +23,11 @@ end
 def create_html_element(components, index)
   html_string = ''
   component = components[index]
-
   case component['componentType']
+  when 'Header1'
+    html_string = "<h1>#{component['content']}</h1>"
+  when 'Header2'
+    html_string = "<h2>#{component['content']}</h2>"
   when 'Text'
     html_string += component['content'].present? ? "<p>#{component['content']}</p>\n" : '<br>'
   when 'Olist'
@@ -36,12 +39,12 @@ def create_html_element(components, index)
     html_string += "<li>#{component['content']}</li>"
     html_string += "</ul>\n" if list_end?(components, index)
   when 'Upload'
-    src = component['component_attachment']['url']
-    filename = component['component_attachment']['filename']
-    filesize = component['component_attachment']['filesize']
-    width = component['component_attachment']['dimensions']['width']
-    height = component['component_attachment']['dimensions']['height']
-    html_string = "<action-text-attachment content-type=\"image\" url=\"#{src}\" filename=\"#{filename}\" filesize=\"#{filesize}\" width=\"#{width}\" height=\"#{height}\" previewable=\"true\" presentation=\"gallery\"><figure class=\"attachment attachment--preview\"> <img src=\"#{src}\" />  </figure></action-text-attachment>\n"
+    src = component.dig('component_attachment', 'url')
+    filename = component.dig('component_attachment', 'filename')
+    filesize = component.dig('component_attachment', 'filesize')
+    width = component.dig('component_attachment', 'dimensions', 'width')
+    height = component.dig('component_attachment', 'dimensions', 'height')
+    html_string = "<action-text-attachment content-type=\"image\" url=\"#{src}\" filename=\"#{filename}\" filesize=\"#{filesize}\" width=\"#{width}\"height=\"#{height}\" previewable=\"true\" presentation=\"gallery\"><figure class=\"attachment attachment--preview\"> <img src=\"#{src}\" />  </figure></action-text-attachment>\n"
   when 'Divider'
     html_string = '<div><action-text-attachment content="<div style=&quot;width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;&quot;><div style=&quot;width: 100%; border: 1px solid #ececec;&quot;></div></div>">☒</action-text-attachment></div>'
   when 'Embed'
