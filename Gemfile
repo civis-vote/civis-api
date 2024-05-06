@@ -66,7 +66,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 gem 'sentry-rails'
 gem 'sentry-ruby'
 
-gem 'spotlight_search'
+gem 'spotlight_search', '~> 0.2.0'
 
 gem 'slim-rails'
 # oauth gems
