@@ -93,8 +93,6 @@ class Admin::MinistriesController < ApplicationController
 		redirect_back fallback_location: root_path,  flash_success_info: "Ministry was successfully rejected."
 	end
 
-	private
-
 	def secure_params
 		params.require(:ministry).permit(:name, :level, :poc_email_primary, :primary_officer_name, :primary_officer_designation, :poc_email_secondary, :secondary_officer_name, :secondary_officer_designation, :logo, :category_id, :location_id)
 	end
@@ -110,5 +108,4 @@ class Admin::MinistriesController < ApplicationController
   def filter_params
     params.require(:filters).permit(:search, :status_filter) if params[:filters]
   end
-
 end
