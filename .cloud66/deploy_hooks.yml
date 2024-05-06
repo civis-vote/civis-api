@@ -1,36 +1,42 @@
 staging: # Environment
-    first_thing: # Hook point
-      - snippet: cloud66/node_7 # Hook type
-        target: rails # Hook fields
-        execute: true
-    after_bundle:
-      - snippet: cloud66/yarn # Hook type
-        target: rails # Hook fields
-        execute: true
-    after_rails: # Hook point
-      - command: sudo chmod 0777 -R $STACK_PATH/public/uploads # Hook type
-        target: rails # Hook fields
-        execute: true
-    after_checkout: # Hook point
-      - command: mv $STACK_PATH/config/database.yml.cloud66 $STACK_PATH/config/database.yml # Hook type
-        target: rails # Hook fields
-        run_on: all_servers
-        execute: true   
+  first_thing: # Hook point
+    - command: apt-get install -y libvips # Hook type
+      target: any # Hook fields
+      execute: true
+    - snippet: cloud66/node_7 # Hook type
+      target: rails # Hook fields
+      execute: true
+  after_bundle:
+    - snippet: cloud66/yarn # Hook type
+      target: rails # Hook fields
+      execute: true
+  after_rails: # Hook point
+    - command: sudo chmod 0777 -R $STACK_PATH/public/uploads # Hook type
+      target: rails # Hook fields
+      execute: true
+  after_checkout: # Hook point
+    - command: mv $STACK_PATH/config/database.yml.cloud66 $STACK_PATH/config/database.yml # Hook type
+      target: rails # Hook fields
+      run_on: all_servers
+      execute: true
 production: # Environment
-    first_thing: # Hook point
-      - snippet: cloud66/node_7 # Hook type
-        target: rails # Hook fields
-        execute: true
-    after_bundle:
-      - snippet: cloud66/yarn # Hook type
-        target: rails # Hook fields
-        execute: true
-    after_rails: # Hook point
-      - command: sudo chmod 0777 -R $STACK_PATH/public/uploads # Hook type
-        target: rails # Hook fields
-        execute: true
-    after_checkout: # Hook point
-      - command: mv $STACK_PATH/config/database.yml.cloud66 $STACK_PATH/config/database.yml # Hook type
-        target: rails # Hook fields
-        run_on: all_servers
-        execute: true       
+  first_thing: # Hook point
+    - command: apt-get install -y libvips # Hook type
+      target: any # Hook fields
+      execute: true
+    - snippet: cloud66/node_7 # Hook type
+      target: rails # Hook fields
+      execute: true
+  after_bundle:
+    - snippet: cloud66/yarn # Hook type
+      target: rails # Hook fields
+      execute: true
+  after_rails: # Hook point
+    - command: sudo chmod 0777 -R $STACK_PATH/public/uploads # Hook type
+      target: rails # Hook fields
+      execute: true
+  after_checkout: # Hook point
+    - command: mv $STACK_PATH/config/database.yml.cloud66 $STACK_PATH/config/database.yml # Hook type
+      target: rails # Hook fields
+      run_on: all_servers
+      execute: true
