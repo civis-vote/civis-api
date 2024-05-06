@@ -38,3 +38,13 @@
 trix-toolbar .trix-button-group {
   flex-wrap: wrap;
 }
+
+.trix-content {
+  figure {
+    width: 100%;
+  }
+
+  h2 {
+    font-size: 1.1em;
+  }
+}
