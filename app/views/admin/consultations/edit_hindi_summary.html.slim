@@ -16,17 +16,14 @@
   .width-60.bg-white.mt-4
     .p-5
       .show-page-parent-details
-        .show-page-input-details
-          = simple_form_for [:admin, @consultation], url: hindi_page_component_admin_consultations_path(@consultation), method: :patch do |f|
-            - if @hindi_summary_page.errors.any?
+        .show-page-input-detail
+          = simple_form_for [:admin, @consultation], url: update_hindi_summary_admin_consultation_path(@consultation), method: :patch do |f|
+            - if @hindi_summary.errors.any?
               #error_explanation
-                h2 = "#{pluralize(@hindi_summary_page.errors.count, "error")} prohibited this page from being saved:"
+                h2 = "#{pluralize(@hindi_summary.errors.count, "error")} prohibited this page from being saved:"
                 ul
-                  - @hindi_summary_page.errors.full_messages.each do |message|
+                  - @hindi_summary.errors.full_messages.each do |message|
                     li = message
-            .field
-              input type='hidden' id="content-editor" name="page[components]"
-              = react_component("cm_content_manager/Content", {input: "content-editor", components: @hindi_summary_page.components})
+            = f.rich_text_area :hindi_summary
             .admin-update-button-position
-              button class="btn square-btn-question" type="submit" Update Hindi Summary
-  .h-20
+              button class="btn square-btn-question" type="submit" Save Changes

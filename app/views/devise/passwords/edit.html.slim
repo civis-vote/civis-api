@@ -6,7 +6,7 @@
       .login-panel-input-width
         .login-form
           .company-logo
-            = image_pack_tag "media/application/images/civis_logo.png"
+            = image_tag "civis_logo.png"
           .sign-up-text.text-center Change your password
           = simple_form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: "user_login p-4" }) do |f|
             = f.hidden_field :reset_password_token

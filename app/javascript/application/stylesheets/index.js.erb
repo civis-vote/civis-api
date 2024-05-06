@@ -1,4 +1,0 @@
-<% css_glob = Rails.application.root.join('app', 'javascript', 'application', 'stylesheets', '**', '*.{scss}') %>
-<% Dir.glob(css_glob).each do |file| %>
-  import '<%= file %>';
-<% end %>

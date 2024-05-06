@@ -15,7 +15,7 @@
 	              - if ( respondent.user.first_name? && respondent.user.profile_picture.present? )
 	                = image_tag respondent.user.picture_url, class: "user-timeline-profile-picture-bg"
 	              - else
-	                = image_pack_tag respondent.user.picture_url
+	                = image_tag respondent.user.picture_url
 	            td.employee-td-box-shadow.width-85
 	              - if respondent.user.first_name?
 	                .employee-name

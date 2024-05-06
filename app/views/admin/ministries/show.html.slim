@@ -17,18 +17,18 @@
                       - if @ministry.is_approved
                         li
                           .dropdown-without-icon
-                            = link_to "Reject", reject_admin_ministry_path(@ministry), method: :post
+                            = link_to "Reject", reject_admin_ministry_path(@ministry), data: { turbo_method: :post }
                       - else
                         li
                           .dropdown-without-icon
-                            = link_to "Approve", approve_admin_ministry_path(@ministry), method: :post
+                            = link_to "Approve", approve_admin_ministry_path(@ministry), data: { turbo_method: :post }
                       li
                         = link_to edit_admin_ministry_path(@ministry), method: :get do
                           .dropdown-with-icon
                             p Edit
                             .pull-right.fa.fa-edit.pointer.fa-icon-color
                       li
-                        = link_to admin_ministry_path(@ministry), method: :delete, data: { confirm: "Are you sure?" } do
+                        = link_to admin_ministry_path(@ministry), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do
                           .dropdown-with-icon
                             p Delete
                             .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
@@ -40,7 +40,7 @@
           - if @ministry.logo
             = image_tag @ministry.picture_url, class: "user-timeline-profile-picture-bg"
           - else
-            = image_pack_tag @ministry.picture_url, class: "user-timeline-profile-picture-bg"
+            = image_tag @ministry.picture_url, class: "user-timeline-profile-picture-bg"
 
         .combine-user-list
           .edit-user-name

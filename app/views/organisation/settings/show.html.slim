@@ -38,7 +38,7 @@
               - if @organisation.logo
                 = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
               - else
-                = image_pack_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+                / = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
           .show-page-parent-details.pb-4
             .show-page-label-details Added on
             .show-page-input-details
