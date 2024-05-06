@@ -27,4 +27,4 @@ pin 'spotlight_search', to: 'spotlight_search.js', preload: true
 pin 'trix', to: 'https://ga.jspm.io/npm:trix@2.1.0/dist/trix.esm.min.js'
 pin '@rails/actiontext', to: 'https://ga.jspm.io/npm:@rails/actiontext@7.1.3-2/app/assets/javascripts/actiontext.esm.js'
 
-pin_all_from 'app/javascript/controllers', under: 'controllers'
+pin_all_from 'app/javascript/custom', under: 'custom'

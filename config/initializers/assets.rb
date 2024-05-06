@@ -12,4 +12,4 @@ Rails.application.config.assets.paths << SpotlightSearch::Engine.root.join('app'
 # application.js, application.css, and all non-JS/CSS in the app/assets
 # folder are already added.
 # Rails.application.config.assets.precompile += %w( admin.js admin.css )
-Rails.application.config.assets.precompile += %w[spotlight_search.js controllers/index.js controllers/*.js]
+Rails.application.config.assets.precompile += %w[spotlight_search.js custom/*.js]
