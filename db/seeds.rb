@@ -24,6 +24,10 @@ puts "---> Importing Point Scale"
 Rake::Task["import_records_from_csv:point_scale"].invoke("")
 Rake::Task["import_records_from_csv:point_scale"].reenable
 
+puts "---> Converting Page components to action text"
+Rake::Task["consultation:convert_page_to_action_text"].invoke
+Rake::Task["consultation:convert_page_to_action_text"].reenable
+
 puts "---> Fabricating API Team"
 Fabricate(:user, email: "mkv@commutatus.com", role: "admin")
 Fabricate(:user, email: "balaji@commutatus.com", role: "admin")
