@@ -25,7 +25,7 @@
     "react-dom": "^16.13.1",
     "react_ujs": "^2.6.1",
     "select2": "^4.0.8",
-    "trix": "^1.0.0",
+    "trix": "^2.1.1",
     "turbolinks": "^5.2.0"
   },
   "version": "0.1.1",
