@@ -46,6 +46,16 @@ module Types
 				field :response_rounds,										[Types::Objects::ResponseRoundType], nil, null: true
 				field :english_summary,										String, nil, null: true
 				field :hindi_summary,											String, nil, null: true
+				field :summary_hindi,											String, nil, null: true
+				field :page,											 				String, nil, null: true
+
+				def page
+					nil
+				end
+
+				def summary_hindi
+					nil
+				end
 
 				def english_summary
 					return unless object.english_summary.to_s.present?
