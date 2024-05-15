@@ -27,12 +27,10 @@ production:
 development:
   <<: *defaults
   monitor: false
-  auto_instruments: false
 
 test:
   <<: *defaults
   monitor: false
-  auto_instruments: false
 
 staging:
   <<: *defaults
