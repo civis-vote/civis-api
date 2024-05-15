@@ -19,9 +19,9 @@ common: &defaults
   # - Default: none
   # - Valid Options: true, false
   monitor: true
+  auto_instruments: true
 
 production:
-  auto_instruments: true
   <<: *defaults
 
 development:
@@ -33,5 +33,4 @@ test:
   monitor: false
 
 staging:
-  auto_instruments: true
   <<: *defaults
