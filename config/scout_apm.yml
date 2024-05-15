@@ -19,19 +19,20 @@ common: &defaults
   # - Default: none
   # - Valid Options: true, false
   monitor: true
+  auto_instruments: true
 
 production:
-  auto_instruments: true
   <<: *defaults
 
 development:
   <<: *defaults
   monitor: false
+  auto_instruments: false
 
 test:
   <<: *defaults
   monitor: false
+  auto_instruments: false
 
 staging:
-  auto_instruments: true
   <<: *defaults
