@@ -15,7 +15,7 @@ table.table.employee-table
               - if ( respondent.invitation_accepted? && respondent.profile_picture.present? )
                 = image_tag respondent.picture_url, class: "user-timeline-profile-picture-bg"
               - else
-                = image_pack_tag respondent.picture_url
+                = image_tag respondent.picture_url
             td.employee-td-box-shadow.width-85
               - if respondent.invitation_accepted?
                 .employee-name
@@ -28,7 +28,7 @@ table.table.employee-table
                 span.child-invite-span Invited
             td.employee-td-box-shadow.width-10
               - unless @responded_user_ids.include? respondent.id
-                = link_to destroy_respondents_organisation_setting_path(@organisation.id, respondent.id), method: :delete, data: { confirm: "Are you sure?" } do
+                = link_to destroy_respondents_organisation_setting_path(@organisation.id, respondent.id), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do
                   .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
 
 .pagination-parent.width-50

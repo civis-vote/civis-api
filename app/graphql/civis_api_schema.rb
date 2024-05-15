@@ -1,5 +1,4 @@
 class CivisApiSchema < GraphQL::Schema
-	query_analyzer GraphQL::Authorization::Analyzer
   mutation(Types::MutationType)
   query(Types::QueryType)
 

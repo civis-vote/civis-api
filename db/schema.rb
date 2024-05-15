@@ -2,16 +2,15 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# This file is the source Rails uses to define your schema when running `rails
-# db:schema:load`. When creating a new database, `rails db:schema:load` tends to
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
 # be faster and is potentially less error prone than running all of your
 # migrations from scratch. Old migrations may fail to apply correctly if those
 # migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2023_09_25_125754) do
-
+ActiveRecord::Schema[7.1].define(version: 2024_04_29_095618) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -21,8 +20,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.text "body"
     t.string "record_type", null: false
     t.bigint "record_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
@@ -31,7 +30,7 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -42,17 +41,24 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "content_type"
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.string "checksum"
+    t.datetime "created_at", precision: nil, null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "api_keys", force: :cascade do |t|
     t.string "access_token"
     t.bigint "user_id", null: false
-    t.datetime "expires_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "expires_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_api_keys_on_user_id"
   end
 
@@ -62,17 +68,17 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.integer "no_of_citizens"
     t.string "url"
     t.integer "created_by_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.text "cover_photo_data"
     t.jsonb "cover_photo_versions_data"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
@@ -82,31 +88,31 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "content"
     t.integer "position"
     t.string "component_type"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["page_id"], name: "index_cm_page_builder_rails_page_components_on_page_id"
   end
 
   create_table "cm_page_builder_rails_pages", force: :cascade do |t|
     t.string "container_type", null: false
     t.bigint "container_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["container_type", "container_id"], name: "container_composite_index"
   end
 
   create_table "constants", force: :cascade do |t|
     t.string "name"
     t.integer "constant_type"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "parent_id"
   end
 
   create_table "consultation_hindi_summaries", force: :cascade do |t|
     t.bigint "consultation_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["consultation_id"], name: "index_consultation_hindi_summaries_on_consultation_id"
   end
 
@@ -114,8 +120,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.bigint "consultation_response_id", null: false
     t.integer "vote_direction"
     t.bigint "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["consultation_response_id", "user_id"], name: "consultation_response_id_and_user_id_index", unique: true
     t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
     t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
@@ -125,8 +131,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.bigint "user_id"
     t.bigint "consultation_id", null: false
     t.integer "satisfaction_rating"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "visibility", default: 1
     t.integer "template_id"
     t.float "points", default: 0.0
@@ -135,7 +141,7 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.integer "up_vote_count", default: 0, null: false
     t.integer "down_vote_count", default: 0, null: false
     t.jsonb "answers"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.bigint "respondent_id"
     t.bigint "response_round_id"
     t.string "import_key"
@@ -159,13 +165,13 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
   create_table "consultations", force: :cascade do |t|
     t.string "title", null: false
     t.string "url"
-    t.datetime "response_deadline"
+    t.datetime "response_deadline", precision: nil
     t.bigint "ministry_id", null: false
     t.integer "status", default: 0
     t.integer "created_by_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "published_at", precision: nil
     t.integer "consultation_responses_count", default: 0
     t.boolean "is_featured", default: false
     t.uuid "response_token"
@@ -175,7 +181,7 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.integer "visibility", default: 0
     t.integer "organisation_id"
     t.integer "private_response", default: 0
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.string "officer_name"
     t.string "officer_designation"
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
@@ -186,8 +192,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.bigint "user_id", null: false
     t.integer "action"
     t.bigint "point_event_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["point_event_id"], name: "index_game_actions_on_point_event_id"
     t.index ["user_id"], name: "index_game_actions_on_user_id"
   end
@@ -195,16 +201,16 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
   create_table "glossary_word_consultation_mappings", force: :cascade do |t|
     t.integer "consultation_id"
     t.integer "glossary_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "locations", force: :cascade do |t|
     t.string "name"
     t.integer "parent_id"
     t.integer "location_type"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "is_international_city", default: false
   end
 
@@ -212,8 +218,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "name"
     t.integer "category_id"
     t.integer "level"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "is_approved", default: false
     t.string "poc_email_primary"
     t.string "poc_email_secondary"
@@ -221,7 +227,7 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.jsonb "meta"
     t.text "logo_data"
     t.jsonb "logo_versions_data"
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.integer "location_id", default: 0
     t.string "primary_officer_name"
     t.string "primary_officer_designation"
@@ -233,8 +239,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
   create_table "notification_settings", force: :cascade do |t|
     t.boolean "on_new_consultation"
     t.bigint "user_id", null: false
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_notification_settings_on_user_id"
   end
 
@@ -243,10 +249,10 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.text "logo_data"
     t.integer "created_by_id"
     t.integer "users_count", default: 0
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean "active", default: true
-    t.datetime "deleted_at"
+    t.datetime "deleted_at", precision: nil
     t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
@@ -254,8 +260,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.bigint "point_scale_id", null: false
     t.bigint "user_id", null: false
     t.float "points"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["point_scale_id"], name: "index_point_events_on_point_scale_id"
     t.index ["user_id"], name: "index_point_events_on_user_id"
   end
@@ -263,16 +269,16 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
   create_table "point_scales", force: :cascade do |t|
     t.integer "upper_limit"
     t.integer "action"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.float "points"
   end
 
   create_table "profanities", force: :cascade do |t|
     t.string "profane_word"
     t.integer "created_by_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["profane_word"], name: "index_profanities_on_profane_word", unique: true
   end
 
@@ -280,9 +286,9 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.integer "parent_id"
     t.string "question_text"
     t.integer "question_type"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
     t.bigint "response_round_id"
     t.boolean "is_optional", default: false
     t.boolean "supports_other", default: false
@@ -294,8 +300,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.bigint "user_id"
     t.bigint "response_round_id"
     t.bigint "organisation_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["organisation_id"], name: "index_respondents_on_organisation_id"
     t.index ["response_round_id"], name: "index_respondents_on_response_round_id"
     t.index ["user_id"], name: "index_respondents_on_user_id"
@@ -303,8 +309,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
 
   create_table "response_rounds", force: :cascade do |t|
     t.bigint "consultation_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer "round_number"
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
   end
@@ -312,8 +318,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
   create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
@@ -322,8 +328,8 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.integer "user_id"
     t.integer "profanity_count"
     t.integer "short_response_count"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
@@ -331,26 +337,26 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
-    t.datetime "locked_at"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "locked_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "first_name"
     t.string "last_name"
     t.integer "city_id"
-    t.datetime "last_activity_at", default: -> { "(CURRENT_DATE)::timestamp without time zone" }
+    t.datetime "last_activity_at", precision: nil, default: -> { "(CURRENT_DATE)::timestamp without time zone" }
     t.jsonb "notification_settings"
     t.integer "role", default: 0
     t.string "phone_number"
@@ -370,9 +376,9 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "designation"
     t.bigint "organisation_id"
     t.string "invitation_token"
-    t.datetime "invitation_created_at"
-    t.datetime "invitation_sent_at"
-    t.datetime "invitation_accepted_at"
+    t.datetime "invitation_created_at", precision: nil
+    t.datetime "invitation_sent_at", precision: nil
+    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
     t.string "invited_by_type"
     t.bigint "invited_by_id"
@@ -394,12 +400,13 @@ ActiveRecord::Schema.define(version: 2023_09_25_125754) do
     t.string "word"
     t.string "description"
     t.integer "created_by_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["word"], name: "index_wordindices_on_word", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "consultation_hindi_summaries", "consultations"

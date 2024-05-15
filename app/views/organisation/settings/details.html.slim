@@ -22,7 +22,7 @@
             - if @user.profile_picture_url
               = image_tag @user.picture_url, class: "user-timeline-profile-picture-bg"
             - else
-              = image_pack_tag @user.picture_url, class: "user-timeline-profile-picture-bg"
+              = image_tag @user.picture_url, class: "user-timeline-profile-picture-bg"
         = display_details("show-page-parent-details", "show-page-label-details", "Email", "show-page-input-details", "#{@user&.email}")
 .admin-update-button-position
   .btn.square-btn-question data-target="#invite_employee" data-toggle="modal" Edit
@@ -47,7 +47,7 @@
                       - if @user.profile_picture.present?
                         = image_tag @user.picture_url, class: "pointer", id: "profileImage"
                       - else
-                        = image_pack_tag @user.picture_url, class: "pointer", id: "profileImage"
+                        = image_tag @user.picture_url, class: "pointer", id: "profileImage"
                 = f.input :first_name, placeholder: "First Name", required: true, autofocus: true, label: false, input_html: { id: "first_name", style: "height: 48px;", placeholder: "First Name"}
                 = f.input :last_name, placeholder: "Last Name", required: true, autofocus: true, label: false, input_html: { id: "last_name", style: "height: 48px;", placeholder: "Last Name"}
                 .modal-footer

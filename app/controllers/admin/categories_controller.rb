@@ -41,7 +41,7 @@ class Admin::CategoriesController < ApplicationController
       redirect_to admin_category_path(@category), flash_success_info: "Category was successfully created."
     else
     	flash[:flash_info] = "Category was not successfully created."
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 

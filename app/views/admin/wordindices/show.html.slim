@@ -20,7 +20,7 @@
                             p Edit
                             .pull-right.fa.fa-edit.pointer.fa-icon-color
                       li
-                        = link_to admin_wordindex_path(@wordindex), method: :delete, data: { confirm: "Are you sure?" } do 
+                        = link_to admin_wordindex_path(@wordindex), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do 
                           .dropdown-with-icon
                             p Delete
                             .pull-right.fas.fa-trash-alt.pointer.fa-icon-color

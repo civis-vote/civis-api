@@ -41,7 +41,7 @@ class Admin::CaseStudiesController < ApplicationController
       redirect_to admin_case_study_path(@case_study), flash_success_info: "Case Study was successfully created."
     else
     	flash[:flash_info] = "Case Study was not successfully created."
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 

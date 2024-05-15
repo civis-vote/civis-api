@@ -17,21 +17,18 @@
     .p-5
       .show-page-parent-details
         .show-page-input-details
-          = simple_form_for [:admin, @consultation], url: page_component_admin_consultations_path(@consultation), method: :patch do |f|
-            - if @english_summary_page.errors.any?
+          = simple_form_for [:admin, @consultation], url: update_english_summary_admin_consultation_path(@consultation), method: :patch do |f|
+            - if @english_summary.errors.any?
               #error_explanation
-                h2 = "#{pluralize(@english_summary_page.errors.count, "error")} prohibited this page from being saved:"
+                h2 = "#{pluralize(@english_summary.errors.count, "error")} prohibited this page from being saved:"
                 ul
-                  - @english_summary_page.errors.full_messages.each do |message|
+                  - @english_summary.errors.full_messages.each do |message|
                     li = message
-            .field
-              input type='hidden' id="content-editor" name="page[components]"
-              - unless @english_summary_page.components.present?
-                input type='hidden' id="content-editor" name="consultation_create" value="true"
-              = react_component("cm_content_manager/Content", {input: "content-editor", components: @english_summary_page.components})
+            = f.rich_text_area :english_summary
             .admin-update-button-position
-              - if @english_summary_page.components.present?
+              - if @english_summary.to_s.present?
                 button class="btn square-btn-question" type="submit" Save Changes
               - else
+                input type='hidden' id="content-editor" name="consultation_create" value="true"
                 button class="btn square-btn-question" type="submit" Save Consultation
   .h-20

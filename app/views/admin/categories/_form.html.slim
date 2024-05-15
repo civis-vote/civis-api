@@ -9,6 +9,6 @@
 				- if @category.cover_photo
 					= image_tag @category.picture_url, class: "pointer", id: "profileImage"
 				- else
-					= image_pack_tag @category.picture_url, class: "pointer", id: "profileImage"
+					= image_tag @category.picture_url, class: "pointer", id: "profileImage"
 		.admin-update-button-position
 			= f.button :submit, "Save Category"
