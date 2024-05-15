@@ -57,7 +57,7 @@ class Ministry < ApplicationRecord
     if self.logo
       self.logo_url
     else
-      "media/application/images/user_profile_picture.png"
+      "user_profile_picture.png"
     end
   end
 

@@ -3,7 +3,6 @@ Rails.application.routes.draw do
   resources :orders, only: :create
   mount GraphiQL::Rails::Engine, at: "/graphiql", graphql_path: "/graphql"
   mount ImageUploader.derivation_endpoint => "/derivations/image"
-  mount CmPageBuilder::Rails::Engine => "/cm_page_builder"
 
   devise_for :users, controllers: {sessions: "sessions"}
   devise_scope :user do
@@ -39,6 +38,8 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
+        patch :update_hindi_summary
+        patch :update_english_summary
         patch :update_response_submission_message
         get :show_response_submission_message
         post :import_responses
@@ -98,6 +99,8 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
+        patch :update_hindi_summary
+        patch :update_english_summary
         post :import_responses
       end
       collection do
