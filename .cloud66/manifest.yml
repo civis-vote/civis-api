@@ -12,4 +12,10 @@ staging:
 production:
   rails:
     configuration:
-      iam_instance_profile_name: ec2-rds-civis-production
+      iam_instance_profile_name: ec2-rds-civis-production     
+      operating_system: ubuntu2204
+  postgresql:
+    groups:
+      eris:
+        configuration:
+          version: "12.5"

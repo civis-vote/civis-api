@@ -10,10 +10,6 @@ module Types
 				field	:consultation_feedback_email,				String, nil, null: true
 				field :is_featured,												Boolean, nil, null: true
 				field :responded_on,											Types::Objects::DateTime, nil, null: true do 
-					def resolve(object, context)
-						object.responded_on(context[:current_user])
-					end
-
 					def visible?(context)
 						super && context[:current_user].present?
 					end
@@ -46,6 +42,22 @@ module Types
 				field :response_rounds,										[Types::Objects::ResponseRoundType], nil, null: true
 				field :english_summary,										String, nil, null: true
 				field :hindi_summary,											String, nil, null: true
+				field :summary_hindi,											String, nil, null: true
+				field :page,											 				String, nil, null: true
+
+				def responded_on
+					nil unless context[:current_user].present?
+
+					object.responded_on(context[:current_user])
+				end
+
+				def page
+					nil
+				end
+
+				def summary_hindi
+					nil
+				end
 
 				def english_summary
 					return unless object.english_summary.to_s.present?
