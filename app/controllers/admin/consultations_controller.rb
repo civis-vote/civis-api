@@ -1,8 +1,8 @@
 class Admin::ConsultationsController < ApplicationController
-	layout "admin_panel_sidenav"
+  layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :page_component, :show_response_submission_message, :update_response_submission_message, :import_responses]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
@@ -25,9 +25,6 @@ class Admin::ConsultationsController < ApplicationController
     @question.sub_questions.build
     @respondents = @organisation ? @organisation.respondents.search_user_query(params[:search]).uniq(&:user_id) : @consultation_respondents.search_user_query(params[:search]).uniq(&:user_id)
     @consultation_response_rounds = Consultation.includes(:response_rounds)
-		@page = @consultation.page
-		ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
-    @hindi_summary_page = ConsultationHindiSummary.find_by(consultation: @consultation).page
     respond_to do |format|
       if request.xhr?
         format.html {render partial: "users/admin/invite_respondents_table", locals: {consultations: @consultations}}
@@ -35,22 +32,18 @@ class Admin::ConsultationsController < ApplicationController
         format.html
       end
     end
-	end
+  end
 
-	def edit_hindi_summary
-		@hindi_summary_page = ConsultationHindiSummary.find_by(consultation: @consultation).page
-	end
+  def edit_english_summary
+    @english_summary = @consultation.english_summary
+  end
 
-	def page_component
-    components = page_params.delete(:components)
-    if @consultation.page.present?
-      @page = @consultation.page
-    else
-      @page = @consultation.page.new(page_params)
-    end
-    if @page.save
-      @page.save_content(components)
-      sleep(2.0)
+  def edit_hindi_summary
+    @hindi_summary = @consultation.hindi_summary
+  end
+
+  def update_english_summary
+    if @consultation.update(english_summary: params[:consultation][:english_summary])
       @consultation.update_reading_time
       flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation English Summary was successfully updated.'
       redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
@@ -59,40 +52,21 @@ class Admin::ConsultationsController < ApplicationController
     end
   end
 
-  def edit_english_summary
-    @english_summary_page = @consultation.page
-  end
-
-  def hindi_page_component
-		@consultation = Consultation.find(params[:id])
-		@consultation_hindi_summary = ConsultationHindiSummary.find_or_create_by(consultation: @consultation)
-
-    components = page_params.delete(:components)
-    if @consultation_hindi_summary.page.present?
-      @hindi_summary_page = @consultation_hindi_summary.page
+  def update_hindi_summary
+    if @consultation.update(hindi_summary: params[:consultation][:hindi_summary])
+      @consultation.update_reading_time
+      flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation Hindi Summary was successfully updated.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
     else
-      @hindi_summary_page = @consultation_hindi_summary.page.new(page_params)
-    end
-    if @hindi_summary_page.save
-      @hindi_summary_page.save_content(components)
-      sleep(2.0)
-      redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation hindi summary page details was successfully updated."
-    else
-      redirect_to admin_consultation_path(@consultation), flash_info: "Consultation hindi summary page details was not successfully updated."
+      redirect_to admin_consultation_path(@consultation), flash_info: "Consultation Hindi Summary was not successfully updated."
     end
   end
 
   def edit
-  	@page = @consultation.page
   end
 
 	def update
 		if @consultation.update(secure_params)
-	    if @consultation.page.present?
-	      @page = @consultation.page
-	    else
-	      @page = @consultation.create_page
-	    end
 	    @consultation.update_reading_time
 			redirect_to admin_consultation_path(@consultation), flash_success_info: "Consultation details was successfully updated."
 		else
@@ -102,7 +76,6 @@ class Admin::ConsultationsController < ApplicationController
 
 	def new
     @consultation = Consultation.new
-    @page = @consultation.page
   end
 
   def create
@@ -111,7 +84,7 @@ class Admin::ConsultationsController < ApplicationController
       redirect_to edit_english_summary_admin_consultation_path(@consultation)
     else
     	flash[:flash_info] = "#{@consultation.errors.full_messages.present? ? @consultation&.errors&.full_messages&.join("<br /> ") : 'Consultation was not successfully created.'}".html_safe
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 
@@ -224,9 +197,5 @@ class Admin::ConsultationsController < ApplicationController
 
   def filter_params
     params.require(:filters).permit(:search_query, :status_filter, :visibility_filter) if params[:filters]
-  end
-
-  def page_params
-    params.require(:page).permit(:components)
   end
 end

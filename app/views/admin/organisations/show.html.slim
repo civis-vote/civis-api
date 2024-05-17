@@ -20,7 +20,7 @@
         .mr-3
           = link_to edit_admin_organisation_path(@organisation), method: :get, class: "icon-with-bg" do
             .pull-right.fa.fa-pencil-alt.pointer.fa-icon-color
-        = link_to admin_organisation_path(@organisation), method: :delete, data: { confirm: "Are you sure?" }, class: "icon-with-bg" do
+        = link_to admin_organisation_path(@organisation), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "icon-with-bg" do
             .pull-right.fas.fa-trash-alt.pointer.fa-icon-color.text-danger
                       
   .tab-content
@@ -34,6 +34,6 @@
               - if @organisation.logo
                 = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
               - else
-                = image_pack_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+                = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
           = display_details("show-page-parent-details", "show-page-label-details", "Added on", "show-page-input-details", "#{@organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'}")
           = display_details("show-page-parent-details", "show-page-label-details", "Addeded by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")

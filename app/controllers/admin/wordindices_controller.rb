@@ -44,11 +44,11 @@ class Admin::WordindicesController < ApplicationController
 				redirect_to admin_wordindex_path(@wordindex), flash_success_info: "Word Index was successfully created."
 			else
 				flash[:flash_info] = "Word Index was not successfully created."
-			render :new
+			render :new, status: :unprocessable_entity
 			end
 		else
 			flash[:flash_info] = "Word is already present and duplicate words cannot be inserted. Please Update the word instead."
-			render :new
+			render :new, status: :unprocessable_entity
 		end
   	end
 

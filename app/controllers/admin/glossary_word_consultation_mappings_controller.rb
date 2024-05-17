@@ -43,7 +43,7 @@ class Admin::GlossaryWordConsultationMappingsController < ApplicationController
 			redirect_to admin_glossary_word_consultation_mappings_path, flash_success_info: "Glossary mapping Index was successfully created."
 		else
 			flash[:flash_info] = "Mapping was not successfull"
-		render :new
+		render :new, status: :unprocessable_entity
 		end
 	else
 		flash[:flash_info] = "Mapping was duplicate. Hence not succesfull"

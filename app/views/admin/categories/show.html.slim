@@ -15,12 +15,12 @@
                 .dropdown#dropdown-container
                   ul.dropdown-menu.icon-list#show-page-dropdown
                       li
-                        = link_to edit_admin_category_path(@category), method: :get do
+                        = link_to edit_admin_category_path(@category) do
                           .dropdown-with-icon
                             p Edit
                             .pull-right.fa.fa-edit.pointer.fa-icon-color
                       li
-                        = link_to admin_category_path(@category), method: :delete, data: { confirm: "Are you sure?" } do 
+                        = link_to admin_category_path(@category), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" } do 
                           .dropdown-with-icon
                             p Delete
                             .pull-right.fas.fa-trash-alt.pointer.fa-icon-color
@@ -31,7 +31,7 @@
           - if @category.cover_photo
             = image_tag @category.picture_url, class: "user-timeline-profile-picture-bg"
           - else
-            = image_pack_tag @category.picture_url, class: "user-timeline-profile-picture-bg"
+            = image_tag @category.picture_url, class: "user-timeline-profile-picture-bg"
 
         .combine-user-list
           .edit-user-name

@@ -3,7 +3,7 @@
     .navbar-header
       .text-center
           span
-            = image_pack_tag "media/application/images/civis_organisation_logo.svg"
+            = image_tag "civis_organisation_logo.svg"
       i.navbar-toggle.collapsed.fa.fa-bars data-target="#menu-content" data-toggle="collapse"
     ul#menu-content
       / = link_to admin_dashboard_path, class: "#{current_class?(admin_dashboard_path)}" do

@@ -1,1 +1,0 @@
-CmPageBuilder::Rails.layout_template = 'application'

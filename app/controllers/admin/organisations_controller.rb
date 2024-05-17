@@ -41,7 +41,7 @@ class Admin::OrganisationsController < ApplicationController
       redirect_to admin_organisation_path(@organisation), flash_success_info: "Organisation was successfully created."
     else
     	flash[:flash_info] = "Organisation was not successfully created."
-      render :new
+      render :new, status: :unprocessable_entity
     end
   end
 

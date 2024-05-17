@@ -181,7 +181,7 @@ class User < ApplicationRecord
     if self.profile_picture.present?
       self.profile_picture_url
     else
-      "media/application/images/defalut-user.svg"
+      "defalut-user.svg"
     end
   end
 

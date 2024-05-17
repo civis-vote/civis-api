@@ -79,7 +79,7 @@ class Admin::MinistriesController < ApplicationController
 		  redirect_to admin_ministry_path(@ministry), flash_success_info: "Ministry was successfully created."
 		else
 			flash[:flash_info] = "Ministry was not successfully created."
-		  render :new
+		  render :new, status: :unprocessable_entity
 		end
 	end
 
@@ -92,8 +92,6 @@ class Admin::MinistriesController < ApplicationController
 		@ministry.reject
 		redirect_back fallback_location: root_path,  flash_success_info: "Ministry was successfully rejected."
 	end
-
-	private
 
 	def secure_params
 		params.require(:ministry).permit(:name, :level, :poc_email_primary, :primary_officer_name, :primary_officer_designation, :poc_email_secondary, :secondary_officer_name, :secondary_officer_designation, :logo, :category_id, :location_id)
@@ -110,5 +108,4 @@ class Admin::MinistriesController < ApplicationController
   def filter_params
     params.require(:filters).permit(:search, :status_filter) if params[:filters]
   end
-
 end

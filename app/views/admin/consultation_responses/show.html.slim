@@ -17,19 +17,19 @@
                       - if @consultation_response.under_review?
                         li
                           .dropdown-without-icon
-                            = link_to "Reject", reject_admin_consultation_response_path(@consultation_response), method: :post
+                            = link_to "Reject", reject_admin_consultation_response_path(@consultation_response), data: {turbo_method: :post}
                         li
                           .dropdown-without-icon
-                            = link_to "Approve", approve_admin_consultation_response_path(@consultation_response), method: :post
+                            = link_to "Approve", approve_admin_consultation_response_path(@consultation_response), data: {turbo_method: :post}
                       - else
                         - if @consultation_response.unacceptable?
                           li
                             .dropdown-without-icon
-                              = link_to "Approve", approve_admin_consultation_response_path(@consultation_response), method: :post
+                              = link_to "Approve", approve_admin_consultation_response_path(@consultation_response), data: {turbo_method: :post}
                         - else
                           li
                           .dropdown-without-icon
-                            = link_to "Reject", reject_admin_consultation_response_path(@consultation_response), method: :post               
+                            = link_to "Reject", reject_admin_consultation_response_path(@consultation_response), data: {turbo_method: :post}
   .admin-list-bg
     .p-4
       .admin-header-text

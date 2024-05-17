@@ -4,7 +4,6 @@ class Consultation < ApplicationRecord
 	include Paginator
   include Scorable::Consultation
   has_rich_text :summary
-  include CmPageBuilder::Rails::HasCmContent
   has_rich_text :response_submission_message
 
   has_rich_text :english_summary
@@ -17,15 +16,14 @@ class Consultation < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :response_rounds
-  has_one :consultation_hindi_summary, dependent: :destroy
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
   enum visibility: { public_consultation: 0, private_consultation: 1 }
 
   validates_presence_of :response_deadline
 
-  after_commit :notify_admins, on: :create
-  after_commit :create_response_round, on: :create
+  after_create :notify_admins
+  after_create :create_response_round
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
 
   scope :status_filter, lambda { |status|
@@ -121,8 +119,8 @@ class Consultation < ApplicationRecord
   end
 
   def update_reading_time
-    contents = self.page.components.map{|c| c["content"] }*" "
-    total_word_count = contents.scan(/\w+/).size
+    contents = english_summary.to_s.gsub(/<[^>]*>/,' ')
+    total_word_count = contents.split.size
     time = total_word_count.to_f / 200
     time_with_divmod = time.divmod 1
     array = [time_with_divmod[0].to_i, time_with_divmod[1].round(2) * 0.60 ]
@@ -142,6 +140,14 @@ class Consultation < ApplicationRecord
   def feedback_url
     feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/" + "#{self.id}" +"/read", query: nil } ))
     feedback_url.to_s
+  end
+
+  def english_summary_rich_text
+    convert_to_rich_text(english_summary.to_s)
+  end
+
+  def hindi_summary_rich_text
+    convert_to_rich_text(hindi_summary.to_s)
   end
 
   def response_url
@@ -170,7 +176,7 @@ class Consultation < ApplicationRecord
   def english_summary_text
     return summary.to_plain_text if summary.to_plain_text.present?
 
-    ActionView::Base.full_sanitizer.sanitize(page.components.map { |comp| comp['content'] if comp["componentType"] != "Upload" }.join(' '))
+    english_summary.to_plain_text if english_summary.present?
   end
 
   def set_consultation_expiry_job
@@ -181,5 +187,19 @@ class Consultation < ApplicationRecord
 
   def feedback_report_email(email, officer_name, officer_designation)
     ConsultationFeedbackReportEmailJob.perform_later(email, self, officer_name, officer_designation)
+  end
+
+  def convert_to_rich_text(text)
+    match = '<action-text-attachment content="<div style=&quot;width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;&quot;><div style=&quot;width: 100%; border: 1px solid #ececec;&quot;></div></div>">☒</action-text-attachment>'
+    # regex to replace action-text-attachement with divider
+    text.gsub!(match, '<div style="width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;"><div style="width: 100%; border: 1px solid #ececec;"></div></div>')
+    # regex to replace action-text-attachement with image
+    text.gsub!(%r{<action-text-attachment[^>]*>|</action-text-attachment>|<figure[^>]*>|</figure>}, '')
+    # regex to replace youtube image link with iframe
+    youtube_img_regex = %r{<img(?:\s+[\w-]+="[^"]*")*\s+src="https://img\.youtube\.com/vi/([\w-]+)/0\.jpg">}
+    text.gsub(youtube_img_regex) do |_match|
+      video_id = ::Regexp.last_match(1)
+      "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
+    end
   end
 end
