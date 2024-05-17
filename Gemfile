@@ -76,7 +76,7 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-linkedin-oauth2'
 
 gem 'cocoon'
-gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
+gem 'devise_invitable', '~> 2.0'
 gem 'paranoia'
 gem 'shrine', '~> 3.3'
 
