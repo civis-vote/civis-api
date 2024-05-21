@@ -7,8 +7,8 @@ module Mutations
 
       def resolve(user:)
         current_user = context[:current_user]
-        current_user.update_attributes! user.to_h
-        return current_user
+        current_user.update! user.to_h
+        current_user
       end
 
       def self.authorized?(object, context)
