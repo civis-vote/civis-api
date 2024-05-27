@@ -22,9 +22,9 @@ class Consultation < ApplicationRecord
 
   validates_presence_of :response_deadline
 
-  after_create :notify_admins
-  after_create :create_response_round
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
+  after_commit :create_response_round, on: :create
+  after_commit :notify_admins, on: :create
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
