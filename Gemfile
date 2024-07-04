@@ -34,8 +34,6 @@ gem 'razorpay'
 gem 'graphql', '~> 1.13.23'
 gem 'graphql-errors'
 
-gem 'rollbar'
-
 gem 'sidekiq'
 
 gem 'simple_form'
@@ -62,9 +60,6 @@ gem 'mini_magick'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
-
-gem 'sentry-rails'
-gem 'sentry-ruby'
 
 gem 'spotlight_search', '~> 0.2.0'
 
@@ -128,3 +123,5 @@ gem 'sassc-rails'
 gem 'select2-rails'
 gem 'trix-rails'
 gem 'turbo-rails'
+
+gem 'airbrake', '~> 13.0'
