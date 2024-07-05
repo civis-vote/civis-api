@@ -31,8 +31,8 @@ GraphQL::Errors.configure(CivisApiSchema) do
   
   unless Rails.env.development?
 	  rescue_from StandardError do |exception|
-      sentry_error = Sentry.capture_exception(exception)
-	    GraphQL::ExecutionError.new("Please try to execute the query for this field later", extensions: {code: :internal_server_error, event_id: sentry_error.event_id})
+      error = Airbrake.notify_sync(exception)
+	    GraphQL::ExecutionError.new("Please try to execute the query for this field later", extensions: {code: :internal_server_error, event_id: error['id']})
 	  end
 	end
 end

@@ -31,7 +31,7 @@ module ImportGlossary
           return result.merge!(status: "true", records_count: records.size)
         end
       rescue Exception => e
-        Sentry.capture_exception(e)
+        Airbrake.notify_sync(e)
         return result.merge!(status: "false")
       end
     end
