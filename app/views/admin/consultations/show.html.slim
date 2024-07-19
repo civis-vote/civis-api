@@ -179,7 +179,9 @@
                     .admin-questions-box.width-100.organisation-question-box-width
                       .question-type-text
                         .question-type
-                          ="Question #{count} • #{question.question_type.capitalize.humanize}"
+                          | ID #{question.id} • Question #{count} • #{question.question_type.capitalize.humanize} 
+                          - if !question.is_optional
+                              span.badge.badge-pill.bg-danger.text-white style="margin-left: 8px;" = "Mandatory"
                         .question-text
                           = question.question_text
                       .question-edit-delete
