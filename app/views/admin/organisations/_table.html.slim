@@ -3,13 +3,16 @@
 table.table.mt-3
       thead
         tr
+          th ID
           th.width-35 Organisation Name
-          th Employess
+          th Employees
           th Added on
           th Added by
       tbody
         - @organisations.data.each do |organisation|
             tr.pointer onclick='window.location="#{admin_organisation_path(organisation)}";'
+              td
+                = organisation.id
               td.table-bold-title
                 = organisation&.name
               td
