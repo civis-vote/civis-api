@@ -27,6 +27,7 @@
     .tab-pane.active#organisation_overview role="tabpanel"
       .mt-60
         .admin-details-box
+          = display_details("show-page-parent-details", "show-page-label-details", "Organisation ID", "show-page-input-details", "#{@organisation&.id || '-'}")
           = display_details("show-page-parent-details", "show-page-label-details", "Organisation Name", "show-page-input-details", "#{@organisation&.name || '-'}")
           .show-page-parent-details
             .show-page-label-details Logo
