@@ -16,6 +16,8 @@ class ConsultationResponse < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :respondent, optional: true
   belongs_to :response_round
+  belongs_to :organisation, optional: true
+
   before_commit :update_reading_time
   before_commit :validate_html_tags
   before_commit :validate_answers

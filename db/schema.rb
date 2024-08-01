@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_19_093053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -30,7 +30,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", precision: nil, null: false
+    t.datetime "created_at", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -40,10 +40,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
+    t.string "service_name", null: false
     t.bigint "byte_size", null: false
     t.string "checksum"
-    t.datetime "created_at", precision: nil, null: false
-    t.string "service_name", null: false
+    t.datetime "created_at", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -82,8 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
-  create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
-    t.string "uuid", null: false
+  create_table "cm_page_builder_rails_page_components", id: :string, force: :cascade do |t|
     t.bigint "page_id", null: false
     t.string "content"
     t.integer "position"
@@ -122,7 +121,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["consultation_response_id", "user_id"], name: "consultation_response_id_and_user_id_index", unique: true
     t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
     t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
   end
@@ -155,8 +153,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
     t.jsonb "meta"
     t.integer "subjective_answer_count"
     t.integer "objective_answer_count"
+    t.bigint "organisation_id"
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
+    t.index ["organisation_id"], name: "index_consultation_responses_on_organisation_id"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
     t.index ["response_round_id"], name: "index_consultation_responses_on_response_round_id"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
@@ -413,6 +413,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_17_045437) do
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
+  add_foreign_key "consultation_responses", "organisations"
   add_foreign_key "consultation_responses", "respondents"
   add_foreign_key "consultation_responses", "response_rounds"
   add_foreign_key "consultation_responses", "users"
