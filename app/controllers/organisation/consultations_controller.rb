@@ -74,6 +74,7 @@ class Organisation::ConsultationsController < ApplicationController
     else
       redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Odia Summary was not successfully updated.'
     end
+  end
 
   def edit
   end
