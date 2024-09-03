@@ -41,7 +41,7 @@ Rails.application.routes.draw do
         get :edit_odia_summary
         patch :update_hindi_summary
         patch :update_english_summary
-        get :update_odia_summary
+        patch :update_odia_summary
         patch :update_response_submission_message
         get :show_response_submission_message
         post :import_responses
