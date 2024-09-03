@@ -110,7 +110,6 @@
       parent.find('.sub_question_destroy').val(id);
       var destroyField = parent.find('.sub_question_destroy');
       destroyField.val(id); 
-      console.log(parent.find('.sub_question_destroy').val());
       parent.hide();
     });
 

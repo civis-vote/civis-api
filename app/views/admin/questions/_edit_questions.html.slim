@@ -30,7 +30,7 @@
                         .form-group.string.optional.question_sub_questions_question_text_odia.form-group-valid
                           input#question_text_odia.form-control.is-valid.string.optional autofocus="autofocus" name="question[sub_questions_attributes][0][question_text_odia]" placeholder="Option in Odia" style=("height: 40px;") type="text"
                       .cross-btn
-                        img#option-cross src="/assets/Remove-2500ccd3389957c63a59ddd2d1ce1abac67e37ed2ef11de08fb952a4bb99360f.svg"
+                        img#option-cross src="/assets/Remove-2500ccd3389957c63a59ddd2d1ce1abac67e37ed2ef11de08fb952a4bb99360f.svg", style: 'width: 20px;'
                   - else 
                     = f.simple_fields_for :sub_questions do |q|
                       = render partial: '/admin/questions/edit_check_box_options', locals: {q: q}
