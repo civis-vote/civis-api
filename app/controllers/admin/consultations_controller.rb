@@ -2,7 +2,7 @@ class Admin::ConsultationsController < ApplicationController
   layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_odia_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary, :update_odia_summary]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
