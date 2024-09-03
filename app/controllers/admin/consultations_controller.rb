@@ -42,6 +42,10 @@ class Admin::ConsultationsController < ApplicationController
     @hindi_summary = @consultation.hindi_summary
   end
 
+  def edit_odia_summary
+    @odia_summary = @consultation.odia_summary
+  end
+
   def update_english_summary
     if @consultation.update(english_summary: params[:consultation][:english_summary])
       @consultation.update_reading_time
@@ -58,7 +62,17 @@ class Admin::ConsultationsController < ApplicationController
       flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation Hindi Summary was successfully updated.'
       redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
     else
-      redirect_to admin_consultation_path(@consultation), flash_info: "Consultation Hindi Summary was not successfully updated."
+      redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Hindi Summary was not successfully updated.'
+    end
+  end
+
+  def update_odia_summary
+    if @consultation.update(odia_summary: params[:consultation][:odia_summary])
+      @consultation.update_reading_time
+      flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation Odia Summary was successfully updated.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
+    else
+      redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Odia Summary was not successfully updated.'
     end
   end
 
@@ -180,8 +194,8 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:consultation).permit(:title, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response, :officer_name, :officer_designation)
-	end
+    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response, :officer_name, :officer_designation)
+ end
 
 	def set_consultation
 		@consultation = Consultation.find(params[:id])
