@@ -109,8 +109,11 @@
       var id = parent.next().val();
       parent.find('.sub_question_destroy').val(id);
       var destroyField = parent.find('.sub_question_destroy');
+      parent.children().each(function() {
+        var input =$(this).find('input')
+        input.val('');
+      });
       destroyField.val(id); 
-      console.log(parent.find('.sub_question_destroy').val());
       parent.hide();
     });
 
