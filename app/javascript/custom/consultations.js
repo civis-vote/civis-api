@@ -107,17 +107,22 @@
     $(document).on('click', '#options-fields-area-edit #option-cross', function() {
       var parent = $(this).closest('.checkbox-option-row');
       var id = parent.next().val();
-      parent.find('.sub_question_destroy').val(id);
-      var destroyField = parent.find('.sub_question_destroy');
-      destroyField.val(id); 
+      if (id=== undefined) {
+        parent.remove();
+      } else {
+      parent.children().find('.sub_question_question_text').val("");
+      parent.children().find('.sub_question_question_text_hindi').val("");
+      parent.children().find('.sub_question_question_text_odia').val("");
       parent.hide();
+      parent.find('.sub_question_destroy').val(id);
+      }
     });
 
     
     $(document).on('click', '#add-option-btn', function() {
       var child, id, name, hindi_name, odia_name;
       
-      child = $('#options-fields-area').children().last().clone();
+      child = $('#options-fields-area').children(':not(:hidden)').last().clone();
       
       child.find("input").val("");
       
@@ -156,7 +161,7 @@
         parent.find('.cross-btn').addClass("d-none");
       }
     
-      child = parent.find('#options-fields-area-edit .checkbox-option-row').last().clone().removeClass("d-none");
+      child = parent.find('#options-fields-area-edit .checkbox-option-row:not(:hidden)').last().clone().removeClass("d-none");
       child.find(".question_sub_questions__destroy").remove();
     
       child.find(".input-box input").val("");
