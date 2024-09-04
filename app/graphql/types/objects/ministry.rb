@@ -8,8 +8,8 @@ module Types
    				 argument :resolution, String, required: false, default_value: nil
    			end
   			 field :name,	String, nil, null: false
-				 field :hindi_name,	String, nil, null: false
-				 field :odia_name,	String, nil, null: false
+				 field :hindi_name,	String, nil, null: true
+				 field :odia_name,	String, nil, null: true
   			 field :location_id, Int, nil, null: false
   			 field :poc_email_primary,	String, nil, null: false
   			 field :poc_email_secondary,	String, nil, null: false
