@@ -34,7 +34,6 @@ module Types
 				field :status,														Types::Enums::ConsultationStatuses, nil, null: false
 				field :summary,														String, nil, null: true
 				field :title,															String, nil, null: false
-				field :english_title,											String, nil, null: false
 				field :hindi_title,												String, nil, null: true
 				field :odia_title,												String, nil, null: true
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
@@ -63,9 +62,6 @@ module Types
 					nil
 				end
 
-				def english_title
-					object.title
-			 end
 
 				def hindi_title
 					 object.title_hindi
