@@ -8,7 +8,6 @@ module Types
    				 argument :resolution, String, required: false, default_value: nil
    			end
   			 field :name,	String, nil, null: false
-				 field :english_name,	String, nil, null: false
 				 field :hindi_name,	String, nil, null: false
 				 field :odia_name,	String, nil, null: false
   			 field :location_id, Int, nil, null: false
@@ -17,10 +16,6 @@ module Types
 
   			 def logo(resolution:)
    				 object.shrine_resize(resolution, 'logo')
-   			 end
-
-  			 def english_name
-   				 object.name if object.name.present?
    			 end
 
   			 def hindi_name
