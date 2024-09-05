@@ -2,6 +2,8 @@
 	.radio-button-option
 	.checkbox-option
     .input-box.width-85
-        = q.input :question_text, placeholder: "Option", autofocus: true, label: false, input_html: { id: "question_text", style: "height: 48px;" }
+        = q.input :question_text, placeholder: "Option in English", autofocus: true, label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 40px;" }
+        = q.input :question_text_hindi, placeholder: "Option in Hindi", label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 40px;" }
+        = q.input :question_text_odia, placeholder: "Option in Odia", label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 40px;" }
     .cross-btn
-        = image_tag 'Remove.svg', id: 'option-cross'
+        = image_tag 'Remove.svg', id: 'option-cross', style: 'width: 20px;'
