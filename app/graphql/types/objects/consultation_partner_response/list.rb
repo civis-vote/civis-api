@@ -1,9 +1,9 @@
 module Types
 	module Objects
-		module ConsultationResponse
+		module ConsultationPartnerResponse
 			class List < BaseObject
-				graphql_name "ListConsultationResponseType"
-				field :data,								[Types::Objects::ConsultationResponse::Base], nil, null: true
+				graphql_name "ListConsultationPartnerResponseType"
+				field :data,								[Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
 				field :paging,							Types::Objects::Paging,               				nil, null: false
 			end
 		end
