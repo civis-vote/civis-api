@@ -29,7 +29,7 @@ class Organisation::QuestionsController < ApplicationController
     private
 
     def question_params
-		params.require(:question).permit(:question_text, :response_round_id, :question_type, :is_optional, :supports_other, sub_questions_attributes: [:id, :_destroy, :question_text, :parent_id])
+		  params.require(:question).permit(:question_text, :question_text_hindi, :question_text_odia, :response_round_id, :question_type, :is_optional, :supports_other, sub_questions_attributes: %i[id _destroy question_text question_text_hindi question_text_odia parent_id])
 	end
 
     def set_consultation

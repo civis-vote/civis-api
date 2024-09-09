@@ -37,6 +37,8 @@
                       </svg>
               = simple_form_for [:organisation, @consultation], url: organisation_consultations_path do |f|     
                   = f.input :title, placeholder: "Consultation title", required: true, autofocus: true, label: false, input_html: { id: "title", style: "height: 48px;", placeholder: "Consultation title"}
+                  = f.input :title_hindi, placeholder: "Hindi Consultation title", required: true, autofocus: true, label: false, input_html: { id: "title_hindi", style: "height: 48px;", placeholder: "Hindi Consultation title"}
+                  = f.input :title_odia, placeholder: "Odia Consultation title", required: true, autofocus: true, label: false, input_html: { id: "title_odia", style: "height: 48px;", placeholder: "Odia Consultation title"}
                   = f.input :consultation_feedback_email, placeholder: "Feedback email", required: true, autofocus: true, label: false, input_html: { id: "email", style: "height: 48px;", placeholder: "Feedback email"}
                   = f.input :organisation_id, as: :hidden, input_html: { value: @organisation.id }
                   = f.input :visibility, as: :hidden, input_html: { value: "private_consultation" }

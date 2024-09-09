@@ -32,12 +32,6 @@ module ImportResponse
       content_type = File.extname(file.original_filename.to_s)
       if content_type.include?('csv')
         csv_file = open(file.path)
-        csv_file = begin
-          csv_file.string
-        rescue StandardError
-          csv_file.read
-        end
-        csv_file = csv_file.encode('UTF-8', 'Windows-1252').sub("\xEF\xBB\xBF", '')
       else
         begin
           xlsx = Roo::Spreadsheet.open(file.path, extension: :xlsx)

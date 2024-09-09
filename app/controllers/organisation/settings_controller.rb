@@ -1,7 +1,7 @@
 class Organisation::SettingsController < ApplicationController
 	layout "organisation_sidenav"
   before_action :authenticate_user!
-  before_action :set_organisation, only: [:index, :create, :show, :edit, :update, :page_component, :hindi_page_component, :edit_hindi_summary, :destroy, :publish, :edit_english_summary, :list_respondents, :destroy_respondents]
+  before_action :set_organisation, only: %i[index create show edit update page_component hindi_page_component odia_page_component edit_hindi_summary edit_odia_summary destroy publish edit_english_summary list_respondents destroy_respondents]
   before_action :require_organisation_employee, only: [:index, :create, :show, :edit, :list_respondents, :destroy_respondents]
 
 	def index
