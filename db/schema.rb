@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_09_075834) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -264,6 +264,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
     t.datetime "deleted_at", precision: nil
+    t.string "official_url"
+    t.jsonb "logo_versions_data"
     t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
