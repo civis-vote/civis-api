@@ -29,6 +29,7 @@
         .admin-details-box
           = display_details("show-page-parent-details", "show-page-label-details", "Organisation ID", "show-page-input-details", "#{@organisation&.id || '-'}")
           = display_details("show-page-parent-details", "show-page-label-details", "Organisation Name", "show-page-input-details", "#{@organisation&.name || '-'}")
+          = display_details("show-page-parent-details", "show-page-label-details", "Organisation URL", "show-page-input-details", "#{@organisation&.official_url || '-'}")
           .show-page-parent-details
             .show-page-label-details Logo
             .show-page-input-details
