@@ -104,10 +104,9 @@ module Types
 					grouped_responses = object.responses.where.not(organisation_id: nil).group(:organisation_id).count
 			  
 					grouped_responses.map do |organisation_id, response_count|
-					  organisation = Organisation.find(organisation_id)
-					  { organisation: organisation, response_count: response_count }
+					  { organisation_id: organisation_id, response_count: response_count }
 					end
-				  end
+				end
 
 				def responses_reading_times
 					object.shared_responses.sum(:reading_time)

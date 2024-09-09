@@ -23,9 +23,6 @@ module Types
 		  end
 
 		end
-		def self.find(id)
-			::Organisation.find(id)
-		end
 	  end
 	end
   end
