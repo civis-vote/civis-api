@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_19_093053) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -115,13 +115,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
     t.index ["consultation_id"], name: "index_consultation_hindi_summaries_on_consultation_id"
   end
 
-  create_table "consultation_odia_summaries", force: :cascade do |t|
-    t.bigint "consultation_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["consultation_id"], name: "index_consultation_odia_summaries_on_consultation_id"
-  end
-
   create_table "consultation_response_votes", force: :cascade do |t|
     t.bigint "consultation_response_id", null: false
     t.integer "vote_direction"
@@ -191,8 +184,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
     t.datetime "deleted_at", precision: nil
     t.string "officer_name"
     t.string "officer_designation"
-    t.string "title_hindi"
-    t.string "title_odia"
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
@@ -242,8 +233,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
     t.string "primary_officer_designation"
     t.string "secondary_officer_name"
     t.string "secondary_officer_designation"
-    t.string "name_hindi"
-    t.string "name_odia"
     t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
@@ -303,8 +292,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
     t.bigint "response_round_id"
     t.boolean "is_optional", default: false
     t.boolean "supports_other", default: false
-    t.string "question_text_hindi"
-    t.string "question_text_odia"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
   end
@@ -423,7 +410,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "consultation_hindi_summaries", "consultations"
-  add_foreign_key "consultation_odia_summaries", "consultations"
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
   add_foreign_key "consultation_responses", "consultations"
