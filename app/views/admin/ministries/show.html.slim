@@ -50,8 +50,6 @@
         | Basic Information
       .admin-details-box
         = display_details("show-page-parent-details", "show-page-label-details", "Ministry Name", "show-page-input-details", "#{@ministry&.name || '-'}")
-        = display_details("show-page-parent-details", "show-page-label-details", "Ministry Name in Hindi", "show-page-input-details", "#{@ministry&.name_hindi || '-'}")
-        = display_details("show-page-parent-details", "show-page-label-details", "Ministry Name in Odia", "show-page-input-details", "#{@ministry&.name_odia || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Ministry Level", "show-page-input-details", "#{@ministry&.level}")
         = display_details("show-page-parent-details", "show-page-label-details", "Category", "show-page-input-details", "#{@ministry&.category&.name || '-'}")
         = display_details("show-page-parent-details", "show-page-label-details", "Primary email address", "show-page-input-details", "#{@ministry&.poc_email_primary || '-'}")

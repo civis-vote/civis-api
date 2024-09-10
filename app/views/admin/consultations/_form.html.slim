@@ -4,8 +4,6 @@
       | Basic Information
     .admin-details-box
       = f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
-      = f.input :title_hindi, placeholder: "Hindi Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_hindi" }
-      = f.input :title_odia, placeholder: "Odia Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_odia" }
       .private-consultation
         = f.input :visibility, as: :boolean, checked_value: "private_consultation", unchecked_value: "public_consultation", label: "Private Consultation"
       .private-consultation
