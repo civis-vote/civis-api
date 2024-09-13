@@ -38,8 +38,10 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
+        get :edit_odia_summary
         patch :update_hindi_summary
         patch :update_english_summary
+        patch :update_odia_summary
         patch :update_response_submission_message
         get :show_response_submission_message
         post :import_responses
@@ -48,6 +50,7 @@ Rails.application.routes.draw do
         get :export_as_excel
         patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
         patch "/hindi_page_component/:id", to: "consultations#hindi_page_component", as: "hindi_page_component"
+        patch "/odia_page_component/:id", to: "consultations#odia_page_component", as: "odia_page_component"
       end
       resources :questions
     end
@@ -99,13 +102,16 @@ Rails.application.routes.draw do
         post :invite_respondents
         get :edit_hindi_summary
         get :edit_english_summary
+        get :edit_odia_summary
         patch :update_hindi_summary
         patch :update_english_summary
+        patch :update_odia_summary
         post :import_responses
       end
       collection do
         patch "/page_component/:id", to: "consultations#page_component", as: "page_component"
         patch "/hindi_page_component/:id", to: "consultations#hindi_page_component", as: "hindi_page_component"
+        patch "/odia_page_component/:id", to: "consultations#odia_page_component", as: "odia_page_component"
       end
       resources :questions
     end
