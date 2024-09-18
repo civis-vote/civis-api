@@ -11,11 +11,9 @@
                     <path d="M19.6342 0.365727C19.1465 -0.121909 18.3644 -0.121909 17.8767 0.365727L10 8.24152L2.1233 0.365727C1.63561 -0.121909 0.853462 -0.121909 0.36577 0.365727C-0.121923 0.853364 -0.121923 1.63542 0.36577 2.12306L8.24247 9.99885L0.36577 17.8746C-0.121923 18.3623 -0.121923 19.1443 0.36577 19.632C0.605015 19.8712 0.927076 20 1.23994 20C1.5528 20 1.87486 19.8804 2.1141 19.632L9.9908 11.7562L17.8675 19.632C18.1067 19.8712 18.4288 20 18.7417 20C19.0637 20 19.3766 19.8804 19.6158 19.632C20.1035 19.1443 20.1035 18.3623 19.6158 17.8746L11.7575 9.99885L19.6342 2.12306C20.1219 1.63542 20.1219 0.853364 19.6342 0.365727Z" fill="#D5DBE2"/>
                     </svg>
             = simple_form_for @question, url: organisation_consultation_questions_path(@consultation) do |f|        
-                = f.input :question_text, placeholder: "Question", required: true, autofocus: true, input_html: { id: "question_text", style: "height: 40px;", placeholder: "Question in English"}, label:"Question in English"
+                = f.input :question_text, placeholder: "Question", required: true, autofocus: true, label: false, input_html: { id: "question_text", style: "height: 48px;", placeholder: "Question"}
                 .validation-question-text.validation-error.text-danger.d-none Add question text to create question
-                = f.input :question_text_hindi, placeholder: "Hindi Question", label: false, input_html: { id: "question_text", style: "height: 40px;", placeholder: "Question in Hindi"}, label:"Question in Hindi"
-                = f.input :question_text_odia, placeholder: "Odia Question", label: false, input_html: { id: "question_text", style: "height: 40px;", placeholder: "Question in Odia"}, label:"Question in Odia"
-                = f.input :question_type, as: :select, collection: Question.question_types.keys.map{|a| [a.humanize.capitalize, a]}, prompt: "Question type", required: true, label: false, input_html: { style: "height: 41px;"}
+                = f.input :question_type, as: :select, collection: Question.question_types.keys.map{|a| [a.humanize.capitalize, a]}, prompt: "Question type", required: true, label: false, input_html: { style: "height: 48px;"}
                 = f.input :response_round_id, as: :hidden, input_html: { value: response_round_id }
                 #options-fields-area
                     = f.simple_fields_for :sub_questions do |q|
