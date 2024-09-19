@@ -68,7 +68,7 @@ class Organisation::SettingsController < ApplicationController
 	private
 
 	def secure_params
-		params.require(:organisation).permit(:name, :logo)
+		params.require(:organisation).permit(:name, :logo, :official_url)
 	end
 
 	def set_organisation

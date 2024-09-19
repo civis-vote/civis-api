@@ -44,6 +44,7 @@ module Types
 				field :hindi_summary,											String, nil, null: true
 				field :summary_hindi,											String, nil, null: true
 				field :page,											 				String, nil, null: true
+				field :consultation_partner_responses,			[Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
 
 				def responded_on
 					nil unless context[:current_user].present?
@@ -78,6 +79,15 @@ module Types
 				def responses(response_token:, sort:, sort_direction:)
 					raise CivisApi::Exceptions::Unauthorized if response_token != object.response_token
 					return object.responses.acceptable_responses.sort_records(sort, sort_direction)
+				end
+
+				def consultation_partner_responses
+					grouped_responses = object.responses.where.not(organisation_id: nil).group(:organisation_id).count
+			  
+					grouped_responses.map do |organisation_id, response_count|
+						organisation = ::Organisation.find(organisation_id)
+					  { organisation: organisation, response_count: response_count }
+					end
 				end
 
 				def responses_reading_times

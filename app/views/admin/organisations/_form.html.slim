@@ -4,6 +4,7 @@
 			| Basic Information
 		.admin-details-box
 			= f.input :name, placeholder: "Name of organisation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "organisation_name" }
+			= f.input :official_url, placeholder: "Organisation website", required: false, wrapper: :form_input_group, input_html: { id: "organisation_url" }
 			= f.input :logo, placeholder: "organisation logo", required: false, wrapper: :form_input_group, input_html: { class: "d-none", id: "imageUpload", capture: "", type: "file" }
 			#profile-container
 				- if @organisation.logo

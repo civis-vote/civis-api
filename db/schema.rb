@@ -253,6 +253,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_19_093053) do
     t.datetime "updated_at", null: false
     t.boolean "active", default: true
     t.datetime "deleted_at", precision: nil
+    t.string "official_url"
+    t.jsonb "logo_versions_data"
     t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
