@@ -70,8 +70,6 @@
   .admin-list-bg.mt-4
     .p-4
       = display_details("show-page-parent-details", "show-page-label-details", "Consultation title", "show-page-input-details", "#{@consultation&.title || '-'}")
-      = display_details("show-page-parent-details", "show-page-label-details", "Consultation title in Hindi", "show-page-input-details", "#{@consultation&.title_hindi || '-'}")
-      = display_details("show-page-parent-details", "show-page-label-details", "Consultation title in Odia", "show-page-input-details", "#{@consultation&.title_odia || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Feedback Email", "show-page-input-details", "#{@consultation&.consultation_feedback_email || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Consultation PDF", "show-page-input-details", "#{@consultation&.url}")
       .show-page-parent-details
@@ -107,15 +105,6 @@
           - else
             | --
         = link_to edit_hindi_summary_organisation_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
-          .pull-right.fa.fa-pencil-alt.fa-icon-color
-      .show-page-parent-details
-        .show-page-label-details Odia Summary
-        .show-page-input-details
-          - if @consultation.odia_summary.present?
-            = raw @consultation.odia_summary_rich_text
-          - else
-            | --
-        = link_to edit_odia_summary_admin_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
           .pull-right.fa.fa-pencil-alt.fa-icon-color
   .admin-index-title.mt-4
     | Feedback
@@ -270,8 +259,6 @@
                       </svg>
               = simple_form_for [:organisation, @consultation], url: organisation_consultation_path(@consultation) do |f|
                 = f.input :title, placeholder: "Consultation title", required: true, autofocus: true, label: false, input_html: { id: "title", style: "height: 48px;", placeholder: "Consultation title"}
-                = f.input :title_hindi, placeholder: "Consultation title in Hindi", required: false, autofocus: true, label: false, input_html: { id: "title_hindi", style: "height: 48px;", placeholder: "Consultation title in Hindi"}
-                = f.input :title_odia, placeholder: "Consultation title in Odia", required: false, autofocus: true, label: false, input_html: { id: "title_odia", style: "height: 48px;", placeholder: "Consultation title in Odia"}
                 = f.input :consultation_feedback_email, placeholder: "Feedback email", required: true, autofocus: true, label: false, input_html: { id: "email", style: "height: 48px;", placeholder: "Feedback email"}
                 = f.input :organisation_id, as: :hidden, input_html: { value: @organisation.id }
                 = f.input :visibility, as: :hidden, input_html: { value: "private_consultation" }

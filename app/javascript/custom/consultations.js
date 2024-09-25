@@ -98,91 +98,51 @@
       }
     });
     $(document).on('click', '#options-fields-area #option-cross', function() {
-      var row = $(this).closest('.checkbox-option-row');
-      if (row.siblings('.checkbox-option-row').length > 0) {
-        row.remove();
+      if ($(this).parent().parent().parent().children().length > 1) {
+        return $(this).parent().parent().remove();
       }
     });
-    
     $(document).on('click', '#options-fields-area-edit #option-cross', function() {
-      var parent = $(this).closest('.checkbox-option-row');
-      var id = parent.next().val();
-      if (id=== undefined) {
-        parent.remove();
-      } else {
-      parent.children().find('.sub_question_question_text').val("");
-      parent.children().find('.sub_question_question_text_hindi').val("");
-      parent.children().find('.sub_question_question_text_odia').val("");
-      parent.hide();
+      var id, parent;
+      parent = $(this).parent().parent();
+      id = parent.next().val();
       parent.find('.sub_question_destroy').val(id);
-      }
+      return parent.remove();
     });
-
-    
     $(document).on('click', '#add-option-btn', function() {
-      var child, id, name, hindi_name, odia_name;
-      
-      child = $('#options-fields-area').children(':not(:hidden)').last().clone();
-      
+      var child, id, name;
+      child = $('#options-fields-area').children().last(":nth-child(1)").clone();
       child.find("input").val("");
-      
       id = child.data('id');
       id = parseInt(id) + 1;
-      child.attr('data-id', id);
-      
+      child.attr("data-id", id);
       name = "question[sub_questions_attributes][" + id + "][question_text]";
-      hindi_name = "question[sub_questions_attributes][" + id + "][question_text_hindi]";
-      odia_name = "question[sub_questions_attributes][" + id + "][question_text_odia]";
-      
-      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text input")
-        .attr('name', name);
-      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_hindi input")
-        .attr('name', hindi_name);
-      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_odia input")
-        .attr('name', odia_name);
-      
-      child.find('.sub_question_destroy').val("").removeClass('hidden');
-      
-      $('#options-fields-area').append(child);
+      child.find("input").attr('name', name);
+      child.children().last().children(":nth-child(1)").removeClass('hidden');
+      return $('#options-fields-area').append(child);
     });
-
     $(document).on('click', '.edit-add-option', function() {
-      var child, id, name, hindi_name, odia_name;
-      var parent = $(this).parent();
-      var optionType = parent.find('select').val();
-    
-      if (optionType === "checkbox") {
+      var child, id, name, parent;
+      parent = $(this).parent();
+      if (parent.find('select').val() === "checkbox") {
         parent.find('.checkbox-option').removeClass("d-none");
-      } else if (optionType === "multiple_choice" || optionType === "dropdown") {
+      } else if (parent.find('select').val() === "multiple_choice" || parent.find('select').val() === "dropdown") {
         parent.find('.radio-button-option').removeClass("d-none");
       } else {
         parent.find('.checkbox-option').addClass("d-none");
         parent.find('.radio-button-option').addClass("d-none");
         parent.find('.cross-btn').addClass("d-none");
       }
-    
-      child = parent.find('#options-fields-area-edit .checkbox-option-row:not(:hidden)').last().clone().removeClass("d-none");
+      child = parent.find('#options-fields-area-edit .checkbox-option-row').last().clone();
+      child = child.removeClass("d-none");
       child.find(".question_sub_questions__destroy").remove();
-    
       child.find(".input-box input").val("");
-    
-      var existingRowsCount = parent.find('#options-fields-area-edit .checkbox-option-row').length;
-      id = existingRowsCount;
+      id = parent.find('#options-fields-area-edit .checkbox-option-row').length;
+      id = parseInt(id) + 1;
       name = "question[sub_questions_attributes][" + id + "][question_text]";
-      hindi_name = "question[sub_questions_attributes][" + id + "][question_text_hindi]";
-      odia_name = "question[sub_questions_attributes][" + id + "][question_text_odia]";
-    
-      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text input")
-        .attr('name', name);
-      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_hindi input")
-        .attr('name', hindi_name);
-      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_odia input")
-        .attr('name', odia_name);
-    
-      parent.find('#options-fields-area-edit').append(child);
+      child.find(".input-box input").attr('name', name);
+      return parent.find('#options-fields-area-edit').append(child);
     });
-    
-    
     $('#new_question #options-fields-area .checkbox-option-row').addClass("d-none");
     $('.question_question_type select').each(function() {
       if ($(this).val() === "checkbox") {
