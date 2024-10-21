@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_21_070453) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -193,6 +193,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_02_200244) do
     t.string "officer_designation"
     t.string "title_hindi"
     t.string "title_odia"
+    t.boolean "is_satisfaction_rating_optional", default: false, null: false
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
   end
