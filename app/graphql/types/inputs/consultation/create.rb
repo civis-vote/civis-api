@@ -5,7 +5,6 @@ module Types
    				 graphql_name 'ConsultationCreateInput'
    				 argument :ministry_id,	Int,	nil,	required: true
    				 argument :title,	String,	nil,	required: true
-				 argument :english_title,	String,	nil,	required: false
 				 argument :odia_title,	String,	nil,	required: false
 				 argument :hindi_title,	String,	nil,	required: false
    				 argument :url,	String,	nil,	required: true
@@ -13,10 +12,6 @@ module Types
    				 argument :review_type,						Types::Enums::ConsultationReviewType,	nil,	required: false
    				 argument :visibility,							Types::Enums::ConsultationVisibilityType,	nil,	required: false
         argument :consultation_feedback_email, String, nil, required: false
-
-				def english_title
-   					object.title if object.title.present?
-        		end
 
    				def hindi_title
     				object.title_hindi if object.title_hindi.present?

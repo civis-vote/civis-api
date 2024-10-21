@@ -33,6 +33,10 @@
             .show-page-input-details
               = @organisation&.name || '-'
           .show-page-parent-details.pb-4
+              .show-page-label-details Organisation Website
+              .show-page-input-details
+                 = link_to @organisation&.official_url || '-'
+          .show-page-parent-details.pb-4
             .show-page-label-details Logo
             .show-page-input-details
               - if @organisation.logo

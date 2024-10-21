@@ -51,7 +51,7 @@ class Admin::OrganisationsController < ApplicationController
 	end
 
 	def secure_params
-		params.require(:organisation).permit(:name, :logo, :email)
+		params.require(:organisation).permit(:name, :logo, :email, :official_url)
 	end
 
 	def set_organisation
