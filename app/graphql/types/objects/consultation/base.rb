@@ -109,6 +109,10 @@ module Types
 					end
 				end
 
+				def consultation_responses_count
+					object.responses.count
+				end
+
 				def responses_reading_times
 					object.shared_responses.sum(:reading_time)
 				end
