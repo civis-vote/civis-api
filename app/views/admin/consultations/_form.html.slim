@@ -10,8 +10,8 @@
         = f.input :visibility, as: :boolean, checked_value: "private_consultation", unchecked_value: "public_consultation", label: "Private Consultation"
       .private-consultation
         = f.input :private_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Enforce Private Response"
-      .satisfaction_rating_optional
-        = f.input :is_satisfaction_rating_optional, as: :boolean, checked_value: true, unchecked_value: false, label: "Is Satisfaction Rating Optional"
+      .private-consultation
+        = f.input :is_satisfaction_rating_optional, as: :boolean, label: "Is Satisfaction Rating Optional", include_hidden: true       
       = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
       = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
       = f.input :officer_designation, placeholder: "Officer designation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_designation" }
