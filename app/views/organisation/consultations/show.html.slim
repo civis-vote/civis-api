@@ -122,6 +122,13 @@
   .admin-list-bg.mt-4
     .consultation-feedback-flex
       .width-50
+        .p-4
+            .question-parent
+              .question-header-text
+                | Is Satisfaction Rating optional?
+              .question-text
+                .padding-right-40
+                  = @consultation.is_satisfaction_rating_optional ? "Yes" : "No"
         - if @response_rounds.size > 1
           ul.questions-rounds-tab.nav.nav-tabs.mt-2.pb-3.questions-box-shadow-top role="tablist"
             - @response_rounds.each_with_index do |response_round, index|
