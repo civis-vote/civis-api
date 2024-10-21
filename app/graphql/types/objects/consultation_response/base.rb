@@ -14,7 +14,7 @@ module Types
 				field :response_text,											String, nil, null: true
 				field :response_status,												Integer, nil, null: false
 				field :round_number,											Integer, nil, null: true
-				field :satisfaction_rating,								Types::Enums::ConsultationResponseSatisfactionRatings, nil, null: false
+				field :satisfaction_rating,								Types::Enums::ConsultationResponseSatisfactionRatings, nil, null: true
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true
 				field :templates_count,										Integer, "Count of responses that used this response as a template", null: false
 				field :up_vote_count,											Integer, "Count of users that up-voted this response", null: false
