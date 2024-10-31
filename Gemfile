@@ -112,7 +112,7 @@ gem 'http'
 gem 'pg-aws_rds_iam'
 gem 'psych', '< 4'
 
-gem 'bootstrap', '~> 4.3', '>= 4.3.1'
+gem 'bootstrap', '~> 4.6'
 gem 'font-awesome-sass'
 gem 'importmap-rails'
 gem 'sassc-rails'
