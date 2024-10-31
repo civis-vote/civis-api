@@ -76,8 +76,12 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
 **Exploring GraphQL API**
 
 - Use GraphQL client such as [Postman](https://www.postman.com/) testing and interacting with the GraphQL API. .
-- GraphQL endpoint is at `/graphql`.
+  ![Postman GraphQL](https://civis-staging-api.s3.ap-south-1.amazonaws.com/Screenshot+2024-10-31+at+6.12.25%E2%80%AFPM.png)
+- GraphQL endpoint will be at `/graphql`. Examples:
+  - Staging: `https://api-staging.civis.vote/graphql`
+  - Production: `https://api.civis.vote/graphql`.
 - To fetch GraphQL schema, use interospection query on GraphQL client.
+- To use API, pass your api key, in `Authorization` headers.
 
 ---
 
