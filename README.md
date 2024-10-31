@@ -9,7 +9,7 @@ This repository contains the codebase for the Civis API. [Civis](https://www.civ
 - The platform implements a public GraphQL API.
 - Authentication is managed via an access_token which is sent as an Authorization Header.
 - User Interfaces consume the GraphQL API (including the primary interface i.e www.civis.vote)
-- The ERD of the platform can be found [here](https://github.com/civis-vote/civis-api/blob/develop/erd.pdf).
+- The ERD of the platform can be found [here](https://github.com/civis-vote/civis-api/blob/main/erd.pdf).
 
 ---
 
