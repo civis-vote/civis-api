@@ -28,6 +28,7 @@ Rails.application.routes.draw do
     end
     resources :consultations do
       member do
+        get :analytics
         post :publish
         post :reject
         post :featured

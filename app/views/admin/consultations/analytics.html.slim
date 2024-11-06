@@ -1,0 +1,23 @@
+- navigation_add 'Consultations', admin_consultations_path
+- navigation_add "#{@consultation&.title}", admin_consultation_path(@consultation)
+= render_navigation
+- flash.each do |key, value|
+  - if (key == "flash_info" || key == "flash_success_info")
+    div class=("alert #{key}") = value
+
+.bg-white.p-3
+  .admin-filter-bg.box-shadow-none
+    .admin-filter-parent
+      .admin-filter-child.width-75
+        .admin-filter-child-field
+          ul.nav.nav-tabs role="tablist"
+            li role="presentation"
+              = link_to admin_consultation_path(@consultation) do
+                .organisation-index-title Overview
+            li.active role="presentation"
+              = link_to analytics_admin_consultation_path(@consultation) do
+                .organisation-index-title Analytics
+  .tab-content
+    .tab-pane.active.h-full#consultation_overview role="tabpanel"
+      .mt-60
+        iframe.metabase-iframe src="#{iframe_url}"

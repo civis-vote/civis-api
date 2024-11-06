@@ -21,8 +21,7 @@
           = link_to edit_admin_organisation_path(@organisation), method: :get, class: "icon-with-bg" do
             .pull-right.fa.fa-pencil-alt.pointer.fa-icon-color
         = link_to admin_organisation_path(@organisation), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "icon-with-bg" do
-            .pull-right.fas.fa-trash-alt.pointer.fa-icon-color.text-danger
-                      
+          .pull-right.fas.fa-trash-alt.pointer.fa-icon-color.text-danger
   .tab-content
     .tab-pane.active#organisation_overview role="tabpanel"
       .mt-60
@@ -38,4 +37,4 @@
               - else
                 = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
           = display_details("show-page-parent-details", "show-page-label-details", "Added on", "show-page-input-details", "#{@organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'}")
-          = display_details("show-page-parent-details", "show-page-label-details", "Addeded by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")
+          = display_details("show-page-parent-details", "show-page-label-details", "Added by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")

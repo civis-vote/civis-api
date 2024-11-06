@@ -2,7 +2,7 @@ class Admin::ConsultationsController < ApplicationController
   layout "admin_panel_sidenav"
   before_action :authenticate_user!
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_odia_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary, :update_odia_summary]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_odia_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary, :update_odia_summary, :analytics]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
@@ -189,6 +189,19 @@ class Admin::ConsultationsController < ApplicationController
     else
       redirect_to admin_consultation_path(@consultation), flash_info: "File not found."
     end
+  end
+
+  def analytics
+    metabase_site_url = Rails.application.credentials.dig(:metabase, :site_url)
+    metabase_secret_key = Rails.application.credentials.dig(:metabase, :secret_key)
+    payload = {
+      resource: { dashboard: 2 },
+      params: { consultation_id: @consultation.id },
+      exp: (Time.now + 10.minutes).to_i
+    }
+    token = JWT.encode(payload, metabase_secret_key)
+    iframe_url = "#{metabase_site_url}/embed/dashboard/#{token}#bordered=true&titled=true"
+    render 'admin/consultations/analytics', locals: { iframe_url: }
   end
 
 	private
