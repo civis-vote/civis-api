@@ -1,10 +1,10 @@
-#admin-navbar{
+#admin-navbar {
   #menu-content {
     max-height: 80vh;
-    overflow:  auto;
+    overflow: auto;
     list-style: none;
     padding-left: 0px;
-      a li {
+    a li {
       color: #fff;
       padding: 15px;
     }
@@ -14,7 +14,7 @@
     background-color: #242536 !important;
     height: 100vh;
     ul a {
-      text-decoration: none; 
+      text-decoration: none;
     }
     ul li {
       padding: 10px 0px;
@@ -24,7 +24,7 @@
     }
     ul a li:hover {
       transition: all 200ms ease;
-      background-color: #3D4857;
+      background-color: #3d4857;
       color: #fff;
     }
     ul a.active li {
@@ -37,7 +37,7 @@
       width: 200px;
       margin-bottom: 20px;
       background-color: #151524;
-      box-shadow: inset 0px -1px 0px #333B43 !important;
+      box-shadow: inset 0px -1px 0px #333b43 !important;
     }
     .text-center span img {
       height: 30px;
@@ -45,35 +45,35 @@
     }
   }
 }
-  .admin-header-navbar {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    margin-left: 200px;
-    width: calc(100% - 200px);
-    height: 60px;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 20px;
-    background-color: #242536;
-    box-shadow: 0 0 2px 0 rgba(0,0,0,0.23), 0 1px 0 0 rgba(0,0,0,0.1);
+.admin-header-navbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin-left: 200px;
+  width: calc(100% - 200px);
+  height: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 20px;
+  background-color: #242536;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.23), 0 1px 0 0 rgba(0, 0, 0, 0.1);
+}
+.main-content {
+  margin: 60px 0 0;
+  width: calc(100% - 200px);
+  max-height: 90vh;
+  overflow: auto;
+  .bg-color {
+    background-color: #f4f5f7;
   }
-  .main-content {
-    margin: 60px 0 0;
-    width: calc(100% - 200px);
-    max-height: 90vh;
-    overflow:  auto;
-    .bg-color {
-      background-color: #F4F5F7;
-    }
-  }
+}
 .avatar-circle {
   cursor: pointer;
   width: 30px;
   height: 30px;
-  background-color: #3ACA60;
+  background-color: #3aca60;
   text-align: center;
   border-radius: 50%;
   -webkit-border-radius: 50%;
@@ -87,18 +87,16 @@
     line-height: 28px; /* 50% of parent */
     color: white;
   }
-
 }
 
 @media (max-width: 768px), (max-width: 1024px) and (orientation: landscape) {
-.nav-side-menu {
-  position: fixed;
+  .nav-side-menu {
+    position: fixed;
 
-  .navbar-toggle {
-    display: none;
+    .navbar-toggle {
+      display: none;
+    }
   }
-}
-
 }
 
 #menu-content::-webkit-scrollbar {
@@ -198,12 +196,12 @@
   height: 60px;
   display: flex;
   background-color: white;
-  box-shadow: 0 1px 0 0 rgba(0,0,0,0.06);
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.06);
   z-index: 99;
   padding: 0 5px;
 }
 
-.admin-filter-parent { 
+.admin-filter-parent {
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -224,7 +222,7 @@
 
 .admin-index-record-count {
   opacity: 0.5;
-  color: #31383D;
+  color: #31383d;
   font-family: "Open Sans";
   font-size: 14px;
   line-height: 19px;
@@ -236,15 +234,15 @@
   justify-content: center;
   padding-top: 10px;
 
-  img{
-  width: 100px;
-  height: auto;
-}
+  img {
+    width: 100px;
+    height: auto;
+  }
 }
 
 .company-white-bg {
   background-color: white;
-  box-shadow: inset 0px -1px 0px #EBECF0;
+  box-shadow: inset 0px -1px 0px #ebecf0;
 }
 
 .consultation-deadline-top {
@@ -256,8 +254,8 @@
 }
 
 .deadline-notification-bg {
-  background: #7838E7;
-  box-shadow: inset 0px -1px 0px #EBECF0;
+  background: #7838e7;
+  box-shadow: inset 0px -1px 0px #ebecf0;
 }
 
 .deadline-title {
@@ -265,7 +263,7 @@
   font-weight: 600;
   font-size: 14px;
   line-height: 22px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 .deadline-description {
@@ -273,18 +271,18 @@
   font-weight: normal;
   font-size: 14px;
   line-height: 22px;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 #admin-navbar .organisation-side-navbar {
-  background-color: #1F252C !important;
+  background-color: #1f252c !important;
   ul a.active li {
-      font-weight: 600;
-      border-left: 3px solid #f0653a;
-      background-color: transparent !important;
-    }
+    font-weight: 600;
+    border-left: 3px solid #f0653a;
+    background-color: transparent !important;
+  }
 }
 
 .organisation-navbar-header {
-  background-color: #1F252C !important;
+  background-color: #1f252c !important;
 }

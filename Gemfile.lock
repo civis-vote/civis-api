@@ -661,6 +661,7 @@ DEPENDENCIES
   image_processing
   importmap-rails
   jbuilder (~> 2.5)
+  jwt
   kaminari
   listen
   local_time (~> 2.1)
