@@ -121,3 +121,5 @@ gem 'trix-rails'
 gem 'turbo-rails'
 
 gem 'airbrake', '~> 13.0'
+
+gem 'jwt'
