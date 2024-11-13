@@ -1,14 +1,15 @@
 staging:
   adapter: postgresql
   encoding: utf8
-  reconnect: true
+  reconnect: false
   database: <%= ENV['POSTGRESQL_DATABASE']%>
   pool: 20
-  url: <%= ENV['POSTGRESQL_URL'] %>
+  username: <%= ENV['POSTGRESQL_USERNAME']%>
+  password: <%= ENV['POSTGRESQL_PASSWORD']%>
+  host: <%= ENV['POSTGRESQL_ADDRESS']%>
   port: 5432
   sslmode: 'verify-ca'
   sslrootcert: "config/amazon-rds-ca-cert.pem"
-  aws_rds_iam_auth_token_generator: default
 
 production:
   adapter: postgresql
@@ -22,4 +23,4 @@ production:
   port: 5432
   sslmode: 'verify-ca'
   sslrootcert: "config/amazon-rds-ca-cert.pem"
-  aws_rds_iam_auth_token_generator: default  
+  aws_rds_iam_auth_token_generator: default
