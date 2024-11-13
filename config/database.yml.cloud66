@@ -1,7 +1,7 @@
 staging:
   adapter: postgresql
   encoding: utf8
-  reconnect: false
+  reconnect: true
   database: <%= ENV['POSTGRESQL_DATABASE']%>
   pool: 20
   url: <%= ENV['POSTGRESQL_URL'] %>
