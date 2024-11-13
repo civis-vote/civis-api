@@ -1,6 +1,6 @@
 class Admin::ConsultationsController < ApplicationController
   layout "admin_panel_sidenav"
-  before_action :authenticate_user!
+  before_action :authenticate_user!, except: %i[feedback_webhook]
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
 	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_odia_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary, :update_odia_summary, :analytics]
 	before_action :set_organisation, only: [:show, :invite_respondents]
@@ -202,6 +202,18 @@ class Admin::ConsultationsController < ApplicationController
     token = JWT.encode(payload, metabase_secret_key)
     iframe_url = "#{metabase_site_url}/embed/dashboard/#{token}#bordered=true&titled=true"
     render 'admin/consultations/analytics', locals: { iframe_url: }
+  end
+
+  def feedback_webhook
+    consultation = Consultation.find_by(feedback_email_message_id: params['MessageID'])
+    return if consultation.blank? || params['Recipient'] == 'support@civis.vote'
+
+    case params['RecordType']
+    when 'Delivery'
+      consultation.update(feedback_email_delivered_at: params['DeliveredAt'])
+    when 'Open'
+      consultation.update(feedback_email_opened_at: DateTime.now)
+    end
   end
 
 	private
