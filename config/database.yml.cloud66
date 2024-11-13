@@ -10,7 +10,7 @@ staging:
   port: 5432
   sslmode: 'verify-ca'
   sslrootcert: "config/amazon-rds-ca-cert.pem"
-  aws_rds_iam_auth_token_generator: default
+
 production:
   adapter: postgresql
   encoding: utf8
@@ -23,4 +23,4 @@ production:
   port: 5432
   sslmode: 'verify-ca'
   sslrootcert: "config/amazon-rds-ca-cert.pem"
-  aws_rds_iam_auth_token_generator: default  
+  aws_rds_iam_auth_token_generator: default
