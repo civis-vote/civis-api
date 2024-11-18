@@ -101,19 +101,20 @@ class UserMailer < ApplicationMailer
   end
 
   def notify_expired_consultation_email(email, consultation, officer_name = nil, officer_designation = nil)
-    @@postmark_client.deliver_with_template(from: 'antaraa.vasudev@civis.vote',
-                                            to: email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'notify-expired-consultation',
-                                            template_model: {
-                                              first_name: consultation.created_by.first_name,
-                                              consultation_name: consultation.title,
-                                              responses: consultation.consultation_responses_count,
-                                              ministry_name: consultation.ministry.name,
-                                              officer_name: officer_name,
-                                              officer_designation: officer_designation,
-                                              response_url: consultation.response_url,
-                                            })
+    response = @@postmark_client.deliver_with_template(from: 'antaraa.vasudev@civis.vote',
+                                                       to: email,
+                                                       reply_to: 'support@civis.vote',
+                                                       template_alias: 'notify-expired-consultation',
+                                                       template_model: {
+                                                         first_name: consultation.created_by.first_name,
+                                                         consultation_name: consultation.title,
+                                                         responses: consultation.consultation_responses_count,
+                                                         ministry_name: consultation.ministry.name,
+                                                         officer_name: officer_name,
+                                                         officer_designation: officer_designation,
+                                                         response_url: consultation.response_url
+                                                       })
+    consultation.update(feedback_email_message_id: response[:message_id])
   end
 
   def forgot_password_email(user, url)
