@@ -213,6 +213,8 @@ class Admin::ConsultationsController < ApplicationController
       consultation.update(feedback_email_delivered_at: params['DeliveredAt'])
     when 'Open'
       consultation.update(feedback_email_opened_at: DateTime.now)
+    when 'Click'
+      consultation.update(feedback_email_clicked_at: DateTime.now)
     end
   end
 
