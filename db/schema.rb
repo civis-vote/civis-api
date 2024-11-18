@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_13_111003) do
+ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -197,6 +197,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_13_111003) do
     t.string "feedback_email_message_id"
     t.datetime "feedback_email_delivered_at"
     t.datetime "feedback_email_opened_at"
+    t.datetime "feedback_email_clicked_at"
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
