@@ -150,9 +150,9 @@ class UserMailer < ApplicationMailer
     file_name = "consultations-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook.add_worksheet(name: 'Consultations') do |sheet|
-      sheet.add_row ['Title', 'Category', 'Url', 'Response Deadline', 'Ministry', 'Category', 'Status', 'Summary', 'Response Count', 'Featured', 'Reading Time', 'Created At', 'Consultation Page Link'], b: true
+      sheet.add_row ['Title', 'Url', 'Response Deadline', 'Ministry', 'Category', 'Status', 'Summary', 'Response Count', 'Featured', 'Reading Time', 'Created At', 'Consultation Page Link'], b: true
       consultations.each do |consultation|
-        sheet.add_row [consultation.title, consultation.ministry.category.name, consultation.url, consultation.response_deadline&.strftime('%d %b %Y %I:%M %p'), consultation.ministry.name, consultation.ministry.category.name, consultation.status, consultation.english_summary_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime('%d %b %Y'), consultation.feedback_url]
+        sheet.add_row [consultation.title, consultation.url, consultation.response_deadline&.strftime('%d %b %Y %I:%M %p'), consultation.ministry.name, consultation.ministry.category.name, consultation.status, consultation.english_summary_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime('%d %b %Y'), consultation.feedback_url]
       end
       sheet.column_widths(*size_arr)
     end
