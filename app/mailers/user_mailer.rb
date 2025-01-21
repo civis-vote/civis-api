@@ -464,7 +464,7 @@ class UserMailer < ApplicationMailer
     excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
     file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
-    response_header = ['Consultation Title', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
+    response_header = ['Consultation Title', 'Category', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Consultation Responses') do |sheet|
         wrap = workbook.styles.add_style alignment: { wrap_text: true }
