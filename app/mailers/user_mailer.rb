@@ -9,8 +9,9 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               first_name: user.first_name,
                                               confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
+
   end
 
   def notify_new_consultation_policy_review_email(user, consultation)
@@ -23,10 +24,9 @@ class UserMailer < ApplicationMailer
                                               consultation_name: consultation.title,
                                               ministry_name: consultation.ministry.name,
                                               feedback_url: consultation.feedback_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
   end
-
   def notify_new_consultation_email_to_admin(user, consultation)
     @@postmark_client.deliver_with_template(from: @@from_email,
                                             to: user.email,
@@ -35,7 +35,7 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               consultation_name: consultation.title,
                                               deadline: consultation.response_deadline.strftime('%e-%m-%Y %I:%M %p'),
-                                              review_url: consultation.review_url
+                                              review_url: consultation.review_url,
                                             })
   end
 
@@ -46,7 +46,7 @@ class UserMailer < ApplicationMailer
                                             template_alias: 'profane-response-notification',
                                             template_model: {
                                               user_name: consultation_response.user.first_name,
-                                              consultation_title: consultation_response.consultation.title
+                                              consultation_title: consultation_response.consultation.title,
                                             })
   end
 
@@ -59,7 +59,7 @@ class UserMailer < ApplicationMailer
                                               name: user.full_name,
                                               response_under_review_count: response_under_review_count,
                                               consultation_expiring_today_count: consultation_expiring_today_count,
-                                              url: url
+                                              url: url,
                                             })
   end
 
@@ -71,7 +71,7 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               up_vote_count: consultation_response.up_vote_count,
                                               consultation_response: consultation_response.response_text.to_plain_text,
-                                              consultation_title: consultation_response.consultation.title
+                                              consultation_title: consultation_response.consultation.title,
                                             })
   end
 
@@ -83,7 +83,7 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               templates_count: consultation_response.templates_count,
                                               consultation_response: consultation_response.response_text.to_plain_text,
-                                              consultation_title: consultation_response.consultation.title
+                                              consultation_title: consultation_response.consultation.title,
                                             })
   end
 
@@ -96,7 +96,7 @@ class UserMailer < ApplicationMailer
                                               first_name: consultation.created_by.first_name,
                                               consultation_name: consultation.title,
                                               feedback_url: consultation.feedback_url,
-                                              unsubscribe_url: consultation.created_by.unsubscribe_url
+                                              unsubscribe_url: consultation.created_by.unsubscribe_url,
                                             })
   end
 
@@ -125,7 +125,7 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               email: user.email,
                                               url: url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
   end
 
@@ -139,15 +139,15 @@ class UserMailer < ApplicationMailer
                                               email: user.email,
                                               password: password,
                                               url: client_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
   end
 
   def consultation_export_email_job(consultations, email)
     size_arr = []
     consultations.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir}/consultations-sheet_#{Time.now}.xlsx"
-    file_name = "consultations-sheet_#{Time.now}.xlsx"
+    excel_file = "#{Dir.tmpdir()}/consultations-sheet_#{Time.now.to_s}.xlsx"
+    file_name = "consultations-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook.add_worksheet(name: 'Consultations') do |sheet|
       sheet.add_row ['Title', 'Url', 'Response Deadline', 'Ministry', 'Category', 'Status', 'Summary', 'Response Count', 'Featured', 'Reading Time', 'Created At', 'Consultation Page Link'], b: true
@@ -164,20 +164,21 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name
+                                              first_name: user.first_name,
                                             },
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
-                                            }])
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
-  def	consultation_responses_export_email_job(consultation_responses, email)
+  def 	consultation_responses_export_email_job(consultation_responses, email)
     size_arr = []
     consultation_responses.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir}/consultation-responses-sheet_#{Time.now}.xlsx"
-    file_name = "consultations-responses-sheet_#{Time.now}.xlsx"
+    excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
+    file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
     if consultation_responses.last.consultation.public_consultation?
       xlsx.workbook do |workbook|
@@ -200,88 +201,59 @@ class UserMailer < ApplicationMailer
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      end, consultation_response.user.present? && consultation_response.user.designation.present? ? consultation_response.user.designation : 'NA']
             answers = []
             question_ids.each do |id|
-              answers << if consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
-                           answer
-                         else
-                           ''
-                         end
+              if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id })
+                answers << answer
+              else
+                answers << ''
+              end
             end
-            answers = answers.map do |k|
-              "#{if k['answer'].class == Array
-                   k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',')
-                 else
-                   k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer']
-                 end}#{if k.empty?
-                         ''
-                       else
-                         k.key?('is_other') && k['answer'].present? ? ',' : ' '
-                       end}#{if k.empty?
-                               ''
-                             else
-                               k.key?('is_other') ? k['other_option_answer'] : ''
-                             end}"
-            end
-            answers.each do |answer|
+            answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',') : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+            answers.each do | answer |
               row_data << answer
             end
             sheet.add_row row_data, style: wrap
           end
-          sheet.column_widths(*size_arr)
+          sheet.column_widths *size_arr
         end
       end
     else
       xlsx.workbook do |workbook|
         consultation_responses.last.consultation.response_rounds.order(:created_at).each_with_index do |response_round, index|
           next unless response_round.present?
-
           workbook.add_worksheet(name: "Responses - Round #{index + 1}") do |sheet|
-            wrap = workbook.styles.add_style alignment: { wrap_text: true }
-            response_header = ['Consultation Title', 'Category', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
-            question_headers = response_round.questions.order(:created_at).pluck(:question_text)
-            question_ids = response_round.questions.order(:created_at).pluck(:id)
-            question_headers.each do |question|
-              response_header << question
-            end
-            sheet.add_row response_header, b: true
-            consultation_responses.each do |consultation_response|
-              next unless consultation_response.response_round_id == response_round.id
+          wrap = workbook.styles.add_style alignment: { wrap_text: true }
+          response_header = ['Consultation Title', 'Category', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
+          question_headers = response_round.questions.order(:created_at).pluck(:question_text)
+          question_ids = response_round.questions.order(:created_at).pluck(:id)
+          question_headers.each do |question|
+            response_header << question
+          end
+          sheet.add_row response_header, b: true
+          consultation_responses.each do |consultation_response|
+            next unless consultation_response.response_round_id == response_round.id
 
-              row_data = [consultation_response.consultation.title, consultation_response.consultation.ministry.category.name, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.user.present? && consultation_response.user.city.present? ? consultation_response.user.city.name : 'NA', consultation_response.user.present? && consultation_response.user.phone_number.present? ? consultation_response.user.phone_number : 'NA', consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if consultation_response.user.present? && consultation_response.user.organisation.present?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       consultation_response.user.organisation.name
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     elsif consultation_response.user.present? && consultation_response.user.organization.present?
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       consultation_response.user.organization
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     else
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       'NA'
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     end, consultation_response.user.present? && consultation_response.user.designation.present? ? consultation_response.user.designation : 'NA']
-              answers = []
+            row_data = [consultation_response.consultation.title, consultation_response.consultation.ministry.category.name, consultation_response.response_text.to_plain_text, consultation_response.user ? consultation_response.user.full_name : "#{consultation_response.first_name} #{consultation_response.last_name}", consultation_response.user ? consultation_response.user.email : consultation_response.email, consultation_response.user.present? && consultation_response.user.city.present? ? consultation_response.user.city.name : 'NA', consultation_response.user.present? && consultation_response.user.phone_number.present? ? consultation_response.user.phone_number : 'NA', consultation_response.satisfaction_rating, consultation_response.visibility, consultation_response.created_at.localtime.try(:strftime, '%e %b %Y'), consultation_response.user ? consultation_response.user.confirmed_at? : nil, consultation_response.source, if consultation_response.user.present? && consultation_response.user.organisation.present?
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     consultation_response.user.organisation.name
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   elsif consultation_response.user.present? && consultation_response.user.organization.present?
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     consultation_response.user.organization
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   else
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     'NA'
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   end, consultation_response.user.present? && consultation_response.user.designation.present? ? consultation_response.user.designation : 'NA']
+            answers = []
               question_ids.each do |id|
-                answers << if consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
-                             answer
-                           else
-                             ''
-                           end
+                if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id } )
+                  answers << answer
+                else
+                  answers << ''
+                end
               end
-              answers = answers.map do |k|
-                "#{if k['answer'].class == Array
-                     k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',')
-                   else
-                     k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer']
-                   end}#{if k.empty?
-                           ''
-                         else
-                           k.key?('is_other') && k['answer'].present? ? ',' : ' '
-                         end}#{if k.empty?
-                                 ''
-                               else
-                                 k.key?('is_other') ? k['other_option_answer'] : ''
-                               end}"
-              end
-              answers.each do |answer|
+              answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',') : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
+              answers.each do | answer |
                 row_data << answer
               end
               sheet.add_row row_data, style: wrap
             end
-            sheet.column_widths(*size_arr)
+            sheet.column_widths *size_arr
           end
         end
       end
@@ -295,20 +267,21 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name
+                                              first_name: user.first_name,
                                             },
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
-                                            }])
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def user_export_email_job(users, email)
     size_arr = []
     users.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir}/users-sheet_#{Time.now}.xlsx"
-    file_name = "users-sheet_#{Time.now}.xlsx"
+    excel_file = "#{Dir.tmpdir()}/users-sheet_#{Time.now.to_s}.xlsx"
+    file_name = "users-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Users') do |sheet|
@@ -334,20 +307,21 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name
+                                              first_name: user.first_name,
                                             },
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
-                                            }])
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def profanity_export_email_job(profanities, email)
     size_arr = []
     profanities.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir}/profanities-sheet_#{Time.now}.xlsx"
-    file_name = "profanities-sheet_#{Time.now}.xlsx"
+    excel_file = "#{Dir.tmpdir()}/profanities-sheet_#{Time.now.to_s}.xlsx"
+    file_name = "profanities-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Profanities') do |sheet|
@@ -367,20 +341,21 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name
+                                              first_name: user.first_name,
                                             },
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
-                                            }])
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def wordindex_export_email_job(wordindices, email)
     size_arr = []
     wordindices.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir}/glossary-sheet_#{Time.now}.xlsx"
-    file_name = "glossary-sheet_#{Time.now}.xlsx"
+    excel_file = "#{Dir.tmpdir()}/glossary-sheet_#{Time.now.to_s}.xlsx"
+    file_name = "glossary-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Glossary') do |sheet|
@@ -400,25 +375,26 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name
+                                              first_name: user.first_name,
                                             },
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
-                                            }])
+                                              content_type: 'application/vnd.ms-excel',
+                                            }],
+                                          )
   end
 
   def invite_organisation_employee(user, invitation_url)
     @@postmark_client.deliver_with_template(from: @@from_email,
-                                            to: user.email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'organisation-user-invite',
-                                            template_model: {
-                                              first_name: user.first_name,
-                                              invitation_url: invitation_url,
-                                              unsubscribe_url: user.unsubscribe_url
-                                            })
+                                              to: user.email,
+                                              reply_to: 'support@civis.vote',
+                                              template_alias: 'organisation-user-invite',
+                                              template_model: {
+                                                first_name: user.first_name,
+                                                invitation_url: invitation_url,
+                                                unsubscribe_url: user.unsubscribe_url,
+                                              })
   end
 
   def invite_respondent(consultation, user, consultation_url)
@@ -429,7 +405,7 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               consultation_name: consultation.title,
                                               consultation_url: consultation_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
   end
 
@@ -446,8 +422,9 @@ class UserMailer < ApplicationMailer
                                               consultation_name: consultation.title,
                                               first_name: user.first_name,
                                               confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
+
   end
 
   def verify_email_after_72_hours(user_id)
@@ -460,8 +437,9 @@ class UserMailer < ApplicationMailer
                                             template_alias: 'user-confirmation-after-72-hours',
                                             template_model: {
                                               confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
+
   end
 
   def verify_email_after_120_hours(user_id)
@@ -475,17 +453,18 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               first_name: user.first_name,
                                               confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
                                             })
+
   end
 
   def export_all_subjective_responses(email)
-    consultation_list = Consultation.includes(responses: { user: :city }, response_rounds: :questions)
+    consultation_list = Consultation.includes(responses: {user: :city}, response_rounds: :questions)
     question_ids = Question.where(question_type: 'long_text').pluck(:id)
-    excel_file = "#{Dir.tmpdir}/consultation-responses-sheet_#{Time.now}.xlsx"
-    file_name = "consultations-responses-sheet_#{Time.now}.xlsx"
+    excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
+    file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
     xlsx = Axlsx::Package.new
-    response_header = ['Consultation Title', 'Category', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
+    response_header = ['Consultation Title', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Consultation Responses') do |sheet|
         wrap = workbook.styles.add_style alignment: { wrap_text: true }
@@ -519,16 +498,17 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name
+                                              first_name: user.first_name,
                                             },
-                                            attachments: [{
-                                              name: file_name,
-                                              content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
-                                            }])
+                                              attachments: [{
+                                                name: file_name,
+                                                content: [file.read].pack('m'),
+                                                content_type: 'application/vnd.ms-excel',
+                                              }],
+                                            )
   end
 
   def response_text(response, question_ids)
-    response.response_text.to_plain_text.presence || (response.answers && response.answers.detect { |an| question_ids.include? an['question_id'].to_i }&.dig('answer'))
+    response.response_text.to_plain_text.presence || (response.answers && response.answers.detect { |an| question_ids.include? an['question_id'].to_i}&.dig('answer'))
   end
 end
