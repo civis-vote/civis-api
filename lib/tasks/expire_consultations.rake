@@ -1,6 +1,6 @@
 namespace :expire do
   desc "Update consultation status"
   task consultations: :environment do
-    Consultation.published.where("Date(response_deadline) <= ?", Date.today).each(&:expire)
+    Consultation.published.where("response_deadline <= ?", DateTime.current).each(&:expire)
   end
 end
