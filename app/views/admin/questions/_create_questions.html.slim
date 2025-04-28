@@ -15,6 +15,7 @@
                 .validation-question-text.validation-error.text-danger.d-none Add question text to create question
                 = f.input :question_text_hindi, placeholder: "Question in Hindi", label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 40px;", placeholder: "Question in Hindi"}, label:"Question in Hindi"
                 = f.input :question_text_odia, placeholder: "Question in Odia", label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 40px;", placeholder: "Question in Odia"}, label:"Question in Odia"
+                = f.input :question_text_marathi, placeholder: "Question in Marathi", label: false, input_html: { class: "sub_question_text", id: "question_text", style: "height: 40px;", placeholder: "Question in Marathi"}, label:"Question in Marathi"
                 = f.input :question_type, as: :select, collection: Question.question_types.keys.map{|a| [a.humanize.capitalize, a]}, prompt: "Question type", required: true, label: false, input_html: { style: "height: 40px;"}
                 = f.input :response_round_id, as: :hidden, input_html: { value: response_round_id }
                 #options-fields-area
