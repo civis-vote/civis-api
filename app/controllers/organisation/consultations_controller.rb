@@ -123,7 +123,7 @@ class Organisation::ConsultationsController < ApplicationController
     @consultation.publish
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully approved."
   end
-
+f
   def extend_deadline
     @consultation.extend_deadline(secure_params[:response_deadline])
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation deadline was extended and successfully published."
@@ -158,7 +158,7 @@ class Organisation::ConsultationsController < ApplicationController
   private
 
   def secure_params
-    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :private_response, :organisation_id, :is_satisfaction_rating_optional)  
+    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :title_marathi, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :private_response, :organisation_id, :is_satisfaction_rating_optional)  
   end
 
   def set_consultation
