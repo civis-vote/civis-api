@@ -13,7 +13,7 @@
       .private-consultation
         = f.input :is_satisfaction_rating_optional, as: :boolean, label: "Is Satisfaction Rating Optional", include_hidden: true       
       = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
-      = f.input :consultation_image, as: :file, label: "Consultation Image", required: false, wrapper: :form_input_group, input_html: { id: "imageUpload", class: "form-control" }
+      = f.input :consultation_logo, as: :file, label: "Consultation Logo", required: false, wrapper: :form_input_group, input_html: { id: "imageUpload", class: "form-control" }
       = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
       = f.input :officer_designation, placeholder: "Officer designation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_designation" }
       #consultation-ministry

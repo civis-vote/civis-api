@@ -20,7 +20,7 @@
 				  = f.input :title_hindi, placeholder: "Hindi Consultation title", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_hindi" }
 				  = f.input :title_odia, placeholder: "Odia Consultation title", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_odia" }
 		          = f.input :consultation_feedback_email, placeholder: "Feedback email", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "email"}
-      			  = f.input :consultation_image, as: :file, label: "Consultation Image", required: false, wrapper: :form_input_group, input_html: { id: "imageUpload", class: "form-control" }
+      			  = f.input :consultation_logo, as: :file, label: "Consultation Logo", required: false, wrapper: :form_input_group, input_html: { id: "imageUpload", class: "form-control" }
 		          = f.input :organisation_id, as: :hidden, input_html: { value: @organisation.id }
 		          = f.input :visibility, as: :hidden, input_html: { value: "private_consultation" }
 		          = f.input :ministry_id, as: :select, collection: Ministry.approved.map {|u| [u.name, u.id]}, selected: @consultation&.ministry_id, label: 'Select ministry', required: false, include_blank: true, wrapper: :form_select_group, input_html: { include_hidden: false, class: "form-control select2", id: "organisation_consultation", data: { placeholder: 'Select ministry', id: "#{@consultation.id}"  } }
