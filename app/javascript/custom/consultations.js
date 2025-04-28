@@ -113,6 +113,7 @@
       parent.children().find('.sub_question_question_text').val("");
       parent.children().find('.sub_question_question_text_hindi').val("");
       parent.children().find('.sub_question_question_text_odia').val("");
+      parent.children().find('.sub_question_question_text_marathi').val("");
       parent.hide();
       parent.find('.sub_question_destroy').val(id);
       }
@@ -120,7 +121,7 @@
 
     
     $(document).on('click', '#add-option-btn', function() {
-      var child, id, name, hindi_name, odia_name;
+      var child, id, name, hindi_name, odia_name, marathi_name;
       
       child = $('#options-fields-area').children(':not(:hidden)').last().clone();
       
@@ -133,6 +134,7 @@
       name = "question[sub_questions_attributes][" + id + "][question_text]";
       hindi_name = "question[sub_questions_attributes][" + id + "][question_text_hindi]";
       odia_name = "question[sub_questions_attributes][" + id + "][question_text_odia]";
+      marathi_name = "question[sub_questions_attributes][" + id + "][question_text_marathi]";
       
       child.find(".input-box .form-group.string.optional.question_sub_questions_question_text input")
         .attr('name', name);
@@ -140,6 +142,8 @@
         .attr('name', hindi_name);
       child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_odia input")
         .attr('name', odia_name);
+      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_marathi input")
+        .attr('name', marathi_name);
       
       child.find('.sub_question_destroy').val("").removeClass('hidden');
       
@@ -147,7 +151,7 @@
     });
 
     $(document).on('click', '.edit-add-option', function() {
-      var child, id, name, hindi_name, odia_name;
+      var child, id, name, hindi_name, odia_name, marathi_name;
       var parent = $(this).parent();
       var optionType = parent.find('select').val();
     
@@ -171,6 +175,7 @@
       name = "question[sub_questions_attributes][" + id + "][question_text]";
       hindi_name = "question[sub_questions_attributes][" + id + "][question_text_hindi]";
       odia_name = "question[sub_questions_attributes][" + id + "][question_text_odia]";
+      marathi_name = "question[sub_questions_attributes][" + id + "][question_text_marathi]";
     
       child.find(".input-box .form-group.string.optional.question_sub_questions_question_text input")
         .attr('name', name);
@@ -178,6 +183,8 @@
         .attr('name', hindi_name);
       child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_odia input")
         .attr('name', odia_name);
+      child.find(".input-box .form-group.string.optional.question_sub_questions_question_text_marathi input")
+        .attr('name', marathi_name);
     
       parent.find('#options-fields-area-edit').append(child);
     });

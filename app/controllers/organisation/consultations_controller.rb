@@ -2,8 +2,8 @@ class Organisation::ConsultationsController < ApplicationController
   layout 'organisation_sidenav'
   before_action :authenticate_user!
   before_action :require_organisation_employee, only: %i[index create show edit import_responses]
-  before_action :set_organisation, only: %i[index create show edit update edit_hindi_summary edit_odia_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary]
-  before_action :set_consultation, only: %i[show edit update edit_hindi_summary edit_odia_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary]
+  before_action :set_organisation, only: %i[index create show edit update edit_hindi_summary edit_odia_summary edit_marathi_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary update_marathi_summary]
+  before_action :set_consultation, only: %i[show edit update edit_hindi_summary edit_odia_summary edit_marathi_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary update_marathi_summary]
   def index
     @consultation = Consultation.new
     @consultations = Consultation.where(organisation_id: @organisation.id).includes(:ministry, :created_by).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
@@ -46,6 +46,10 @@ class Organisation::ConsultationsController < ApplicationController
     @odia_summary = @consultation.odia_summary
   end
 
+  def edit_marathi_summary
+    @marathi_summary = @consultation.marathi_summary
+  end
+
   def update_english_summary
     if @consultation.update(english_summary: params[:consultation][:english_summary])
       @consultation.update_reading_time
@@ -73,6 +77,16 @@ class Organisation::ConsultationsController < ApplicationController
       redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
     else
       redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Odia Summary was not successfully updated.'
+    end
+  end
+
+  def update_marathi_summary
+    if @consultation.update(marathi_summary: params[:consultation][:marathi_summary])
+      @consultation.update_reading_time
+      flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation Marathi Summary was successfully updated.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
+    else
+      redirect_to admin_consultation_path(@consultation), flash_info: "Consultation Marathi Summary was not successfully updated."
     end
   end
 
