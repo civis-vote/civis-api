@@ -115,7 +115,7 @@
             = display_details("show-page-parent-details", "show-page-label-details", "Review Type", "show-page-input-details", "#{@consultation.review_type }")
             = display_details("show-page-parent-details", "show-page-label-details", "Visibility", "show-page-input-details", "#{@consultation.visibility.titleize}")
             = display_details("show-page-parent-details", "show-page-label-details", "Response Deadline", "show-page-input-details", "#{@consultation&.response_deadline&.localtime.try(:strftime, '%e %b %Y %I:%M %p') || '-'}")
-            = display_details("show-page-parent-details", "show-page-label-details", "Allow Discuss Engage Responses", "show-page-input-details", "#{@consultation.allow_discuss_engage_response ? 'Yes' : 'No'}")
+            = display_details("show-page-parent-details", "show-page-label-details", "Show Discuss Section", "show-page-input-details", "#{@consultation.show_discuss_section ? 'Yes' : 'No'}")
             .show-page-parent-details
               .show-page-label-details Status
               .show-page-input-details
