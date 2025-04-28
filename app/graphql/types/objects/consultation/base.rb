@@ -27,6 +27,7 @@ module Types
 				field :response_submission_message,				String, nil, null: true
 				field :review_type,												Types::Enums::ConsultationReviewType, nil, null: false
 				field :is_satisfaction_rating_optional,			Boolean, nil, null: false
+				field :allow_discuss_engage_response,			Boolean, nil, null: false
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true
 				field :shared_responses,									Types::Connections::ConsultationResponse, nil, null: true do 
 					argument :sort,													Types::Enums::ConsultationResponseSorts, 	required: false, default_value: nil
