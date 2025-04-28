@@ -9,6 +9,7 @@ class Consultation < ApplicationRecord
   has_rich_text :english_summary
   has_rich_text :hindi_summary
   has_rich_text :odia_summary
+  has_rich_text :marathi_summary
 
   has_one_attached :consultation_image
 
@@ -155,6 +156,10 @@ class Consultation < ApplicationRecord
 
   def odia_summary_rich_text
     convert_to_rich_text(odia_summary.to_s)
+  end
+
+  def marathi_summary_rich_text
+    convert_to_rich_text(marathi_summary.to_s)
   end
 
   def response_url

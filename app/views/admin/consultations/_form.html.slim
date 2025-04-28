@@ -6,12 +6,15 @@
       = f.input :title, placeholder: "Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title" }
       = f.input :title_hindi, placeholder: "Hindi Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_hindi" }
       = f.input :title_odia, placeholder: "Odia Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_odia" }
+      = f.input :title_marathi, placeholder: "Marathi Title of consultation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_title_marathi" }
       .private-consultation
         = f.input :visibility, as: :boolean, checked_value: "private_consultation", unchecked_value: "public_consultation", label: "Private Consultation"
       .private-consultation
         = f.input :private_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Enforce Private Response"
       .private-consultation
-        = f.input :is_satisfaction_rating_optional, as: :boolean, label: "Is Satisfaction Rating Optional", include_hidden: true       
+        = f.input :is_satisfaction_rating_optional, as: :boolean, label: "Is Satisfaction Rating Optional", include_hidden: true      
+      .private-consultation
+        = f.input :allow_discuss_engage_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Allow Discuss Engage Responses"
       = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
       = f.input :consultation_image, as: :file, label: "Consultation Image", required: false, wrapper: :form_input_group, input_html: { id: "imageUpload", class: "form-control" }
       = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
