@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_28_093705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -115,6 +115,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
     t.index ["consultation_id"], name: "index_consultation_hindi_summaries_on_consultation_id"
   end
 
+  create_table "consultation_marathi_summaries", force: :cascade do |t|
+    t.bigint "consultation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["consultation_id"], name: "index_consultation_marathi_summaries_on_consultation_id"
+  end
+
   create_table "consultation_odia_summaries", force: :cascade do |t|
     t.bigint "consultation_id"
     t.datetime "created_at", null: false
@@ -198,6 +205,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
     t.datetime "feedback_email_delivered_at"
     t.datetime "feedback_email_opened_at"
     t.datetime "feedback_email_clicked_at"
+    t.boolean "incognito"
+    t.string "title_marathi"
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
@@ -250,6 +259,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
     t.string "secondary_officer_designation"
     t.string "name_hindi"
     t.string "name_odia"
+    t.string "name_marathi"
     t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
   end
 
@@ -313,6 +323,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
     t.boolean "supports_other", default: false
     t.string "question_text_hindi"
     t.string "question_text_odia"
+    t.text "question_text_marathi"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
   end
@@ -431,6 +442,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_11_18_094017) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "consultation_hindi_summaries", "consultations"
+  add_foreign_key "consultation_marathi_summaries", "consultations"
   add_foreign_key "consultation_odia_summaries", "consultations"
   add_foreign_key "consultation_response_votes", "consultation_responses"
   add_foreign_key "consultation_response_votes", "users"
