@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_28_093705) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_28_142232) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -207,6 +207,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_093705) do
     t.datetime "feedback_email_clicked_at"
     t.boolean "incognito"
     t.string "title_marathi"
+    t.boolean "allow_discuss_engage_response", default: true, null: false
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
