@@ -13,7 +13,7 @@
       .private-consultation
         = f.input :is_satisfaction_rating_optional, as: :boolean, label: "Is Satisfaction Rating Optional", include_hidden: true      
       .private-consultation
-        = f.input :allow_discuss_engage_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Allow Discuss Engage Responses"
+        = f.input :show_discuss_section, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Show Discuss Section"
       = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
       = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
       = f.input :officer_designation, placeholder: "Officer designation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_designation" }
