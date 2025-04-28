@@ -16,6 +16,7 @@
       .private-consultation
         = f.input :allow_discuss_engage_response, as: :boolean, checked_value: 1, unchecked_value: 0, label: "Allow Discuss Engage Responses"
       = f.input :consultation_feedback_email, placeholder: "Consultation feedback email address", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "consultation_feedback_email" }
+      = f.input :consultation_image, as: :file, label: "Consultation Image", required: false, wrapper: :form_input_group, input_html: { id: "imageUpload", class: "form-control" }
       = f.input :officer_name, placeholder: "Officer name", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_name" }
       = f.input :officer_designation, placeholder: "Officer designation", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "officer_designation" }
       #consultation-ministry

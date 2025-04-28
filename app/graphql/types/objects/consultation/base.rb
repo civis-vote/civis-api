@@ -14,6 +14,9 @@ module Types
 						super && context[:current_user].present?
 					end
 				end
+				field :consultation_image,		Types::Objects::ShrineAttachment, nil, null: true do
+					argument :resolution, String, required: false, default_value: nil
+				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
 				field :consultation_responses_count,			Integer,nil, null: false
 				field :published_at,											Types::Objects::DateTime, nil, null: true
@@ -57,6 +60,10 @@ module Types
 					nil unless context[:current_user].present?
 
 					object.responded_on(context[:current_user])
+				end
+
+				def consultation_image(resolution:)
+					object.shrine_resize(resolution, "consultation_image")
 				end
 
 				def page
