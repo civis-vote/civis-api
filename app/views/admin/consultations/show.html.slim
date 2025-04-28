@@ -128,6 +128,12 @@
               .show-page-label-details Consultation Summary
               .show-page-input-details
                 = link_to  "#{@consultation.response_url}", @consultation.response_url, target: :_blank
+            .show-page-parent-details
+              .show-page-label-details Consultation Image
+              .show-page-input-details
+                - if @consultation.consultation_image.present?
+                  = image_tag @consultation.consultation_image, class: "user-timeline-profile-picture-bg"
+
         .admin-index-title.mt-4
           | Summary
         .admin-list-bg.mt-4

@@ -144,7 +144,7 @@ class Organisation::ConsultationsController < ApplicationController
   private
 
   def secure_params
-    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :private_response, :organisation_id, :is_satisfaction_rating_optional)  
+    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :url, :ministry_id, :response_deadline, :consultation_image, :summary, :consultation_feedback_email, :review_type, :visibility, :private_response, :organisation_id, :is_satisfaction_rating_optional)  
   end
 
   def set_consultation
