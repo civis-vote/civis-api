@@ -123,7 +123,7 @@ class Organisation::ConsultationsController < ApplicationController
     @consultation.publish
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully approved."
   end
-f
+  
   def extend_deadline
     @consultation.extend_deadline(secure_params[:response_deadline])
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation deadline was extended and successfully published."
