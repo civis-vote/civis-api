@@ -175,7 +175,7 @@ class Consultation < ApplicationRecord
     if consultation_logo.attached?
       consultation_logo
     else
-      "user_profile_picture.png"
+      nil
     end
   end
 
