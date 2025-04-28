@@ -14,7 +14,7 @@ module Types
 						super && context[:current_user].present?
 					end
 				end
-				field :consultation_image,		Types::Objects::ShrineAttachment, nil, null: true do
+				field :consultation_logo,		Types::Objects::ShrineAttachment, nil, null: true do
 					argument :resolution, String, required: false, default_value: nil
 				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
@@ -62,8 +62,8 @@ module Types
 					object.responded_on(context[:current_user])
 				end
 
-				def consultation_image(resolution:)
-					object.shrine_resize(resolution, "consultation_image")
+				def consultation_logo(resolution:)
+					object.shrine_resize(resolution, "consultation_logo")
 				end
 
 				def page
