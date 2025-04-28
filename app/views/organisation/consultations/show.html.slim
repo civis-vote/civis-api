@@ -74,6 +74,7 @@
       = display_details("show-page-parent-details", "show-page-label-details", "Consultation title in Odia", "show-page-input-details", "#{@consultation&.title_odia || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Feedback Email", "show-page-input-details", "#{@consultation&.consultation_feedback_email || '-'}")
       = display_details("show-page-parent-details", "show-page-label-details", "Consultation PDF", "show-page-input-details", "#{@consultation&.url}")
+      = display_details("show-page-parent-details", "show-page-label-details", "Allow Discuss Engage Responses", "show-page-input-details", "#{@consultation.allow_discuss_engage_response ? 'Yes' : 'No'}")
       .show-page-parent-details
         .show-page-label-details Status
         .show-page-input-details
