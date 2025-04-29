@@ -2,8 +2,8 @@ class Organisation::ConsultationsController < ApplicationController
   layout 'organisation_sidenav'
   before_action :authenticate_user!
   before_action :require_organisation_employee, only: %i[index create show edit import_responses]
-  before_action :set_organisation, only: %i[index create show edit update edit_hindi_summary edit_odia_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary]
-  before_action :set_consultation, only: %i[show edit update edit_hindi_summary edit_odia_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary]
+  before_action :set_organisation, only: %i[index create show edit update edit_hindi_summary edit_odia_summary edit_marathi_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary update_marathi_summary]
+  before_action :set_consultation, only: %i[show edit update edit_hindi_summary edit_odia_summary edit_marathi_summary destroy publish edit_english_summary extend_deadline create_response_round invite_respondents import_responses update_english_summary update_hindi_summary update_odia_summary update_marathi_summary]
   def index
     @consultation = Consultation.new
     @consultations = Consultation.where(organisation_id: @organisation.id).includes(:ministry, :created_by).filter_by(params[:page], filter_params.to_h, sort_params.to_h)
@@ -46,6 +46,10 @@ class Organisation::ConsultationsController < ApplicationController
     @odia_summary = @consultation.odia_summary
   end
 
+  def edit_marathi_summary
+    @marathi_summary = @consultation.marathi_summary
+  end
+
   def update_english_summary
     if @consultation.update(english_summary: params[:consultation][:english_summary])
       @consultation.update_reading_time
@@ -73,6 +77,16 @@ class Organisation::ConsultationsController < ApplicationController
       redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
     else
       redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Odia Summary was not successfully updated.'
+    end
+  end
+
+  def update_marathi_summary
+    if @consultation.update(marathi_summary: params[:consultation][:marathi_summary])
+      @consultation.update_reading_time
+      flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation Marathi Summary was successfully updated.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
+    else
+      redirect_to admin_consultation_path(@consultation), flash_info: "Consultation Marathi Summary was not successfully updated."
     end
   end
 
@@ -109,7 +123,7 @@ class Organisation::ConsultationsController < ApplicationController
     @consultation.publish
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation was successfully approved."
   end
-
+  
   def extend_deadline
     @consultation.extend_deadline(secure_params[:response_deadline])
     redirect_back fallback_location: root_path,  flash_success_info: "Consultation deadline was extended and successfully published."
@@ -144,7 +158,7 @@ class Organisation::ConsultationsController < ApplicationController
   private
 
   def secure_params
-    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :private_response, :organisation_id, :is_satisfaction_rating_optional, :allow_discuss_engage_response)
+    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :title_marathi, :url, :ministry_id, :response_deadline, :summary, :consultation_feedback_email, :review_type, :visibility, :private_response, :organisation_id, :is_satisfaction_rating_optional, :allow_discuss_engage_response)
   end
 
   def set_consultation

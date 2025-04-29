@@ -15,6 +15,7 @@
                 .validation-question-text.validation-error.text-danger.d-none Add question text to create question
                 = f.input :question_text_hindi, input_html: { id: "question_text", style: "border-radius: 2px!important; height: 40px;"}, label: "Question in Hindi"
                 = f.input :question_text_odia, input_html: { id: "question_text", style: "border-radius: 2px!important; height: 40px;"}, label: "Question in Odia"
+                = f.input :question_text_marathi, input_html: { id: "question_text", style: "border-radius: 2px!important; height: 40px;"}, label: "Question in Marathi"
                 = f.input :question_type, as: :select, collection: Question.question_types.keys.map{|a| [a.humanize.capitalize, a]}, prompt: "Question type", required: true, label: false, input_html: { style: "height: 48px;"}
                 = f.input :response_round_id, as: :hidden, input_html: { value: response_round_id }
                 #options-fields-area-edit.edit-options-fields
@@ -30,6 +31,8 @@
                           input#question_text_hindi.form-control.is-valid.string.optional autofocus="autofocus" name="question[sub_questions_attributes][0][question_text_hindi]" placeholder="Option in Hindi" style=("height: 40px;") type="text"
                         .form-group.string.optional.question_sub_questions_question_text_odia.form-group-valid
                           input#question_text_odia.form-control.is-valid.string.optional autofocus="autofocus" name="question[sub_questions_attributes][0][question_text_odia]" placeholder="Option in Odia" style=("height: 40px;") type="text"
+                        .form-group.string.optional.question_sub_questions_question_text_marathi.form-group-valid
+                          input#question_text_marathi.form-control.is-valid.string.optional autofocus="autofocus" name="question[sub_questions_attributes][0][question_text_marathi]" placeholder="Option in Marathi" style=("height: 40px;") type="text"
                       .cross-btn
                         img#option-cross src="/assets/Remove-2500ccd3389957c63a59ddd2d1ce1abac67e37ed2ef11de08fb952a4bb99360f.svg" style="width: 20px;"
                   - else 
