@@ -1,7 +1,8 @@
 class Consultation < ApplicationRecord
   acts_as_paranoid
   include SpotlightSearch
-	include Paginator
+  include Paginator
+  include ImageResizer
   include Scorable::Consultation
   has_rich_text :summary
   has_rich_text :response_submission_message
