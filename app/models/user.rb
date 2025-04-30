@@ -4,8 +4,10 @@ class User < ApplicationRecord
   include SpotlightSearch
   include Paginator
   include Scorable::User
+  include Auth::User
   include ImageUploader::Attachment(:profile_picture)
   attr_accessor :skip_invitation
+  
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -13,6 +15,7 @@ class User < ApplicationRecord
          :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
 
 	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
+  has_many :otp_requests, dependent: :destroy
 	has_many :api_keys, dependent: :destroy
   has_many :game_actions, dependent: :destroy
   has_many :point_events, dependent: :destroy
@@ -196,4 +199,5 @@ class User < ApplicationRecord
       errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
     end
   end
+
 end
