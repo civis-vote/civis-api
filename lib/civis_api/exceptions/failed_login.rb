@@ -6,7 +6,7 @@ module CivisApi
       end
 
       def message
-        @message || "Email not found"
+        @message || "Incorrect email/password combination"
       end
     end
 

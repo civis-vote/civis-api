@@ -1,12 +1,12 @@
 module CivisApi
   module Exceptions
-    class IncorrectOtp < StandardError
+    class IncorrectPassword < StandardError
       def initialize(message = nil)
         @message = message
       end
 
       def message
-        @message || "Incorrect OTP"
+        @message || "Incorrect old password"
       end
     end
 
