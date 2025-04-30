@@ -14,7 +14,7 @@ module Types
 						super && context[:current_user].present?
 					end
 				end
-				field :consultation_image,		Types::Objects::ShrineAttachment, nil, null: true do
+				field :consultation_logo,		Types::Objects::ShrineAttachment, nil, null: true do
 					argument :resolution, String, required: false, default_value: nil
 				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
@@ -30,6 +30,7 @@ module Types
 				field :response_submission_message,				String, nil, null: true
 				field :review_type,												Types::Enums::ConsultationReviewType, nil, null: false
 				field :is_satisfaction_rating_optional,			Boolean, nil, null: false
+				field :show_discuss_section,			Boolean, nil, null: false
 				field :satisfaction_rating_distribution, 	GraphQL::Types::JSON, nil, null: true
 				field :shared_responses,									Types::Connections::ConsultationResponse, nil, null: true do 
 					argument :sort,													Types::Enums::ConsultationResponseSorts, 	required: false, default_value: nil
@@ -40,6 +41,7 @@ module Types
 				field :title,															String, nil, null: false
 				field :hindi_title,												String, nil, null: true
 				field :odia_title,												String, nil, null: true
+				field :marathi_title,											String, nil, null: true
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
 				field :url,																String, nil, null: false
 				field :responses_reading_times,						Integer, "Reading times of all the responses in this consultation", null: false
@@ -49,6 +51,7 @@ module Types
 				field :english_summary,										String, nil, null: true
 				field :hindi_summary,											String, nil, null: true
 				field :odia_summary,											String, nil, null: true
+				field :marathi_summary,										String, nil, null: true
 				field :summary_hindi,											String, nil, null: true
 				field :page,											 				String, nil, null: true
 				field :consultation_partner_responses,			[Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
@@ -59,8 +62,8 @@ module Types
 					object.responded_on(context[:current_user])
 				end
 
-				def consultation_image(resolution:)
-					object.shrine_resize(resolution, "consultation_image")
+				def consultation_logo(resolution:)
+					object.shrine_resize(resolution, "consultation_logo")
 				end
 
 				def page
@@ -80,6 +83,10 @@ module Types
 					 object.title_odia
 				end
 
+				def marathi_title
+					 object.title_marathi
+				end
+
 				def english_summary
 					return unless object.english_summary.to_s.present?
 
@@ -96,6 +103,12 @@ module Types
 					return unless object.odia_summary.to_s.present?
 
 					object.odia_summary_rich_text
+				end
+
+				def marathi_summary
+					return unless object.marathi_summary.to_s.present?
+
+					object.marathi_summary_rich_text
 				end
 				
 				def shared_responses(sort:, sort_direction:)
