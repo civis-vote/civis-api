@@ -1,10 +1,12 @@
 module Types
   class MutationType < Types::BaseObject
     field :auth_accept_invite,                      resolver: Mutations::Auth::AcceptInvite
+    field :auth_change_password,                    resolver: Mutations::Auth::ChangePassword
     field :auth_confirm_email,                      resolver: Mutations::Auth::ConfirmEmail
+    field :auth_forgot_password,                    resolver: Mutations::Auth::ForgotPassword
+    field :auth_reset_password,                     resolver: Mutations::Auth::ResetPassword
     field :auth_resend_verification_email,          resolver: Mutations::Auth::ResendVerificationEmail
     field :auth_login,                              resolver: Mutations::Auth::Login
-    field :verify_otp,                              resolver: Mutations::Auth::VerifyOtp
     field :auth_sign_up,                            resolver: Mutations::Auth::SignUp
     field :consultation_create,                     resolver: Mutations::Consultation::Create
     field :consultation_response_create,            resolver: Mutations::ConsultationResponse::Create
