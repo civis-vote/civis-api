@@ -15,7 +15,6 @@ module Auth
       otp_requests.timed_out.update_all(status: :time_out, expired_at: DateTime.now)
       otp_requests.active.update_all(status:, expired_at: DateTime.now)
       otp = rand(100_000..999_999)
-      puts "OTP: #{otp}"
       otp_requests.create!(otp:, status: :created)
     end
 
