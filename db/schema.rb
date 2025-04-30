@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_30_103112) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -286,6 +286,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
+  create_table "otp_requests", force: :cascade do |t|
+    t.string "otp"
+    t.datetime "expired_at"
+    t.integer "status"
+    t.datetime "verified_at"
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_otp_requests_on_user_id"
+  end
+
   create_table "point_events", force: :cascade do |t|
     t.bigint "point_scale_id", null: false
     t.bigint "user_id", null: false
@@ -456,6 +467,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
   add_foreign_key "game_actions", "point_events"
   add_foreign_key "game_actions", "users"
   add_foreign_key "notification_settings", "users"
+  add_foreign_key "otp_requests", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
   add_foreign_key "questions", "response_rounds"
