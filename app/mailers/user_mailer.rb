@@ -511,4 +511,26 @@ class UserMailer < ApplicationMailer
   def response_text(response, question_ids)
     response.response_text.to_plain_text.presence || (response.answers && response.answers.detect { |an| question_ids.include? an['question_id'].to_i}&.dig('answer'))
   end
+
+  def send_otp(user)
+    otp = user.otp_requests.active.last&.otp
+    return unless otp
+
+    postmark_client.deliver_with_template(
+      from: from_email,
+      to: user.email,
+      template_alias: 'otp-verification',
+      template_model: template_model_base.merge!({ otp: })
+    )
+  end
+
+  def send_invitation(user)
+    postmark_client.deliver_with_template(
+      from: from_email,
+      to: user.email,
+      template_alias: 'user-invitation',
+      template_model: template_model_base.merge!({ name: user.full_name,
+                                                   redirection_url: "#{Rails.application.credentials[:be_url]}/users/sign_in" })
+    )
+  end
 end
