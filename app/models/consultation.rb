@@ -1,7 +1,8 @@
 class Consultation < ApplicationRecord
   acts_as_paranoid
   include SpotlightSearch
-	include Paginator
+  include Paginator
+  include ImageResizer
   include Scorable::Consultation
   has_rich_text :summary
   has_rich_text :response_submission_message
@@ -10,6 +11,8 @@ class Consultation < ApplicationRecord
   has_rich_text :hindi_summary
   has_rich_text :odia_summary
   has_rich_text :marathi_summary
+
+  has_one_attached :consultation_logo
 
   belongs_to :ministry
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
@@ -172,6 +175,14 @@ class Consultation < ApplicationRecord
 
   def create_response_round
     self.response_rounds.create()
+  end
+
+  def picture_url
+    if consultation_logo.attached?
+      consultation_logo
+    else
+      nil
+    end
   end
 
   def extend_deadline(deadline_date)
