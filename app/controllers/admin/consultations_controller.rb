@@ -2,7 +2,7 @@ class Admin::ConsultationsController < ApplicationController
   layout "admin_panel_sidenav"
   before_action :authenticate_user!, except: %i[feedback_webhook]
 	before_action :require_admin, only: [:index, :update, :edit, :show, :create, :show_response_submission_message, :update_response_submission_message, :import_responses]
-	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_odia_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary, :update_odia_summary, :analytics]
+	before_action :set_consultation, only: [:edit, :update, :show, :publish, :reject, :destroy, :featured, :unfeatured, :check_active_ministry, :edit_hindi_summary, :edit_odia_summary, :edit_marathi_summary, :edit_english_summary, :extend_deadline, :create_response_round, :invite_respondents, :show_response_submission_message, :update_response_submission_message, :import_responses, :update_english_summary, :update_hindi_summary, :update_odia_summary, :update_marathi_summary, :analytics]
 	before_action :set_organisation, only: [:show, :invite_respondents]
 
 	def index
@@ -46,6 +46,10 @@ class Admin::ConsultationsController < ApplicationController
     @odia_summary = @consultation.odia_summary
   end
 
+  def edit_marathi_summary
+    @marathi_summary = @consultation.marathi_summary
+  end
+
   def update_english_summary
     if @consultation.update(english_summary: params[:consultation][:english_summary])
       @consultation.update_reading_time
@@ -73,6 +77,16 @@ class Admin::ConsultationsController < ApplicationController
       redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
     else
       redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Odia Summary was not successfully updated.'
+    end
+  end
+
+  def update_marathi_summary
+    if @consultation.update(marathi_summary: params[:consultation][:marathi_summary])
+      @consultation.update_reading_time
+      flash_message = params[:consultation_create].present? ? 'Consultation was successfully created.' : 'Consultation Marathi Summary was successfully updated.'
+      redirect_to admin_consultation_path(@consultation), flash_success_info: flash_message
+    else
+      redirect_to admin_consultation_path(@consultation), flash_info: 'Consultation Marathi Summary was not successfully updated.'
     end
   end
 
@@ -221,7 +235,7 @@ class Admin::ConsultationsController < ApplicationController
 	private
 
 	def secure_params
-    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :url, :ministry_id, :response_deadline, :consultation_logo, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response, :officer_name, :officer_designation, :is_satisfaction_rating_optional, :show_discuss_section)
+    params.require(:consultation).permit(:title, :title_hindi, :title_odia, :title_marathi, :url, :ministry_id, :response_deadline, :consultation_logo, :summary, :consultation_feedback_email, :review_type, :visibility, :response_submission_message, :private_response, :officer_name, :officer_designation, :is_satisfaction_rating_optional, :show_discuss_section)
  end
 
 	def set_consultation
