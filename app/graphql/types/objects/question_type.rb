@@ -8,6 +8,7 @@ module Types
 				field :question_text, String, nil, null: true
 				field :hindi_question_text, String, nil, null: true
 				field :odia_question_text, String, nil, null: true
+				field :marathi_question_text, String, nil, null: true
   		  field :parent,	Types::Objects::QuestionType, nil, null: true
   		  field :sub_questions, [Types::Objects::QuestionType], nil, null: true
   		  field :supports_other, Boolean, nil, null: false
@@ -19,6 +20,10 @@ module Types
 				def odia_question_text
   	 				object.question_text_odia if object.question_text_odia.present?
       	end
+
+				def marathi_question_text
+					object.question_text_marathi if object.question_text_marathi.present?
+				end
   		end
  	end
 end
