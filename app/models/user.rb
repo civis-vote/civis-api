@@ -23,8 +23,9 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
-  validates :first_name, presence: true
   validate :password_complexity, on: :create
+  before_validation :create_random_password, on: :create
+
 
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
@@ -149,6 +150,13 @@ class User < ApplicationRecord
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
     return user
+  end
+
+  def create_random_password
+    return unless password.blank?
+
+    self.password = [*'a'..'z', *0..9, *'A'..'Z', *'!'..'?'].sample(11).join
+    self.password_confirmation = password
   end
 
   def forgot_password_url(raw_token)
