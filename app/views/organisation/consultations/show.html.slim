@@ -128,6 +128,15 @@
             | --
         = link_to edit_marathi_summary_admin_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
           .pull-right.fa.fa-pencil-alt.fa-icon-color
+      .show-page-parent-details
+        .show-page-label-details Marathi Summary
+        .show-page-input-details
+          - if @consultation.marathi_summary.present?
+            = raw @consultation.marathi_summary_rich_text
+          - else
+            | --
+        = link_to edit_marathi_summary_admin_consultation_path(@consultation), method: :get, class: "icon-with-bg" do
+          .pull-right.fa.fa-pencil-alt.fa-icon-color
   .admin-index-title.mt-4
     | Feedback
   .admin-list-bg.mt-4
