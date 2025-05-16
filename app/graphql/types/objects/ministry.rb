@@ -10,6 +10,7 @@ module Types
   			 field :name,	String, nil, null: false
 				 field :hindi_name,	String, nil, null: true
 				 field :odia_name,	String, nil, null: true
+				 field :marathi_name,	String, nil, null: true
   			 field :location_id, Int, nil, null: false
   			 field :poc_email_primary,	String, nil, null: false
   			 field :poc_email_secondary,	String, nil, null: false
@@ -25,6 +26,10 @@ module Types
   			 def odia_name
    				 object.name_odia if object.name_odia.present?
    			 end
+
+				 def marathi_name
+					 object.name_marathi if object.name_marathi.present?
+				 end
   		end
  	end
 end
