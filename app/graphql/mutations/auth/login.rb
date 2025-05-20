@@ -7,10 +7,11 @@ module Mutations
 
       def resolve(auth:)
         user = ::User.find_or_create_by!(email: auth[:email])
-        raise CivisApi::Exceptions::FailedLogin unless user.persisted?
 
         user.create_otp_request
         true
+      rescue ActiveRecord::RecordInvalid => e
+        raise CivisApi::Exceptions::FailedLogin, e.message
       end
     end
   end

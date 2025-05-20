@@ -23,8 +23,8 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
-  validate :password_complexity, on: :create
   before_validation :create_random_password, on: :create
+  validate :password_complexity, on: :create
 
 
   # enums
@@ -155,7 +155,20 @@ class User < ApplicationRecord
   def create_random_password
     return unless password.blank?
 
-    self.password = [*'a'..'z', *0..9, *'A'..'Z', *'!'..'?'].sample(11).join
+    alphabet = ('a'..'z').to_a + ('A'..'Z').to_a
+    digits = ('0'..'9').to_a
+    special_characters = %w[@ $ ! % * # ? &]
+
+    password_components = [
+      alphabet.sample,
+      digits.sample,
+      special_characters.sample
+    ]
+
+    all_characters = alphabet + digits + special_characters
+    password_components += all_characters.sample(8)
+
+    self.password = password_components.shuffle.join
     self.password_confirmation = password
   end
 
