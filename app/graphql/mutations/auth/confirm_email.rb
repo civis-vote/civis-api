@@ -7,7 +7,8 @@ module Mutations
 
       def resolve(confirmation_token:)
         user = ::User.find_by(confirmation_token: confirmation_token)
-        raise CivisApi::Exceptions::Unauthorized unless user
+        raise Unauthorized unless user
+
         user.confirm
         user.find_or_generate_api_key
         user.live_api_key
