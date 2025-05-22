@@ -10,8 +10,6 @@ module Mutations
 
         user.create_otp_request
         true
-      rescue ActiveRecord::RecordInvalid => e
-        raise CivisApi::Exceptions::FailedLogin, e.message
       end
     end
   end
