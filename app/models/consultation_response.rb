@@ -114,7 +114,6 @@ class ConsultationResponse < ApplicationRecord
     raise IncompleteEntity, "Mandatory question should be answered." if ( mandatory_question_ids.present? && !answers.present? )
     if answers.present?
       mandatory_question_ids.each do |question_id|
-        byebug
       	if answers.class == Array
       		mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s }
       	end
