@@ -7,7 +7,7 @@ module Mutations
 
       def resolve(confirmation_token:)
         user = ::User.find_by(confirmation_token: confirmation_token)
-        raise Unauthorized unless user
+        raise Unauthorized if user.blank?
 
         user.confirm
         user.find_or_generate_api_key
