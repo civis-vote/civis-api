@@ -116,7 +116,8 @@ module Types
 				end
 
 				def responses(response_token:, sort:, sort_direction:)
-					raise CivisApi::Exceptions::Unauthorized if response_token != object.response_token
+          raise Unauthorized if response_token != object.response_token
+					
 					return object.responses.acceptable_responses.sort_records(sort, sort_direction)
 				end
 

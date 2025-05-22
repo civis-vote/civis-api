@@ -1,6 +1,14 @@
 class GraphqlController < ApplicationController
   before_action :authenticate!
 
+  rescue_from Unauthorized do |e|
+    render json: { error: 'Unauthorized', message: e.message }, status: :unauthorized
+  end
+
+  rescue_from TokenExpired do |e|
+    render json: { error: 'TokenExpired', message: e.message }, status: :unauthorized
+  end
+
   def execute
     variables = ensure_hash(params[:variables])
     query = params[:query]

@@ -10,7 +10,7 @@ module Queries
 	    	consultation_response = ::ConsultationResponse.find(id)
 	    	return consultation_response if consultation_response.shared?
 	    	return consultation_response if context[:current_user] == consultation_response.user
-	    	raise CivisApi::Exceptions::Unauthorized
+	    	raise Unauthorized
 	    end
 		end
 	end

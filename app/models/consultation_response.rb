@@ -98,7 +98,7 @@ class ConsultationResponse < ApplicationRecord
     if response_text.body.to_html !~ /(?!<\/?ol>|<\/?p>|<a[\s]+([^>]+)>((?:.(?!\<\/a\>))*.)<\/a>|<\/?a>)<\/?[^>]*>/
       return true
     else
-      raise CivisApi::Exceptions::IncompleteEntity, "Certain HTML attributes are not permitted."
+      raise IncompleteEntity, "Certain HTML attributes are not permitted."
     end
   end
 
@@ -111,13 +111,13 @@ class ConsultationResponse < ApplicationRecord
     return true if ( !response_round.questions.present? && !answers.present? )
     mandatory_question_ids = []
     response_round.questions.map{|question| mandatory_question_ids << question.id if question.is_optional == false }
-    raise CivisApi::Exceptions::IncompleteEntity, "Mandatory question should be answered." if ( mandatory_question_ids.present? && !answers.present? )
+    raise IncompleteEntity, "Mandatory question should be answered." if ( mandatory_question_ids.present? && !answers.present? )
     if answers.present?
       mandatory_question_ids.each do |question_id|
       	if answers.class == Array
       		mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s }
       	end
-        raise CivisApi::Exceptions::IncompleteEntity, "Mandatory question with id #{question_id} should be answered." if ( !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?) )
+        raise IncompleteEntity, "Mandatory question with id #{question_id} should be answered." if ( !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?) )
       end
     end
   end
@@ -147,7 +147,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def check_if_consultation_expired?
-    raise CivisApi::Exceptions::IncompleteEntity, "Consultation Expired" if self.platform? && consultation.response_deadline < Date.today
+    raise IncompleteEntity, "Consultation Expired" if self.platform? && consultation.response_deadline < Date.today
   end
 
   def set_subjective_objective_response_count
