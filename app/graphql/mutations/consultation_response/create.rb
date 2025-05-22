@@ -28,6 +28,7 @@ module Mutations
           raise IncompleteEntity, "Response already submitted by User"
         end
 
+        created_consultation_response.save!
         created_consultation_response
       end
 
