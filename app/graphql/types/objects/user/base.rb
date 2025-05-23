@@ -7,7 +7,7 @@ module Types
 				field :best_rank_type,		Types::Enums::UserBestRankTypes, nil, null: true
 				field :city,							Types::Objects::Location, 	"City where the user is registered from.", null: true
 				field :city_rank,					Integer,										"City rank in the system", null: true
-				field :first_name, 				String, 										nil, null: false
+				field :first_name, 				String, 										nil, null: true
 				field :points,						Integer,											nil, null: false
 				field :profile_picture,		Types::Objects::ShrineAttachment, nil, null: true do
 					argument :resolution, String, required: false, default_value: nil
