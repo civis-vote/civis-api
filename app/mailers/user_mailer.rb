@@ -1,18 +1,6 @@
 class UserMailer < ApplicationMailer
   require 'axlsx'
 
-  def verify_email(user)
-    @@postmark_client.deliver_with_template(from: @@from_email,
-                                            to: user.email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'user-confirmation',
-                                            template_model: {
-                                              first_name: user.first_name,
-                                              confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
-                                            })
-  end
-
   def notify_new_consultation_policy_review_email(user, consultation)
     @@postmark_client.deliver_with_template(from: @@from_email,
                                             to: user.email,
@@ -23,7 +11,8 @@ class UserMailer < ApplicationMailer
                                               consultation_name: consultation.title,
                                               ministry_name: consultation.ministry.name,
                                               feedback_url: consultation.feedback_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -35,7 +24,8 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               consultation_name: consultation.title,
                                               deadline: consultation.response_deadline.strftime('%e-%m-%Y %I:%M %p'),
-                                              review_url: consultation.review_url
+                                              review_url: consultation.review_url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -46,7 +36,8 @@ class UserMailer < ApplicationMailer
                                             template_alias: 'profane-response-notification',
                                             template_model: {
                                               user_name: consultation_response.user.first_name,
-                                              consultation_title: consultation_response.consultation.title
+                                              consultation_title: consultation_response.consultation.title,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -59,7 +50,8 @@ class UserMailer < ApplicationMailer
                                               name: user.full_name,
                                               response_under_review_count: response_under_review_count,
                                               consultation_expiring_today_count: consultation_expiring_today_count,
-                                              url: url
+                                              url: url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -71,7 +63,8 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               up_vote_count: consultation_response.up_vote_count,
                                               consultation_response: consultation_response.response_text.to_plain_text,
-                                              consultation_title: consultation_response.consultation.title
+                                              consultation_title: consultation_response.consultation.title,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -83,7 +76,8 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               templates_count: consultation_response.templates_count,
                                               consultation_response: consultation_response.response_text.to_plain_text,
-                                              consultation_title: consultation_response.consultation.title
+                                              consultation_title: consultation_response.consultation.title,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -96,7 +90,8 @@ class UserMailer < ApplicationMailer
                                               first_name: consultation.created_by.first_name,
                                               consultation_name: consultation.title,
                                               feedback_url: consultation.feedback_url,
-                                              unsubscribe_url: consultation.created_by.unsubscribe_url
+                                              unsubscribe_url: consultation.created_by.unsubscribe_url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -112,7 +107,8 @@ class UserMailer < ApplicationMailer
                                                          ministry_name: consultation.ministry.name,
                                                          officer_name: officer_name,
                                                          officer_designation: officer_designation,
-                                                         response_url: consultation.response_url
+                                                         response_url: consultation.response_url,
+                                                         product_url: Rails.application.config.client_url[:host]
                                                        })
     consultation.update(feedback_email_message_id: response[:message_id])
   end
@@ -125,7 +121,8 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               email: user.email,
                                               url: url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -139,7 +136,8 @@ class UserMailer < ApplicationMailer
                                               email: user.email,
                                               password: password,
                                               url: client_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -169,7 +167,8 @@ class UserMailer < ApplicationMailer
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
+                                              content_type: 'application/vnd.ms-excel',
+                                              product_url: Rails.application.config.client_url[:host]
                                             }])
   end
 
@@ -299,7 +298,8 @@ class UserMailer < ApplicationMailer
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
+                                              content_type: 'application/vnd.ms-excel',
+                                              product_url: Rails.application.config.client_url[:host]
                                             }])
   end
 
@@ -338,7 +338,8 @@ class UserMailer < ApplicationMailer
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
+                                              content_type: 'application/vnd.ms-excel',
+                                              product_url: Rails.application.config.client_url[:host]
                                             }])
   end
 
@@ -371,7 +372,8 @@ class UserMailer < ApplicationMailer
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
+                                              content_type: 'application/vnd.ms-excel',
+                                              product_url: Rails.application.config.client_url[:host]
                                             }])
   end
 
@@ -404,7 +406,8 @@ class UserMailer < ApplicationMailer
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
+                                              content_type: 'application/vnd.ms-excel',
+                                              product_url: Rails.application.config.client_url[:host]
                                             }])
   end
 
@@ -428,53 +431,8 @@ class UserMailer < ApplicationMailer
                                             template_model: {
                                               consultation_name: consultation.title,
                                               consultation_url: consultation_url,
-                                              unsubscribe_url: user.unsubscribe_url
-                                            })
-  end
-
-  def verify_email_after_8_hours(user_id, consultation_id)
-    user = User.find(user_id)
-    consultation = Consultation.find(consultation_id)
-    return if user.confirmed_at?
-
-    @@postmark_client.deliver_with_template(from: @@from_email,
-                                            to: user.email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'user-confirmation-after-8-hours',
-                                            template_model: {
-                                              consultation_name: consultation.title,
-                                              first_name: user.first_name,
-                                              confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
-                                            })
-  end
-
-  def verify_email_after_72_hours(user_id)
-    user = User.find(user_id)
-    return if user.confirmed_at?
-
-    @@postmark_client.deliver_with_template(from: @@from_email,
-                                            to: user.email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'user-confirmation-after-72-hours',
-                                            template_model: {
-                                              confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
-                                            })
-  end
-
-  def verify_email_after_120_hours(user_id)
-    user = User.find(user_id)
-    return if user.confirmed_at?
-
-    @@postmark_client.deliver_with_template(from: @@from_email,
-                                            to: user.email,
-                                            reply_to: 'support@civis.vote',
-                                            template_alias: 'user-confirmation-after-120-hours',
-                                            template_model: {
-                                              first_name: user.first_name,
-                                              confirmation_url: user.confirmation_url,
-                                              unsubscribe_url: user.unsubscribe_url
+                                              unsubscribe_url: user.unsubscribe_url,
+                                              product_url: Rails.application.config.client_url[:host]
                                             })
   end
 
@@ -523,7 +481,8 @@ class UserMailer < ApplicationMailer
                                             attachments: [{
                                               name: file_name,
                                               content: [file.read].pack('m'),
-                                              content_type: 'application/vnd.ms-excel'
+                                              content_type: 'application/vnd.ms-excel',
+                                              product_url: Rails.application.config.client_url[:host]
                                             }])
   end
 
@@ -540,17 +499,9 @@ class UserMailer < ApplicationMailer
       to: user.email,
       template_alias: 'otp-verification',
       template_model: template_model_base.merge!({ name: user.first_name,
-        otp: })
-    )
-  end
-
-  def send_invitation(user)
-    @@postmark_client.deliver_with_template(
-      from: @@from_email,
-      to: user.email,
-      template_alias: 'user-invitation',
-      template_model: template_model_base.merge!({ name: user.full_name,
-                                                   redirection_url: "#{Rails.application.credentials[:be_url]}/users/sign_in" })
+        product_url: Rails.application.config.client_url[:host],
+        otp: 
+      })
     )
   end
 end

@@ -11,8 +11,8 @@ class User < ApplicationRecord
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :invitable, :database_authenticatable, :confirmable, :recoverable,
-         :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable, :omniauthable
 
 	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
   has_many :otp_requests, dependent: :destroy
@@ -30,9 +30,6 @@ class User < ApplicationRecord
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
   enum best_rank_type: { national: 0, state: 1, city: 2 }
-
-  # callbacks
-  after_commit :generate_api_key, :send_email_verification, on: :create
 
   # attachments
   # has_one_attached :profile_picture
@@ -104,14 +101,6 @@ class User < ApplicationRecord
   	confirmation_url.to_s
   end
 
-  def send_email_verification
-  	VerifyUserEmailJob.perform_later(self) unless confirmed_at
-    if (!confirmed_at && referring_consultation_id)
-      VerifyUserEmailAfter8HoursJob.set(wait: 8.hours).perform_later(self.id, self.referring_consultation_id)
-      VerifyUserEmailAfter72HoursJob.set(wait: 80.hours).perform_later(self.id)
-      VerifyUserEmailAfter120HoursJob.set(wait: 200.hours).perform_later(self.id)
-    end
-  end
 
   def update_last_activity
     update last_activity_at: Date.today
