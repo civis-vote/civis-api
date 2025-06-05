@@ -4,15 +4,18 @@ class User < ApplicationRecord
   include SpotlightSearch
   include Paginator
   include Scorable::User
+  include Auth::User
   include ImageUploader::Attachment(:profile_picture)
   attr_accessor :skip_invitation
+  
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :invitable, :database_authenticatable, :confirmable, :recoverable,
-         :rememberable, :validatable, :lockable, :timeoutable, :trackable, :omniauthable
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :validatable, :omniauthable
 
 	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
+  has_many :otp_requests, dependent: :destroy
 	has_many :api_keys, dependent: :destroy
   has_many :game_actions, dependent: :destroy
   has_many :point_events, dependent: :destroy
@@ -20,15 +23,13 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
-  validates :first_name, presence: true
+  before_validation :create_random_password, on: :create
   validate :password_complexity, on: :create
+
 
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
   enum best_rank_type: { national: 0, state: 1, city: 2 }
-
-  # callbacks
-  after_commit :generate_api_key, :send_email_verification, on: :create
 
   # attachments
   # has_one_attached :profile_picture
@@ -100,14 +101,6 @@ class User < ApplicationRecord
   	confirmation_url.to_s
   end
 
-  def send_email_verification
-  	VerifyUserEmailJob.perform_later(self) unless confirmed_at
-    if (!confirmed_at && referring_consultation_id)
-      VerifyUserEmailAfter8HoursJob.set(wait: 8.hours).perform_later(self.id, self.referring_consultation_id)
-      VerifyUserEmailAfter72HoursJob.set(wait: 80.hours).perform_later(self.id)
-      VerifyUserEmailAfter120HoursJob.set(wait: 200.hours).perform_later(self.id)
-    end
-  end
 
   def update_last_activity
     update last_activity_at: Date.today
@@ -146,6 +139,26 @@ class User < ApplicationRecord
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
     return user
+  end
+
+  def create_random_password
+    return unless password.blank?
+
+    alphabet = ('a'..'z').to_a + ('A'..'Z').to_a
+    digits = ('0'..'9').to_a
+    special_characters = %w[@ $ ! % * # ? &]
+
+    password_components = [
+      alphabet.sample,
+      digits.sample,
+      special_characters.sample
+    ]
+
+    all_characters = alphabet + digits + special_characters
+    password_components += all_characters.sample(8)
+
+    self.password = password_components.shuffle.join
+    self.password_confirmation = password
   end
 
   def forgot_password_url(raw_token)
@@ -196,4 +209,5 @@ class User < ApplicationRecord
       errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
     end
   end
+
 end

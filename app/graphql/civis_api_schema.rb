@@ -25,7 +25,7 @@ GraphQL::Errors.configure(CivisApiSchema) do
     GraphQL::ExecutionError.new(exception.record.errors.full_messages.join("\n"), extensions: {code: :unprocessable_entity, sub_code: :record_invalid})
   end
 
-  rescue_from CivisApi::Exceptions::IncorrectPassword do |exception|
+  rescue_from CivisApi::Exceptions::IncorrectOtp do |exception|
     GraphQL::ExecutionError.new(exception.message, extensions: {code: :unauthorized, sub_code: :unauthorized})
   end
   
