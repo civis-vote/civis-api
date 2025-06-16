@@ -1,15 +1,16 @@
 module Mutations
   module Auth
     class Login < Mutations::BaseMutation
-      type Boolean, null: false
+      type Types::Objects::ApiKey, null: false
 
       argument :auth, Types::Inputs::Auth::Login, required: true
 
       def resolve(auth:)
-        user = ::User.find_or_create_by!(email: auth[:email])
+        user = ::User.find_by(email: auth[:email])
+        raise FailedLogin, "Incorrect Email/Password" unless user&.valid_password?(auth[:password])
 
-        user.create_otp_request
-        true
+        user.find_or_generate_api_key
+        user.live_api_key
       end
     end
   end
