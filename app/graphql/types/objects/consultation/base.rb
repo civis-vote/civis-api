@@ -14,6 +14,9 @@ module Types
 						super && context[:current_user].present?
 					end
 				end
+				field :consultation_logo,		Types::Objects::ShrineAttachment, nil, null: true do
+					argument :resolution, String, required: false, default_value: nil
+				end
 				field :ministry,													Types::Objects::Ministry, nil, null: false
 				field :consultation_responses_count,			Integer,nil, null: false
 				field :published_at,											Types::Objects::DateTime, nil, null: true
@@ -38,6 +41,7 @@ module Types
 				field :title,															String, nil, null: false
 				field :hindi_title,												String, nil, null: true
 				field :odia_title,												String, nil, null: true
+				field :marathi_title,											String, nil, null: true
 				field :updated_at,												Types::Objects::DateTime, nil, null: false
 				field :url,																String, nil, null: false
 				field :responses_reading_times,						Integer, "Reading times of all the responses in this consultation", null: false
@@ -47,6 +51,7 @@ module Types
 				field :english_summary,										String, nil, null: true
 				field :hindi_summary,											String, nil, null: true
 				field :odia_summary,											String, nil, null: true
+				field :marathi_summary,										String, nil, null: true
 				field :summary_hindi,											String, nil, null: true
 				field :page,											 				String, nil, null: true
 				field :consultation_partner_responses,			[Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
@@ -55,6 +60,10 @@ module Types
 					nil unless context[:current_user].present?
 
 					object.responded_on(context[:current_user])
+				end
+
+				def consultation_logo(resolution:)
+					object.shrine_resize(resolution, "consultation_logo")
 				end
 
 				def page
@@ -74,6 +83,10 @@ module Types
 					 object.title_odia
 				end
 
+				def marathi_title
+					 object.title_marathi
+				end
+
 				def english_summary
 					return unless object.english_summary.to_s.present?
 
@@ -91,13 +104,20 @@ module Types
 
 					object.odia_summary_rich_text
 				end
+
+				def marathi_summary
+					return unless object.marathi_summary.to_s.present?
+
+					object.marathi_summary_rich_text
+				end
 				
 				def shared_responses(sort:, sort_direction:)
 					object.shared_responses.sort_records(sort, sort_direction)
 				end
 
 				def responses(response_token:, sort:, sort_direction:)
-					raise CivisApi::Exceptions::Unauthorized if response_token != object.response_token
+          raise Unauthorized if response_token != object.response_token
+					
 					return object.responses.acceptable_responses.sort_records(sort, sort_direction)
 				end
 
