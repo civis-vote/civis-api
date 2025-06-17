@@ -33,7 +33,7 @@ module Mutations
       end
 
       def submission_allowed?(consultation_id)
-        return true if (Rails.env.staging? && consultation_id.eql?(464)) || (Rails.env.production? && consultation_id.eql?(1089))
+        return true if (Rails.env.staging? && consultation_id.eql?(475)) || (Rails.env.production? && consultation_id.eql?(1245))
 
         false
       end
