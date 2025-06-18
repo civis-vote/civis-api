@@ -1,6 +1,6 @@
 class Consultation < ApplicationRecord
-  STAGING_ID = 475
-  PRODUCTION_ID = 1245
+  SKIP_AUTH_STAGING_ID = 475
+  SKIP_AUTH_PRODUCTION_ID = 1245
 
   acts_as_paranoid
   include SpotlightSearch
