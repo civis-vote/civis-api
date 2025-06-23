@@ -32,9 +32,6 @@
           .show-page-parent-details
             .show-page-label-details Logo
             .show-page-input-details
-              - if @organisation.logo
-                = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
-              - else
-                = image_tag @organisation.picture_url, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
+              = image_tag @organisation.picture_url.to_s, class: "user-timeline-profile-picture-bg profile-picture-square-bg"
           = display_details("show-page-parent-details", "show-page-label-details", "Added on", "show-page-input-details", "#{@organisation&.created_at&.localtime.try(:strftime, '%e %b %Y') || '-'}")
           = display_details("show-page-parent-details", "show-page-label-details", "Added by", "show-page-input-details", "#{@organisation&.created_by&.full_name || '-'}")

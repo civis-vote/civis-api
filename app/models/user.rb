@@ -5,18 +5,18 @@ class User < ApplicationRecord
   include Paginator
   include Scorable::User
   include Auth::User
-  include ImageUploader::Attachment(:profile_picture)
   attr_accessor :skip_invitation
-  
+
+  has_one_attached :profile_picture
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :omniauthable
 
-	belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
+  belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
   has_many :otp_requests, dependent: :destroy
-	has_many :api_keys, dependent: :destroy
+  has_many :api_keys, dependent: :destroy
   has_many :game_actions, dependent: :destroy
   has_many :point_events, dependent: :destroy
   has_many :responses, class_name: "ConsultationResponse"
@@ -26,45 +26,40 @@ class User < ApplicationRecord
   before_validation :create_random_password, on: :create
   validate :password_complexity, on: :create
 
-
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
   enum best_rank_type: { national: 0, state: 1, city: 2 }
 
-  # attachments
-  # has_one_attached :profile_picture
-
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation
 
-  class << self
-    def attachment_types
-      ["profile_picture"]
-    end
-  end
+  delegate :url, to: :profile_picture, prefix: true, allow_nil: true
 
   scope :search_query, lambda { |query|
-		return nil if query.blank?
-		terms = query.downcase.split(/\s+/)
-		terms = terms.map { |e|
-			(e.gsub("*", "%").prepend("%") + "%").gsub(/%+/, "%")
-		}
-		num_or_conds = 4
-		where(
-			terms.map { |term|
-				"(LOWER(users.first_name) LIKE ? OR LOWER(users.last_name) LIKE ? OR LOWER(users.email) LIKE ? OR CAST(users.phone_number AS TEXT) LIKE ?)"
-			}.join(" AND "),
-			*terms.map { |e| [e] * num_or_conds }.flatten,
-		)
-	}
+    return nil if query.blank?
 
-  scope :role_filter, lambda {|role|
+    terms = query.downcase.split(/\s+/)
+    terms = terms.map do |e|
+      (e.gsub("*", "%").prepend("%") + "%").gsub(/%+/, "%")
+    end
+    num_or_conds = 4
+    where(
+      terms.map do |_term|
+        "(LOWER(users.first_name) LIKE ? OR LOWER(users.last_name) LIKE ? OR LOWER(users.email) LIKE ? OR CAST(users.phone_number AS TEXT) LIKE ?)"
+      end.join(" AND "),
+      *terms.map { |e| [e] * num_or_conds }.flatten
+    )
+  }
+
+  scope :role_filter, lambda { |role|
     return nil unless role.present?
+
     where(role: role)
   }
 
-  scope :location_filter, lambda {|location|
+  scope :location_filter, lambda { |location|
     return nil unless location.present?
+
     location_scope = [location]
     location_scope << Location.find(location).child_ids
     where(city_id: location_scope.flatten)
@@ -85,22 +80,22 @@ class User < ApplicationRecord
   end
 
   def find_or_generate_api_key
-    self.live_api_key ? self.live_api_key : self.generate_api_key
+    live_api_key || generate_api_key
   end
 
   def live_api_key
-  	api_keys.live.last
+    api_keys.live.last
   end
 
   def generate_api_key
-  	api_keys.create
+    api_keys.create
   end
 
   def confirmation_url
-  	confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/confirm", query: "token=#{self.confirmation_token}&callback_url=#{self.callback_url}"}))
-  	confirmation_url.to_s
+    confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: "/confirm",
+                                                                                     query: "token=#{confirmation_token}&callback_url=#{callback_url}" }))
+    confirmation_url.to_s
   end
-
 
   def update_last_activity
     update last_activity_at: Date.today
@@ -134,11 +129,12 @@ class User < ApplicationRecord
   end
 
   def self.add_fields_from_oauth(f_name, l_name, email, provider, uid, image_url)
-    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid, password: [*'a'..'z', *0..9, *'A'..'Z', *'!'..'?'].shuffle[0..10].join, confirmed_at: DateTime.now
+    user = ::User.new first_name: f_name, last_name: l_name, email: email, provider: provider, uid: uid,
+                      password: [*'a'..'z', *0..9, *'A'..'Z', *'!'..'?'].sample(11).join, confirmed_at: DateTime.now
     user.skip_confirmation_notification!
     user.save!
     UserProfilePictureUploadJob.perform_later(user, image_url) if image_url
-    return user
+    user
   end
 
   def create_random_password
@@ -162,37 +158,42 @@ class User < ApplicationRecord
   end
 
   def forgot_password_url(raw_token)
-    forgot_password_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: "/auth/forgot-password", query: "reset_password_token=#{raw_token}"} ))
+    forgot_password_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: "/auth/forgot-password",
+                                                                                        query: "reset_password_token=#{raw_token}" }))
     forgot_password_url.to_s
   end
 
   def unsubscribe_url
-    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/emails/unsubscribe", query: "unsubscribe_token=#{self.uuid}"}))
+    unsubscribe_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: "/emails/unsubscribe",
+                                                                                    query: "unsubscribe_token=#{uuid}" }))
     unsubscribe_url.to_s
   end
 
   def self.invite_employee(params, current_user)
     emails = params[:email].split(",")
     emails.each do |email|
-      user = ::User.invite!({ email: email, organisation_id: params[:organisation_id] ,skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now, role: "organisation_employee", active: params[:active] }, current_user)
+      user = ::User.invite!(
+        { email: email, organisation_id: params[:organisation_id], skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now,
+          role: "organisation_employee", active: params[:active] }, current_user
+      )
       raw_token = user.raw_invitation_token
       user_record = ::User.find_by(email: email.strip)
       unless user_record.active?
         organisation = ::Organisation.find(params[:organisation_id].to_i)
         ::Organisation.increment_counter(:users_count, organisation.id)
       end
-      if Rails.env.development?
-        url = URI::HTTP.build(Rails.application.config.host_url.merge!({path: "/users/edit_invite", query: "invitation_token=#{raw_token}"})).to_s
-      else
-        url = URI::HTTPS.build(Rails.application.config.host_url.merge!({path: "/users/edit_invite", query: "invitation_token=#{raw_token}"})).to_s
-      end
+      url = if Rails.env.development?
+              URI::HTTP.build(Rails.application.config.host_url.merge!({ path: "/users/edit_invite", query: "invitation_token=#{raw_token}" })).to_s
+            else
+              URI::HTTPS.build(Rails.application.config.host_url.merge!({ path: "/users/edit_invite", query: "invitation_token=#{raw_token}" })).to_s
+            end
       InviteOrganisationEmployeeJob.perform_later(user_record, url)
     end
   end
 
   def picture_url
-    if self.profile_picture.present?
-      self.profile_picture_url
+    if profile_picture.attached?
+      profile_picture_url
     else
       "defalut-user.svg"
     end
@@ -200,14 +201,13 @@ class User < ApplicationRecord
 
   def deactivate(organisation_id)
     self.active = false
-    self.save(validate: false)
+    save(validate: false)
     Organisation.decrement_counter(:users_count, organisation_id)
   end
 
   def password_complexity
-    if password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$/)
-      errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
-    end
-  end
+    return unless password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$/)
 
+    errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
+  end
 end

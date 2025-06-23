@@ -1,9 +1,10 @@
 class Organisation < ApplicationRecord
   acts_as_paranoid
-	include ImageResizer
+  include ImageResizer
   include SpotlightSearch
   include Paginator
-  include ImageUploader::Attachment(:logo)
+
+  has_one_attached :logo
 
   has_many :users, -> { active }, dependent: :nullify
   has_many :respondents
@@ -13,14 +14,17 @@ class Organisation < ApplicationRecord
 
   scope :search_query, lambda { |query = nil|
     return nil unless query
+
     where("name ILIKE (?)", "%#{query}%")
   }
-  
+
   scope :active, -> { where(active: true) }
- 
+
+  delegate :url, to: :logo, prefix: true, allow_nil: true
+
   def picture_url
-    if self.logo
-      self.logo_url
+    if logo.attached?
+      logo_url
     else
       "user_profile_picture.png"
     end
@@ -28,6 +32,6 @@ class Organisation < ApplicationRecord
 
   def deactivate
     self.active = false
-    self.save
+    save
   end
 end
