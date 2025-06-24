@@ -3,7 +3,6 @@
 		.admin-header-text
 			| Basic Information
 		.admin-details-box
-			= f.hidden_field :logo, value: @ministry.cached_logo_data
 			= f.input :logo, placeholder: "Ministry logo", required: false, wrapper: :form_input_group, input_html: { class: "d-none", id: "imageUpload", capture: "", type: "file" }
 			#profile-container
 				- if @ministry.logo
