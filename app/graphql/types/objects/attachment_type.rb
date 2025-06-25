@@ -1,12 +1,12 @@
 module Types
   module Objects
     class AttachmentType < BaseObject
-      field :id, String, null: false
+      field :id, String, null: true
       field :filename, String, null: true
       field :url, String, null: true
 
       def id
-        object.instance_of?(Hash) ? object["id"] : object.id
+        object.instance_of?(Hash) ? object["id"] : (object.respond_to?(:id) ? object.id : nil)
       end
 
       def filename
