@@ -1,4 +1,7 @@
 class Consultation < ApplicationRecord
+  SKIP_AUTH_STAGING_ID = 0
+  SKIP_AUTH_PRODUCTION_ID = 0
+
   acts_as_paranoid
   include SpotlightSearch
   include Paginator
