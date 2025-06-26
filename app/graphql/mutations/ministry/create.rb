@@ -6,10 +6,15 @@ module Mutations
       argument :ministry, Types::Inputs::Ministry::Create, required: true
 
       def resolve(ministry:)
-        created_ministry = ::Ministry.new ministry.to_h
+        ministry_input = ministry.to_h
+        logo_file = ministry_input.delete(:logo_file)
+        created_ministry = ::Ministry.new ministry_input
         created_ministry.created_by = Current.user
-        created_ministry.save_shrine_attachment
-        return created_ministry
+        created_ministry.save!
+        if logo_file.present?
+          created_ministry.save_attachment_with_base64(:logo, logo_file[:content], logo_file[:filename])
+        end
+        created_ministry
       end
 
       def self.accessible?(context)

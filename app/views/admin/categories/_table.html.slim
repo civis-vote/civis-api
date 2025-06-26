@@ -11,6 +11,6 @@ table.table.mt-3
             td.table-bold-title
               = category&.name 
             td
-              = image_tag category.cover_photo_url, class: "width-20" if category.cover_photo
+              = image_tag category.cover_photo_url, class: "width-20" if category.cover_photo.attached?
 .pagination-parent
   = cm_paginate(@categories.facets)
