@@ -4,6 +4,7 @@ class Category < ApplicationRecord
   include ImageResizer
   include SpotlightSearch
   include Paginator
+  include CmAdmin::Category
 
   has_many :ministries
 

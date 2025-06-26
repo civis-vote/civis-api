@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
+ActiveRecord::Schema[7.1].define(version: 2025_06_26_103407) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -82,6 +82,27 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.index ["deleted_at"], name: "index_categories_on_deleted_at"
   end
 
+  create_table "cm_cron_job_logs", force: :cascade do |t|
+    t.bigint "cron_job_id", null: false
+    t.integer "status", default: 0, null: false
+    t.text "execution_log"
+    t.datetime "started_at"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cron_job_id"], name: "index_cm_cron_job_logs_on_cron_job_id"
+  end
+
+  create_table "cm_cron_jobs", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "command", null: false
+    t.string "cron_string", null: false
+    t.datetime "last_run_at"
+    t.integer "status", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "cm_page_builder_rails_page_components", id: :string, force: :cascade do |t|
     t.bigint "page_id", null: false
     t.string "content"
@@ -98,6 +119,25 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["container_type", "container_id"], name: "container_composite_index"
+  end
+
+  create_table "cm_permissions", force: :cascade do |t|
+    t.string "action_name"
+    t.string "action_display_name"
+    t.string "ar_model_name"
+    t.string "scope_name"
+    t.bigint "cm_role_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cm_role_id"], name: "index_cm_permissions_on_cm_role_id"
+  end
+
+  create_table "cm_roles", force: :cascade do |t|
+    t.string "name"
+    t.string "default_redirect_path", default: "/cm_admin/users"
+    t.string "string", default: "/cm_admin/users"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "constants", force: :cascade do |t|
@@ -205,12 +245,36 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.datetime "feedback_email_delivered_at"
     t.datetime "feedback_email_opened_at"
     t.datetime "feedback_email_clicked_at"
-    t.boolean "incognito"
     t.string "title_marathi"
     t.boolean "show_discuss_section", default: true, null: false
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
+  end
+
+  create_table "file_exports", force: :cascade do |t|
+    t.string "associated_model_name"
+    t.string "exported_by_type", null: false
+    t.bigint "exported_by_id", null: false
+    t.datetime "expires_at"
+    t.integer "status", default: 0
+    t.jsonb "params", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
+  end
+
+  create_table "file_imports", force: :cascade do |t|
+    t.string "associated_model_name"
+    t.string "added_by_type", null: false
+    t.bigint "added_by_id", null: false
+    t.jsonb "error_report", default: {}
+    t.datetime "completed_at"
+    t.integer "status", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "associated_model_id"
+    t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
   end
 
   create_table "game_actions", force: :cascade do |t|
@@ -429,6 +493,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.integer "invitations_count", default: 0
     t.boolean "active", default: true
     t.integer "referring_consultation_id"
+    t.bigint "cm_role_id"
+    t.string "current_ip"
+    t.string "sign_up_ip"
+    t.datetime "last_active_at"
+    t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -438,6 +507,17 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
+  end
+
+  create_table "versions", force: :cascade do |t|
+    t.string "whodunnit"
+    t.datetime "created_at"
+    t.bigint "item_id", null: false
+    t.string "item_type", null: false
+    t.string "event", null: false
+    t.text "object"
+    t.text "object_changes"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
   create_table "wordindices", force: :cascade do |t|
@@ -452,7 +532,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
+  add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "consultation_hindi_summaries", "consultations"
   add_foreign_key "consultation_marathi_summaries", "consultations"
   add_foreign_key "consultation_odia_summaries", "consultations"
@@ -475,5 +557,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
   add_foreign_key "respondents", "response_rounds"
   add_foreign_key "respondents", "users"
   add_foreign_key "response_rounds", "consultations"
+  add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end
