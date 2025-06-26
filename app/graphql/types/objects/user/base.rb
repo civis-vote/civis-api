@@ -20,14 +20,7 @@ module Types
         field :state_rank,	Integer,	"State rank in the system", null: true
 
         def profile_picture(resolution: nil)
-          width, height = resolution.split("x").map(&:to_i)
-          attachment = object.public_send(:profile_picture)
-
-          return unless attachment.attached?
-
-          return attachment if width.blank? || height.blank?
-
-          attachment.variant(resize_to_limit: [width, height]).processed
+          attachment_with_resolution(:profile_picture, resolution)
         end
 
         def shared_responses(sort:, sort_direction:)
