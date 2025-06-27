@@ -5,6 +5,7 @@ class Ministry < ApplicationRecord
   include Scorable::Ministry
   include SpotlightSearch
   include Paginator
+  include CmAdmin::Ministry
 
   has_one_attached :logo
 
@@ -15,10 +16,13 @@ class Ministry < ApplicationRecord
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :category, optional: true
-  export_columns enabled: true, except: [:meta]
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
+  before_validation :set_created_by, on: :create
+
   delegate :url, to: :logo, prefix: true, allow_nil: true
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+  delegate :name, to: :category, prefix: true, allow_nil: true
 
   scope :approved, -> { where(is_approved: true) }
   scope :alphabetical, -> { order(name: :asc) }
@@ -57,6 +61,20 @@ class Ministry < ApplicationRecord
     end
   end
 
+  def status
+    is_approved ? 'Approved' : 'Not Approved'
+  end
+
+  def location
+    return nil if location_id == 0
+
+    Location.find_by(id: location_id)
+  end
+
+  def location_name
+    location&.name
+  end
+
   def approve
     self.approved_by_id = Current.user.id
     self.is_approved = true
@@ -69,5 +87,11 @@ class Ministry < ApplicationRecord
     self.is_approved = false
     self.rejected_at = DateTime.now
     save!
+  end
+
+  private
+
+  def set_created_by
+    self.created_by = Current.user
   end
 end

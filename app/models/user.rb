@@ -5,13 +5,15 @@ class User < ApplicationRecord
   include Paginator
   include Scorable::User
   include Auth::User
-  attr_accessor :skip_invitation
+  include CmAdmin::User
 
   has_one_attached :profile_picture
 
+  attr_accessor :skip_invitation
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :cm_admin_authenticatable,
          :recoverable, :rememberable, :validatable, :omniauthable
 
   belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
@@ -23,6 +25,8 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
+  belongs_to :cm_role
+
   before_validation :create_random_password, on: :create
   validate :password_complexity, on: :create
 
@@ -34,6 +38,14 @@ class User < ApplicationRecord
   store_accessor :notification_settings, :notify_for_new_consultation
 
   delegate :url, to: :profile_picture, prefix: true, allow_nil: true
+  delegate :name, to: :cm_role, prefix: true, allow_nil: true
+  delegate :name, to: :city, prefix: true, allow_nil: true
+
+  class << self
+    def attachment_types
+      ["profile_picture"]
+    end
+  end
 
   scope :search_query, lambda { |query|
     return nil if query.blank?
