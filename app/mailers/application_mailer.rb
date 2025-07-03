@@ -1,4 +1,10 @@
 class ApplicationMailer < ActionMailer::Base
+  @@postmark_key = Rails.application.credentials.dig(:postmark, :api_key)
+  @@postmark_client = Postmark::ApiClient.new(@@postmark_key)
+  @@from_email = "Civis #{Rails.env.production? ? '' : "- #{Rails.env.titleize} "}<support@platform.civis.vote>"
+
+  default from: @@from_email
+
   layout "mailer"
 
   def template_model_base
@@ -8,8 +14,4 @@ class ApplicationMailer < ActionMailer::Base
       current_year: Date.today.year.to_s
     }
   end
-
-	@@postmark_key = Rails.application.credentials.dig(:postmark, :api_key)
-	@@postmark_client = Postmark::ApiClient.new(@@postmark_key)
-	@@from_email = "Civis #{(Rails.env.production? ? '' : "- #{Rails.env.titleize} ")}<support@platform.civis.vote>"
 end

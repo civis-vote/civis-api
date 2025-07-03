@@ -31,7 +31,7 @@ module CmAdmin
               field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
             end
           end
-          tab :map_word, 'map_word', associated_model: :glossary_word_consultation_mappings, layout_type: 'cm_association_index' do
+          tab :map_words, 'map_word', associated_model: :glossary_word_consultation_mappings, layout_type: 'cm_association_index' do
             column :consultation_title
             column :glossary_word, header: 'Word'
           end
