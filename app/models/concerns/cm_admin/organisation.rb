@@ -32,6 +32,11 @@ module CmAdmin
               field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
             end
           end
+          tab :employees, 'employees', associated_model: :users, layout_type: 'cm_association_index' do
+            column :email
+            column :full_name
+            column :created_at, field_type: :date, format: '%d %b, %Y'
+          end
         end
 
         cm_new page_title: 'Add Organisation', page_description: 'Enter all details to add Organisation' do

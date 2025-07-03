@@ -32,5 +32,21 @@ module CmAdmin
     def select_options_for_consultation(_ = nil, _ = nil)
       ::Consultation.pluck(:title, :id)
     end
+
+    def select_options_for_consultation_status(_ = nil, _ = nil)
+      ::Consultation.statuses.keys.map { |status| [status.titleize, status] }
+    end
+
+    def select_options_for_consultation_review_type(_ = nil, _ = nil)
+      ::Consultation.review_types.keys.map { |status| [status.titleize, status] }
+    end
+
+    def select_options_for_consultation_visibility(_ = nil, _ = nil)
+      ::Consultation.visibilities.keys.map { |status| [status.titleize, status] }
+    end
+
+    def select_options_for_ministry(_ = nil, _ = nil)
+      ::Ministry.pluck(:name, :id)
+    end
   end
 end

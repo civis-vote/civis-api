@@ -16,6 +16,9 @@ class Ministry < ApplicationRecord
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :category, optional: true
+
+  has_many :consultations
+
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
   before_validation :set_created_by, on: :create
@@ -62,7 +65,7 @@ class Ministry < ApplicationRecord
   end
 
   def status
-    is_approved ? 'Approved' : 'Not Approved'
+    is_approved ? 'approved' : 'not_approved'
   end
 
   def location

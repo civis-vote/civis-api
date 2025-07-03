@@ -11,7 +11,10 @@ module CmAdmin
         cm_index do
           page_title 'Consultations'
 
-          filter %i[title], :search, placeholder: 'Search'
+          filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
+          filter :status, :multi_select, helper_method: :select_options_for_consultation_status
+          filter :review_type, :single_select, helper_method: :select_options_for_consultation_review_type
+          filter :visibility, :single_select, helper_method: :select_options_for_consultation_visibility
 
           column :title
           column :ministry_name, header: 'Ministry'
@@ -40,24 +43,81 @@ module CmAdmin
               field :feedback_url, label: 'Consultation Page', field_type: :link
               field :response_url, label: 'Consultation Summary', field_type: :link
               field :consultation_logo, field_type: :image
+              field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value
               field :created_by_full_name, label: 'Created By'
+            end
+            cm_section 'Summary' do
+              field :english_summary, field_type: :rich_text
+              field :hindi_summary, field_type: :rich_text
+              field :odia_summary, field_type: :rich_text
+              field :marathi_summary, field_type: :rich_text
+            end
+            cm_section 'Thank You Message' do
+              field :response_submission_message, field_type: :rich_text
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
               field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
             end
           end
+          tab :response_rounds, 'response_rounds', associated_model: 'response_rounds',
+                                                   layout_type: 'cm_association_index' do
+            column :id
+            column :created_at, field_type: :date, format: '%d %b, %Y'
+          end
         end
 
         cm_new page_title: 'Add Consultation', page_description: 'Enter all details to add Consultation' do
           cm_section 'Details' do
             form_field :title, input_type: :string
+            form_field :title_hindi, input_type: :string
+            form_field :title_odia, input_type: :string
+            form_field :title_marathi, input_type: :string
+            form_field :visibility, input_type: :single_select
+            form_field :private_response, input_type: :switch
+            form_field :is_satisfaction_rating_optional, input_type: :switch
+            form_field :show_discuss_section, input_type: :switch
+            form_field :consultation_feedback_email, input_type: :string
+            form_field :consultation_logo, input_type: :single_file_upload
+            form_field :officer_name, input_type: :string
+            form_field :officer_designation, input_type: :string
+            form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
+            form_field :url, input_type: :string
+            form_field :response_deadline, input_type: :date
+            form_field :review_type, input_type: :single_select
+          end
+          cm_section 'Summary' do
+            form_field :english_summary, input_type: :rich_text
           end
         end
 
         cm_edit page_title: 'Edit Consultation', page_description: 'Enter all details to edit Consultation' do
           cm_section 'Details' do
             form_field :title, input_type: :string
+            form_field :title_hindi, input_type: :string
+            form_field :title_odia, input_type: :string
+            form_field :title_marathi, input_type: :string
+            form_field :visibility, input_type: :single_select
+            form_field :private_response, input_type: :switch
+            form_field :is_satisfaction_rating_optional, input_type: :switch
+            form_field :show_discuss_section, input_type: :switch
+            form_field :consultation_feedback_email, input_type: :string
+            form_field :consultation_logo, input_type: :single_file_upload
+            form_field :officer_name, input_type: :string
+            form_field :officer_designation, input_type: :string
+            form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
+            form_field :url, input_type: :string
+            form_field :response_deadline, input_type: :date
+            form_field :review_type, input_type: :single_select
+          end
+          cm_section 'Summary' do
+            form_field :english_summary, input_type: :rich_text
+            form_field :hindi_summary, input_type: :rich_text
+            form_field :odia_summary, input_type: :rich_text
+            form_field :marathi_summary, input_type: :rich_text
+          end
+          cm_section 'Thank You Message' do
+            form_field :response_submission_message, input_type: :rich_text
           end
         end
       end
