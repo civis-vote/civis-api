@@ -25,6 +25,7 @@ module CmAdmin
                         group_name: 'Role' do
             user = ::User.find(params[:id])
             user.update!(cm_role_id: ::CmRole.find_by(name: 'Admin')&.id)
+            user.admin!
             user
           end
 
@@ -34,6 +35,7 @@ module CmAdmin
                         group_name: 'Role' do
             user = ::User.find(params[:id])
             user.update!(cm_role_id: ::CmRole.find_by(name: 'Citizen')&.id)
+            user.citizen!
             user
           end
 
@@ -43,6 +45,7 @@ module CmAdmin
                         group_name: 'Role' do
             user = ::User.find(params[:id])
             user.update!(cm_role_id: ::CmRole.find_by(name: 'Moderator')&.id)
+            user.moderator!
             user
           end
 
