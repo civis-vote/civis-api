@@ -231,8 +231,10 @@ class User < ApplicationRecord
 
     self.cm_role = if organisation.present?
                      ::CmRole.find_by(name: "Organisation Employee")
+                     organisation_employee!
                    else
                      ::CmRole.find_by(name: "Citizen")
+                     citizen!
                    end
   end
 end
