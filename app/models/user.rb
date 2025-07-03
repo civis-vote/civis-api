@@ -229,12 +229,12 @@ class User < ApplicationRecord
   def set_cm_role
     return if cm_role.present?
 
-    self.cm_role = if organisation.present?
-                     ::CmRole.find_by(name: "Organisation Employee")
-                     organisation_employee!
-                   else
-                     ::CmRole.find_by(name: "Citizen")
-                     citizen!
-                   end
+    if organisation.present?
+      self.cm_role = ::CmRole.find_by(name: "Organisation Employee")
+      self.role = 'organisation_employee'
+    else
+      self.cm_role = ::CmRole.find_by(name: "Citizen")
+      self.role = 'citizen'
+    end
   end
 end
