@@ -35,6 +35,7 @@ module CmAdmin
           tab :employees, 'employees', associated_model: :users, layout_type: 'cm_association_index' do
             column :email
             column :full_name
+            column :profile_picture, field_type: :image
             column :created_at, field_type: :date, format: '%d %b, %Y'
           end
         end

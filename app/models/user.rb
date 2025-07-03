@@ -25,9 +25,10 @@ class User < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
   belongs_to :organisation, counter_cache: true, optional: true
-  belongs_to :cm_role
+  belongs_to :cm_role, optional: true
 
   before_validation :create_random_password, on: :create
+  before_validation :set_cm_role, on: :create
   validate :password_complexity, on: :create
 
   # enums
@@ -221,5 +222,17 @@ class User < ApplicationRecord
     return unless password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$/)
 
     errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
+  end
+
+  private
+
+  def set_cm_role
+    return if cm_role.present?
+
+    self.cm_role = if organisation.present?
+                     ::CmRole.find_by(name: "Organisation Employee")
+                   else
+                     ::CmRole.find_by(name: "Citizen")
+                   end
   end
 end
