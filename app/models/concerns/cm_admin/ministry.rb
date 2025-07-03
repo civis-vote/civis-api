@@ -2,6 +2,8 @@ module CmAdmin
   module Ministry
     extend ActiveSupport::Concern
 
+    STATUS_TAG_COLORS = { approved: 'bg-success', not_approved: 'bg-danger' }.freeze
+
     included do
       cm_admin do
         actions only: []
@@ -10,11 +12,29 @@ module CmAdmin
           page_title 'Ministries'
 
           filter %i[name], :search, placeholder: 'Search'
+          filter :status, :single_select, collection: [%w[Approved true], ['Not Approved', false]],
+                                          filter_with: :status_filter
+
+          custom_action name: 'Approve', route_type: 'member', verb: 'patch', path: ':id/approve',
+                        icon_name: 'fa-regular fa-circle-check', display_type: :button,
+                        display_if: ->(obj) { obj.status == 'not_approved' } do
+            ministry = ::Ministry.find(params[:id])
+            ministry.approve
+            ministry
+          end
+
+          custom_action name: 'Reject', route_type: 'member', verb: 'patch', path: ':id/reject',
+                        icon_name: 'fa-solid fa-ban', display_type: :button,
+                        display_if: ->(obj) { obj.status == 'approved' } do
+            ministry = ::Ministry.find(params[:id])
+            ministry.reject
+            ministry
+          end
 
           column :name
           column :created_by_full_name, header: 'Created By'
           column :category_name, header: 'Category'
-          column :status
+          column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
           column :location_name, header: 'Location'
         end
 
@@ -28,7 +48,7 @@ module CmAdmin
               field :name_marathi, label: 'Name in Marathi'
               field :level, field_type: :enum
               field :category_name, label: 'Category'
-              field :status
+              field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :poc_email_primary, label: 'Primary Email Address'
               field :primary_officer_name
               field :primary_officer_designation
@@ -42,6 +62,12 @@ module CmAdmin
               field :created_at, field_type: :date, format: '%d %b, %Y'
               field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
             end
+          end
+          tab :consultations, 'consultations', associated_model: :consultations, layout_type: 'cm_association_index' do
+            column :title
+            column :status, field_type: :tag, tag_class: CmAdmin::Consultation::STATUS_TAG_COLORS
+            column :response_deadline, field_type: :date, format: '%d %b, %Y'
+            column :created_by_full_name, header: 'Created By'
           end
         end
 

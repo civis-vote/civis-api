@@ -4,7 +4,8 @@ Rails.application.reloader.to_prepare do
     config.layout = 'admin'
     # config.authorized_roles = [:super_admin?]
     config.included_models = [Category, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
-                             ConsultationResponse, Ministry, Organisation, Consultation, GlossaryWordConsultationMapping]
+                              ConsultationResponse, Ministry, Organisation, Consultation, GlossaryWordConsultationMapping,
+                              ResponseRound, Question]
 
     config.project_name = Rails.configuration.x.project_settings.name
 

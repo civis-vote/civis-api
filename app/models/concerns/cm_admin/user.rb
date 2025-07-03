@@ -48,6 +48,8 @@ module CmAdmin
             form_field :email, input_type: :string
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
+            form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_cm_role,
+                                    label: 'Role', placeholder: 'Select Role'
           end
         end
 
@@ -56,6 +58,8 @@ module CmAdmin
             form_field :email, input_type: :string
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
+            form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_cm_role,
+                                    label: 'Role', placeholder: 'Select Role'
           end
         end
       end
