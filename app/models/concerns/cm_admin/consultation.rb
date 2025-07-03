@@ -16,6 +16,38 @@ module CmAdmin
           filter :review_type, :single_select, helper_method: :select_options_for_consultation_review_type
           filter :visibility, :single_select, helper_method: :select_options_for_consultation_visibility
 
+          custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
+                        icon_name: 'fa-solid fa-check', display_type: :button,
+                        display_if: ->(consultation) { consultation.submitted? || consultation.rejected? } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.publish
+            consultation
+          end
+
+          custom_action name: 'reject', route_type: 'member', verb: 'patch', path: ':id/reject',
+                        icon_name: 'fa-solid fa-ban', display_type: :button,
+                        display_if: ->(consultation) { consultation.published? } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.reject
+            consultation
+          end
+
+          custom_action name: 'mark_featured', route_type: 'member', verb: 'patch', path: ':id/feature',
+                        icon_name: 'fa-solid fa-star', display_type: :button,
+                        display_if: ->(consultation) { !consultation.is_featured } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.update!(is_featured: true)
+            consultation
+          end
+
+          custom_action name: 'un_feature', route_type: 'member', verb: 'patch', path: ':id/unfeature',
+                        icon_name: 'fa-solid fa-ban', display_type: :button,
+                        display_if: ->(consultation) { consultation.is_featured } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.update!(is_featured: false)
+            consultation
+          end
+
           column :title
           column :ministry_name, header: 'Ministry'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
@@ -64,6 +96,12 @@ module CmAdmin
                                                    layout_type: 'cm_association_index' do
             column :id
             column :created_at, field_type: :date, format: '%d %b, %Y'
+          end
+          tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index' do
+            column :id
+            column :user_response
+            column :user_full_name, header: 'Given by'
+            column :response_status, header: 'Status', field_type: :enum
           end
         end
 

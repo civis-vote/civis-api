@@ -78,6 +78,12 @@ module CmAdmin
               field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
             end
           end
+          tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index' do
+            column :id
+            column :consultation_title
+            column :user_response
+            column :response_status, header: 'Status', field_type: :enum
+          end
         end
 
         cm_new page_title: 'Add User', page_description: 'Enter all details to add User' do
