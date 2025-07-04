@@ -33,7 +33,7 @@ class Consultation < ApplicationRecord
 
   validates_presence_of :response_deadline
 
-  before_validation :set_created_by, on: :create
+  before_validation :set_created_by, :set_default_value_for_organisation_consultation, on: :create
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
   after_commit :create_response_round, on: :create
   after_commit :notify_admins, on: :create
@@ -234,6 +234,11 @@ class Consultation < ApplicationRecord
   end
 
   private
+
+  def set_default_value_for_organisation_consultation
+    self.organisation_id = Current.user&.organisation_id
+    self.visibility = :private_consultation
+  end
 
   def set_created_by
     self.created_by = Current.user
