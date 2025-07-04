@@ -48,5 +48,9 @@ module CmAdmin
     def select_options_for_ministry(_ = nil, _ = nil)
       ::Ministry.pluck(:name, :id)
     end
+
+    def select_options_for_assignable_cm_role(_ = nil, _ = nil)
+      ::CmRole.where.not(name: 'Organisation Employee').pluck(:name, :id)
+    end
   end
 end

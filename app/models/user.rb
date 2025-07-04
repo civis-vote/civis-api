@@ -84,6 +84,8 @@ class User < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
+
   def self.notify_for_new_consultation_filter
     where("notification_settings->>'notify_for_new_consultation' = ?", "true")
   end

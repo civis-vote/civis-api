@@ -8,6 +8,8 @@ module CmAdmin
       cm_admin do
         actions only: []
         set_icon 'fas fa-clipboard-list'
+        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+
         cm_index do
           page_title 'Consultations'
 
@@ -15,6 +17,7 @@ module CmAdmin
           filter :status, :multi_select, helper_method: :select_options_for_consultation_status
           filter :review_type, :single_select, helper_method: :select_options_for_consultation_review_type
           filter :visibility, :single_select, helper_method: :select_options_for_consultation_visibility
+
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
                         icon_name: 'fa-solid fa-check', display_type: :button,
@@ -56,6 +59,22 @@ module CmAdmin
         end
 
         cm_show page_title: :title do
+          custom_action name: 'extend_deadline', route_type: 'member', verb: 'patch', icon_name: 'fa-solid fa-timer',
+                        path: ':id/extend_deadline', display_type: :form_modal,
+                        display_if: ->(obj) { obj.can_extend_deadline_or_create_response_round? } do
+            form do
+              cm_section '' do
+                form_field :response_deadline, input_type: :date
+              end
+            end
+            on_submit do
+              consultation = ::Consultation.find(params[:id])
+              consultation.update!(response_deadline: params.dig(:consultation, :response_deadline))
+              consultation.publish
+              consultation
+            end
+          end
+
           tab :profile, '' do
             cm_section 'Consultation details' do
               field :title
