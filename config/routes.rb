@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   mount CmAdmin::Engine => '/cm_admin'
 
-  authenticate :user, ->(u) { u.admin? } do
+  authenticate :user, ->(u) { u.role?('admin') } do
     mount Sidekiq::Web => '/sidekiq'
   end
 
