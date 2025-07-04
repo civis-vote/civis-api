@@ -38,6 +38,12 @@ module CmAdmin
             column :profile_picture, field_type: :image
             column :created_at, field_type: :date, format: '%d %b, %Y'
           end
+          tab :respondents, 'respondents', associated_model: :respondent_users, layout_type: 'cm_association_index' do
+            column :email
+            column :full_name
+            column :profile_picture, field_type: :image
+            column :created_at, field_type: :date, format: '%d %b, %Y'
+          end
         end
 
         cm_new page_title: 'Add Organisation', page_description: 'Enter all details to add Organisation' do

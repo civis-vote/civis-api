@@ -84,6 +84,8 @@ class Consultation < ApplicationRecord
     where(visibility: visibility)
   }
 
+  scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
+
   def notify_admins
     self.response_token = SecureRandom.uuid unless response_token
     save!
@@ -225,6 +227,10 @@ class Consultation < ApplicationRecord
 
   def set_consultation_expiry_job
     ConsultationExpiryJob.set(wait_until: TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(response_deadline.to_datetime.to_s))).perform_later(self)
+  end
+
+  def can_extend_deadline_or_create_response_round?
+    private_consultation? && expired?
   end
 
   private

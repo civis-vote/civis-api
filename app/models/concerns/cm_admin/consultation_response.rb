@@ -6,6 +6,8 @@ module CmAdmin
       cm_admin do
         actions only: %i[index show delete custom_action_modal export history]
         set_icon 'far fa-newspaper'
+        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+
         cm_index do
           page_title 'Consultation Responses'
 

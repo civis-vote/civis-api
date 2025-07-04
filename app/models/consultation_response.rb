@@ -59,6 +59,8 @@ class ConsultationResponse < ApplicationRecord
     where(response_status: response_status)
   }
 
+  scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
+
   def self.acceptable_responses
     where(response_status: 'acceptable')
   end
