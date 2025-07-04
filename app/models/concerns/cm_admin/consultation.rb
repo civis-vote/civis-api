@@ -18,7 +18,6 @@ module CmAdmin
           filter :review_type, :single_select, helper_method: :select_options_for_consultation_review_type
           filter :visibility, :single_select, helper_method: :select_options_for_consultation_visibility
 
-
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
                         icon_name: 'fa-solid fa-check', display_type: :button,
                         display_if: ->(consultation) { consultation.submitted? || consultation.rejected? } do
@@ -37,7 +36,7 @@ module CmAdmin
 
           custom_action name: 'mark_featured', route_type: 'member', verb: 'patch', path: ':id/feature',
                         icon_name: 'fa-solid fa-star', display_type: :button,
-                        display_if: ->(consultation) { !consultation.is_featured } do
+                        display_if: ->(consultation) { !consultation.is_featured && consultation.public_consultation? } do
             consultation = ::Consultation.find(params[:id])
             consultation.update!(is_featured: true)
             consultation
@@ -45,7 +44,7 @@ module CmAdmin
 
           custom_action name: 'un_feature', route_type: 'member', verb: 'patch', path: ':id/unfeature',
                         icon_name: 'fa-solid fa-ban', display_type: :button,
-                        display_if: ->(consultation) { consultation.is_featured } do
+                        display_if: ->(consultation) { consultation.is_featured && consultation.public_consultation? } do
             consultation = ::Consultation.find(params[:id])
             consultation.update!(is_featured: false)
             consultation
@@ -82,19 +81,20 @@ module CmAdmin
               field :title_odia, label: 'Title in Odia'
               field :title_marathi, label: 'Title in Marathi'
               field :consultation_feedback_email
-              field :officer_name
-              field :officer_designation
+              field :officer_name, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :url, label: 'URL of Consultation PDF'
               field :ministry_name, label: 'Ministry'
-              field :review_type, field_type: :enum
-              field :visibility, field_type: :enum
+              field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :response_deadline, field_type: :date, format: '%d %b, %Y'
               field :show_discuss_section, field_type: :custom, helper_method: :format_boolean_value
               field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :feedback_url, label: 'Consultation Page', field_type: :link
-              field :response_url, label: 'Consultation Summary', field_type: :link
-              field :consultation_logo, field_type: :image
-              field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value
+              field :response_url, label: 'Consultation Summary', field_type: :link, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :consultation_logo, field_type: :image, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value,
+                                                      display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
@@ -103,7 +103,7 @@ module CmAdmin
               field :odia_summary, field_type: :rich_text
               field :marathi_summary, field_type: :rich_text
             end
-            cm_section 'Thank You Message' do
+            cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
               field :response_submission_message, field_type: :rich_text
             end
             cm_section 'Log Details' do
@@ -130,18 +130,18 @@ module CmAdmin
             form_field :title_hindi, input_type: :string
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
-            form_field :visibility, input_type: :single_select
+            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
-            form_field :is_satisfaction_rating_optional, input_type: :switch
-            form_field :show_discuss_section, input_type: :switch
+            form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
-            form_field :consultation_logo, input_type: :single_file_upload
-            form_field :officer_name, input_type: :string
-            form_field :officer_designation, input_type: :string
+            form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
             form_field :url, input_type: :string
             form_field :response_deadline, input_type: :date
-            form_field :review_type, input_type: :single_select
+            form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
@@ -154,18 +154,18 @@ module CmAdmin
             form_field :title_hindi, input_type: :string
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
-            form_field :visibility, input_type: :single_select
+            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
-            form_field :is_satisfaction_rating_optional, input_type: :switch
-            form_field :show_discuss_section, input_type: :switch
+            form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
-            form_field :consultation_logo, input_type: :single_file_upload
-            form_field :officer_name, input_type: :string
-            form_field :officer_designation, input_type: :string
+            form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
             form_field :url, input_type: :string
             form_field :response_deadline, input_type: :date
-            form_field :review_type, input_type: :single_select
+            form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
@@ -173,7 +173,7 @@ module CmAdmin
             form_field :odia_summary, input_type: :rich_text
             form_field :marathi_summary, input_type: :rich_text
           end
-          cm_section 'Thank You Message' do
+          cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
             form_field :response_submission_message, input_type: :rich_text
           end
         end
