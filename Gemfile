@@ -10,9 +10,8 @@ gem 'pg'
 # Use Puma as the app server
 gem 'puma'
 # Use SCSS for stylesheets
-gem 'sass-rails', '~> 5'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-gem 'jbuilder', '~> 2.5'
+gem 'jbuilder'
 # Use Redis adapter to run Action Cable in production
 gem 'redis'
 # Use Active Model has_secure_password
@@ -22,6 +21,7 @@ gem 'kaminari'
 
 gem 'rack-cors'
 
+gem 'paper_trail'
 gem 'postmark-rails'
 
 gem 'devise'
@@ -33,10 +33,6 @@ gem 'graphql-errors'
 gem 'sidekiq'
 
 gem 'simple_form'
-
-gem 'local_time', '~> 2.1'
-
-gem 'travis'
 
 gem 'roo', '~> 2.8.0'
 
@@ -57,8 +53,6 @@ gem 'mini_magick'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false
 
-gem 'spotlight_search', '~> 0.2.0'
-
 gem 'slim-rails'
 # oauth gems
 gem 'omniauth'
@@ -67,7 +61,7 @@ gem 'omniauth-google-oauth2'
 gem 'omniauth-linkedin-oauth2'
 
 gem 'cocoon'
-gem 'devise_invitable', '~> 2.0', '>= 2.0.2'
+gem 'devise_invitable'
 gem 'paranoia'
 gem 'shrine', '~> 3.3'
 
@@ -86,14 +80,11 @@ group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'listen'
   gem 'web-console', '>= 3.3.0'
-  # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'rb-readline'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'ruby-progressbar'
-  gem 'spring'
-  gem 'spring-watcher-listen'
 end
 
 group :test do
@@ -112,14 +103,13 @@ gem 'http'
 gem 'pg-aws_rds_iam'
 gem 'psych', '< 4'
 
-gem 'bootstrap', '~> 4.3', '>= 4.3.1'
-gem 'font-awesome-sass'
 gem 'importmap-rails'
 gem 'sassc-rails'
-gem 'select2-rails'
-gem 'trix-rails'
 gem 'turbo-rails'
 
 gem 'airbrake', '~> 13.0'
 
 gem 'jwt'
+
+gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
+gem 'stimulus-rails'

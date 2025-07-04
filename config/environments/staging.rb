@@ -26,7 +26,7 @@ Rails.application.configure do
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
+  config.assets.compile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'
@@ -95,16 +95,6 @@ Rails.application.configure do
 
   config.client_url = { host: ENV["CLIENT_HOST"], protocol: :https }
   config.host_url = { host: ENV["HOST"], protocol: :https }
-
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address:              "smtp.postmarkapp.com",
-    port:                 587,
-    domain:               "civis.vote",
-    user_name:            Rails.application.credentials.dig(:postmark, :api_key),
-    password:             Rails.application.credentials.dig(:postmark, :api_key),
-    authentication:       "plain",
-  enable_starttls_auto: true  }
 
   # Inserts middleware to perform automatic connection switching.
   # The `database_selector` hash is used to pass options to the DatabaseSelector
