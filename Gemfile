@@ -100,7 +100,6 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 gem 'graphiql-rails'
 gem 'http'
-gem 'pg-aws_rds_iam'
 gem 'psych', '< 4'
 
 gem 'importmap-rails'

@@ -1,9 +1,7 @@
 class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
-  include SpotlightSearch
   include Paginator
   include Scorable::ConsultationResponse
-  include ImportResponse
   include CmAdmin::ConsultationResponse
 
   has_rich_text :response_text

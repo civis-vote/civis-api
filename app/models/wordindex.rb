@@ -1,6 +1,4 @@
 class Wordindex < ApplicationRecord
-  include SpotlightSearch
-  include ImportGlossary
   include CmAdmin::Wordindex
 
   validates :word, presence: true

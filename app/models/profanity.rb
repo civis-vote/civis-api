@@ -1,6 +1,4 @@
 class Profanity < ApplicationRecord
-  include SpotlightSearch
-  include ImportProfanities
   include Paginator
   include CmAdmin::Profanity
 

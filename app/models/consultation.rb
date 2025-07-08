@@ -3,9 +3,7 @@ class Consultation < ApplicationRecord
   SKIP_AUTH_PRODUCTION_ID = 0
 
   acts_as_paranoid
-  include SpotlightSearch
   include Paginator
-  include ImageResizer
   include Scorable::Consultation
   include CmAdmin::Consultation
 

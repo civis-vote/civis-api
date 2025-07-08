@@ -6,6 +6,8 @@ module CmAdmin
       cm_admin do
         actions only: []
         set_icon 'fas fa-building'
+        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+
         cm_index do
           page_title 'Organisations'
 

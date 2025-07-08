@@ -1,5 +1,4 @@
 class CaseStudy < ApplicationRecord
-  include SpotlightSearch
   include Paginator
   include CmAdmin::CaseStudy
 

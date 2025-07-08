@@ -1,7 +1,6 @@
 module Scorable
   module User
     extend ActiveSupport::Concern
-    include Scorable
 
     included do
       after_commit :add_user_created_points, on: :create if respond_to? :after_commit

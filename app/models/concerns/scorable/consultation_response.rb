@@ -1,7 +1,6 @@
 module Scorable
   module ConsultationResponse
     extend ActiveSupport::Concern
-    include Scorable
 
     included do
       after_commit :add_response_created_points, on: :create if respond_to? :after_commit
