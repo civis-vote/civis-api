@@ -1,5 +1,4 @@
 class Respondent < ApplicationRecord
-  include SpotlightSearch
   include Paginator
 
   belongs_to :user

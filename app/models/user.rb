@@ -1,7 +1,5 @@
 class User < ApplicationRecord
   include Attachable
-  include ImageResizer
-  include SpotlightSearch
   include Paginator
   include Scorable::User
   include Auth::User

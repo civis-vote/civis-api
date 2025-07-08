@@ -1,8 +1,0 @@
-= simple_form_for [:admin, @profanity], data: { id: "add_edit_profanity_detail" } do |f|
-	.p-4
-		.admin-header-text
-			| Profane Words
-		.admin-details-box
-			= f.input :profane_word, placeholder: "Profane Word", required: false, autofocus: true, wrapper: :form_input_group, input_html: { id: "profane_word" }
-		.admin-update-button-position
-			= f.button :submit, "Save Profane Word"

@@ -1,7 +1,6 @@
 module Scorable
   module Consultation
     extend ActiveSupport::Concern
-    include Scorable
 
     included do
       before_save :add_consultation_created_points, if: :status_changed? if respond_to? :before_save

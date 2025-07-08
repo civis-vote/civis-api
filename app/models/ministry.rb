@@ -1,9 +1,7 @@
 class Ministry < ApplicationRecord
   acts_as_paranoid
   include Attachable
-  include ImageResizer
   include Scorable::Ministry
-  include SpotlightSearch
   include Paginator
   include CmAdmin::Ministry
 

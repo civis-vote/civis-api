@@ -1,7 +1,5 @@
 class Organisation < ApplicationRecord
   acts_as_paranoid
-  include ImageResizer
-  include SpotlightSearch
   include Paginator
   include CmAdmin::Organisation
 
