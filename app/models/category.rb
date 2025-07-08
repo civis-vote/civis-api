@@ -1,9 +1,8 @@
 class Category < ApplicationRecord
   acts_as_paranoid
   include Attachable
-  include ImageResizer
-  include SpotlightSearch
   include Paginator
+  include CmAdmin::Category
 
   has_many :ministries
 

@@ -9,10 +9,7 @@ if Rails.env.development?
 
   namespace :erd do
     task :load_models do
-      say "Loading application environment..."
       Rake::Task[:environment].invoke
-
-      say "Loading code in search of Active Record models..."
       Zeitwerk::Loader.eager_load_all
     end
   end

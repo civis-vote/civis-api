@@ -1,0 +1,3 @@
+import_key,consultation_id,first_name,last_name,email,phone_number,responded_at,organisation_id,visibility,satisfaction_rating,response_text,Question1_id,Question2_id
+1,105,mahaveer,soni,m@a.com,324242,12-05-2025,3,anonymous,satisfied,some text,a,b,second,world
+2,105,random,user,mahaveer@commutatus.com,324242,10-07-2025,3,shared,somewhat_dissatisfied,some text1,a,b,fist,hello
