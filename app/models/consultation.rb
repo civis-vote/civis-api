@@ -236,8 +236,10 @@ class Consultation < ApplicationRecord
   private
 
   def set_default_value_for_organisation_consultation
-    self.organisation_id = Current.user&.organisation_id
-    self.visibility = :private_consultation
+    if Current.user&.role?('organisation_employee')
+      self.organisation_id = Current.user&.organisation_id
+      self.visibility = :private_consultation
+    end
   end
 
   def set_created_by

@@ -82,6 +82,13 @@ class User < ApplicationRecord
     order("#{sort} #{sort_direction}, id asc")
   }
 
+  scope :cm_role_filter, lambda { |role_names|
+    return all unless role_names.present?
+
+    cm_role_ids = ::CmRole.where(name: role_names).pluck(:id)
+    where(cm_role_id: cm_role_ids)
+  }
+
   scope :active, -> { where(active: true) }
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
