@@ -23,6 +23,8 @@ class Organisation < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
+  scope :organisation_only, -> { where(id: Current.user&.organisation_id) }
+
   delegate :url, to: :logo, prefix: true, allow_nil: true
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
 
