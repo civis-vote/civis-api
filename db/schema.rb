@@ -173,6 +173,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
     t.index ["organisation_id"], name: "index_consultation_responses_on_organisation_id"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
     t.index ["response_round_id"], name: "index_consultation_responses_on_response_round_id"
+    t.index ["response_status", "visibility"], name: "index_consultation_responses_on_response_status_and_visibility"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
@@ -205,7 +206,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
     t.datetime "feedback_email_delivered_at"
     t.datetime "feedback_email_opened_at"
     t.datetime "feedback_email_clicked_at"
-    t.boolean "incognito"
     t.string "title_marathi"
     t.boolean "show_discuss_section", default: true, null: false
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
