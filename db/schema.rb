@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -237,6 +237,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_international_city", default: false
+    t.index ["location_type"], name: "index_locations_on_location_type"
+    t.index ["parent_id"], name: "index_locations_on_parent_id"
   end
 
   create_table "ministries", force: :cascade do |t|
@@ -337,6 +339,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_28_153237) do
     t.string "question_text_odia"
     t.text "question_text_marathi"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
+    t.index ["parent_id"], name: "index_questions_on_parent_id"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
   end
 
