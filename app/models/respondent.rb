@@ -56,41 +56,19 @@ class Respondent < ApplicationRecord
 
 		def create_respondent(email, organisation, consultation, current_user=nil)
 			user_record = User.find_by(email: email.strip)
-			user_record = create_user_record(email.strip, DateTime.now, current_user) if !(user_record.present?) || (user_record.created_by_invite? && !user_record.invitation_accepted?)
+			user_record = create_user_record(email.strip, DateTime.now, current_user) if !(user_record.present?)
 	    respondent_record = Respondent.where(user_id: user_record.id, organisation: organisation, response_round_id: consultation.response_rounds.last.id)
     	create_respondent_record(user_record.id, organisation, consultation.response_rounds.last.id) unless respondent_record.present?
 	    return user_record
 		end
 
 		def respondent_invite_url(consultation, user_record)
-			url = ""
-			callback_url = ""
-			if (user_record.created_by_invite?) && !(user_record.invitation_accepted?)
-				if Rails.env.development?
-		      callback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
-		      user_record.update(callback_url: callback_url)
-		      url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}&consultation_id=#{consultation.id}&invitation_token=#{@raw_token}"})).to_s
-		      return url
-		    else
-		      callback_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
-		      user_record.update(callback_url: callback_url)
-		      url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/auth-private", query: "email=#{user_record.email}&first_name=#{user_record.first_name}&last_name=#{user_record.last_name}&consultation_id=#{consultation.id}&invitation_token=#{@raw_token}"})).to_s
-		      return url
-		    end
-			else
-				if Rails.env.development?
-		      callback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
-		      user_record.update(callback_url: callback_url)
-		      url = URI::HTTP.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
-		      return url
-		    else
-		      callback_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
-		      user_record.update(callback_url: callback_url)
-		      url = URI::HTTPS.build(Rails.application.config.client_url.merge!({path: "/consultations/#{consultation.id}/read", query: nil})).to_s
-		      return url
-		    end
-			end
-   	end
+			protocol = Rails.env.development? ? URI::HTTP : URI::HTTPS
+			url_options = Rails.application.config.client_url.merge(path: "/consultations/#{consultation.id}/read", query: nil)
+			callback_url = protocol.build(url_options).to_s
+			user_record.update(callback_url: callback_url)
+			callback_url
+		end
 
 		def invite_respondent_email_job(consultation, user_record)
 			url = respondent_invite_url(consultation, user_record)

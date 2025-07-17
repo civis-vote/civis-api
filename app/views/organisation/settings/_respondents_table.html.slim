@@ -12,12 +12,12 @@ table.table.employee-table
           tr
             td.width-5
             td.employee-td-box-shadow.width-5
-              - if ( respondent.invitation_accepted? && respondent.profile_picture.present? )
+              - if ( respondent.profile_picture.present? )
                 = image_tag respondent.picture_url, class: "user-timeline-profile-picture-bg"
               - else
                 = image_tag respondent.picture_url
             td.employee-td-box-shadow.width-85
-              - if respondent.invitation_accepted?
+              - if respondent.full_name.present?
                 .employee-name
                   = respondent.full_name
                 span.child-invite-span 
