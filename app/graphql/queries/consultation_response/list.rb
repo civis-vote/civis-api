@@ -17,7 +17,7 @@ module Queries
 	    	else
 	    		consultation_response = ::ConsultationResponse.off_platform
 	    	end
-	    	consultation_response.public_consultation_response_filter.consultation_filter(consultation_filter).shared.sort_records(sort, sort_direction).list(per_page, page)
+	    	consultation_response.includes(:user, :consultation).public_consultation_response_filter.consultation_filter(consultation_filter).shared.sort_records(sort, sort_direction).list(per_page, page)
 	    end
 		end
 	end
