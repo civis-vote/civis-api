@@ -30,6 +30,8 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
+  graphql:
+    unauthorized: "Unauthorized"
   hello: "Hello world"
   activerecord:
     attributes:
