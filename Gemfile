@@ -27,8 +27,7 @@ gem 'postmark-rails'
 gem 'devise'
 gem 'razorpay'
 
-gem 'graphql', '~> 1.13.23'
-gem 'graphql-errors'
+gem 'graphql'
 
 gem 'sidekiq'
 

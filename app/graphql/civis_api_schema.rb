@@ -2,6 +2,8 @@ class CivisApiSchema < GraphQL::Schema
   mutation(Types::MutationType)
   query(Types::QueryType)
 
+  trace_with GraphQL::Tracing::ScoutTrace, set_transaction_name: true
+
   def self.resolve_type(_abstract_type, _obj, _ctx)
     raise(GraphQL::RequiredImplementationMissingError)
   end
