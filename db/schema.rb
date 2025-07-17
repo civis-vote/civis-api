@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_04_30_103112) do
+ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -173,6 +173,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_30_103112) do
     t.index ["organisation_id"], name: "index_consultation_responses_on_organisation_id"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
     t.index ["response_round_id"], name: "index_consultation_responses_on_response_round_id"
+    t.index ["response_status", "visibility"], name: "index_consultation_responses_on_response_status_and_visibility"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
@@ -205,7 +206,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_30_103112) do
     t.datetime "feedback_email_delivered_at"
     t.datetime "feedback_email_opened_at"
     t.datetime "feedback_email_clicked_at"
-    t.boolean "incognito"
     t.string "title_marathi"
     t.boolean "show_discuss_section", default: true, null: false
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
@@ -237,6 +237,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_30_103112) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_international_city", default: false
+    t.index ["location_type"], name: "index_locations_on_location_type"
+    t.index ["parent_id"], name: "index_locations_on_parent_id"
   end
 
   create_table "ministries", force: :cascade do |t|
@@ -337,6 +339,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_04_30_103112) do
     t.string "question_text_odia"
     t.text "question_text_marathi"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
+    t.index ["parent_id"], name: "index_questions_on_parent_id"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
   end
 
