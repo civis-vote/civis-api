@@ -55,6 +55,17 @@ module Types
         field :summary_hindi,	String, nil, null: true
         field :page,	String, nil, null: true
         field :consultation_partner_responses,	[Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
+        field :has_user_filled_response_in_current_response_round, Boolean, null: true
+
+        def has_user_filled_response_in_current_response_round
+          return false unless context[:current_user].present?
+
+          object.response_rounds.order(:round_number)
+                .last
+                &.consultation_responses
+                &.where(user: context[:current_user])
+                &.exists?
+        end
 
         def responded_on
           nil unless context[:current_user].present?
