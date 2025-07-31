@@ -12,6 +12,7 @@ module CmAdmin
           page_title 'Organisations'
 
           filter %i[name], :search, placeholder: 'Search'
+          filter :active, :single_select, collection: [['Yes', true], ['No', false]]
 
           column :id
           column :name
