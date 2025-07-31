@@ -3,6 +3,7 @@ staging:
     configuration:
       iam_instance_profile_name: ec2-rds-civis-staging
       operating_system: ubuntu2204
+      memory_allocator: jemalloc
   postgresql:
     groups:
       eris:
@@ -12,8 +13,9 @@ staging:
 production:
   rails:
     configuration:
-      iam_instance_profile_name: ec2-rds-civis-production     
+      iam_instance_profile_name: ec2-rds-civis-production
       operating_system: ubuntu2204
+      memory_allocator: jemalloc
   postgresql:
     groups:
       eris:

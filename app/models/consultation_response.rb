@@ -44,7 +44,7 @@ class ConsultationResponse < ApplicationRecord
   }
 
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
-    order("#{sort} #{sort_direction}")
+    order("consultation_responses.#{sort} #{sort_direction}")
   }
 
   scope :published_consultation, lambda {
