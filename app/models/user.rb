@@ -28,6 +28,7 @@ class User < ApplicationRecord
   before_validation :create_random_password, on: :create
   before_validation :set_cm_role, on: :create
   validate :password_complexity, on: :create
+  validate :check_organisation_role_only_for_employee
 
   # enums
   enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
@@ -236,12 +237,14 @@ class User < ApplicationRecord
   def set_cm_role
     return if cm_role.present?
 
-    if organisation.present?
-      self.cm_role = ::CmRole.find_by(name: "Organisation Employee")
-      self.role = 'organisation_employee'
-    else
-      self.cm_role = ::CmRole.find_by(name: "Citizen")
-      self.role = 'citizen'
-    end
+    self.cm_role = ::CmRole.find_by(name: "Citizen")
+    self.role = 'citizen'
+  end
+
+  def check_organisation_role_only_for_employee
+    return unless cm_role.name == 'Organisation Employee'
+
+    errors.add(:cm_role, "Organisation employee role is only allowed when organisation is present") if organisation_id.blank?
+    errors
   end
 end

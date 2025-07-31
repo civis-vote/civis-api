@@ -50,7 +50,7 @@ module CmAdmin
     end
 
     def select_options_for_assignable_cm_role(_ = nil, _ = nil)
-      ::CmRole.where.not(name: 'Organisation Employee').pluck(:name, :id)
+      ::CmRole.pluck(:name, :id)
     end
   end
 end

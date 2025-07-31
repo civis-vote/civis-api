@@ -107,7 +107,7 @@ GEM
       airbrake-ruby (~> 6.0)
     airbrake-ruby (6.2.2)
       rbtree3 (~> 0.6)
-    ast (2.4.2)
+    ast (2.4.3)
     aws-eventstream (1.2.0)
     aws-partitions (1.587.0)
     aws-sdk-core (3.131.0)
@@ -212,10 +212,11 @@ GEM
       i18n (>= 1.8.11, < 2)
     faraday (0.17.5)
       multipart-post (>= 1.2, < 3)
-    ffi (1.17.0)
+    ffi (1.17.0-arm64-darwin)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
+    fiber-storage (1.0.1)
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
@@ -258,10 +259,10 @@ GEM
     graphiql-rails (1.8.0)
       railties
       sprockets-rails
-    graphql (1.13.23)
+    graphql (2.5.11)
       base64
-    graphql-errors (0.4.0)
-      graphql (>= 1.6.0, < 2)
+      fiber-storage
+      logger
     hashie (5.0.0)
     htmlentities (4.3.4)
     http (5.1.0)
@@ -332,7 +333,6 @@ GEM
     memoist (0.16.2)
     mini_magick (4.11.0)
     mini_mime (1.1.5)
-    mini_portile2 (2.8.9)
     minitest (5.25.5)
     msgpack (1.5.1)
     multi_json (1.15.0)
@@ -350,8 +350,7 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nio4r (2.7.4)
-    nokogiri (1.18.8)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.18.8-arm64-darwin)
       racc (~> 1.4)
     oauth2 (1.4.9)
       faraday (>= 0.17.3, < 3.0)
@@ -384,7 +383,7 @@ GEM
     parallel (1.26.3)
     paranoia (2.6.3)
       activerecord (>= 5.1, < 7.2)
-    parser (3.3.5.0)
+    parser (3.3.8.0)
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
@@ -398,7 +397,7 @@ GEM
     prettyprint (0.2.0)
     psych (3.3.2)
     public_suffix (4.0.7)
-    puma (6.4.3)
+    puma (6.6.0)
       nio4r (~> 2.0)
     pundit (2.2.0)
       activesupport (>= 3.0.0)
@@ -537,7 +536,7 @@ GEM
       sprockets (> 3.0)
       sprockets-rails
       tilt
-    scout_apm (5.3.8)
+    scout_apm (5.6.4)
       parser
     securerandom (0.4.1)
     selenium-webdriver (4.1.0)
@@ -630,7 +629,7 @@ GEM
     zeitwerk (2.7.3)
 
 PLATFORMS
-  ruby
+  arm64-darwin-23
 
 DEPENDENCIES
   activerecord-session_store
@@ -650,8 +649,7 @@ DEPENDENCIES
   faker
   google-cloud-storage
   graphiql-rails
-  graphql (~> 1.13.23)
-  graphql-errors
+  graphql
   http
   image_processing
   importmap-rails
