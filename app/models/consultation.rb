@@ -172,7 +172,7 @@ class Consultation < ApplicationRecord
   end
 
   def review_url
-    response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/admin/consultations/" + "#{self.id}", query: nil } ))
+    response_url = URI::HTTP.build(Rails.application.config.host_url.merge!({ path: "/admin/consultations/" + "#{self.id}", query: nil } ))
     response_url.to_s
   end
 
