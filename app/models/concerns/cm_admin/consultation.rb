@@ -50,6 +50,14 @@ module CmAdmin
             consultation
           end
 
+          custom_action name: 'create_response_round', route_type: 'member', verb: 'patch', path: ':id/create_response_round',
+                        icon_name: 'fa-solid fa-timer', display_type: :button,
+                        display_if: ->(obj) { obj.can_extend_deadline_or_create_response_round? } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.create_response_round
+            consultation
+          end
+
           column :title
           column :ministry_name, header: 'Ministry'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
