@@ -7,7 +7,6 @@ module Mutations
 
       def resolve(auth:)
         user = ::User.new auth.to_h
-        user.skip_confirmation_notification!
         user.save!
         return user.live_api_key
       end
