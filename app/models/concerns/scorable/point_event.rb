@@ -1,7 +1,6 @@
 module Scorable
   module PointEvent
     extend ActiveSupport::Concern
-    include Scorable
 
     included do 
 
