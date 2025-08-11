@@ -1,7 +1,6 @@
 module Scorable
   module Ministry
     extend ActiveSupport::Concern
-    include Scorable
 
     included do 
 

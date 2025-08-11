@@ -1,7 +1,6 @@
 module Scorable
   module GameAction
     extend ActiveSupport::Concern
-    include Scorable
 
     included do 
 

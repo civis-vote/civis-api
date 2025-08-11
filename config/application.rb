@@ -12,6 +12,15 @@ module CivisApi
     config.load_defaults 7.1
 
     config.action_mailer.delivery_method = :postmark
+    config.action_mailer.postmark_settings = { api_token: Rails.application.credentials.dig(:postmark, :api_key) }
+
+    config.x.project_settings.name = 'CIVIS'
+    config.x.project_settings.slug = 'civis'
+    config.x.project_settings.logo_url = 'https://civis-staging-api.s3.ap-south-1.amazonaws.com/civis_logo.png'
+    config.x.project_settings.favicon_url = 'https://civis-staging-api.s3.ap-south-1.amazonaws.com/favicon.png'
+    config.x.project_settings.scout_sample_rate = 0.5
+
+    config.x.project_settings.default_from_email = "support@platform.civis.vote"
 
     config.active_job.queue_adapter = :sidekiq
     config.active_storage.queues.analysis = :default

@@ -1,0 +1,79 @@
+module CmAdmin
+  module User
+    extend ActiveSupport::Concern
+    STATUS_TAG_CLASS = { active: 'bg-success', disabled: 'bg-danger' }.freeze
+
+    included do
+      cm_admin do
+        actions only: []
+        set_icon 'fas fa-users'
+        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+
+        cm_index do
+          page_title 'Users'
+
+          filter %i[email first_name last_name], :search, placeholder: 'Search'
+          filter :cm_role_id, :single_select, helper_method: :select_options_for_cm_role, display_name: 'Role'
+          filter :created_at, :date, placeholder: 'Created at'
+          filter :updated_at, :date, placeholder: 'Updated at'
+
+          column :full_name
+          column :email
+          column :cm_role_name, header: 'Role'
+          column :created_at, field_type: :date, format: '%d %b, %Y', header: 'Joining Date'
+          column :points
+          column :city_name, header: 'City'
+          column :rank
+        end
+
+        cm_show page_title: :full_name do
+          tab :profile, '' do
+            cm_show_section 'User Details' do
+              field :first_name
+              field :last_name
+              field :email
+              field :cm_role_name, label: 'Role'
+              field :points
+              field :city_name, header: 'City'
+              field :rank
+              field :phone_number
+              field :profile_picture, field_type: :image
+              field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
+                           label: 'Organisation'
+            end
+            cm_section 'Log Details' do
+              field :created_at, field_type: :date, format: '%d %b, %Y', label: 'Joining Date'
+              field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
+            end
+          end
+          tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index' do
+            column :id
+            column :consultation_title
+            column :user_response
+            column :response_status, header: 'Status', field_type: :enum
+          end
+        end
+
+        cm_new page_title: 'Add User', page_description: 'Enter all details to add User' do
+          cm_section 'Details' do
+            form_field :email, input_type: :string
+            form_field :first_name, input_type: :string
+            form_field :last_name, input_type: :string
+            form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
+                                    label: 'Role', placeholder: 'Select Role'
+          end
+        end
+
+        cm_edit page_title: 'Edit User', page_description: 'Enter all details to edit User' do
+          cm_section 'Details' do
+            form_field :email, input_type: :string
+            form_field :first_name, input_type: :string
+            form_field :last_name, input_type: :string
+            form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
+                                    label: 'Role', placeholder: 'Select Role'
+          end
+        end
+      end
+    end
+  end
+end
