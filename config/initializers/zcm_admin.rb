@@ -8,6 +8,7 @@ Rails.application.reloader.to_prepare do
                               ResponseRound, Question]
 
     config.project_name = Rails.configuration.x.project_settings.name
+    config.enable_tracking = true
 
     config.sidebar = [
       {
