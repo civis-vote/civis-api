@@ -38,6 +38,18 @@ module CmAdmin
           column :user_response
           column :user_full_name, header: 'Given by'
           column :response_status, header: 'Status', field_type: :enum
+          column :submitted_by
+          column :responder_email
+          column :city
+          column :phone_number
+          column :satisfaction_rating
+          column :visibility
+          column :submitted_at
+          column :is_verified
+          column :source
+          column :organisation
+          column :designation
+          column :user_answers
         end
 
         cm_show page_title: :user_full_name do
