@@ -279,7 +279,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
     t.integer "associated_model_id"
     t.string "action_name"
     t.string "url"
-    t.integer "export_type"
+    t.integer "export_type", default: 0
     t.datetime "completed_at"
     t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
   end
