@@ -52,5 +52,9 @@ module CmAdmin
     def select_options_for_assignable_cm_role(_ = nil, _ = nil)
       ::CmRole.pluck(:name, :id)
     end
+
+    def select_options_for_questions(_ = nil, _ = nil)
+      ::Question.pluck(:question_text, :id)
+    end
   end
 end
