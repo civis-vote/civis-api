@@ -147,6 +147,74 @@ class ConsultationResponse < ApplicationRecord
     save!
   end
 
+  def category
+    consultation.ministry.category&.name
+  end
+
+  def submitted_by
+    user ? user.full_name : "#{first_name} #{last_name}"
+  end
+
+  def responder_email
+    user ? user.email : email
+  end
+
+  def city
+    user.present? && user.city.present? ? user.city.name : 'NA'
+  end
+
+  def phone_number
+    user.present? && user.phone_number.present? ? user.phone_number : 'NA'
+  end
+
+  def is_verified
+    user ? user.confirmed_at? : nil
+  end
+
+  def submitted_at
+    platform? ? created_at.localtime.try(:strftime, '%e %b %Y') : responded_at.try(:strftime, '%e %b %Y')
+  end
+
+  def organisation
+    user.present? && user.organisation.present? ? user.organisation.name : 'NA'
+  end
+
+  def designation
+    user.present? && user.designation.present? ? user.designation : 'NA'
+  end
+
+  def user_answers
+    answers_array = []
+    response_round.questions.each do |question|
+      if answers.present?
+        answer = answers.find { |ans| ans['question_id'].to_i == question.id }
+        answers_array << answer if answer.present?
+      else
+        answers_array << ''
+      end
+    end
+    answers_array.map do |k|
+      answer_text = if k['answer'].is_a?(Array)
+                      k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',')
+                    elsif k['answer'].is_a?(Integer)
+                      Question.find(k['answer']).question_text
+                    else
+                      k['answer']
+                    end
+      empty_string = if k.empty?
+                       ''
+                     else
+                       k.key?('is_other') && k['answer'].present? ? ',' : ' '
+                     end
+      other_option_answer = if k.empty?
+                              ''
+                            else
+                              k.key?('is_other') ? k['other_option_answer'] : ''
+                            end
+      "#{answer_text} #{empty_string} #{other_option_answer}"
+    end
+  end
+
   def reject
     self.rejected_by_id = Current.user.id
     self.response_status = :unacceptable

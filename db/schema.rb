@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
+ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
@@ -101,6 +101,20 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "cm_index_preferences", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "ar_model_name", null: false
+    t.string "associated_ar_model_name"
+    t.string "visible_columns", default: [], array: true
+    t.string "hidden_columns", default: [], array: true
+    t.integer "records_per_page", default: 20
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ar_model_name"], name: "index_cm_index_preferences_on_ar_model_name"
+    t.index ["associated_ar_model_name"], name: "index_cm_index_preferences_on_associated_ar_model_name"
+    t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
   end
 
   create_table "cm_page_builder_rails_page_components", id: :string, force: :cascade do |t|
@@ -262,6 +276,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_07_17_082424) do
     t.jsonb "params", default: {}
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "associated_model_id"
+    t.string "action_name"
+    t.string "url"
+    t.integer "export_type", default: 0
+    t.datetime "completed_at"
     t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
   end
 
