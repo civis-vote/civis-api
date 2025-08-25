@@ -12,7 +12,7 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :cm_admin_authenticatable,
-         :recoverable, :rememberable, :validatable, :omniauthable
+         :recoverable, :rememberable, :validatable, :omniauthable, :invitable
 
   belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
   has_many :otp_requests, dependent: :destroy
