@@ -11,6 +11,8 @@ module Types
       field :marathi_question_text, String, nil, null: true
       field :parent,	Types::Objects::QuestionType, nil, null: true
       field :sub_questions, [Types::Objects::QuestionType], nil, null: true
+      field :conditional_questions, [Types::Objects::QuestionType], nil, null: true
+      field :show_conditional_question_on_answer, Boolean, nil, null: true
       field :is_conditional, Boolean, null: true
       field :conditional_question, Types::Objects::QuestionType, null: true
       field :supports_other, Boolean, nil, null: false
