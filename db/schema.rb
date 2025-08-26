@@ -422,6 +422,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
     t.string "question_text_hindi"
     t.string "question_text_odia"
     t.text "question_text_marathi"
+    t.boolean "is_conditional", default: false
+    t.bigint "conditional_question_id"
+    t.bigint "conditional_question_option_id"
+    t.boolean "show_conditional_question_on_answer", default: false
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["parent_id"], name: "index_questions_on_parent_id"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"

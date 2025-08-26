@@ -13,6 +13,15 @@ module CmAdmin
 
           filter %i[question_text], :search, placeholder: 'Search'
 
+          custom_action name: 'conditional_question_options', route_type: 'collection', verb: 'get', path: '/conditional_question_options',
+                        display_type: :route do
+            @questions = ::Question.find(params[:question_id]).sub_questions.search_filter(params[:search])
+            {
+              "results": @questions.map { |question| { "id": question.id, "text": question.question_text } },
+              "pagination": { "more": false }
+            }
+          end
+
           column :id
           column :question_text
           column :question_type, field_type: :enum
@@ -27,6 +36,12 @@ module CmAdmin
               field :question_type, field_type: :enum
               field :is_optional, field_type: :custom, helper_method: :format_boolean_value
               field :supports_other, label: 'Other Option', field_type: :custom, helper_method: :format_boolean_value
+              field :is_conditional, field_type: :custom, helper_method: :format_boolean_value
+              field :question_text, field_type: :association, association_name: :conditional_question,
+                                    association_type: 'belongs_to', label: 'Conditional Question'
+              field :question_text, field_type: :association, association_name: :conditional_question_option,
+                                    association_type: 'belongs_to', label: 'Conditional Question Option'
+              field :show_conditional_question_on_answer, field_type: :custom, helper_method: :format_boolean_value
             end
             cm_section 'Options', display_if: ->(record) { record.display_options? } do
               nested_form_field :sub_questions do
@@ -51,6 +66,10 @@ module CmAdmin
                                                      'data-cm-hidden-id': 'supports_other options',
                                                      'data-cm-toggle-value': 'long_text' }
             form_field :is_optional, input_type: :switch
+            form_field :is_conditional, input_type: :switch
+            form_field :show_conditional_question_on_answer, input_type: :switch
+            form_field :conditional_question_id, input_type: :single_select, helper_method: :select_options_for_questions
+            form_field :conditional_question_option_id, input_type: :single_select
             form_field :supports_other, input_type: :switch, html_attrs: { 'data-fields-target': 'cmHidden' }
           end
           cm_section 'Options', html_attrs: { 'data-fields-target': 'cmHidden', 'data-cm-id': 'options' } do
@@ -59,6 +78,7 @@ module CmAdmin
               form_field :question_text_hindi, input_type: :string
               form_field :question_text_odia, input_type: :string
               form_field :question_text_marathi, input_type: :string
+              form_field :conditional_question_id, input_type: :single_select, helper_method: :select_options_for_questions
             end
           end
         end
@@ -74,7 +94,11 @@ module CmAdmin
                                                      'data-cm-hidden-id': 'supports_other options',
                                                      'data-cm-toggle-value': 'long_text' }
             form_field :is_optional, input_type: :switch
+            form_field :is_conditional, input_type: :switch
             form_field :supports_other, input_type: :switch, html_attrs: { 'data-fields-target': 'cmHidden' }
+            form_field :show_conditional_question_on_answer, input_type: :switch
+            form_field :conditional_question_id, input_type: :single_select, helper_method: :select_options_for_questions
+            form_field :conditional_question_option_id, input_type: :single_select, helper_method: :selected_conditional_option
           end
           cm_section 'Options', html_attrs: { 'data-fields-target': 'cmHidden', 'data-cm-id': 'options' } do
             nested_form_field :sub_questions do
