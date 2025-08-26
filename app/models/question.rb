@@ -17,6 +17,8 @@ class Question < ApplicationRecord
 
   accepts_nested_attributes_for :sub_questions, allow_destroy: true, reject_if: proc { |attributes| attributes['question_text'].blank? }
 
+  scope :main_questions, -> { where(parent_id: nil) }
+
   scope :search_filter, lambda { |search|
     return all if search.blank?
 

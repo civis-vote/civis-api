@@ -54,7 +54,7 @@ module CmAdmin
     end
 
     def select_options_for_questions(_ = nil, _ = nil)
-      ::Question.pluck(:question_text, :id)
+      ::Question.main_questions.pluck(:question_text, :id)
     end
 
     def selected_conditional_option(record, _)
