@@ -127,6 +127,7 @@ module CmAdmin
               field :consultation_logo, field_type: :image, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value,
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :show_satisfaction_rating, field_type: :custom, helper_method: :format_boolean_value, label: 'Show Satisfaction Rating Section?'
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
@@ -183,6 +184,8 @@ module CmAdmin
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :show_satisfaction_rating, input_type: :switch, label: 'Show Satisfaction Rating Section?',
+                                                  helper_text: 'Enable this option to show the satisfaction rating section on the consultation form.'
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -207,6 +210,8 @@ module CmAdmin
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :show_satisfaction_rating, input_type: :switch, label: 'Show Satisfaction Rating Section?',
+                                                  helper_text: 'Enable this option to show the satisfaction rating section on the consultation form.'
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
