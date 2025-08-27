@@ -58,11 +58,14 @@ module CmAdmin
             consultation
           end
 
+          column :id
           column :title
           column :ministry_name, header: 'Ministry'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
           column :response_deadline, field_type: :date, format: '%d %b, %Y'
+          column :created_at, field_type: :date, format: '%d %b, %Y'
           column :created_by_full_name, header: 'Created By'
+          column :responses_count
         end
 
         cm_show page_title: :title do
@@ -82,8 +85,29 @@ module CmAdmin
             end
           end
 
+          custom_action name: 'invite_respondent', route_type: 'member', verb: 'patch', icon_name: 'fa-solid fa-envelope',
+                        modal_configuration: { title: 'Invite Respondent', confirmation_text: 'Invite' },
+                        path: ':id/invite_respondent', display_type: :form_modal,
+                        display_if: ->(obj) { obj.private_consultation? } do
+            form do
+              cm_section '' do
+                form_field :respondent_emails, input_type: :string,
+                                               helper_text: 'Enter email addresses separated by commas, e.g. email1@example.com,email2@example.com'
+              end
+            end
+            on_submit do
+              consultation = ::Consultation.find(params[:id])
+              organisation = consultation.organisation
+              emails = params.dig(:consultation, :respondent_emails).split(",").map(&:strip)
+              respondent_ids = ::Respondent.joins(:user).where(user: { email: emails }).pluck(:id)
+              ::Respondent.invite_respondent(consultation, organisation, respondent_ids, emails, Current.user)
+              consultation
+            end
+          end
+
           tab :profile, '' do
             cm_section 'Consultation details' do
+              field :id, label: 'Consultation ID'
               field :title
               field :title_hindi, label: 'Title in Hindi'
               field :title_odia, label: 'Title in Odia'
@@ -142,6 +166,12 @@ module CmAdmin
             column :organisation, display_if: ->(_) { false }
             column :designation, display_if: ->(_) { false }
             column :user_answers, display_if: ->(_) { false }
+          end
+          tab :respondents, 'respondents', associated_model: 'respondents', layout_type: 'cm_association_index' do
+            column :id
+            column :email, field_type: :association, association_name: :user, association_type: 'belongs_to',
+                           header: 'User'
+            column :created_at, field_type: :date, format: '%d %b, %Y'
           end
         end
 
