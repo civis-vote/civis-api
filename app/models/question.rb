@@ -9,7 +9,8 @@ class Question < ApplicationRecord
   belongs_to :conditional_question_option, class_name: 'Question', optional: true
 
   has_many :sub_questions, class_name: 'Question', foreign_key: :parent_id
-  has_many :conditional_questions, class_name: 'Question', foreign_key: :conditional_question_option_id
+  has_many :conditional_question_options, class_name: 'Question', foreign_key: :conditional_question_option_id
+  has_many :conditional_questions, class_name: 'Question', foreign_key: :conditional_question_id
 
   enum question_type: { checkbox: 0, multiple_choice: 1, long_text: 2, dropdown: 3 }
 
