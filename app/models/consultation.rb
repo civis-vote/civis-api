@@ -229,6 +229,7 @@ class Consultation < ApplicationRecord
 
   def set_consultation_expiry_job
     ConsultationExpiryJob.set(wait_until: TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(response_deadline.to_datetime.to_s))).perform_later(self)
+    publish if public_consultation? && expired? && response_deadline > Time.current
   end
 
   def can_extend_deadline_or_create_response_round?
