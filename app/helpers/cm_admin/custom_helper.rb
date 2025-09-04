@@ -52,5 +52,17 @@ module CmAdmin
     def select_options_for_assignable_cm_role(_ = nil, _ = nil)
       ::CmRole.pluck(:name, :id)
     end
+
+    def select_options_for_questions(_ = nil, _ = nil)
+      ::Question.main_questions.pluck(:question_text, :id)
+    end
+
+    def selected_conditional_option(record, _)
+      return [] if record.conditional_question_option.blank?
+
+      record.conditional_question_option&.parent&.sub_questions&.map do |sub_question|
+        [sub_question.question_text, sub_question.id]
+      end
+    end
   end
 end
