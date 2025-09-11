@@ -193,6 +193,8 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
             form_field :url, input_type: :string
+            alert_box header: 'Time Zone Notice', type: :warning,
+                      body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
           end
@@ -219,6 +221,8 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
             form_field :url, input_type: :string
+            alert_box header: 'Time Zone Notice', type: :warning,
+                      body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
           end

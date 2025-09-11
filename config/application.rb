@@ -11,9 +11,6 @@ module CivisApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
 
-    config.time_zone = 'Kolkata'
-    config.active_record.default_timezone = :local
-
     config.action_mailer.delivery_method = :postmark
     config.action_mailer.postmark_settings = { api_token: Rails.application.credentials.dig(:postmark, :api_key) }
 
