@@ -158,7 +158,7 @@ module Types
         end
 
         def response_deadline
-          TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(object.response_deadline.to_s))
+          object.response_deadline&.in_time_zone('Asia/Kolkata')
         end
       end
     end
