@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_11_070853) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "btree_gist"
   enable_extension "plpgsql"
   enable_extension "uuid-ossp"
 
@@ -101,6 +102,29 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "cm_geo_ip_locations", force: :cascade do |t|
+    t.string "locale_code", null: false
+    t.string "continent_code"
+    t.string "continent_name"
+    t.string "country_iso_code"
+    t.string "country_name"
+    t.boolean "is_in_european_union"
+    t.index ["country_iso_code"], name: "index_cm_geo_ip_locations_on_country_iso_code"
+    t.index ["locale_code"], name: "index_cm_geo_ip_locations_on_locale_code"
+  end
+
+  create_table "cm_geo_ip_networks", force: :cascade do |t|
+    t.cidr "network", null: false
+    t.bigint "cm_geo_ip_location_id"
+    t.integer "registered_country_geoname_id"
+    t.integer "represented_country_geoname_id"
+    t.boolean "is_anonymous_proxy"
+    t.boolean "is_satellite_provider"
+    t.boolean "is_anycast"
+    t.index ["cm_geo_ip_location_id"], name: "index_cm_geo_ip_networks_on_cm_geo_ip_location_id"
+    t.index ["network"], name: "index_cm_geo_ip_networks_on_network", using: :gist
   end
 
   create_table "cm_index_preferences", force: :cascade do |t|
@@ -262,6 +286,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
     t.datetime "feedback_email_clicked_at"
     t.string "title_marathi"
     t.boolean "show_discuss_section", default: true, null: false
+    t.boolean "show_satisfaction_rating", default: true
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
@@ -422,10 +447,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
     t.string "question_text_hindi"
     t.string "question_text_odia"
     t.text "question_text_marathi"
-    t.boolean "is_conditional", default: false
+    t.integer "position"
     t.bigint "conditional_question_id"
-    t.bigint "conditional_question_option_id"
-    t.boolean "show_conditional_question_on_answer", default: false
+    t.index ["conditional_question_id"], name: "index_questions_on_conditional_question_id"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["parent_id"], name: "index_questions_on_parent_id"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
@@ -560,6 +584,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
+  add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "consultation_hindi_summaries", "consultations"
@@ -579,6 +604,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_08_19_081903) do
   add_foreign_key "otp_requests", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
+  add_foreign_key "questions", "questions", column: "conditional_question_id"
   add_foreign_key "questions", "response_rounds"
   add_foreign_key "respondents", "organisations"
   add_foreign_key "respondents", "response_rounds"

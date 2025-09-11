@@ -21,6 +21,10 @@ module CmAdmin
       value.present? ? 'Yes' : 'No'
     end
 
+    def select_options_for_boolean(_ = nil, _ = nil)
+      [['Yes', true], ['No', false]]
+    end
+
     def select_options_for_consultation_response_status(_ = nil, _ = nil)
       ::ConsultationResponse.response_statuses.keys.map { |status| [status.titleize, status] }
     end
@@ -58,11 +62,7 @@ module CmAdmin
     end
 
     def selected_conditional_option(record, _)
-      return [] if record.conditional_question_option.blank?
-
-      record.conditional_question_option&.parent&.sub_questions&.map do |sub_question|
-        [sub_question.question_text, sub_question.id]
-      end
+      [[record&.conditional_question&.question_text, record&.conditional_question&.id]]
     end
   end
 end

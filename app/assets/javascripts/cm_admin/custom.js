@@ -1,20 +1,32 @@
 document.addEventListener("turbo:load", function () {
   function updateConditionalQuestionOptions() {
-    const conditionalQuestionId = $(
-      '[data-field-name="conditional_question_id"]'
-    ).val();
-    if (!conditionalQuestionId) return;
+    let questionId = null,
+      responseRoundId = null;
 
-    $('[data-field-name="conditional_question_option_id"]')
-      .val(null)
-      .trigger("change");
+    if (location.pathname.endsWith("/edit")) {
+      questionId = location.pathname.split("/")[3];
+    } else if (location.pathname.endsWith("/new")) {
+      const urlParams = new URLSearchParams(location.search);
+      if (urlParams.get("associated_class") === "response_round") {
+        responseRoundId = urlParams.get("associated_id");
+      }
+    }
 
-    $('[data-field-name="conditional_question_option_id"]').select2({
+    if (!questionId && !responseRoundId) {
+      return;
+    }
+
+    const url = "/cm_admin/questions/response_round_questions";
+    const params = {
+      question_id: questionId ?? "",
+      response_round_id: responseRoundId ?? "",
+    };
+    const queryParams = new URLSearchParams(params).toString();
+
+    $('[data-field-name="conditional_question_id"]').select2({
       theme: "bootstrap-5",
       ajax: {
-        url:
-          "/cm_admin/questions/conditional_question_options?question_id=" +
-          conditionalQuestionId,
+        url: url + "?" + queryParams,
         type: "GET",
         dataType: "json",
         data: function (params) {
@@ -25,7 +37,9 @@ document.addEventListener("turbo:load", function () {
         },
         processResults: (data, params) => {
           return {
-            results: data.results,
+            results: [{ id: "", text: "Select Conditional Question" }].concat(
+              data.results
+            ),
           };
         },
       },
@@ -33,7 +47,31 @@ document.addEventListener("turbo:load", function () {
     });
   }
 
-  $('[data-field-name="conditional_question_id"]').on("change", function () {
-    updateConditionalQuestionOptions();
+  $(document).on(
+    "click",
+    '.nested-table-footer [data-association="sub_question"]',
+    function () {
+      updateConditionalQuestionOptions();
+    }
+  );
+  updateConditionalQuestionOptions();
+
+  $(document).on("change", '[data-field-name="question_type"]', function () {
+    updateOptionsVisibility();
   });
+  function updateOptionsVisibility() {
+    const questionType = $("[data-cm-id='question_type']").val();
+    if (questionType === "" || questionType === "long_text") {
+      const nearestCol = $("[data-section-id='options']").closest(".col");
+      if (nearestCol.length > 0) {
+        nearestCol.hide();
+      }
+    } else {
+      const nearestCol = $("[data-section-id='options']").closest(".col");
+      if (nearestCol.length > 0) {
+        nearestCol.show();
+      }
+    }
+  }
+  updateOptionsVisibility();
 });
