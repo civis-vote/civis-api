@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_01_162711) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_11_070853) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -447,6 +447,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_01_162711) do
     t.string "question_text_hindi"
     t.string "question_text_odia"
     t.text "question_text_marathi"
+    t.integer "position"
+    t.bigint "conditional_question_id"
+    t.index ["conditional_question_id"], name: "index_questions_on_conditional_question_id"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["parent_id"], name: "index_questions_on_parent_id"
     t.index ["response_round_id"], name: "index_questions_on_response_round_id"
@@ -601,6 +604,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_01_162711) do
   add_foreign_key "otp_requests", "users"
   add_foreign_key "point_events", "point_scales"
   add_foreign_key "point_events", "users"
+  add_foreign_key "questions", "questions", column: "conditional_question_id"
   add_foreign_key "questions", "response_rounds"
   add_foreign_key "respondents", "organisations"
   add_foreign_key "respondents", "response_rounds"

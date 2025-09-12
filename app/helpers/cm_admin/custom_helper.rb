@@ -21,6 +21,10 @@ module CmAdmin
       value.present? ? 'Yes' : 'No'
     end
 
+    def select_options_for_boolean(_ = nil, _ = nil)
+      [['Yes', true], ['No', false]]
+    end
+
     def select_options_for_consultation_response_status(_ = nil, _ = nil)
       ::ConsultationResponse.response_statuses.keys.map { |status| [status.titleize, status] }
     end
@@ -51,6 +55,14 @@ module CmAdmin
 
     def select_options_for_assignable_cm_role(_ = nil, _ = nil)
       ::CmRole.pluck(:name, :id)
+    end
+
+    def select_options_for_questions(_ = nil, _ = nil)
+      ::Question.main_questions.pluck(:question_text, :id)
+    end
+
+    def selected_conditional_option(record, _)
+      [[record&.conditional_question&.question_text, record&.conditional_question&.id]]
     end
   end
 end
