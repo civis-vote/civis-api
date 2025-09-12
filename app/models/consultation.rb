@@ -2,6 +2,8 @@ class Consultation < ApplicationRecord
   SKIP_AUTH_STAGING_ID = 0
   SKIP_AUTH_PRODUCTION_ID = 0
 
+  attr_accessor :respondent_emails
+
   acts_as_paranoid
   include Paginator
   include Scorable::Consultation
@@ -24,6 +26,7 @@ class Consultation < ApplicationRecord
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :response_rounds
+  has_many :respondents, through: :response_rounds
 
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
@@ -38,6 +41,7 @@ class Consultation < ApplicationRecord
 
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
   delegate :name, to: :ministry, prefix: true, allow_nil: true
+  delegate :count, to: :responses, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -224,7 +228,8 @@ class Consultation < ApplicationRecord
   end
 
   def set_consultation_expiry_job
-    ConsultationExpiryJob.set(wait_until: TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(response_deadline.to_datetime.to_s))).perform_later(self)
+    ConsultationExpiryJob.set(wait_until: response_deadline).perform_later(self)
+    publish if public_consultation? && expired? && response_deadline > Time.current
   end
 
   def can_extend_deadline_or_create_response_round?

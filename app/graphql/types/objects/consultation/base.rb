@@ -30,6 +30,7 @@ module Types
         field :response_submission_message, String, nil, null: true
         field :review_type, Types::Enums::ConsultationReviewType, nil, null: false
         field :is_satisfaction_rating_optional, Boolean, nil, null: false
+        field :show_satisfaction_rating, Boolean, nil, null: true
         field :show_discuss_section, Boolean, nil, null: false
         field :satisfaction_rating_distribution, GraphQL::Types::JSON, nil, null: true
         field :shared_responses, Types::Connections::ConsultationResponse, nil, null: true do
@@ -157,7 +158,7 @@ module Types
         end
 
         def response_deadline
-          TZInfo::Timezone.get("Asia/Kolkata").local_to_utc(Time.parse(object.response_deadline.to_s))
+          object.response_deadline&.in_time_zone('Asia/Kolkata')
         end
       end
     end

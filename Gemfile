@@ -110,5 +110,6 @@ gem 'airbrake', '~> 13.0'
 gem 'jwt'
 
 gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
+gem 'cm-geocoder'
 gem 'positioning'
 gem 'stimulus-rails'
