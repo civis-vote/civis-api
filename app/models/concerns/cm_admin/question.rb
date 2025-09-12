@@ -99,6 +99,7 @@ module CmAdmin
             form_field :question_text_odia, input_type: :string
             form_field :question_text_marathi, input_type: :string
             form_field :question_type, input_type: :single_select, is_required: true
+            form_field :position, input_type: :integer
             form_field :is_optional, input_type: :switch, label: 'Optional?'
             form_field :supports_other, input_type: :switch, label: 'Supports Other?'
             nested_form_section 'Options', html_attrs: { 'data-section-id': 'options' } do
