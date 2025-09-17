@@ -1,7 +1,7 @@
 GEM
   remote: https://cm-gems.commutatus.com/
   specs:
-    cm-admin (5.5.3)
+    cm-admin (5.5.5)
       caxlsx_rails
       cocoon (~> 1.2.15)
       csv (>= 3.3.0)
@@ -331,7 +331,7 @@ GEM
       net-imap
       net-pop
       net-smtp
-    marcel (1.0.4)
+    marcel (1.1.0)
     matrix (0.4.2)
     memoist (0.16.2)
     mini_magick (4.11.0)
