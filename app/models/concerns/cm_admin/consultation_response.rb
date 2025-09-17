@@ -34,6 +34,7 @@ module CmAdmin
             consultation_response
           end
 
+          column :id
           column :consultation_title
           column :user_response
           column :user_full_name, header: 'Given by'
