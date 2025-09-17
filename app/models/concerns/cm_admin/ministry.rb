@@ -75,6 +75,7 @@ module CmAdmin
           cm_section 'Details' do
             form_field :name, input_type: :string
             form_field :logo, input_type: :single_file_upload
+            alert_box type: :info, body: 'Only JPEG and PNG files are supported for Logo'
             form_field :name_hindi, input_type: :string, label: 'Name in Hindi'
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
@@ -94,6 +95,7 @@ module CmAdmin
           cm_section 'Details' do
             form_field :name, input_type: :string
             form_field :logo, input_type: :single_file_upload
+            alert_box type: :info, body: 'Only JPEG and PNG files are supported for Logo'
             form_field :name_hindi, input_type: :string, label: 'Name in Hindi'
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
