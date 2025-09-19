@@ -29,7 +29,7 @@ module Auth
     end
 
     def can_access_admin_panel?
-      %w[admin moderator organisation_employee].include?(cm_role&.name&.parameterize&.underscore.to_s)
+      %w[admin moderator organisation_employee super_admin].include?(cm_role&.name&.parameterize&.underscore.to_s)
     end
 
     def role?(role_name)

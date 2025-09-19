@@ -20,6 +20,7 @@ class Ministry < ApplicationRecord
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
   before_validation :set_created_by, on: :create
+  validate :validate_logo_image_extension
 
   delegate :url, to: :logo, prefix: true, allow_nil: true
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
@@ -91,6 +92,12 @@ class Ministry < ApplicationRecord
   end
 
   private
+
+  def validate_logo_image_extension
+    return unless logo.attached? && %w[image/jpeg image/png image/jpg].exclude?(logo.content_type)
+
+    errors.add(:logo, 'must be a JPG or PNG image')
+  end
 
   def set_created_by
     self.created_by = Current.user
