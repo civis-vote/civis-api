@@ -4,6 +4,10 @@ class Consultation < ApplicationRecord
 
   attr_accessor :respondent_emails
 
+  enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
+  enum review_type: { consultation: 0, policy: 1 }
+  enum visibility: { public_consultation: 0, private_consultation: 1 }
+
   acts_as_paranoid
   include Paginator
   include Scorable::Consultation
@@ -19,7 +23,7 @@ class Consultation < ApplicationRecord
 
   has_one_attached :consultation_logo
 
-  belongs_to :ministry
+  belongs_to :department
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :organisation, optional: true
   has_many :responses, class_name: "ConsultationResponse"
@@ -27,10 +31,8 @@ class Consultation < ApplicationRecord
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :response_rounds
   has_many :respondents, through: :response_rounds
-
-  enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
-  enum review_type: { consultation: 0, policy: 1 }
-  enum visibility: { public_consultation: 0, private_consultation: 1 }
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, through: :constant_maps, source: :constant
 
   validates_presence_of :response_deadline
 
@@ -40,7 +42,7 @@ class Consultation < ApplicationRecord
   after_commit :notify_admins, on: :create
 
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
-  delegate :name, to: :ministry, prefix: true, allow_nil: true
+  delegate :name, to: :department, prefix: true, allow_nil: true
   delegate :count, to: :responses, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
@@ -49,17 +51,16 @@ class Consultation < ApplicationRecord
     where(status: status)
   }
 
-  scope :ministry_filter, lambda { |ministry_id|
-    return all unless ministry_id.present?
+  scope :department_filter, lambda { |department_id|
+    return all unless department_id.present?
 
-    where(ministry_id: ministry_id)
+    where(department_id: department_id)
   }
 
-  scope :category_filter, lambda { |category_id|
-    return all unless category_id.present?
+  scope :theme_filter, lambda { |theme_id|
+    return all unless theme_id.present?
 
-    joins(ministry: :category)
-      .where(categories: { id: category_id })
+    joins(department: :theme).where(themes: { id: theme_id })
   }
 
   scope :featured_filter, lambda { |featured|
@@ -94,6 +95,10 @@ class Consultation < ApplicationRecord
     NotifyNewConsultationEmailToAdminJob.perform_later(self)
   end
 
+  def segment_names
+    segments.map(&:name).join(", ")
+  end
+
   def publish
     self.status = :published
     self.published_at = DateTime.now unless published_at.present?
@@ -119,13 +124,13 @@ class Consultation < ApplicationRecord
 
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
-      if ministry.poc_email_primary
-        feedback_report_email(ministry.poc_email_primary, ministry.primary_officer_name,
-                              ministry.primary_officer_designation)
+      if department.poc_email_primary
+        feedback_report_email(department.poc_email_primary, department.primary_officer_name,
+                              department.primary_officer_designation)
       end
-      if ministry.poc_email_secondary
-        feedback_report_email(ministry.poc_email_secondary, ministry.secondary_officer_name,
-                              ministry.secondary_officer_designation)
+      if department.poc_email_secondary
+        feedback_report_email(department.poc_email_secondary, department.secondary_officer_name,
+                              department.secondary_officer_designation)
       end
     end
     UserUpVoteResponsesEmailJob.perform_later(self)

@@ -62,7 +62,6 @@ gem 'omniauth-linkedin-oauth2'
 gem 'cocoon'
 gem 'devise_invitable'
 gem 'paranoia'
-gem 'shrine', '~> 3.3'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -105,10 +104,10 @@ gem 'importmap-rails'
 gem 'sassc-rails'
 gem 'turbo-rails'
 
-gem 'airbrake', '~> 13.0'
+gem 'airbrake'
 
 gem 'jwt'
 
-gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
+gem 'cm-admin', path: '../commutatus/cm-admin'
 gem 'cm-geocoder'
 gem 'stimulus-rails'

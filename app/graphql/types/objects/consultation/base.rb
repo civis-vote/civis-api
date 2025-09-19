@@ -17,7 +17,7 @@ module Types
         field :consultation_logo, Types::Objects::AttachmentType, nil, null: true do
           argument :resolution, String, required: false, default_value: nil
         end
-        field :ministry, Types::Objects::Ministry, nil, null: false
+        field :department, Types::Objects::Ministry, nil, null: false
         field :consultation_responses_count, Integer, nil, null: false
         field :published_at, Types::Objects::DateTime, nil, null: true
         field :enforce_private_response, Boolean, nil, null: false

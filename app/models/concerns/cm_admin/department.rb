@@ -1,5 +1,5 @@
 module CmAdmin
-  module Ministry
+  module Department
     extend ActiveSupport::Concern
 
     STATUS_TAG_COLORS = { approved: 'bg-success', not_approved: 'bg-danger' }.freeze
@@ -8,8 +8,9 @@ module CmAdmin
       cm_admin do
         actions only: []
         set_icon 'fas fa-suitcase'
+        permit_additional_fields [segment_ids: []]
         cm_index do
-          page_title 'Ministries'
+          page_title 'Departments'
 
           filter %i[name], :search, placeholder: 'Search'
           filter :status, :single_select, collection: [%w[Approved true], ['Not Approved', false]],
@@ -18,36 +19,36 @@ module CmAdmin
           custom_action name: 'Approve', route_type: 'member', verb: 'patch', path: ':id/approve',
                         icon_name: 'fa-regular fa-circle-check', display_type: :button,
                         display_if: ->(obj) { obj.status == 'not_approved' } do
-            ministry = ::Ministry.find(params[:id])
-            ministry.approve
-            ministry
+            department = ::Department.find(params[:id])
+            department.approve
+            department
           end
 
           custom_action name: 'Reject', route_type: 'member', verb: 'patch', path: ':id/reject',
                         icon_name: 'fa-solid fa-ban', display_type: :button,
                         display_if: ->(obj) { obj.status == 'approved' } do
-            ministry = ::Ministry.find(params[:id])
-            ministry.reject
-            ministry
+            department = ::Department.find(params[:id])
+            department.reject
+            department
           end
 
           column :name
           column :created_by_full_name, header: 'Created By'
-          column :category_name, header: 'Category'
+          column :theme_name, header: 'Theme'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
           column :location_name, header: 'Location'
         end
 
         cm_show page_title: :name do
           tab :profile, '' do
-            cm_section 'Ministry details' do
+            cm_section 'Department details' do
               field :name
               field :logo, field_type: :image
               field :name_hindi, label: 'Name in Hindi'
               field :name_odia, label: 'Name in Odia'
               field :name_marathi, label: 'Name in Marathi'
               field :level, field_type: :enum
-              field :category_name, label: 'Category'
+              field :theme_name, label: 'Theme'
               field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :poc_email_primary, label: 'Primary Email Address'
               field :primary_officer_name
@@ -56,6 +57,7 @@ module CmAdmin
               field :secondary_officer_name
               field :secondary_officer_designation
               field :location_name, label: 'Location'
+              field :segment_names, label: 'Segments'
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Log Details' do
@@ -71,7 +73,7 @@ module CmAdmin
           end
         end
 
-        cm_new page_title: 'Add Ministry', page_description: 'Enter all details to add Ministry' do
+        cm_new page_title: 'Add Department', page_description: 'Enter all details to add Department' do
           cm_section 'Details' do
             form_field :name, input_type: :string
             form_field :logo, input_type: :single_file_upload
@@ -80,7 +82,7 @@ module CmAdmin
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
             form_field :level, input_type: :single_select
-            form_field :category_id, input_type: :single_select, helper_method: :select_options_for_category
+            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :poc_email_primary, input_type: :string, label: 'Primary Email Address'
             form_field :primary_officer_name, input_type: :string, label: 'Primary Officer Name'
             form_field :primary_officer_designation, input_type: :string, label: 'Primary Officer Designation'
@@ -88,10 +90,12 @@ module CmAdmin
             form_field :secondary_officer_name, input_type: :string, label: 'Secondary Officer Name'
             form_field :secondary_officer_designation, input_type: :string, label: 'Secondary Officer Designation'
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
+            form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
+                                     display_if: ->(_) { Current.user&.role?('super_admin') }
           end
         end
 
-        cm_edit page_title: 'Edit Ministry', page_description: 'Enter all details to edit Ministry' do
+        cm_edit page_title: 'Edit Department', page_description: 'Enter all details to edit Department' do
           cm_section 'Details' do
             form_field :name, input_type: :string
             form_field :logo, input_type: :single_file_upload
@@ -100,7 +104,7 @@ module CmAdmin
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
             form_field :level, input_type: :single_select
-            form_field :category_id, input_type: :single_select, helper_method: :select_options_for_category
+            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :poc_email_primary, input_type: :string, label: 'Primary Email Address'
             form_field :primary_officer_name, input_type: :string, label: 'Primary Officer Name'
             form_field :primary_officer_designation, input_type: :string, label: 'Primary Officer Designation'
@@ -108,6 +112,8 @@ module CmAdmin
             form_field :secondary_officer_name, input_type: :string, label: 'Secondary Officer Name'
             form_field :secondary_officer_designation, input_type: :string, label: 'Secondary Officer Designation'
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
+            form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
+                                     display_if: ->(_) { Current.user&.role?('super_admin') }
           end
         end
       end

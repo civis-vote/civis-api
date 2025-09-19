@@ -1,9 +1,9 @@
-class Ministry < ApplicationRecord
+class Department < ApplicationRecord
   acts_as_paranoid
   include Attachable
   include Scorable::Ministry
   include Paginator
-  include CmAdmin::Ministry
+  include CmAdmin::Department
 
   has_one_attached :logo
 
@@ -13,9 +13,11 @@ class Ministry < ApplicationRecord
   enum level: %i[national state local]
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
-  belongs_to :category, optional: true
+  belongs_to :theme, optional: true
 
   has_many :consultations
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, through: :constant_maps, source: :constant
 
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
@@ -24,7 +26,7 @@ class Ministry < ApplicationRecord
 
   delegate :url, to: :logo, prefix: true, allow_nil: true
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
-  delegate :name, to: :category, prefix: true, allow_nil: true
+  delegate :name, to: :theme, prefix: true, allow_nil: true
 
   scope :approved, -> { where(is_approved: true) }
   scope :alphabetical, -> { order(name: :asc) }
@@ -75,6 +77,10 @@ class Ministry < ApplicationRecord
 
   def location_name
     location&.name
+  end
+
+  def segment_names
+    segments.map(&:name).join(", ")
   end
 
   def approve

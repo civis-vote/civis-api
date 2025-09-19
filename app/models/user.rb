@@ -22,6 +22,9 @@ class User < ApplicationRecord
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, through: :constant_maps, source: :constant
+
   belongs_to :organisation, counter_cache: true, optional: true
   belongs_to :cm_role, optional: true
 
@@ -94,6 +97,10 @@ class User < ApplicationRecord
 
   def self.notify_for_new_consultation_filter
     where("notification_settings->>'notify_for_new_consultation' = ?", "true")
+  end
+
+  def segment_names
+    segments.map(&:name).join(", ")
   end
 
   def full_name
@@ -234,6 +241,7 @@ class User < ApplicationRecord
   private
 
   def set_cm_role
+    self.notify_for_new_consultation = true if notify_for_new_consultation.blank?
     return if cm_role.present?
 
     self.cm_role = ::CmRole.find_by(name: "Citizen")
