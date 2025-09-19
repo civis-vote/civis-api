@@ -8,7 +8,7 @@ module Mutations
       def resolve(ministry:)
         ministry_input = ministry.to_h
         logo_file = ministry_input.delete(:logo_file)
-        created_ministry = ::Ministry.new ministry_input
+        created_ministry = ::Department.new ministry_input
         created_ministry.created_by = Current.user
         created_ministry.save!
         if logo_file.present?

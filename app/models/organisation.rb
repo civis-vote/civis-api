@@ -1,13 +1,18 @@
 class Organisation < ApplicationRecord
+  enum :engagement_type, ['CM Admin Deployment', 'Outreach Partnership', 'Private Consultation Partnership']
+
   acts_as_paranoid
   include Paginator
   include CmAdmin::Organisation
 
   has_one_attached :logo
 
+  has_many :consultations
   has_many :users, -> { active }, dependent: :nullify
   has_many :respondents
   has_many :respondent_users, -> { distinct }, through: :respondents, source: :user
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, -> { segment }, through: :constant_maps, source: :constant
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User"
   validates_presence_of :created_by_id
@@ -34,6 +39,10 @@ class Organisation < ApplicationRecord
     else
       "user_profile_picture.png"
     end
+  end
+
+  def segment_names
+    segments.map(&:name).join(", ")
   end
 
   def deactivate
