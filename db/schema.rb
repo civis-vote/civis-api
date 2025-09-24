@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_11_070853) do
+ActiveRecord::Schema[7.1].define(version: 2025_09_17_165119) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -306,6 +306,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_11_070853) do
     t.string "url"
     t.integer "export_type", default: 0
     t.datetime "completed_at"
+    t.jsonb "error_report", default: {}
     t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
   end
 

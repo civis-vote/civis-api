@@ -12,7 +12,7 @@ class NotifyPendingReviewOfProfaneResponsesEmailToAdminJob < ApplicationJob
                                                       .distinct.size
     # Set the value to nil so that the conditional statement can be added in the postmark template.
     consultation_expiring_today_count = nil if consultation_expiring_today_count.zero?
-    ::User.cm_role_filter(%w[Admin]).each do |user|
+    ::User.cm_role_filter(['Admin', 'Super Admin']).each do |user|
       UserMailer.notify_pending_review_of_profane_responses_email_to_admin(user, response_under_review_count,
                                                                            consultation_expiring_today_count, url).deliver_now
     rescue StandardError
