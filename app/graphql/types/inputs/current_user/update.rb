@@ -10,6 +10,7 @@ module Types
         argument :organization, String, nil, required: false
         argument :phone_number, String, nil, required: false
         argument :profile_picture_file, Types::Inputs::Attachment, nil, required: false
+        argument :notify_for_new_consultation, Boolean, nil, required: false
       end
     end
   end
