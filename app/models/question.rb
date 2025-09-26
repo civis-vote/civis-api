@@ -15,6 +15,7 @@ class Question < ApplicationRecord
   positioned on: %i[parent response_round]
 
   validates :question_text, presence: true
+  validate :conditional_question_should_be_optional
 
   accepts_nested_attributes_for :sub_questions, allow_destroy: true, reject_if: proc { |attributes| attributes['question_text'].blank? }
 
@@ -45,5 +46,13 @@ class Question < ApplicationRecord
 
   def conditional_question?
     conditional_question_options.present?
+  end
+
+  private
+
+  def conditional_question_should_be_optional
+    return if conditional_question.blank? || conditional_question&.is_optional
+
+    errors.add(:conditional_question, 'Conditional question should be optional')
   end
 end
