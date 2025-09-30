@@ -132,6 +132,8 @@ class ConsultationResponse < ApplicationRecord
               "Mandatory question with id #{question_id} should be answered."
       end
     end
+
+    validate_answer_limit
   end
 
   def notify_admin_if_profane
@@ -193,23 +195,23 @@ class ConsultationResponse < ApplicationRecord
         answers_array << ''
       end
     end
-    answers_array.map do |k|
-      answer_text = if k['answer'].is_a?(Array)
-                      k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',')
-                    elsif k['answer'].is_a?(Integer)
-                      Question.find(k['answer']).question_text
+    answers_array.map do |ans|
+      answer_text = if ans['answer'].is_a?(Array)
+                      format_multiple_choice_answer(ans)
+                    elsif ans['answer'].is_a?(Integer)
+                      Question.find(ans['answer']).question_text
                     else
-                      k['answer']
+                      ans['answer']
                     end
-      empty_string = if k.empty?
+      empty_string = if ans.empty?
                        ''
                      else
-                       k.key?('is_other') && k['answer'].present? ? ',' : ' '
+                       ans.key?('is_other') && ans['answer'].present? ? ',' : ' '
                      end
-      other_option_answer = if k.empty?
+      other_option_answer = if ans.empty?
                               ''
                             else
-                              k.key?('is_other') ? k['other_option_answer'] : ''
+                              ans.key?('is_other') ? ans['other_option_answer'] : ''
                             end
       "#{answer_text} #{empty_string} #{other_option_answer}"
     end
@@ -240,5 +242,33 @@ class ConsultationResponse < ApplicationRecord
       # if no questions present then it's a generic subjective response
       self.subjective_answer_count = 1
     end
+  end
+
+  private
+
+  def validate_answer_limit
+    questions = response_round.questions
+    return if questions.blank? || answers.blank?
+
+    questions.each do |question|
+      next if question.answer_limit.to_i.zero?
+
+      answer = answers.find { |answer| answer[:question_id] == question.id }
+      next unless answer.is_a?(Array)
+
+      raise BadRequest, 'Answer Limit is breached' if answer.size > question.answer_limit
+    end
+  end
+
+  def format_multiple_choice_answer(answer)
+    answer['answer'].map do |sub_question|
+      if sub_question.is_a?(Hash)
+        "Option: #{Question.find(sub_question['option_id']).question_text} Priority: #{sub_question['priority']}"
+      elsif sub_question.is_a?(String)
+        Question.find(sub_question).question_text
+      else
+        ''
+      end
+    end.join(',')
   end
 end
