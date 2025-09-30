@@ -58,5 +58,13 @@ module CmAdmin
     def select_options_for_organisation_engagement_type(_ = nil, _ = nil)
       ::Organisation.engagement_types.keys.map { |et| [et, et] }
     end
+
+    def select_options_for_questions(_ = nil, _ = nil)
+      ::Question.main_questions.pluck(:question_text, :id)
+    end
+
+    def selected_conditional_option(record, _)
+      [[record&.conditional_question&.question_text, record&.conditional_question&.id]]
+    end
   end
 end

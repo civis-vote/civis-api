@@ -392,6 +392,9 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.9)
+    positioning (0.4.7)
+      activerecord (>= 6.1)
+      activesupport (>= 6.1)
     postmark (1.22.0)
       json
     postmark-rails (0.22.0)
@@ -669,6 +672,7 @@ DEPENDENCIES
   paper_trail
   paranoia
   pg
+  positioning
   postmark-rails
   psych (< 4)
   puma
