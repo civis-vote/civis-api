@@ -5,7 +5,7 @@ module Types
 
     field :case_study_list,                    resolver: Queries::CaseStudy::List
     field :case_study_profile,                 resolver: Queries::CaseStudy::Profile
-    field :category_list,                      resolver: Queries::Category::List
+    field :theme_list,                         resolver: Queries::Theme::List
     field :consultation_list,                  resolver: Queries::Consultation::List
     field :consultation_analysis,              resolver: Queries::Consultation::Analysis
     field :consultation_response_list,         resolver: Queries::ConsultationResponse::List
@@ -15,7 +15,7 @@ module Types
     field :impact_stats,                       resolver: Queries::Stats::Impact
     field :location_list,                      resolver: Queries::Location::List
     field :location_autocomplete,              resolver: Queries::Location::Autocomplete
-    field :ministry_autocomplete,              resolver: Queries::Ministry::Autocomplete
+    field :department_autocomplete,            resolver: Queries::Department::Autocomplete
     field :user_current,                       resolver: Queries::User::CurrentUser
     field :user_list,                          resolver: Queries::User::List
     field :user_profile,                       resolver: Queries::User::Profile
