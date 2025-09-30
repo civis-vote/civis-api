@@ -1,9 +1,9 @@
 module Mutations
-  module Ministry
+  module Department
     class Create < Mutations::BaseMutation
-      type Types::Objects::Ministry, null: false
+      type Types::Objects::Department, null: false
 
-      argument :ministry, Types::Inputs::Ministry::Create, required: true
+      argument :ministry, Types::Inputs::Department::Create, required: true
 
       def resolve(ministry:)
         ministry_input = ministry.to_h
@@ -11,9 +11,7 @@ module Mutations
         created_ministry = ::Department.new ministry_input
         created_ministry.created_by = Current.user
         created_ministry.save!
-        if logo_file.present?
-          created_ministry.save_attachment_with_base64(:logo, logo_file[:content], logo_file[:filename])
-        end
+        created_ministry.save_attachment_with_base64(:logo, logo_file[:content], logo_file[:filename]) if logo_file.present?
         created_ministry
       end
 
