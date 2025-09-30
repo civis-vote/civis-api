@@ -9,6 +9,7 @@ module Mutations
         user = ::User.find_by(email: auth[:email])
         raise FailedLogin, "You have entered a wrong OTP" unless user&.verify_otp(auth[:otp])
 
+        user.update(last_active_at: Time.current) if user.last_active_at&.to_date != Date.today
         user.find_or_generate_api_key
         user.live_api_key
       end
