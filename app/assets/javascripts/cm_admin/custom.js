@@ -58,6 +58,7 @@ document.addEventListener("turbo:load", function () {
 
   $(document).on("change", '[data-field-name="question_type"]', function () {
     updateOptionsVisibility();
+    updateSelectedOptionLimitVisibility();
   });
   function updateOptionsVisibility() {
     const questionType = $("[data-cm-id='question_type']").val();
@@ -73,5 +74,18 @@ document.addEventListener("turbo:load", function () {
       }
     }
   }
+  function updateSelectedOptionLimitVisibility() {
+    const questionType = $("[data-cm-id='question_type']").val();
+    if (questionType === "checkbox" || questionType === "multiple_choice") {
+      $("[data-cm-id='selected_options_limit']")
+        .closest(".row")
+        .removeAttr("hidden", "true");
+    } else {
+      $("[data-cm-id='selected_options_limit']")
+        .closest(".row")
+        .attr("hidden", "true");
+    }
+  }
   updateOptionsVisibility();
+  updateSelectedOptionLimitVisibility();
 });

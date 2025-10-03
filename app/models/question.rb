@@ -16,7 +16,7 @@ class Question < ApplicationRecord
 
   validates :question_text, presence: true
   validate :conditional_question_should_be_optional
-  validate :validate_answer_limit_equal_or_less_than_options
+  validate :validate_selected_options_limit_equal_or_less_than_options
 
   accepts_nested_attributes_for :sub_questions, allow_destroy: true, reject_if: proc { |attributes| attributes['question_text'].blank? }
 
@@ -57,8 +57,8 @@ class Question < ApplicationRecord
     errors.add(:conditional_question, 'Conditional question should be optional')
   end
 
-  def validate_answer_limit_equal_or_less_than_options
+  def validate_selected_options_limit_equal_or_less_than_options
     remaining_options = sub_questions.reject(&:marked_for_destruction?)
-    errors.add(:answer_limit, 'can not be greater than options') if remaining_options.size < answer_limit.to_i
+    errors.add(:selected_options_limit, 'can not be greater than options') if remaining_options.size < selected_options_limit.to_i
   end
 end

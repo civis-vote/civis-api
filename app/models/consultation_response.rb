@@ -126,14 +126,14 @@ class ConsultationResponse < ApplicationRecord
     return unless answers.present?
 
     mandatory_question_ids.each do |question_id|
-      mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s } if answers.class == Array
+      mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s } if answers.instance_of?(Array)
       if !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?)
         raise IncompleteEntity,
               "Mandatory question with id #{question_id} should be answered."
       end
     end
 
-    validate_answer_limit
+    validate_selected_options_limit
   end
 
   def notify_admin_if_profane
@@ -246,17 +246,17 @@ class ConsultationResponse < ApplicationRecord
 
   private
 
-  def validate_answer_limit
+  def validate_selected_options_limit
     questions = response_round.questions
     return if questions.blank? || answers.blank?
 
     questions.each do |question|
-      next if question.answer_limit.to_i.zero?
+      next if question.selected_options_limit.to_i.zero?
 
-      answer = answers.find { |answer| answer[:question_id] == question.id }
+      answer = answers.find { |ans| ans['question_id'] == question.id }
       next unless answer.is_a?(Array)
 
-      raise BadRequest, 'Answer Limit is breached' if answer.size > question.answer_limit
+      raise BadRequest, 'Answer Limit is breached' if answer.size > question.selected_options_limit.to_i
     end
   end
 
