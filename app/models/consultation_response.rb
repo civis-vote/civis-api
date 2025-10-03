@@ -211,7 +211,16 @@ class ConsultationResponse < ApplicationRecord
       other_option_answer = if ans.empty?
                               ''
                             else
-                              ans.key?('is_other') ? ans['other_option_answer'] : ''
+                              if ans.key?('is_other')
+                                other_answer = ans['other_option_answer']
+                                if other_answer.is_a?(Hash)
+                                  "Option: #{other_answer['option_id']} Priority: #{other_answer['priority']}"
+                                else
+                                  other_answer
+                                end
+                              else
+                                ''
+                              end
                             end
       "#{answer_text} #{empty_string} #{other_option_answer}"
     end
