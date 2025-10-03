@@ -52,6 +52,7 @@ module CmAdmin
               field :question_type, field_type: :enum
               field :is_optional, field_type: :custom, helper_method: :format_boolean_value, label: 'Optional?'
               field :position
+              field :selected_options_limit, display_if: ->(obj) { obj.multiple_choice? || obj.checkbox? }
               field :supports_other, label: 'Other Option', field_type: :custom, helper_method: :format_boolean_value
             end
             cm_section 'Options', display_if: ->(record) { record.display_options? } do
@@ -78,6 +79,7 @@ module CmAdmin
             form_field :question_text_odia, input_type: :string
             form_field :question_text_marathi, input_type: :string
             form_field :question_type, input_type: :single_select, is_required: true
+            form_field :selected_options_limit, input_type: :integer
             form_field :is_optional, input_type: :switch, label: 'Optional?'
             form_field :supports_other, input_type: :switch, label: 'Supports Other?'
             nested_form_section 'Options', html_attrs: { 'data-section-id': 'options' } do
@@ -100,6 +102,7 @@ module CmAdmin
             form_field :question_text_marathi, input_type: :string
             form_field :question_type, input_type: :single_select, is_required: true
             form_field :position, input_type: :integer
+            form_field :selected_options_limit, input_type: :integer
             form_field :is_optional, input_type: :switch, label: 'Optional?'
             form_field :supports_other, input_type: :switch, label: 'Supports Other?'
             nested_form_section 'Options', html_attrs: { 'data-section-id': 'options' } do
