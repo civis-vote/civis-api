@@ -1,10 +1,20 @@
 class CaseStudy < ApplicationRecord
+  enum :case_study_type, %i[government product outreach]
+
   include Paginator
   include CmAdmin::CaseStudy
+
+  has_one_attached :hero_image
+
+  has_rich_text :description
 
   validates :name, presence: true
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User"
+  belongs_to :theme, optional: true
+
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, -> { segment }, through: :constant_maps, source: :constant
 
   before_validation :set_created_by, on: :create
 
@@ -36,6 +46,10 @@ class CaseStudy < ApplicationRecord
 
     order("#{sort} #{sort_direction}")
   }
+
+  def segment_names
+    segments.map(&:name).join(", ")
+  end
 
   private
 

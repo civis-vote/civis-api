@@ -22,6 +22,9 @@ class User < ApplicationRecord
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :votes, class_name: "ConsultationResponseVote"
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, -> { segment }, through: :constant_maps, source: :constant
+
   belongs_to :organisation, counter_cache: true, optional: true
   belongs_to :cm_role, optional: true
 
@@ -77,6 +80,12 @@ class User < ApplicationRecord
     where(city_id: location_scope.flatten)
   }
 
+  scope :state_filter, lambda { |state_ids|
+    return all if state_ids.blank?
+
+    joins(:city).where(locations: { parent_id: state_ids })
+  }
+
   scope :sort_records, lambda { |sort = "created_at", sort_direction = "asc"|
     order("#{sort} #{sort_direction}, id asc")
   }
@@ -94,6 +103,10 @@ class User < ApplicationRecord
 
   def self.notify_for_new_consultation_filter
     where("notification_settings->>'notify_for_new_consultation' = ?", "true")
+  end
+
+  def segment_names
+    segments.map(&:name).join(", ")
   end
 
   def full_name
@@ -234,6 +247,7 @@ class User < ApplicationRecord
   private
 
   def set_cm_role
+    self.notify_for_new_consultation = true if notify_for_new_consultation.blank?
     return if cm_role.present?
 
     self.cm_role = ::CmRole.find_by(name: "Citizen")

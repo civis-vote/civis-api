@@ -1,14 +1,20 @@
-class Category < ApplicationRecord
+class Theme < ApplicationRecord
   acts_as_paranoid
   include Attachable
   include Paginator
-  include CmAdmin::Category
+  include CmAdmin::Theme
 
-  has_many :ministries
+  has_many :departments
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, -> { segment }, through: :constant_maps, source: :constant
 
   has_one_attached :cover_photo
 
   delegate :url, to: :cover_photo, prefix: true, allow_nil: true
+
+  def segment_names
+    segments.map(&:name).join(", ")
+  end
 
   def picture_url
     if cover_photo.attached?
