@@ -27,6 +27,9 @@ class User < ApplicationRecord
 
   before_validation :create_random_password, on: :create
   before_validation :set_cm_role, on: :create
+
+  after_create :update_notification_setting
+
   validate :password_complexity, on: :create
   validate :check_organisation_role_only_for_employee
 
@@ -35,7 +38,7 @@ class User < ApplicationRecord
   enum best_rank_type: { national: 0, state: 1, city: 2 }
 
   # store accessors
-  store_accessor :notification_settings, :notify_for_new_consultation
+  store_accessor :notification_settings, :notify_for_new_consultation, :newsletter_subscription
 
   delegate :url, to: :profile_picture, prefix: true, allow_nil: true
   delegate :name, to: :cm_role, prefix: true, allow_nil: true
@@ -245,5 +248,11 @@ class User < ApplicationRecord
 
     errors.add(:cm_role, "Organisation employee role is only allowed when organisation is present") if organisation_id.blank?
     errors
+  end
+
+  def update_notification_setting
+    self.notify_for_new_consultation = true if notify_for_new_consultation.nil?
+    self.newsletter_subscription = true if newsletter_subscription.nil?
+    save
   end
 end
