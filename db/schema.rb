@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -519,7 +519,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
     t.string "last_name"
     t.integer "city_id"
     t.datetime "last_activity_at", precision: nil, default: -> { "(CURRENT_DATE)::timestamp without time zone" }
-    t.jsonb "notification_settings"
+    t.jsonb "notification_settings", default: {"newsletter_subscription"=>true, "notify_for_new_consultation"=>true}
     t.integer "role", default: 0
     t.string "phone_number"
     t.string "provider"
