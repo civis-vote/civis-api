@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_09_17_165119) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -450,6 +450,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_09_17_165119) do
     t.text "question_text_marathi"
     t.integer "position"
     t.bigint "conditional_question_id"
+    t.integer "selected_options_limit"
+    t.boolean "has_choice_priority", default: false
     t.index ["conditional_question_id"], name: "index_questions_on_conditional_question_id"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["parent_id"], name: "index_questions_on_parent_id"
