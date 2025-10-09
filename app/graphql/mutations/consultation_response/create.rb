@@ -29,13 +29,14 @@ module Mutations
         end
 
         created_consultation_response.save!
+        created_consultation_response.submit_voice_message_answers(consultation_response.voice_message_answers)
         created_consultation_response
       end
 
       def submission_allowed?(consultation_id)
         return true if (Rails.env.staging? && consultation_id.eql?(::Consultation::SKIP_AUTH_STAGING_ID)) || 
                       (Rails.env.production? && consultation_id.eql?(::Consultation::SKIP_AUTH_PRODUCTION_ID))
-      
+
         false
       end
     end

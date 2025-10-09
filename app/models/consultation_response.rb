@@ -6,6 +6,8 @@ class ConsultationResponse < ApplicationRecord
 
   has_rich_text :response_text
 
+  has_many_attached :voice_messages
+
   belongs_to :user, optional: true
   belongs_to :consultation, counter_cache: true, optional: true
   validates_uniqueness_of :user_id, scope: :response_round_id, unless: proc { |_user| user_id.blank? }
@@ -84,6 +86,20 @@ class ConsultationResponse < ApplicationRecord
     return nil if user_vote.nil?
 
     user_vote
+  end
+
+  def submit_voice_message_answers(voice_message_answers)
+    updated_response = []
+    voice_message_answers&.each do |answer|
+      question_id, base64_string, filename = answer['question_id'], answer['content'], answer['filename']
+      debugger
+      base64_content = Base64.decode64(base64_string.to_s.sub(%r{data:((image|application)/.{3,}),}, ''))
+      voice_messages.attach(io: StringIO.new(base64_content), filename: filename.to_s)
+      save!
+      attachment = voice_messages.last
+      updated_response << { question_id:, attachment_id: attachment.id }
+    end
+    update!(voice_message_answers: updated_response)
   end
 
   def update_reading_time

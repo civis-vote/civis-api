@@ -31,8 +31,9 @@ class Consultation < ApplicationRecord
   enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
   enum review_type: { consultation: 0, policy: 1 }
   enum visibility: { public_consultation: 0, private_consultation: 1 }
+  enum :question_flow, { question_list: 0, single_question: 1 }
 
-  validates_presence_of :response_deadline
+  validates_presence_of :response_deadline, :question_flow
 
   before_validation :set_created_by, :set_default_value_for_organisation_consultation, on: :create
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?

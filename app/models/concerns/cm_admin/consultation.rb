@@ -128,6 +128,7 @@ module CmAdmin
               field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value,
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :show_satisfaction_rating, field_type: :custom, helper_method: :format_boolean_value, label: 'Show Satisfaction Rating Question?'
+              field :question_flow, field_type: :enum
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
@@ -197,6 +198,7 @@ module CmAdmin
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :question_flow, input_type: :single_select
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
@@ -225,6 +227,7 @@ module CmAdmin
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :question_flow, input_type: :single_select
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text

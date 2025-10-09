@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
+ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -246,6 +246,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
     t.integer "subjective_answer_count"
     t.integer "objective_answer_count"
     t.bigint "organisation_id"
+    t.jsonb "voice_message_answers", default: {}
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["organisation_id"], name: "index_consultation_responses_on_organisation_id"
@@ -287,6 +288,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
     t.string "title_marathi"
     t.boolean "show_discuss_section", default: true, null: false
     t.boolean "show_satisfaction_rating", default: true
+    t.integer "question_flow", default: 0
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
@@ -452,6 +454,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_06_073143) do
     t.bigint "conditional_question_id"
     t.integer "selected_options_limit"
     t.boolean "has_choice_priority", default: false
+    t.boolean "accept_voice_message", default: false
     t.index ["conditional_question_id"], name: "index_questions_on_conditional_question_id"
     t.index ["deleted_at"], name: "index_questions_on_deleted_at"
     t.index ["parent_id"], name: "index_questions_on_parent_id"
