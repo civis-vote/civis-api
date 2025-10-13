@@ -88,17 +88,16 @@ class ConsultationResponse < ApplicationRecord
     user_vote
   end
 
-  def submit_voice_message_answers(voice_message_answers)
+  def submit_voice_responses(voice_responses)
     updated_response = []
-    voice_message_answers&.each do |answer|
-      question_id, base64_string, filename = answer['question_id'], answer['content'], answer['filename']
-      base64_content = Base64.decode64(base64_string.to_s.sub(%r{data:((image|application)/.{3,}),}, ''))
-      voice_messages.attach(io: StringIO.new(base64_content), filename: filename.to_s)
+    voice_responses&.each do |answer|
+      question_id, file = answer[:question_id], answer[:file]
+      voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
       updated_response << { question_id:, attachment_id: attachment.id }
     end
-    update!(voice_message_answers: updated_response)
+    update!(voice_responses: updated_response)
   end
 
   def update_reading_time

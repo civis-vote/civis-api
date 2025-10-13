@@ -246,7 +246,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.integer "subjective_answer_count"
     t.integer "objective_answer_count"
     t.bigint "organisation_id"
-    t.jsonb "voice_message_answers", default: {}
+    t.jsonb "voice_responses", default: {}
     t.index ["consultation_id"], name: "index_consultation_responses_on_consultation_id"
     t.index ["deleted_at"], name: "index_consultation_responses_on_deleted_at"
     t.index ["organisation_id"], name: "index_consultation_responses_on_organisation_id"

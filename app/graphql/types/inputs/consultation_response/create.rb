@@ -4,7 +4,7 @@ module Types
       class Create < Types::BaseInputObject
         graphql_name "ConsultationResponseCreateInput"
         argument :answers, GraphQL::Types::JSON, nil, required: false
-        argument :voice_message_answers, GraphQL::Types::JSON, nil, required: false
+        argument :voice_responses, [Types::Inputs::ConsultationResponse::VoiceResponse], nil, required: false
         argument :consultation_id, Int, nil, required: true
         argument :response_text, String, nil, required: false
         argument :response_status, Int, nil, required: true
