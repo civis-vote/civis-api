@@ -92,7 +92,6 @@ class ConsultationResponse < ApplicationRecord
     updated_response = []
     voice_message_answers&.each do |answer|
       question_id, base64_string, filename = answer['question_id'], answer['content'], answer['filename']
-      debugger
       base64_content = Base64.decode64(base64_string.to_s.sub(%r{data:((image|application)/.{3,}),}, ''))
       voice_messages.attach(io: StringIO.new(base64_content), filename: filename.to_s)
       save!
