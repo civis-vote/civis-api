@@ -16,7 +16,7 @@ module Mutations
         current_user
       end
 
-      def self.authorized?(object, context)
+      def self.authorized?(_, context)
         context[:current_user].present?
       end
     end
