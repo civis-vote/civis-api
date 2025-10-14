@@ -3,8 +3,8 @@ Rails.application.reloader.to_prepare do
     # Sets the default layout to be used for admin
     config.layout = 'admin'
     # config.authorized_roles = [:super_admin?]
-    config.included_models = [Category, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
-                              ConsultationResponse, Ministry, Organisation, Consultation, GlossaryWordConsultationMapping,
+    config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
+                              ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
                               ResponseRound, Question, FileImport, FileExport, Respondent]
 
     config.project_name = Rails.configuration.x.project_settings.name
@@ -24,13 +24,13 @@ Rails.application.reloader.to_prepare do
         path: :cm_index_organisation_path
       },
       {
-        path: :cm_index_ministry_path
+        path: :cm_index_department_path
       },
       {
         path: :cm_index_case_study_path
       },
       {
-        path: :cm_index_category_path
+        path: :cm_index_theme_path
       },
       {
         display_name: 'Glossary',
