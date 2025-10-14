@@ -30,6 +30,7 @@ class User < ApplicationRecord
 
   before_validation :create_random_password, on: :create
   before_validation :set_cm_role, on: :create
+
   validate :password_complexity, on: :create
   validate :check_organisation_role_only_for_employee
 
@@ -38,7 +39,7 @@ class User < ApplicationRecord
   enum best_rank_type: { national: 0, state: 1, city: 2 }
 
   # store accessors
-  store_accessor :notification_settings, :notify_for_new_consultation
+  store_accessor :notification_settings, :notify_for_new_consultation, :newsletter_subscription
 
   delegate :url, to: :profile_picture, prefix: true, allow_nil: true
   delegate :name, to: :cm_role, prefix: true, allow_nil: true

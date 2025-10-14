@@ -19,7 +19,7 @@ document.addEventListener("turbo:load", function () {
     const url = "/cm_admin/questions/response_round_questions";
     const params = {
       question_id: questionId ?? "",
-      response_round_id: responseRoundId ?? "",
+      response_round_id: responseRoundId ?? ""
     };
     const queryParams = new URLSearchParams(params).toString();
 
@@ -31,7 +31,7 @@ document.addEventListener("turbo:load", function () {
         dataType: "json",
         data: function (params) {
           var query = {
-            search: params.term,
+            search: params.term
           };
           return query;
         },
@@ -39,11 +39,11 @@ document.addEventListener("turbo:load", function () {
           return {
             results: [{ id: "", text: "Select Conditional Question" }].concat(
               data.results
-            ),
+            )
           };
-        },
+        }
       },
-      minimumInputLength: 0,
+      minimumInputLength: 0
     });
   }
 
@@ -58,6 +58,7 @@ document.addEventListener("turbo:load", function () {
 
   $(document).on("change", '[data-field-name="question_type"]', function () {
     updateOptionsVisibility();
+    updateSelectedOptionLimitVisibility();
   });
   function updateOptionsVisibility() {
     const questionType = $("[data-cm-id='question_type']").val();
@@ -73,5 +74,22 @@ document.addEventListener("turbo:load", function () {
       }
     }
   }
+  function updateSelectedOptionLimitVisibility() {
+    const questionType = $("[data-cm-id='question_type']").val();
+    if (questionType === "checkbox" || questionType === "multiple_choice") {
+      $(
+        "[data-cm-id='selected_options_limit'], [data-cm-id='has_choice_priority']"
+      )
+        .closest(".row")
+        .removeAttr("hidden", "true");
+    } else {
+      $(
+        "[data-cm-id='selected_options_limit'], [data-cm-id='has_choice_priority']"
+      )
+        .closest(".row")
+        .attr("hidden", "true");
+    }
+  }
   updateOptionsVisibility();
+  updateSelectedOptionLimitVisibility();
 });
