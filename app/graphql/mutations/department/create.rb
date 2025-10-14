@@ -3,10 +3,10 @@ module Mutations
     class Create < Mutations::BaseMutation
       type Types::Objects::Department, null: false
 
-      argument :ministry, Types::Inputs::Department::Create, required: true
+      argument :department, Types::Inputs::Department::Create, required: true
 
-      def resolve(ministry:)
-        ministry_input = ministry.to_h
+      def resolve(department:)
+        ministry_input = department.to_h
         logo_file = ministry_input.delete(:logo_file)
         created_ministry = ::Department.new ministry_input
         created_ministry.created_by = Current.user
