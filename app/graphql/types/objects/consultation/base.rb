@@ -17,15 +17,15 @@ module Types
         field :consultation_logo, Types::Objects::AttachmentType, nil, null: true do
           argument :resolution, String, required: false, default_value: nil
         end
-        field :ministry, Types::Objects::Ministry, nil, null: false
+        field :department, Types::Objects::Department, nil, null: false
         field :consultation_responses_count, Integer, nil, null: false
         field :published_at, Types::Objects::DateTime, nil, null: true
         field :enforce_private_response, Boolean, nil, null: false
         field :response_deadline, Types::Objects::DateTime, "Deadline to submit responses.", null: false
         field :responses, Types::Connections::ConsultationResponse, nil, null: true do
-          argument :response_token,	String, required: true
-          argument :sort,	Types::Enums::ConsultationResponseSorts,	required: false, default_value: nil
-          argument :sort_direction,	Types::Enums::SortDirections,	required: false, default_value: nil
+          argument :response_token, String, required: true
+          argument :sort, Types::Enums::ConsultationResponseSorts, required: false, default_value: nil
+          argument :sort_direction, Types::Enums::SortDirections, required: false, default_value: nil
         end
         field :response_submission_message, String, nil, null: true
         field :review_type, Types::Enums::ConsultationReviewType, nil, null: false
@@ -34,8 +34,8 @@ module Types
         field :show_discuss_section, Boolean, nil, null: false
         field :satisfaction_rating_distribution, GraphQL::Types::JSON, nil, null: true
         field :shared_responses, Types::Connections::ConsultationResponse, nil, null: true do
-          argument :sort,	Types::Enums::ConsultationResponseSorts,	required: false, default_value: nil
-          argument :sort_direction,	Types::Enums::SortDirections,	required: false, default_value: nil
+          argument :sort, Types::Enums::ConsultationResponseSorts, required: false, default_value: nil
+          argument :sort_direction, Types::Enums::SortDirections, required: false, default_value: nil
         end
         field :status,	Types::Enums::ConsultationStatuses, nil, null: false
         field :summary, String, nil, null: true
@@ -50,12 +50,12 @@ module Types
         field :visibility, Types::Enums::ConsultationVisibilityType, nil, null: false
         field :response_rounds, [Types::Objects::ResponseRoundType], nil, null: true
         field :english_summary, String, nil, null: true
-        field :hindi_summary,	String, nil, null: true
-        field :odia_summary,	String, nil, null: true
-        field :marathi_summary,	String, nil, null: true
-        field :summary_hindi,	String, nil, null: true
-        field :page,	String, nil, null: true
-        field :consultation_partner_responses,	[Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
+        field :hindi_summary, String, nil, null: true
+        field :odia_summary, String, nil, null: true
+        field :marathi_summary, String, nil, null: true
+        field :summary_hindi, String, nil, null: true
+        field :page, String, nil, null: true
+        field :consultation_partner_responses, [Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
         field :has_user_filled_response_in_current_response_round, Boolean, null: true
 
         def has_user_filled_response_in_current_response_round

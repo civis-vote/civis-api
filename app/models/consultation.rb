@@ -4,6 +4,10 @@ class Consultation < ApplicationRecord
 
   attr_accessor :respondent_emails
 
+  enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
+  enum review_type: { consultation: 0, policy: 1 }
+  enum visibility: { public_consultation: 0, private_consultation: 1 }
+
   acts_as_paranoid
   include Paginator
   include Scorable::Consultation
@@ -19,7 +23,7 @@ class Consultation < ApplicationRecord
 
   has_one_attached :consultation_logo
 
-  belongs_to :ministry
+  belongs_to :department
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :organisation, optional: true
   has_many :responses, class_name: "ConsultationResponse"
@@ -27,10 +31,8 @@ class Consultation < ApplicationRecord
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :response_rounds
   has_many :respondents, through: :response_rounds
-
-  enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
-  enum review_type: { consultation: 0, policy: 1 }
-  enum visibility: { public_consultation: 0, private_consultation: 1 }
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, -> { segment }, through: :constant_maps, source: :constant
 
   validates_presence_of :response_deadline
 
@@ -40,7 +42,7 @@ class Consultation < ApplicationRecord
   after_commit :notify_admins, on: :create
 
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
-  delegate :name, to: :ministry, prefix: true, allow_nil: true
+  delegate :name, to: :department, prefix: true, allow_nil: true
   delegate :count, to: :responses, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
@@ -49,17 +51,16 @@ class Consultation < ApplicationRecord
     where(status: status)
   }
 
-  scope :ministry_filter, lambda { |ministry_id|
-    return all unless ministry_id.present?
+  scope :department_filter, lambda { |department_id|
+    return all unless department_id.present?
 
-    where(ministry_id: ministry_id)
+    where(department_id: department_id)
   }
 
-  scope :category_filter, lambda { |category_id|
-    return all unless category_id.present?
+  scope :theme_filter, lambda { |theme_id|
+    return all unless theme_id.present?
 
-    joins(ministry: :category)
-      .where(categories: { id: category_id })
+    joins(department: :theme).where(themes: { id: theme_id })
   }
 
   scope :featured_filter, lambda { |featured|
@@ -94,6 +95,10 @@ class Consultation < ApplicationRecord
     NotifyNewConsultationEmailToAdminJob.perform_later(self)
   end
 
+  def segment_names
+    segments.map(&:name).join(", ")
+  end
+
   def publish
     self.status = :published
     self.published_at = DateTime.now unless published_at.present?
@@ -117,13 +122,13 @@ class Consultation < ApplicationRecord
 
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
-      if ministry.poc_email_primary
-        feedback_report_email(ministry.poc_email_primary, ministry.primary_officer_name,
-                              ministry.primary_officer_designation)
+      if department.primary_contact.present?
+        feedback_report_email(department.primary_contact.email, department.primary_contact.name,
+                              department.primary_contact.designation)
       end
-      if ministry.poc_email_secondary
-        feedback_report_email(ministry.poc_email_secondary, ministry.secondary_officer_name,
-                              ministry.secondary_officer_designation)
+      if department.secondary_contact.present?
+        feedback_report_email(department.secondary_contact.email, department.secondary_contact.name,
+                              department.secondary_contact.designation)
       end
     end
     UserUpVoteResponsesEmailJob.perform_later(self)
@@ -232,6 +237,33 @@ class Consultation < ApplicationRecord
 
   def can_extend_deadline_or_create_response_round?
     private_consultation? && expired?
+  end
+
+  def duplicate
+    fields = attributes.except('id', 'created_at', 'updated_at', 'status', 'title', 'response_token', 'created_by_id')
+    consultation = ::Consultation.new(fields)
+    consultation.title = "Copy of #{title}"
+    consultation.created_by_id = Current.user&.id
+    consultation.status = :submitted
+    consultation.summary = summary
+    consultation.response_submission_message = response_submission_message
+    consultation.english_summary = english_summary
+    consultation.hindi_summary = hindi_summary
+    consultation.odia_summary = odia_summary
+    consultation.marathi_summary = marathi_summary
+    consultation.save!
+    consultation.consultation_logo.attach(consultation_logo.blob)
+
+    consultation.response_rounds.destroy_all
+    response_rounds.each do |response_round|
+      new_response_round = consultation.response_rounds.create!
+      response_round.questions.each do |question|
+        new_question = new_response_round.questions.create!(question.attributes.except('id', 'created_at', 'updated_at'))
+        question.sub_questions.each do |sub_question|
+          new_question.sub_questions.create!(sub_question.attributes.except('id', 'created_at', 'updated_at'))
+        end
+      end
+    end
   end
 
   private

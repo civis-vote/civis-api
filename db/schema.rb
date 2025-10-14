@@ -71,16 +71,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.integer "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-  end
-
-  create_table "categories", force: :cascade do |t|
-    t.string "name"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "cover_photo_data"
-    t.jsonb "cover_photo_versions_data"
-    t.datetime "deleted_at", precision: nil
-    t.index ["deleted_at"], name: "index_categories_on_deleted_at"
+    t.integer "case_study_type"
+    t.bigint "theme_id"
+    t.index ["theme_id"], name: "index_case_studies_on_theme_id"
   end
 
   create_table "cm_cron_job_logs", force: :cascade do |t|
@@ -178,6 +171,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "constant_maps", force: :cascade do |t|
+    t.bigint "constant_id", null: false
+    t.string "mappable_type"
+    t.bigint "mappable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["constant_id"], name: "index_constant_maps_on_constant_id"
+    t.index ["mappable_type", "mappable_id"], name: "index_constant_maps_on_mappable"
+  end
+
   create_table "constants", force: :cascade do |t|
     t.string "name"
     t.integer "constant_type"
@@ -259,7 +262,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.string "title", null: false
     t.string "url"
     t.datetime "response_deadline", precision: nil
-    t.bigint "ministry_id", null: false
+    t.bigint "department_id", null: false
     t.integer "status", default: 0
     t.integer "created_by_id"
     t.datetime "created_at", null: false
@@ -288,8 +291,37 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.boolean "show_discuss_section", default: true, null: false
     t.boolean "show_satisfaction_rating", default: true
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
+    t.index ["department_id"], name: "index_consultations_on_department_id"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
-    t.index ["ministry_id"], name: "index_consultations_on_ministry_id"
+  end
+
+  create_table "department_contacts", force: :cascade do |t|
+    t.bigint "department_id", null: false
+    t.string "name"
+    t.string "email"
+    t.string "designation"
+    t.integer "contact_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["department_id"], name: "index_department_contacts_on_department_id"
+  end
+
+  create_table "departments", force: :cascade do |t|
+    t.string "name"
+    t.bigint "theme_id"
+    t.integer "level"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.boolean "is_approved", default: false
+    t.integer "created_by_id"
+    t.jsonb "meta"
+    t.datetime "deleted_at", precision: nil
+    t.integer "location_id", default: 0
+    t.string "name_hindi"
+    t.string "name_odia"
+    t.string "name_marathi"
+    t.index ["deleted_at"], name: "index_departments_on_deleted_at"
+    t.index ["theme_id"], name: "index_departments_on_theme_id"
   end
 
   create_table "file_exports", force: :cascade do |t|
@@ -351,31 +383,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.index ["parent_id"], name: "index_locations_on_parent_id"
   end
 
-  create_table "ministries", force: :cascade do |t|
-    t.string "name"
-    t.integer "category_id"
-    t.integer "level"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.boolean "is_approved", default: false
-    t.string "poc_email_primary"
-    t.string "poc_email_secondary"
-    t.integer "created_by_id"
-    t.jsonb "meta"
-    t.text "logo_data"
-    t.jsonb "logo_versions_data"
-    t.datetime "deleted_at", precision: nil
-    t.integer "location_id", default: 0
-    t.string "primary_officer_name"
-    t.string "primary_officer_designation"
-    t.string "secondary_officer_name"
-    t.string "secondary_officer_designation"
-    t.string "name_hindi"
-    t.string "name_odia"
-    t.string "name_marathi"
-    t.index ["deleted_at"], name: "index_ministries_on_deleted_at"
-  end
-
   create_table "notification_settings", force: :cascade do |t|
     t.boolean "on_new_consultation"
     t.bigint "user_id", null: false
@@ -386,7 +393,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
 
   create_table "organisations", force: :cascade do |t|
     t.string "name"
-    t.text "logo_data"
     t.integer "created_by_id"
     t.integer "users_count", default: 0
     t.datetime "created_at", null: false
@@ -394,7 +400,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.boolean "active", default: true
     t.datetime "deleted_at", precision: nil
     t.string "official_url"
-    t.jsonb "logo_versions_data"
+    t.integer "engagement_type"
     t.index ["deleted_at"], name: "index_organisations_on_deleted_at"
   end
 
@@ -486,6 +492,25 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
   end
 
+  create_table "themes", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.datetime "deleted_at", precision: nil
+    t.index ["deleted_at"], name: "index_themes_on_deleted_at"
+  end
+
+  create_table "translations", force: :cascade do |t|
+    t.string "scope"
+    t.string "locale"
+    t.string "key"
+    t.text "value"
+    t.text "interpolations"
+    t.boolean "is_proc", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "user_counts", force: :cascade do |t|
     t.integer "user_id"
     t.integer "profanity_count"
@@ -531,8 +556,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.integer "best_rank"
     t.integer "best_rank_type"
     t.uuid "uuid", default: -> { "uuid_generate_v4()" }, null: false
-    t.text "profile_picture_data"
-    t.jsonb "profile_picture_versions_data"
     t.string "organization"
     t.string "callback_url"
     t.string "designation"
@@ -551,6 +574,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
     t.string "current_ip"
     t.string "sign_up_ip"
     t.datetime "last_active_at"
+    t.string "locale", default: "en"
     t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -586,10 +610,12 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "case_studies", "themes"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
   add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
+  add_foreign_key "constant_maps", "constants"
   add_foreign_key "consultation_hindi_summaries", "consultations"
   add_foreign_key "consultation_marathi_summaries", "consultations"
   add_foreign_key "consultation_odia_summaries", "consultations"
@@ -600,7 +626,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_043541) do
   add_foreign_key "consultation_responses", "respondents"
   add_foreign_key "consultation_responses", "response_rounds"
   add_foreign_key "consultation_responses", "users"
-  add_foreign_key "consultations", "ministries"
+  add_foreign_key "consultations", "departments"
+  add_foreign_key "department_contacts", "departments"
   add_foreign_key "game_actions", "point_events"
   add_foreign_key "game_actions", "users"
   add_foreign_key "notification_settings", "users"
