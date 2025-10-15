@@ -7,16 +7,22 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
+        permit_additional_fields [segment_ids: []]
         set_icon 'fas fa-clipboard-list'
         set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        sortable_columns [
+          { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
+          { column: 'updated_at', display_name: 'Updated At' },
+          { column: 'consultation_responses_count', display_name: 'Response Count' }
+        ]
 
         cm_index do
           page_title 'Consultations'
 
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
-          filter :status, :multi_select, helper_method: :select_options_for_consultation_status
-          filter :review_type, :single_select, helper_method: :select_options_for_consultation_review_type
-          filter :visibility, :single_select, helper_method: :select_options_for_consultation_visibility
+          filter :review_type, :multi_select
+          filter :visibility, :multi_select
+          filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
                         icon_name: 'fa-solid fa-check', display_type: :button,
@@ -60,7 +66,7 @@ module CmAdmin
 
           column :id
           column :title
-          column :ministry_name, header: 'Ministry'
+          column :department_name, header: 'Department'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
           column :response_deadline, field_type: :date, format: '%d %b, %Y'
           column :created_at, field_type: :date, format: '%d %b, %Y'
@@ -105,6 +111,38 @@ module CmAdmin
             end
           end
 
+          bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
+                      success_message: ->(success) { "Successfully Deleted #{success.size} Consultations." },
+                      error_message: lambda { |errors|
+                        "<p class='mb-0'>Failed to delete #{errors.size} consultations.</p>
+                        <ul>
+                          #{errors.map do |error|
+                            "<li><a href='/cm_admin/consultations/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
+                          end.join}
+                        </ul>"
+                      },
+                      modal_configuration: { title: 'Delete', description: 'Are you sure you want to Delete selected Consultations.',
+                                             confirmation_text: 'Confirm' } do |id|
+            ::Consultation.find(id).destroy
+          end
+
+          bulk_action name: 'duplicate', display_name: 'Duplicate', icon_name: 'fa-solid fa-clone', display_type: :modal,
+                      success_message: ->(success) { "Successfully duplicated #{success.size} Consultations." },
+                      error_message: lambda { |errors|
+                        "<p class='mb-0'>Failed to duplicate #{errors.size} Consultations.</p>
+                        <ul>
+                          #{errors.map do |error|
+                            "<li><a href='/cm_admin/consultations/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
+                          end.join}
+                        </ul>"
+                      },
+                      modal_configuration: { title: 'Duplicate Consultation', description: 'Are you sure you want to Duplicate selected Consultations',
+                                             confirmation_text: 'Confirm' } do |id|
+            @consultation = ::Consultation.find(id)
+            @consultation.duplicate
+            @consultation
+          end
+
           tab :profile, '' do
             cm_section 'Consultation details' do
               field :id, label: 'Consultation ID'
@@ -116,7 +154,7 @@ module CmAdmin
               field :officer_name, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :url, label: 'URL of Consultation PDF'
-              field :ministry_name, label: 'Ministry'
+              field :department_name, label: 'Department'
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :response_deadline, field_type: :datetime
@@ -129,6 +167,7 @@ module CmAdmin
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :show_satisfaction_rating, field_type: :custom, helper_method: :format_boolean_value, label: 'Show Satisfaction Rating Question?'
               field :question_flow, field_type: :enum
+              field :segment_names, label: 'Segments'
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
@@ -150,7 +189,8 @@ module CmAdmin
             column :id
             column :created_at, field_type: :date, format: '%d %b, %Y'
           end
-          tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index' do
+          tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index',
+                                       associated_model_name: 'ConsultationResponse' do
             column :id
             column :user_response
             column :user_full_name, header: 'Given by'
@@ -192,13 +232,15 @@ module CmAdmin
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-            form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
+            form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
             alert_box header: 'Time Zone Notice', type: :warning,
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :question_flow, input_type: :single_select
+            form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
+                                     display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
@@ -221,13 +263,15 @@ module CmAdmin
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-            form_field :ministry_id, input_type: :single_select, helper_method: :select_options_for_ministry
+            form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
             alert_box header: 'Time Zone Notice', type: :warning,
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :question_flow, input_type: :single_select
+            form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
+                                     display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text

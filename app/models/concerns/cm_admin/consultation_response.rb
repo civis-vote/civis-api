@@ -11,7 +11,9 @@ module CmAdmin
         cm_index do
           page_title 'Consultation Responses'
 
-          filter :response_status, :single_select, helper_method: :select_options_for_consultation_response_status
+          filter :theme_filter, :multi_select, helper_method: :select_options_for_theme, filter_with: :theme_filter
+          filter :department_filter, :multi_select, helper_method: :select_options_for_department,
+                                                    filter_with: :department_filter
           filter :created_at, :date, placeholder: 'Created at'
           filter :updated_at, :date, placeholder: 'Updated at'
 
@@ -53,7 +55,7 @@ module CmAdmin
           column :user_answers, display_if: ->(_) { false }
         end
 
-        cm_show page_title: :user_full_name do
+        cm_show page_title: :id do
           tab :profile, '' do
             cm_show_section 'Consultation Response Details' do
               field :consultation_title

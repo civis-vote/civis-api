@@ -1,5 +1,12 @@
 class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
+
+
+  enum visibility: { shared: 0, anonymous: 1 }
+  enum response_status: { acceptable: 0, under_review: 1, unacceptable: 2 }
+  enum source: { platform: 0, off_platform: 1 }
+  enum satisfaction_rating: %i[dissatisfied somewhat_dissatisfied somewhat_satisfied satisfied]
+
   include Paginator
   include Scorable::ConsultationResponse
   include CmAdmin::ConsultationResponse
@@ -27,12 +34,6 @@ class ConsultationResponse < ApplicationRecord
   after_commit :notify_admin_if_profane, on: :create
   before_commit :check_if_consultation_expired?, :set_subjective_objective_response_count, on: :create
 
-  enum satisfaction_rating: %i[dissatisfied somewhat_dissatisfied somewhat_satisfied satisfied]
-
-  enum visibility: { shared: 0, anonymous: 1 }
-  enum response_status: { acceptable: 0, under_review: 1, unacceptable: 2 }
-  enum source: { platform: 0, off_platform: 1 }
-
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
@@ -57,6 +58,18 @@ class ConsultationResponse < ApplicationRecord
     return all unless response_status.present?
 
     where(response_status: response_status)
+  }
+
+  scope :department_filter, lambda { |department_ids|
+    return all unless department_ids.present?
+
+    joins(consultation: :department).where(departments: { id: department_ids })
+  }
+
+  scope :theme_filter, lambda { |theme_ids|
+    return all unless theme_ids.present?
+
+    joins(consultation: { department: :theme }).where(themes: { id: theme_ids })
   }
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
@@ -163,8 +176,8 @@ class ConsultationResponse < ApplicationRecord
     save!
   end
 
-  def category
-    consultation.ministry.category&.name
+  def theme
+    consultation.department.theme&.name
   end
 
   def submitted_by
