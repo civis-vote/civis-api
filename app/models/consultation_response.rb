@@ -13,6 +13,8 @@ class ConsultationResponse < ApplicationRecord
 
   has_rich_text :response_text
 
+  has_many_attached :voice_messages
+
   belongs_to :user, optional: true
   belongs_to :consultation, counter_cache: true, optional: true
   validates_uniqueness_of :user_id, scope: :response_round_id, unless: proc { |_user| user_id.blank? }
@@ -97,6 +99,18 @@ class ConsultationResponse < ApplicationRecord
     return nil if user_vote.nil?
 
     user_vote
+  end
+
+  def submit_voice_responses(voice_responses)
+    updated_response = []
+    voice_responses&.each do |answer|
+      question_id, file = answer[:question_id], answer[:file]
+      voice_messages.attach(io: file, filename: file.original_filename)
+      save!
+      attachment = voice_messages.last
+      updated_response << { question_id:, attachment_id: attachment.id }
+    end
+    update!(voice_responses: updated_response)
   end
 
   def update_reading_time

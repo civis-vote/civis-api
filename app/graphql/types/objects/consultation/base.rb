@@ -4,7 +4,7 @@ module Types
       class Base < BaseObject
         graphql_name "BaseConsultationType"
         field :id, Int, "ID of the consultation", null: false
-        field :anonymous_responses,	Types::Connections::ConsultationResponse, nil, null: true
+        field :anonymous_responses, Types::Connections::ConsultationResponse, nil, null: true
         field :created_at, Types::Objects::DateTime, nil, null: false
         field :created_by, Types::Objects::User::Base, nil, null: false
         field :consultation_feedback_email, String, nil, null: true
@@ -37,7 +37,8 @@ module Types
           argument :sort, Types::Enums::ConsultationResponseSorts, required: false, default_value: nil
           argument :sort_direction, Types::Enums::SortDirections, required: false, default_value: nil
         end
-        field :status,	Types::Enums::ConsultationStatuses, nil, null: false
+        field :status, Types::Enums::ConsultationStatuses, nil, null: false
+        field :question_flow, String, nil, null: true
         field :summary, String, nil, null: true
         field :title, String, nil, null: false
         field :hindi_title, String, nil, null: true
