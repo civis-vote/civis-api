@@ -52,6 +52,7 @@ module CmAdmin
               field :question_type, field_type: :enum
               field :is_optional, field_type: :custom, helper_method: :format_boolean_value, label: 'Optional?'
               field :position
+              field :accept_voice_message, field_type: :custom, helper_method: :format_boolean_value
               field :selected_options_limit, display_if: ->(obj) { obj.multiple_choice? || obj.checkbox? }
               field :has_choice_priority, field_type: :custom, helper_method: :format_boolean_value,
                                           display_if: ->(obj) { obj.multiple_choice? || obj.checkbox? }
@@ -80,10 +81,14 @@ module CmAdmin
             form_field :question_text_hindi, input_type: :string
             form_field :question_text_odia, input_type: :string
             form_field :question_text_marathi, input_type: :string
-            form_field :question_type, input_type: :single_select, is_required: true
+            form_field :question_type, input_type: :single_select, is_required: true,
+                                       html_attrs: { 'data-action': 'change->fields#show',
+                                                     'data-cm-visible-id': 'accept_voice_message',
+                                                     'data-cm-toggle-value': 'long_text' }
             form_field :selected_options_limit, input_type: :integer
             form_field :has_choice_priority, input_type: :switch
             form_field :is_optional, input_type: :switch, label: 'Optional?'
+            form_field :accept_voice_message, input_type: :switch, html_attrs: { 'data-fields-target': 'cmVisible' }
             form_field :supports_other, input_type: :switch, label: 'Supports Other?'
             nested_form_section 'Options', html_attrs: { 'data-section-id': 'options' } do
               nested_form_field :sub_questions, is_positionable: ->(_) { true } do
@@ -103,11 +108,15 @@ module CmAdmin
             form_field :question_text_hindi, input_type: :string
             form_field :question_text_odia, input_type: :string
             form_field :question_text_marathi, input_type: :string
-            form_field :question_type, input_type: :single_select, is_required: true
+            form_field :question_type, input_type: :single_select, is_required: true,
+                                       html_attrs: { 'data-action': 'change->fields#show',
+                                                     'data-cm-visible-id': 'accept_voice_message',
+                                                     'data-cm-toggle-value': 'long_text' }
             form_field :position, input_type: :integer
             form_field :selected_options_limit, input_type: :integer
             form_field :has_choice_priority, input_type: :switch
             form_field :is_optional, input_type: :switch, label: 'Optional?'
+            form_field :accept_voice_message, input_type: :switch, html_attrs: { 'data-fields-target': 'cmVisible' }
             form_field :supports_other, input_type: :switch, label: 'Supports Other?'
             nested_form_section 'Options', html_attrs: { 'data-section-id': 'options' } do
               nested_form_field :sub_questions, is_positionable: ->(_) { true } do

@@ -166,6 +166,7 @@ module CmAdmin
               field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value,
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :show_satisfaction_rating, field_type: :custom, helper_method: :format_boolean_value, label: 'Show Satisfaction Rating Question?'
+              field :question_flow, field_type: :enum
               field :segment_names, label: 'Segments'
               field :created_by_full_name, label: 'Created By'
             end
@@ -237,6 +238,7 @@ module CmAdmin
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end
@@ -267,6 +269,7 @@ module CmAdmin
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end

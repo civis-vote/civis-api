@@ -11,7 +11,9 @@ module Mutations
           raise Unauthorized, I18n.t('consultation_response.unauthorized')
         end
 
-        created_consultation_response = ::ConsultationResponse.new consultation_response.to_h
+        consultation_response_input = consultation_response.to_h.except(:voice_responses)
+
+        created_consultation_response = ::ConsultationResponse.new consultation_response_input
         created_consultation_response.user = user
         @consultation = ::Consultation.find(consultation_response.consultation_id)
         active_response_round = @consultation.response_rounds.order(:created_at).last
@@ -29,13 +31,14 @@ module Mutations
         end
 
         created_consultation_response.save!
+        created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
         created_consultation_response
       end
 
       def submission_allowed?(consultation_id)
         return true if (Rails.env.staging? && consultation_id.eql?(::Consultation::SKIP_AUTH_STAGING_ID)) || 
                       (Rails.env.production? && consultation_id.eql?(::Consultation::SKIP_AUTH_PRODUCTION_ID))
-      
+
         false
       end
     end

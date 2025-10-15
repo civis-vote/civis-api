@@ -14,6 +14,7 @@ module Types
       field :sub_questions, [Types::Objects::QuestionType], nil, null: true
       field :selected_options_limit, Integer, nil, null: true
       field :is_conditional_question, Boolean, null: true
+      field :accept_voice_message, Boolean, null: true
       field :has_choice_priority, Boolean, null: true
       field :conditional_question, Types::Objects::QuestionType, null: true
       field :supports_other, Boolean, nil, null: false
