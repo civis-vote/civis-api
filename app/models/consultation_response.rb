@@ -146,8 +146,9 @@ class ConsultationResponse < ApplicationRecord
   def validate_answers
     return true if !response_round.questions.present? && !answers.present?
 
-    mandatory_question_ids = []
-    response_round.questions.map { |question| mandatory_question_ids << question.id if !question.is_optional }
+    mandatory_question_ids = response_round.questions.filter do |question|
+      !question.is_optional && !question.accept_voice_message
+    end.map(&:id)
     raise IncompleteEntity, "Mandatory question should be answered." if mandatory_question_ids.present? && !answers.present?
 
     return unless answers.present?
