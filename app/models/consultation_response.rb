@@ -13,6 +13,8 @@ class ConsultationResponse < ApplicationRecord
 
   has_rich_text :response_text
 
+  has_many_attached :voice_messages
+
   belongs_to :user, optional: true
   belongs_to :consultation, counter_cache: true, optional: true
   validates_uniqueness_of :user_id, scope: :response_round_id, unless: proc { |_user| user_id.blank? }
@@ -99,6 +101,18 @@ class ConsultationResponse < ApplicationRecord
     user_vote
   end
 
+  def submit_voice_responses(voice_responses)
+    updated_response = []
+    voice_responses&.each do |answer|
+      question_id, file = answer[:question_id], answer[:file]
+      voice_messages.attach(io: file, filename: file.original_filename)
+      save!
+      attachment = voice_messages.last
+      updated_response << { question_id:, attachment_id: attachment.id }
+    end
+    update!(voice_responses: updated_response)
+  end
+
   def update_reading_time
     return unless reading_time.blank? || response_text.saved_change_to_body?
     return unless response_text && shared?
@@ -132,13 +146,17 @@ class ConsultationResponse < ApplicationRecord
   def validate_answers
     return true if !response_round.questions.present? && !answers.present?
 
-    mandatory_question_ids = []
-    response_round.questions.map { |question| mandatory_question_ids << question.id if question.is_optional == false }
+    mandatory_question_ids = response_round.questions.filter do |question|
+      !question.is_optional && !question.accept_voice_message
+    end.map(&:id)
     raise IncompleteEntity, "Mandatory question should be answered." if mandatory_question_ids.present? && !answers.present?
 
     return unless answers.present?
 
     mandatory_question_ids.each do |question_id|
+      question = response_round.questions.find_by(id: question_id)
+      next if question&.accept_voice_message
+
       mandatory_answer = JSON.parse(answers.to_json).select { |answer| answer["question_id"] == question_id.to_s } if answers.instance_of?(Array)
       if !mandatory_answer.present? || (!mandatory_answer.first["answer"].present? && !mandatory_answer.first["other_option_answer"].present?)
         raise IncompleteEntity,
