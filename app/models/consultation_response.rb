@@ -217,44 +217,46 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def user_answers
-    answers_array = []
+    answers_hash = {}
+
     response_round.questions.each do |question|
-      if answers.present?
-        answer = answers.find { |ans| ans['question_id'].to_i == question.id }
-        answers_array << answer if answer.present?
-      else
-        answers_array << ''
-      end
-    end
-    answers_array.map do |ans|
-      answer_text = if ans['answer'].is_a?(Array)
-                      format_multiple_choice_answer(ans)
-                    elsif ans['answer'].is_a?(Integer)
-                      Question.find(ans['answer']).question_text
+      answer_data = if answers.present?
+                      answers.find { |ans| ans['question_id'].to_i == question.id }
                     else
-                      ans['answer']
+                      nil
                     end
-      empty_string = if ans.empty?
-                       ''
-                     else
-                       ans.key?('is_other') && ans['answer'].present? ? ',' : ' '
-                     end
-      other_option_answer = if ans.empty?
-                              ''
-                            else
-                              if ans.key?('is_other')
-                                other_answer = ans['other_option_answer']
-                                if other_answer.is_a?(Hash)
-                                  "Option: #{other_answer['option_id']} Priority: #{other_answer['priority']}"
-                                else
-                                  other_answer
-                                end
-                              else
-                                ''
-                              end
-                            end
-      "#{answer_text} #{empty_string} #{other_option_answer}"
+
+      formatted_answer = if answer_data.present?
+                           answer_text = if answer_data['answer'].is_a?(Array)
+                                          format_multiple_choice_answer(answer_data)
+                                        elsif answer_data['answer'].is_a?(Integer)
+                                          Question.find(answer_data['answer']).question_text
+                                        else
+                                          answer_data['answer']
+                                        end
+
+                           empty_string = answer_data.key?('is_other') && answer_data['answer'].present? ? ',' : ' '
+
+                           other_option_answer = if answer_data.key?('is_other')
+                                                   other_answer = answer_data['other_option_answer']
+                                                   if other_answer.is_a?(Hash)
+                                                     "Option: #{other_answer['option_id']} Priority: #{other_answer['priority']}"
+                                                   else
+                                                     other_answer
+                                                   end
+                                                 else
+                                                   ''
+                                                 end
+
+                           "#{answer_text} #{empty_string} #{other_option_answer}"
+                         else
+                           ''
+                         end
+
+      answers_hash[question.question_text] = formatted_answer
     end
+
+    answers_hash
   end
 
   def reject

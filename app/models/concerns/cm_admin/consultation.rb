@@ -64,6 +64,16 @@ module CmAdmin
             consultation
           end
 
+          custom_action name: 'export_responses', route_type: 'member', verb: 'get', path: ':id/export_response',
+                        icon_name: 'fa-solid fa-file-export', display_type: :button do
+          @consultation = ::Consultation.find(params[:id])
+          file_export = ::FileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
+                                           expires_at: DateTime.now + 1.day, export_type: :custom_export,
+                                           associated_model_id: @consultation.id, action_name: 'export_responses')
+          ::ConsultationResponsesExportJob.perform_later(file_export:)
+          @consultation
+          end
+
           column :id
           column :title
           column :department_name, header: 'Department'
