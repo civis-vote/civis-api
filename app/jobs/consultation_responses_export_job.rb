@@ -89,6 +89,7 @@ class ConsultationResponsesExportJob < ApplicationJob
       'Source',
       'Organisation/Department',
       'Designation',
+      'Language',
       'Status'
     ]
   end
@@ -110,6 +111,7 @@ class ConsultationResponsesExportJob < ApplicationJob
         source: response.source,
         organisation: response.organisation,
         designation: response.designation,
+        language: response.inferred_language,
         response_status: response.response_status,
         user_answers: response.user_answers
       )
@@ -132,6 +134,7 @@ class ConsultationResponsesExportJob < ApplicationJob
       data_struct.source,
       data_struct.organisation,
       data_struct.designation,
+      data_struct.language,
       data_struct.response_status
     ]
 
