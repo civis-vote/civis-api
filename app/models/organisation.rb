@@ -2,6 +2,8 @@ class Organisation < ApplicationRecord
   enum :engagement_type, ['CM Admin Deployment', 'Outreach Partnership', 'Private Consultation Partnership']
 
   acts_as_paranoid
+  has_paper_trail
+
   include Paginator
   include CmAdmin::Organisation
 

@@ -1,6 +1,8 @@
 class CaseStudy < ApplicationRecord
   enum :case_study_type, %i[government product outreach]
 
+  has_paper_trail
+
   include Paginator
   include CmAdmin::CaseStudy
 

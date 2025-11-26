@@ -1,4 +1,6 @@
 class ResponseRound < ApplicationRecord
+  has_paper_trail
+
   include CmAdmin::ResponseRound
 
   belongs_to :consultation, optional: true
