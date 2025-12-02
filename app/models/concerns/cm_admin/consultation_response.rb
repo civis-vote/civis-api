@@ -11,10 +11,10 @@ module CmAdmin
         cm_index do
           page_title 'Consultation Responses'
 
-          filter :theme_filter, :multi_select, helper_method: :select_options_for_theme, filter_with: :theme_filter,active_by_default: true
-          filter :department_filter, :multi_select, helper_method: :select_options_for_department,filter_with: :department_filter ,active_by_default: true
+          filter :theme_filter, :multi_select, helper_method: :select_options_for_theme, filter_with: :theme_filter, active_by_default: true
+          filter :department_filter, :multi_select, helper_method: :select_options_for_department, filter_with: :department_filter, active_by_default: true
           filter :created_at, :date, placeholder: 'Created at'
-          filter :updated_at, :date, placeholder: 'Updated at'  
+          filter :updated_at, :date, placeholder: 'Updated at'
 
           importable class_name: 'ImportConsultationResponse', importer_type: 'custom_importer',
                      sample_file_path: '/csv_import_templates/consultation_response.csv'
