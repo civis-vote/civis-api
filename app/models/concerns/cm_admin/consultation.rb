@@ -206,7 +206,7 @@ module CmAdmin
                                        associated_model_name: 'ConsultationResponse' do
             column :id
             column :user_response
-            column :inferred_language, header: 'Language'
+            column :response_language, field_type: :enum, header: 'Language'
             column :user_full_name, header: 'Given by'
             column :response_status, header: 'Status', field_type: :enum
           end

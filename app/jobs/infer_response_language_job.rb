@@ -5,16 +5,16 @@ class InferResponseLanguageJob < ApplicationJob
     long_text_content = extract_long_text_answers(consultation_response)
 
     if long_text_content.blank?
-      consultation_response.update(inferred_language: "English")
+      consultation_response.update(response_language: "English")
       return
     end
 
     inferred_language = infer_language_from_openai(long_text_content)
 
-    consultation_response.update(inferred_language: inferred_language)
+    consultation_response.update(response_language: inferred_language)
   rescue StandardError => e
     Rails.logger.error("InferResponseLanguageJob failed for ConsultationResponse ID #{consultation_response.id}: #{e.message}")
-    consultation_response.update(inferred_language: "English")
+    consultation_response.update(response_language: "English")
   end
 
   private
@@ -67,6 +67,7 @@ class InferResponseLanguageJob < ApplicationJob
       2) If multiple languages are present, return the language used for the longest content.
       3) Prefer non-English languages over English if both are present.
       4) Return language name in proper case (e.g., 'Hindi', 'English', 'Spanish').
+      5) Language will be one of the following: #{ConsultationResponse.response_languages.values.join(', ')}
 
       Text to analyze: #{text}
     PROMPT
