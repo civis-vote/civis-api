@@ -19,6 +19,7 @@ class ImportConsultationResponse
         consultation_response.last_name = sanitize_column_value(row['last_name'])
         consultation_response.email = sanitize_column_value(row['email'])
         consultation_response.phone_number = sanitize_column_value(row['phone_number'])
+        consultation_response.response_language = sanitize_column_value(row['response_language'])
         if sanitize_column_value(row['responded_at']).present?
           consultation_response.responded_at = Date.parse(sanitize_column_value(row['responded_at']))
         end

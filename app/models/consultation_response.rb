@@ -6,6 +6,12 @@ class ConsultationResponse < ApplicationRecord
   enum response_status: { acceptable: 0, under_review: 1, unacceptable: 2 }
   enum source: { platform: 0, off_platform: 1 }
   enum satisfaction_rating: %i[dissatisfied somewhat_dissatisfied somewhat_satisfied satisfied]
+  enum response_language: {
+    english: "English",
+    hindi: "Hindi",
+    marathi: "Marathi",
+    odia: "Odia"
+  }
 
   include Paginator
   include Scorable::ConsultationResponse
@@ -32,7 +38,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
-  after_commit :enqueue_language_inference
+  after_commit :enqueue_language_inference, on: :create, if: -> { response_language.blank? }
   before_commit :check_if_consultation_expired?, :set_subjective_objective_response_count, on: :create
 
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
