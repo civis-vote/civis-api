@@ -111,7 +111,7 @@ class ConsultationResponsesExportJob < ApplicationJob
         source: response.source,
         organisation: response.organisation,
         designation: response.designation,
-        language: response.inferred_language,
+        language: response.response_language,
         response_status: response.response_status,
         user_answers: response.user_answers
       )
