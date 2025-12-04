@@ -27,6 +27,8 @@ class Consultation < ApplicationRecord
   belongs_to :department
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :organisation, optional: true
+  belongs_to :theme, optional: true
+
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
@@ -45,6 +47,7 @@ class Consultation < ApplicationRecord
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
   delegate :name, to: :department, prefix: true, allow_nil: true
   delegate :count, to: :responses, prefix: true, allow_nil: true
+  delegate :name, to: :theme, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
