@@ -23,11 +23,8 @@ module CmAdmin
           filter :cm_role_id, :multi_select, helper_method: :select_options_for_cm_role, display_name: 'Role', active_by_default: true
           filter :city_id, :multi_select, helper_method: :select_options_for_city, active_by_default: true
           filter :state_id, :multi_select, helper_method: :select_options_for_state, filter_with: :state_filter, active_by_default: true
-          
           filter :created_at, :date, placeholder: 'Created at'
           filter :updated_at, :date, placeholder: 'Updated at'
-        
-
           column :full_name
           column :email
           column :cm_role_name, header: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
