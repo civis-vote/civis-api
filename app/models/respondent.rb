@@ -1,4 +1,6 @@
 class Respondent < ApplicationRecord
+  has_paper_trail
+
   include Paginator
   include CmAdmin::Respondent
 

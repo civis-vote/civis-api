@@ -1,5 +1,7 @@
 class Theme < ApplicationRecord
   acts_as_paranoid
+  has_paper_trail
+
   include Attachable
   include Paginator
   include CmAdmin::Theme

@@ -10,6 +10,8 @@ class Consultation < ApplicationRecord
   enum :question_flow, { question_list: 0, single_question: 1 }
 
   acts_as_paranoid
+  has_paper_trail
+
   include Paginator
   include Scorable::Consultation
   include CmAdmin::Consultation

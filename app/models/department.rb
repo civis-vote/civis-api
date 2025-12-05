@@ -1,5 +1,7 @@
 class Department < ApplicationRecord
   acts_as_paranoid
+  has_paper_trail
+
   include Attachable
   include Scorable::Ministry
   include Paginator
