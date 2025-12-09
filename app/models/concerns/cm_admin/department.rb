@@ -43,7 +43,6 @@ module CmAdmin
 
           column :name
           column :created_by_full_name, header: 'Created By'
-          column :theme_name, header: 'Theme'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
           column :location_name, header: 'Location'
         end
@@ -89,7 +88,6 @@ module CmAdmin
               field :name_odia, label: 'Name in Odia'
               field :name_marathi, label: 'Name in Marathi'
               field :level, field_type: :enum
-              field :theme_name, label: 'Theme'
               field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :location_name, label: 'Location'
               field :segment_names, label: 'Segments'
@@ -123,7 +121,6 @@ module CmAdmin
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
             form_field :level, input_type: :single_select
-            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
@@ -145,7 +142,6 @@ module CmAdmin
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
             form_field :level, input_type: :single_select
-            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'

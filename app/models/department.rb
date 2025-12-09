@@ -1,5 +1,7 @@
 class Department < ApplicationRecord
   acts_as_paranoid
+  has_paper_trail
+
   include Attachable
   include Scorable::Ministry
   include Paginator
@@ -13,7 +15,6 @@ class Department < ApplicationRecord
   enum level: %i[national state local]
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
-  belongs_to :theme, optional: true
 
   has_many :consultations
   has_many :constant_maps, as: :mappable, dependent: :destroy
@@ -27,7 +28,6 @@ class Department < ApplicationRecord
 
   delegate :url, to: :logo, prefix: true, allow_nil: true
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
-  delegate :name, to: :theme, prefix: true, allow_nil: true
 
   accepts_nested_attributes_for :department_contacts, allow_destroy: true, reject_if: :all_blank
 
