@@ -108,8 +108,6 @@ gem 'airbrake'
 
 gem 'jwt'
 
-gem 'ruby-openai'
-
 gem 'apollo_upload_server'
 gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
 gem 'cm-geocoder'
