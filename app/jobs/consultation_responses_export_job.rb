@@ -29,6 +29,8 @@ class ConsultationResponsesExportJob < ApplicationJob
         Rails.logger.error("Consultation responses export failed for Consultation: #{consultation.id}, Error: #{e.message}")
         Rails.logger.error(e.backtrace.join("\n"))
         raise e
+      ensure
+        File.delete(excel_file_path) if File.exist?(excel_file_path)
       end
     end
   end
