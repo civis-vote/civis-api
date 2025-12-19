@@ -76,19 +76,39 @@ module CmAdmin
           end
 
           tab :profile, '' do
-            cm_show_section 'User Details' do
-              field :first_name
-              field :last_name
-              field :email
-              field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
-              field :points
-              field :city_name, header: 'City'
-              field :rank
-              field :phone_number
+            cm_show_section 'Profile Details' do
               field :profile_picture, field_type: :image
+              field :full_name
+
+              field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
+              field :city_name, header: 'City'
               field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
                            label: 'Organisation'
+              field :points
+              field :rank
+
               field :segment_names, label: 'Segments'
+            end
+            cm_section 'Contact and Identity' do
+              field :email
+              field :phone_number
+              field :is_verified, field_type: :boolean, label: 'Email verified'
+              field :is_verified, field_type: :boolean, label: 'Phone verified'
+              # field :is
+            end
+            cm_section 'Participation Snapshot' do
+              field :responses_count, label: 'Response count'
+              # field :cm_index_file_import_path
+              field :last_sign_in_at
+            end
+            cm_section 'Preferences' do
+              field :notify_for_new_consultation, label: 'Notify for New Consultation'
+              field :newsletter_subscription
+            end
+            cm_section 'Security and Audit' do
+              # field :DateTime, label: 'Joining date'
+              field :last_activity_at
+              field :create_account_method, label: 'Create Account Method'
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y', label: 'Joining Date'
