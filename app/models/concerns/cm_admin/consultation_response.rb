@@ -39,20 +39,9 @@ module CmAdmin
           column :id
           column :consultation_title
           column :user_response
+          column :response_language, field_type: :enum, header: 'Language'
           column :user_full_name, header: 'Given by'
           column :response_status, header: 'Status', field_type: :enum
-          column :submitted_by, display_if: ->(_) { false }
-          column :responder_email, display_if: ->(_) { false }
-          column :city, display_if: ->(_) { false }
-          column :phone_number, display_if: ->(_) { false }
-          column :satisfaction_rating, display_if: ->(_) { false }
-          column :visibility, display_if: ->(_) { false }
-          column :submitted_at, display_if: ->(_) { false }
-          column :is_verified, display_if: ->(_) { false }
-          column :source, display_if: ->(_) { false }
-          column :organisation, display_if: ->(_) { false }
-          column :designation, display_if: ->(_) { false }
-          column :user_answers, display_if: ->(_) { false }
         end
 
         cm_show page_title: :id do

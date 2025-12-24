@@ -213,8 +213,12 @@ GEM
     fabrication (2.28.0)
     faker (2.21.0)
       i18n (>= 1.8.11, < 2)
-    faraday (0.17.5)
-      multipart-post (>= 1.2, < 3)
+    faraday (2.13.4)
+      faraday-net_http (>= 2.0, < 3.5)
+      json
+      logger
+    faraday-net_http (3.4.1)
+      net-http (>= 0.5.0)
     ffi (1.17.0-arm64-darwin)
     ffi (1.17.0-x86_64-linux-gnu)
     ffi-compiler (1.0.1)
@@ -344,8 +348,9 @@ GEM
     multi_json (1.15.0)
     multi_xml (0.7.1)
       bigdecimal (~> 3.1)
-    multipart-post (2.1.1)
     mutex_m (0.3.0)
+    net-http (0.6.0)
+      uri
     net-imap (0.5.10)
       date
       net-protocol
@@ -612,6 +617,7 @@ GEM
     unf_ext (0.0.8.2)
     unicode (0.4.4.5)
     unicode-display_width (2.6.0)
+    uri (1.0.3)
     virtus (2.0.0)
       axiom-types (~> 0.1)
       coercible (~> 1.0)

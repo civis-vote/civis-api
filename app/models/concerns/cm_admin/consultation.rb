@@ -64,6 +64,16 @@ module CmAdmin
             consultation
           end
 
+          custom_action name: 'export_responses', route_type: 'member', verb: 'get', path: ':id/export_response',
+                        icon_name: 'fa-solid fa-file-export', display_type: :button do
+          @consultation = ::Consultation.find(params[:id])
+          file_export = ::FileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
+                                           expires_at: DateTime.now + 1.day, export_type: :custom_export,
+                                           associated_model_id: @consultation.id, action_name: 'export_responses')
+          ::ConsultationResponsesExportJob.perform_later(file_export:)
+          @consultation
+          end
+
           column :id
           column :title
           column :department_name, header: 'Department'
@@ -193,20 +203,9 @@ module CmAdmin
                                        associated_model_name: 'ConsultationResponse' do
             column :id
             column :user_response
+            column :response_language, field_type: :enum, header: 'Language'
             column :user_full_name, header: 'Given by'
             column :response_status, header: 'Status', field_type: :enum
-            column :submitted_by, display_if: ->(_) { false }
-            column :responder_email, display_if: ->(_) { false }
-            column :city, display_if: ->(_) { false }
-            column :phone_number, display_if: ->(_) { false }
-            column :satisfaction_rating, display_if: ->(_) { false }
-            column :visibility, display_if: ->(_) { false }
-            column :submitted_at, display_if: ->(_) { false }
-            column :is_verified, display_if: ->(_) { false }
-            column :source, display_if: ->(_) { false }
-            column :organisation, display_if: ->(_) { false }
-            column :designation, display_if: ->(_) { false }
-            column :user_answers, display_if: ->(_) { false }
           end
           tab :respondents, 'respondents', associated_model: 'respondents', layout_type: 'cm_association_index' do
             column :id
