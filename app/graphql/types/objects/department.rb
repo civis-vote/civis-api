@@ -2,7 +2,6 @@ module Types
   module Objects
     class Department < BaseObject
       field :id, Int, 'ID of the location', null: false
-      field :theme, Types::Objects::Theme, 'Category of the ministry', null: true
       field :level, Types::Enums::DepartmentLevels, nil, null: false
       field :logo, Types::Objects::AttachmentType, nil, null: true do
         argument :resolution, String, required: false, default_value: nil
