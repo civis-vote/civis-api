@@ -76,7 +76,7 @@ class ConsultationResponse < ApplicationRecord
   scope :theme_filter, lambda { |theme_ids|
     return all unless theme_ids.present?
 
-    joins(consultation: { department: :theme }).where(themes: { id: theme_ids })
+    joins(:consultation).where(consultations: { theme_id: theme_ids })
   }
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }

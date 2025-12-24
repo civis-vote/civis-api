@@ -22,6 +22,7 @@ module CmAdmin
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
           filter :review_type, :multi_select
           filter :visibility, :multi_select
+          filter :theme_id, :multi_select, helper_method: :select_options_for_theme
           filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
@@ -78,6 +79,7 @@ module CmAdmin
           column :title
           column :department_name, header: 'Department'
           column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+          column :theme_name, header: 'Theme'
           column :response_deadline, field_type: :date, format: '%d %b, %Y'
           column :created_at, field_type: :date, format: '%d %b, %Y'
           column :created_by_full_name, header: 'Created By'
@@ -160,6 +162,7 @@ module CmAdmin
               field :title_hindi, label: 'Title in Hindi'
               field :title_odia, label: 'Title in Odia'
               field :title_marathi, label: 'Title in Marathi'
+              field :theme_name, label: 'Theme'
               field :consultation_feedback_email
               field :officer_name, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -221,6 +224,7 @@ module CmAdmin
             form_field :title_hindi, input_type: :string
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
+            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -252,6 +256,7 @@ module CmAdmin
             form_field :title_hindi, input_type: :string
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
+            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
