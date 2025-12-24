@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_10_111312) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "plpgsql"
@@ -31,7 +31,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -41,10 +41,10 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.string "filename", null: false
     t.string "content_type"
     t.text "metadata"
-    t.string "service_name", null: false
     t.bigint "byte_size", null: false
     t.string "checksum"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
@@ -134,7 +134,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
   end
 
-  create_table "cm_page_builder_rails_page_components", id: :string, force: :cascade do |t|
+  create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
+    t.string "uuid", null: false
     t.bigint "page_id", null: false
     t.string "content"
     t.integer "position"
@@ -216,6 +217,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["consultation_response_id", "user_id"], name: "consultation_response_id_and_user_id_index", unique: true
     t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
     t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
   end
@@ -292,9 +294,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.boolean "show_discuss_section", default: true, null: false
     t.boolean "show_satisfaction_rating", default: true
     t.integer "question_flow", default: 0
+    t.bigint "theme_id"
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["department_id"], name: "index_consultations_on_department_id"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
+    t.index ["theme_id"], name: "index_consultations_on_theme_id"
   end
 
   create_table "department_contacts", force: :cascade do |t|
@@ -310,7 +314,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
 
   create_table "departments", force: :cascade do |t|
     t.string "name"
-    t.bigint "theme_id"
     t.integer "level"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -323,7 +326,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
     t.string "name_odia"
     t.string "name_marathi"
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
-    t.index ["theme_id"], name: "index_departments_on_theme_id"
   end
 
   create_table "file_exports", force: :cascade do |t|
@@ -630,6 +632,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_10_09_045439) do
   add_foreign_key "consultation_responses", "response_rounds"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "departments"
+  add_foreign_key "consultations", "themes"
   add_foreign_key "department_contacts", "departments"
   add_foreign_key "game_actions", "point_events"
   add_foreign_key "game_actions", "users"
