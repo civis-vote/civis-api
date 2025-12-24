@@ -4,6 +4,7 @@ module Types
       class Create < Types::BaseInputObject
         graphql_name 'ConsultationCreateInput'
         argument :department_id, ID, nil, required: true
+        argument :theme_id, Int, nil, required: false
         argument :title, String, nil, required: true
         argument :odia_title, String, nil, required: false
         argument :hindi_title, String, nil, required: false
