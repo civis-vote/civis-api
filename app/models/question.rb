@@ -11,7 +11,7 @@ class Question < ApplicationRecord
   has_many :sub_questions, -> { order(position: :asc) }, class_name: 'Question', foreign_key: :parent_id
   has_many :conditional_question_options, class_name: 'Question', foreign_key: :conditional_question_id
 
-  enum question_type: { checkbox: 0, multiple_choice: 1, long_text: 2, dropdown: 3 }
+  enum :question_type, { checkbox: 0, multiple_choice: 1, long_text: 2, dropdown: 3 }
 
   positioned on: %i[parent response_round]
 

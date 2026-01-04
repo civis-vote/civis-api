@@ -4,10 +4,24 @@ class Consultation < ApplicationRecord
 
   attr_accessor :respondent_emails
 
-  enum status: { submitted: 0, published: 1, rejected: 2, expired: 3 }
-  enum review_type: { consultation: 0, policy: 1 }
-  enum visibility: { public_consultation: 0, private_consultation: 1 }
-  enum :question_flow, { question_list: 0, single_question: 1 }
+  enum :status, { 
+    submitted: 0,
+    published: 1,
+    rejected: 2,
+    expired: 3 
+  }
+  enum :review_type, { 
+    consultation: 0,
+    policy: 1 
+  }
+  enum :visibility, { 
+    public_consultation: 0,
+    private_consultation: 1 
+  }
+  enum :question_flow, { 
+    question_list: 0,
+    single_question: 1 
+  }
 
   acts_as_paranoid
   has_paper_trail
