@@ -20,7 +20,7 @@ gem 'kaminari'
 
 gem 'rack-cors'
 
-gem 'paper_trail'
+gem 'paper_trail','~> 17.0'
 gem 'postmark-rails'
 
 gem 'devise'
@@ -70,7 +70,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'fabrication'
   gem 'faker'
-  gem 'rspec-rails', '~> 3.7'
+  gem 'rspec-rails', '~> 7.0'
 end
 
 group :development do

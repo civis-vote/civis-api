@@ -198,7 +198,7 @@ GEM
     devise_invitable (2.0.9)
       actionmailer (>= 5.0)
       devise (>= 4.6)
-    diff-lcs (1.5.0)
+    diff-lcs (1.6.2)
     digest-crc (0.6.4)
       rake (>= 12.0.0, < 14.0.0)
     domain_name (0.5.20190701)
@@ -305,7 +305,7 @@ GEM
       actionview (>= 7.0.0)
       activesupport (>= 7.0.0)
     jmespath (1.6.1)
-    json (2.7.5)
+    json (2.18.0)
     jwt (2.3.0)
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -391,8 +391,8 @@ GEM
     orm_adapter (0.5.0)
     os (1.1.4)
     pagy (4.11.0)
-    paper_trail (16.0.0)
-      activerecord (>= 6.1)
+    paper_trail (17.0.0)
+      activerecord (>= 7.1)
       request_store (~> 1.4)
     parallel (1.26.3)
     paranoia (3.1.0)
@@ -503,23 +503,23 @@ GEM
       nokogiri
       roo (>= 2.0.0, < 3)
       spreadsheet (> 0.9.0)
-    rspec-core (3.9.3)
-      rspec-support (~> 3.9.3)
-    rspec-expectations (3.9.4)
+    rspec-core (3.13.6)
+      rspec-support (~> 3.13.0)
+    rspec-expectations (3.13.5)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.9.0)
-    rspec-mocks (3.9.1)
+      rspec-support (~> 3.13.0)
+    rspec-mocks (3.13.7)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.9.0)
-    rspec-rails (3.9.1)
-      actionpack (>= 3.0)
-      activesupport (>= 3.0)
-      railties (>= 3.0)
-      rspec-core (~> 3.9.0)
-      rspec-expectations (~> 3.9.0)
-      rspec-mocks (~> 3.9.0)
-      rspec-support (~> 3.9.0)
-    rspec-support (3.9.4)
+      rspec-support (~> 3.13.0)
+    rspec-rails (7.1.1)
+      actionpack (>= 7.0)
+      activesupport (>= 7.0)
+      railties (>= 7.0)
+      rspec-core (~> 3.13)
+      rspec-expectations (~> 3.13)
+      rspec-mocks (~> 3.13)
+      rspec-support (~> 3.13)
+    rspec-support (3.13.6)
     rubocop (1.68.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -621,7 +621,7 @@ GEM
     unf_ext (0.0.8.2)
     unicode (0.4.4.5)
     unicode-display_width (2.6.0)
-    uri (1.0.3)
+    uri (1.1.1)
     useragent (0.16.11)
     virtus (2.0.0)
       axiom-types (~> 0.1)
@@ -684,7 +684,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-google-oauth2
   omniauth-linkedin-oauth2
-  paper_trail
+  paper_trail (~> 17.0)
   paranoia
   pg
   positioning
@@ -699,7 +699,7 @@ DEPENDENCIES
   redis
   roo (~> 2.8.0)
   roo-xls
-  rspec-rails (~> 3.7)
+  rspec-rails (~> 7.0)
   rubocop
   rubocop-performance
   rubocop-rails

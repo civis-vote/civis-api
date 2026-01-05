@@ -2,7 +2,7 @@ class Location < ApplicationRecord
 	has_many :children, class_name: "Location", foreign_key: "parent_id"
   belongs_to :parent, class_name: "Location", optional: true
 
-  enum location_type: [:city, :state]
+  enum :location_type, [:city, :state]
 
   validates :name, :location_type,  presence: true
 
