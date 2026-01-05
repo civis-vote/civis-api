@@ -108,7 +108,7 @@ gem 'airbrake'
 gem 'jwt'
 
 gem 'apollo_upload_server'
-gem 'cm-admin','~> 5.7', source: 'https://cm-gems.commutatus.com'
+gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
 gem 'cm-geocoder'
 gem 'positioning'
 gem 'stimulus-rails'
