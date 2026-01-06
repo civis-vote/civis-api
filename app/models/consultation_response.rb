@@ -2,7 +2,6 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   has_paper_trail
 
-
   enum :visibility, { 
     shared: 0,
     anonymous: 1
@@ -54,6 +53,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
+  after_commit :enqueue_language_inference, on: :create, if: -> { response_language.blank? }
   before_commit :check_if_consultation_expired?, :set_subjective_objective_response_count, on: :create
 
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
@@ -309,6 +309,10 @@ class ConsultationResponse < ApplicationRecord
   end
 
   private
+
+  def enqueue_language_inference
+    InferResponseLanguageJob.perform_later(self)
+  end
 
   def validate_selected_options_limit
     questions = response_round.questions
