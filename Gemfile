@@ -3,7 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby '3.4.7'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 8.1.1'
+gem 'rails'
 # Use postgresql as the database for Active Record
 gem 'pg'
 # Use Puma as the app server
@@ -20,7 +20,7 @@ gem 'kaminari'
 
 gem 'rack-cors'
 
-gem 'paper_trail','~> 17.0'
+gem 'paper_trail'
 gem 'postmark-rails'
 
 gem 'devise'
@@ -70,7 +70,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'fabrication'
   gem 'faker'
-  gem 'rspec-rails', '~> 7.0'
+  gem 'rspec-rails'
 end
 
 group :development do

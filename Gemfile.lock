@@ -685,7 +685,7 @@ DEPENDENCIES
   omniauth-facebook
   omniauth-google-oauth2
   omniauth-linkedin-oauth2
-  paper_trail (~> 17.0)
+  paper_trail
   paranoia
   pg
   positioning
@@ -693,14 +693,14 @@ DEPENDENCIES
   psych (< 4)
   puma
   rack-cors
-  rails (~> 8.1.1)
+  rails
   rails-erd
   razorpay
   rb-readline
   redis
   roo (~> 2.8.0)
   roo-xls
-  rspec-rails (~> 7.0)
+  rspec-rails
   rubocop
   rubocop-performance
   rubocop-rails
