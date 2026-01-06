@@ -22,7 +22,6 @@ module CmAdmin
           filter :status, :single_select, collection: [%w[Approved true], ['Not Approved', false]],
                                           filter_with: :status_filter, active_by_default: true
           filter :level, :multi_select, active_by_default: true
-          filter :theme_id, :multi_select, helper_method: :select_options_for_theme, active_by_default: true
           filter :location_id, :multi_select, helper_method: :select_options_for_location, active_by_default: true
 
           custom_action name: 'Approve', route_type: 'member', verb: 'patch', path: ':id/approve',

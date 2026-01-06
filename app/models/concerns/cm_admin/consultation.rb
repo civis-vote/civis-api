@@ -22,6 +22,7 @@ module CmAdmin
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
           filter :review_type, :multi_select, active_by_default: true
           filter :visibility, :multi_select,  active_by_default: true
+          filter :theme_id, :multi_select, helper_method: :select_options_for_theme
           filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
