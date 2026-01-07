@@ -143,6 +143,10 @@ class User < ApplicationRecord
     confirmation_url.to_s
   end
 
+  def is_verified
+    confirmed_at.present?
+  end
+
   def update_last_activity
     update last_activity_at: Date.today
   end
