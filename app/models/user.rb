@@ -144,6 +144,10 @@ class User < ApplicationRecord
     confirmation_url.to_s
   end
 
+  def is_verified
+    confirmed_at.present?
+  end
+
   def create_account_method
     return 'Google'   if provider == 'google_oauth2'
     return 'Facebook' if provider == 'facebook'
