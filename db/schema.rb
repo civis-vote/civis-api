@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_01_08_171452) do
+ActiveRecord::Schema[7.1].define(version: 2026_01_12_091434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -541,9 +541,11 @@ ActiveRecord::Schema[7.1].define(version: 2026_01_08_171452) do
     t.string "name"
     t.string "designation"
     t.boolean "active"
-    t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "linkedin_url"
+    t.integer "member_type", default: 0, null: false
+    t.index ["member_type"], name: "index_team_members_on_member_type"
   end
 
   create_table "themes", force: :cascade do |t|
