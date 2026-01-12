@@ -99,6 +99,8 @@ module CmAdmin
             end
             cm_section 'Participation Snapshot' do
               field :responses_count, label: 'Response count'
+              field :themes_participated_in, label: 'Themes participated in'
+              field :departments_engaged_in, label: 'Departments engaged in'
               # field :cm_index_file_import_path
               field :last_sign_in_at
             end
@@ -109,7 +111,7 @@ module CmAdmin
             cm_section 'Security and Audit' do
               # field :DateTime, label: 'Joining date'
               field :last_activity_at
-              field :create_account_method, label: 'Create Account Method'
+              field :create_account_method, label: 'Authentication'
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y', label: 'Joining Date'
