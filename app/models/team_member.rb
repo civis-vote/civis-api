@@ -6,13 +6,17 @@ class TeamMember < ApplicationRecord
   include CmAdmin::TeamMember
   has_one_attached :profile_picture
 
-  validates :name, :designation, :position, presence: true
+  enum member_type: { team: 0, advisory: 1 }
+
+  validates :name, :designation, presence: true
   validates :profile_picture, presence: true
 
-  default_scope { order(:position) }
+  scope :alphabetical, -> {
+    order(Arel.sql("LOWER(name) ASC"))
+  }
 
   def status
-    active ? 'Active' : 'Inactive'
+    active ? :active : :inactive
   end
 
 end

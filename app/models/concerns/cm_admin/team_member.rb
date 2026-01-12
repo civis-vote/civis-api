@@ -2,6 +2,8 @@ module CmAdmin
   module TeamMember
     extend ActiveSupport::Concern
 
+    STATUS_TAG_CLASS = { :active => 'completed', :inactive => 'danger' }.freeze
+
     included do
       cm_admin do
         actions only: []
@@ -16,18 +18,19 @@ module CmAdmin
           column :profile_picture, field_type: :image
           column :name
           column :designation
-          column :position
-          column :status
+          column :member_type
+          column :status, field_type: :tag, tag_class: STATUS_TAG_CLASS
         end
 
         cm_show page_title: :name do
           tab :profile, '' do
-            cm_section 'Team Member Details' do
+            cm_section 'Member Details' do
               field :profile_picture, field_type: :image
               field :name
               field :designation
-              field :position
-              field :status
+              field :linkedin_url
+              field :member_type
+              field :status, field_type: :tag, tag_class: STATUS_TAG_CLASS
             end
 
             cm_section 'Log Details' do
@@ -37,24 +40,26 @@ module CmAdmin
           end
         end
 
-        cm_new page_title: 'Add Team Member',
-               page_description: 'Enter details to add a new team member' do
+        cm_new page_title: 'Add Member',
+               page_description: 'Enter details to add a team or advisory member' do
           cm_section 'Details' do
             form_field :profile_picture, input_type: :single_file_upload
             form_field :name, input_type: :string
             form_field :designation, input_type: :string
-            form_field :position, input_type: :integer, label: 'Display Order'
+            form_field :linkedin_url, input_type: :string, label: 'LinkedIn URL'
+            form_field :member_type, input_type: :single_select, helper_method: :select_options_for_member_type
             form_field :active, input_type: :switch
           end
         end
 
-        cm_edit page_title: 'Edit Team Member',
+        cm_edit page_title: 'Edit Member',
                 page_description: 'Update team member details' do
           cm_section 'Details' do
             form_field :profile_picture, input_type: :single_file_upload
             form_field :name, input_type: :string
             form_field :designation, input_type: :string
-            form_field :position, input_type: :integer, label: 'Display Order'
+            form_field :linkedin_url, input_type: :string, label: 'LinkedIn URL'
+            form_field :member_type, input_type: :single_select, helper_method: :select_options_for_member_type
             form_field :active, input_type: :switch
           end
         end
