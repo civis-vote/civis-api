@@ -162,22 +162,17 @@ class User < ApplicationRecord
 
   def themes_participated_in
     responses
-      .joins(:consultation)
-      .group('consultations.theme_id')
-      .order('COUNT(consultation_responses.id) DESC')
-      .limit(5)
-      .pluck('consultations.theme_id')
-      .compact
+      .joins(:consultation).group('consultations.theme_id')
+      .order('COUNT(consultation_responses.id) DESC').limit(5)
+      .pluck('consultations.theme_id').compact
       .then { |ids| Theme.where(id: ids).pluck(:name) }
       .join(', ')
   end
 
   def departments_engaged_in
     responses
-      .joins(consultation: :department)
-      .group('departments.id')
-      .order('COUNT(consultation_responses.id) DESC')
-      .limit(5)
+      .joins(consultation: :department).group('departments.id')
+      .order('COUNT(consultation_responses.id) DESC').limit(5)
       .pluck('departments.name')
       .join(', ')
   end
