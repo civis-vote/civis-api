@@ -83,6 +83,7 @@ module CmAdmin
           column :created_at, field_type: :date, format: '%d %b, %Y'
           column :created_by_full_name, header: 'Created By'
           column :responses_count
+          column :url, header: 'Consultation PDF'
         end
 
         cm_show page_title: :title do

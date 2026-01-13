@@ -18,6 +18,7 @@ module Types
           argument :resolution, String, required: false, default_value: nil
         end
         field :department, Types::Objects::Department, nil, null: false
+        field :theme, Types::Objects::Theme, nil, null: true
         field :consultation_responses_count, Integer, nil, null: false
         field :published_at, Types::Objects::DateTime, nil, null: true
         field :enforce_private_response, Boolean, nil, null: false

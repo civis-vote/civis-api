@@ -66,7 +66,7 @@ class Consultation < ApplicationRecord
   scope :theme_filter, lambda { |theme_id|
     return all unless theme_id.present?
 
-    joins(department: :theme).where(themes: { id: theme_id })
+    where(theme_id: theme_id)
   }
 
   scope :featured_filter, lambda { |featured|
