@@ -95,13 +95,11 @@ module CmAdmin
               field :phone_number
               field :is_verified, field_type: :boolean, label: 'Email verified'
               field :is_verified, field_type: :boolean, label: 'Phone verified'
-              # field :is
             end
             cm_section 'Participation Snapshot' do
               field :responses_count, label: 'Response count'
               field :themes_participated_in, label: 'Themes participated in'
               field :departments_engaged_in, label: 'Departments engaged in'
-              # field :cm_index_file_import_path
               field :last_sign_in_at
             end
             cm_section 'Preferences' do
@@ -109,7 +107,6 @@ module CmAdmin
               field :newsletter_subscription
             end
             cm_section 'Security and Audit' do
-              # field :DateTime, label: 'Joining date'
               field :last_activity_at
               field :create_account_method, label: 'Authentication'
             end
