@@ -17,34 +17,22 @@ document.addEventListener("turbo:load", function () {
     }
 
     const url = "/cm_admin/questions/response_round_questions";
-    const params = {
+    const queryData = {
       question_id: questionId ?? "",
       response_round_id: responseRoundId ?? ""
     };
-    const queryParams = new URLSearchParams(params).toString();
 
-    $('[data-field-name="conditional_question_id"]').select2({
-      theme: "bootstrap-5",
-      ajax: {
-        url: url + "?" + queryParams,
-        type: "GET",
-        dataType: "json",
-        data: function (params) {
-          var query = {
-            search: params.term
-          };
-          return query;
-        },
-        processResults: (data, params) => {
-          return {
-            results: [{ id: "", text: "Select Conditional Question" }].concat(
-              data.results
-            )
-          };
-        }
-      },
-      minimumInputLength: 0
+    const element = document.querySelector(
+      '[data-field-name="conditional_question_id"]'
+    );
+
+    if (!element) return;
+
+    window.cmSelect(element, {
+      url: url,
+      queryData: queryData
     });
+
   }
 
   $(document).on(
