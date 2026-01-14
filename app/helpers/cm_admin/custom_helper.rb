@@ -71,10 +71,5 @@ module CmAdmin
       [['Yes', true], ['No', false]]
     end
 
-    def select_options_for_member_type(_ = nil, _ = nil)
-      ::TeamMember.member_types.keys.map { |k| [k.titleize, k] }
-    end
-
-
   end
 end

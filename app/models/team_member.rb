@@ -1,22 +1,17 @@
 class TeamMember < ApplicationRecord
   has_paper_trail
 
+  enum status: { inactive: 0, active: 1 }
+  enum member_type: { team: 0, advisory: 1 }
+
   include Attachable
-  include Paginator
   include CmAdmin::TeamMember
   has_one_attached :profile_picture
-
-  enum member_type: { team: 0, advisory: 1 }
 
   validates :name, :designation, presence: true
   validates :profile_picture, presence: true
 
-  scope :alphabetical, -> {
-    order(Arel.sql("LOWER(name) ASC"))
-  }
-
-  def status
-    active ? :active : :inactive
-  end
+  scope :active_only, -> { active }
+  scope :alphabetical, -> { order(Arel.sql("LOWER(name) ASC")) }
 
 end

@@ -4,14 +4,7 @@ module Queries
       type Types::Objects::People, null: false
 
       def resolve
-        members = ::TeamMember
-                    .where(active: true)
-                    .alphabetical
-
-        {
-          team: members.team,
-          advisory: members.advisory
-        }
+        ::TeamMember.active_only.alphabetical
       end
     end
   end
