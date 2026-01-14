@@ -18,7 +18,7 @@ module CmAdmin
           column :profile_picture, field_type: :image
           column :name
           column :designation
-          column :member_type
+          column :member_type, field_type: :enum
           column :status, field_type: :tag, tag_class: STATUS_TAG_CLASS
         end
 
@@ -29,7 +29,7 @@ module CmAdmin
               field :name
               field :designation
               field :linkedin_url
-              field :member_type
+              field :member_type, field_type: :enum
               field :status, field_type: :tag, tag_class: STATUS_TAG_CLASS
             end
 
@@ -48,8 +48,8 @@ module CmAdmin
             form_field :name, input_type: :string
             form_field :designation, input_type: :string
             form_field :linkedin_url, input_type: :string, label: 'LinkedIn URL'
-            form_field :member_type, input_type: :single_select, helper_method: :select_options_for_member_type
-            form_field :active, input_type: :switch
+            form_field :member_type, input_type: :single_select
+            form_field :status, input_type: :single_select
           end
         end
 
@@ -61,8 +61,8 @@ module CmAdmin
             form_field :name, input_type: :string
             form_field :designation, input_type: :string
             form_field :linkedin_url, input_type: :string, label: 'LinkedIn URL'
-            form_field :member_type, input_type: :single_select, helper_method: :select_options_for_member_type
-            form_field :active, input_type: :switch
+            form_field :member_type, input_type: :single_select
+            form_field :status, input_type: :single_select
           end
         end
       end
