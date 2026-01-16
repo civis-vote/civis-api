@@ -10,7 +10,7 @@ class ConsultationResponseVote < ApplicationRecord
   validates_uniqueness_of :consultation_response_id, scope: :user_id
 
   # enums
-  enum vote_direction: { up: 0, down: 1 }
+  enum :vote_direction, { up: 0, down: 1 }
 
   after_commit :refresh_consultation_response_vote_count
 

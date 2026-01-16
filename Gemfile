@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.3.0'
-
+ruby '3.4.7'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails'
 # Use postgresql as the database for Active Record
@@ -71,7 +70,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'fabrication'
   gem 'faker'
-  gem 'rspec-rails', '~> 3.7'
+  gem 'rspec-rails'
 end
 
 group :development do

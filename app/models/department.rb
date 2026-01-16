@@ -12,7 +12,7 @@ class Department < ApplicationRecord
   validates :name, :level, presence: true
 
   # enums
-  enum level: %i[national state local]
+  enum :level, %i[national state local]
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
 

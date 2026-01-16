@@ -23,7 +23,9 @@ Rails.application.routes.draw do
 
   root 'cm_admin/static#index'
 
-  get 'signin_google', 'signin_linkedin', 'signin_facebook', to: 'oauth#redirect_to_provider'
+  get 'signin_google', to: 'oauth#redirect_to_provider'
+  get 'signin_linkedin', to: 'oauth#redirect_to_provider'
+  get 'signin_facebook', to: 'oauth#redirect_to_provider'
   get 'users/auth/:provider/callback', to: 'oauth#callback'
   get 'users/auth/failure' => 'oauth#failure'
   post '/graphql', to: 'graphql#execute'

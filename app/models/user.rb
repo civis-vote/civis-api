@@ -37,8 +37,17 @@ class User < ApplicationRecord
   validate :check_organisation_role_only_for_employee
 
   # enums
-  enum role: { citizen: 0, admin: 1, moderator: 2, organisation_employee: 3 }
-  enum best_rank_type: { national: 0, state: 1, city: 2 }
+  enum :role, { 
+    citizen: 0,
+    admin: 1, 
+    moderator: 2, 
+    organisation_employee: 3 
+  }
+  enum :best_rank_type, {
+    national: 0, 
+    state: 1, 
+    city: 2 
+  }
 
   # store accessors
   store_accessor :notification_settings, :notify_for_new_consultation, :newsletter_subscription
@@ -132,6 +141,10 @@ class User < ApplicationRecord
     confirmation_url = URI::HTTPS.build(Rails.application.config.client_url.merge!({ path: "/confirm",
                                                                                      query: "token=#{confirmation_token}&callback_url=#{callback_url}" }))
     confirmation_url.to_s
+  end
+
+  def is_verified
+    confirmed_at.present?
   end
 
   def update_last_activity
