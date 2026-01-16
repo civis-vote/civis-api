@@ -5,7 +5,7 @@ Rails.application.reloader.to_prepare do
     # config.authorized_roles = [:super_admin?]
     config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
-                              ResponseRound, Question, FileImport, FileExport, Respondent]
+                              ResponseRound, Question, FileImport, FileExport, Respondent, TeamMember]
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
@@ -42,6 +42,10 @@ Rails.application.reloader.to_prepare do
       {
         display_name: 'User Responses',
         path: :cm_index_consultation_response_path
+      },
+      {
+        display_name: 'Team Members',
+        path: :cm_index_team_member_path
       },
       {
         display_name: 'File Imports',
