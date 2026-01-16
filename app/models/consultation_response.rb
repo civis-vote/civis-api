@@ -90,7 +90,13 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def user_response
-    response_text.to_plain_text
+    if response_text.present?
+      response_text.to_plain_text
+    elsif answers.present?
+      user_answers.values.reject(&:blank?).join(" | ")
+    else
+      ''
+    end
   end
 
   def refresh_consultation_response_up_vote_count
