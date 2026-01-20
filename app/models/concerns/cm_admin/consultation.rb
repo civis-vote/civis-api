@@ -20,9 +20,11 @@ module CmAdmin
           page_title 'Consultations'
 
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
-          filter :review_type, :multi_select
-          filter :visibility, :multi_select
+          filter :consultation_status, :multi_select, helper_method: :select_options_for_consultation_status,filter_with: :consultation_status, active_by_default: true
+          filter :response_deadline, :date , active_by_default: true
+          filter :visibility, :multi_select,  active_by_default: true
           filter :theme_id, :multi_select, helper_method: :select_options_for_theme
+          filter :review_type, :multi_select
           filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
