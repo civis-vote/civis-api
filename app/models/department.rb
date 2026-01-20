@@ -60,6 +60,12 @@ class Department < ApplicationRecord
     )
   }
 
+  scope :department_name, ->(names) {
+    return all unless names.present?
+    where(name: names)
+  }
+
+
   def picture_url
     if logo.attached?
       logo_url

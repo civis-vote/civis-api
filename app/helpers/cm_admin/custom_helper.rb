@@ -70,6 +70,14 @@ module CmAdmin
     def select_options_for_boolean(_ = nil, _ = nil)
       [['Yes', true], ['No', false]]
     end
+    
+    def select_options_for_dept_name(_ = nil, _ = nil)
+      ::Department.pluck(:name, :name)
+    end
+
+    def select_options_for_consultation_status(_ = nil, _ = nil)
+      ::Consultation.statuses.map { |status, _| [status.titleize, status] }
+    end
 
   end
 end
