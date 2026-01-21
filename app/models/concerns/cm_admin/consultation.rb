@@ -20,7 +20,7 @@ module CmAdmin
           page_title 'Consultations'
 
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
-          filter :consultation_status, :multi_select, helper_method: :select_options_for_consultation_status,filter_with: :consultation_status, active_by_default: true
+          filter :status, :multi_select, active_by_default: true
           filter :response_deadline, :date , active_by_default: true
           filter :visibility, :multi_select,  active_by_default: true
           filter :theme_id, :multi_select, helper_method: :select_options_for_theme
