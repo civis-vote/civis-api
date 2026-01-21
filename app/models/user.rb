@@ -148,6 +148,18 @@ class User < ApplicationRecord
     confirmed_at.present?
   end
 
+  def create_account_method
+    return 'Google'   if provider == 'google_oauth2'
+    return 'Facebook' if provider == 'facebook'
+    return 'Phone'    if phone_number.present?
+
+    'Email'
+  end
+
+  def responses_count
+    responses.count
+  end
+  
   def themes_participated_in
     responses
       .joins(:consultation).group('consultations.theme_id')
