@@ -76,44 +76,51 @@ module CmAdmin
           end
 
           tab :profile, '' do
-            cm_show_section 'Profile Details' do
-              field :profile_picture, field_type: :image
-              field :full_name
+            row do
+              cm_show_section 'Profile Details' do
+                field :profile_picture, field_type: :image
+                field :full_name
+                field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
+                field :city_name, header: 'City'
+                field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
+                            label: 'Organisation'
+                field :points
+                field :rank
+                field :segment_names, label: 'Segments'
+              end
+              cm_section 'Contact and Identity' do
+                field :email
+                field :phone_number
+                field :is_verified, field_type: :boolean, label: 'Email verified'
+                field :is_verified, field_type: :boolean, label: 'Phone verified'
+              end
+            end
+            
+            row do
+              cm_section 'Participation Snapshot' do
+                field :responses_count, label: 'Response count'
+                field :themes_participated_in, label: 'Themes participated in'
+                field :departments_engaged_in, label: 'Departments engaged in'
+                field :last_sign_in_at
+              end
+              cm_section 'Preferences' do
+                field :notify_for_new_consultation, label: 'Notify for New Consultation'
+                field :newsletter_subscription
+              end
 
-              field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
-              field :city_name, header: 'City'
-              field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
-                           label: 'Organisation'
-              field :points
-              field :rank
+            end
+            row do
+              cm_section 'Security and Audit' do
+                field :last_activity_at
+                field :create_account_method, label: 'Authentication'
+              end
+              cm_section 'Log Details' do
+                field :created_at, field_type: :date, format: '%d %b, %Y', label: 'Joining Date'
+                field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
+                field :last_active_at, field_type: :date, format: '%d %b, %Y'
+              end
+            end
 
-              field :segment_names, label: 'Segments'
-            end
-            cm_section 'Contact and Identity' do
-              field :email
-              field :phone_number
-              field :is_verified, field_type: :boolean, label: 'Email verified'
-              field :is_verified, field_type: :boolean, label: 'Phone verified'
-            end
-            cm_section 'Participation Snapshot' do
-              field :responses_count, label: 'Response count'
-              field :themes_participated_in, label: 'Themes participated in'
-              field :departments_engaged_in, label: 'Departments engaged in'
-              field :last_sign_in_at
-            end
-            cm_section 'Preferences' do
-              field :notify_for_new_consultation, label: 'Notify for New Consultation'
-              field :newsletter_subscription
-            end
-            cm_section 'Security and Audit' do
-              field :last_activity_at
-              field :create_account_method, label: 'Authentication'
-            end
-            cm_section 'Log Details' do
-              field :created_at, field_type: :date, format: '%d %b, %Y', label: 'Joining Date'
-              field :updated_at, field_type: :date, format: '%d %b, %Y', label: 'Last Updated At'
-              field :last_active_at, field_type: :date, format: '%d %b, %Y'
-            end
           end
           tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index',
                                        associated_model_name: 'ConsultationResponse' do
