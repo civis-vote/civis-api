@@ -148,6 +148,24 @@ class User < ApplicationRecord
     confirmed_at.present?
   end
 
+  def themes_participated_in
+    responses
+      .joins(:consultation).group('consultations.theme_id')
+      .order('COUNT(consultation_responses.id) DESC')
+      .pluck('consultations.theme_id').compact
+      .then { |ids| Theme.where(id: ids).pluck(:name) }
+      .join(', ')
+  end
+
+  def departments_engaged_in
+    responses
+      .joins(consultation: :department).group('departments.id')
+      .order('COUNT(consultation_responses.id) DESC')
+      .pluck('departments.name')
+      .join(', ')
+  end
+
+
   def update_last_activity
     update last_activity_at: Date.today
   end
