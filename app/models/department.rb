@@ -60,8 +60,10 @@ class Department < ApplicationRecord
     )
   }
 
-  scope :department_name, ->(names) {
-    return all unless names.present?
+  scope :name_filter, ->(department_ids) {
+    return all unless department_ids.present?
+
+    names = Department.where(id: department_ids).pluck(:name)
     where(name: names)
   }
 
