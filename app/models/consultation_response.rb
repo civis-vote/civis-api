@@ -3,11 +3,26 @@ class ConsultationResponse < ApplicationRecord
   has_paper_trail
 
 
-  enum visibility: { shared: 0, anonymous: 1 }
-  enum response_status: { acceptable: 0, under_review: 1, unacceptable: 2 }
-  enum source: { platform: 0, off_platform: 1 }
-  enum satisfaction_rating: %i[dissatisfied somewhat_dissatisfied somewhat_satisfied satisfied]
-  enum response_language: {
+  enum :visibility, { 
+    shared: 0,
+    anonymous: 1
+  }
+  enum :response_status, { 
+    acceptable: 0,
+    under_review: 1,
+    unacceptable: 2 
+  }
+  enum :source, { 
+    platform: 0,
+    off_platform: 1 
+  }
+  enum :satisfaction_rating, %i[
+    dissatisfied
+    somewhat_dissatisfied
+    somewhat_satisfied
+    satisfied
+  ]
+  enum :response_language, {
     english: "English",
     hindi: "Hindi",
     marathi: "Marathi",
