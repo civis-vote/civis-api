@@ -14,4 +14,9 @@ class TeamMember < ApplicationRecord
   scope :active_only, -> { active }
   scope :alphabetical, -> { order(Arel.sql("LOWER(name) ASC")) }
 
+  def self.list(member_type: nil)
+    records = active_only.alphabetical
+    records = records.where(member_type: member_type) if member_type.present?
+    records
+  end
 end
