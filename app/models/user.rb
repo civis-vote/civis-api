@@ -26,6 +26,7 @@ class User < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
+  # has_many :responses
 
   belongs_to :organisation, counter_cache: true, optional: true
   belongs_to :cm_role, optional: true
@@ -67,7 +68,7 @@ class User < ApplicationRecord
 
     terms = query.downcase.split(/\s+/)
     terms = terms.map do |e|
-      (e.gsub("*", "%").prepend("%") + "%").gsub(/%+/, "%")
+      "#{e.gsub('*', '%').prepend('%')}%".gsub(/%+/, "%")
     end
     num_or_conds = 4
     where(
@@ -122,7 +123,7 @@ class User < ApplicationRecord
   end
 
   def full_name
-    "#{first_name}" + " #{last_name}"
+    first_name.to_s + " #{last_name}"
   end
 
   def find_or_generate_api_key
