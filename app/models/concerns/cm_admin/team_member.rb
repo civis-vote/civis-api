@@ -43,7 +43,7 @@ module CmAdmin
         cm_new page_title: 'Add Member',
                page_description: 'Enter details to add a team or advisory member' do
           cm_section 'Details' do
-            alert_box type: :info, body: 'Profile picture is mandatory. Only JPG and PNG files are supported.'
+            alert_box type: :info, body: 'Only JPEG and PNG are supported for Profile Picture.'
             form_field :profile_picture, input_type: :single_file_upload
             form_field :name, input_type: :string
             form_field :designation, input_type: :string
@@ -56,7 +56,7 @@ module CmAdmin
         cm_edit page_title: 'Edit Member',
                 page_description: 'Update team member details' do
           cm_section 'Details' do
-            alert_box type: :info, body: 'Profile picture is mandatory. Only JPG and PNG files are supported.'
+            alert_box type: :info, body: 'Only JPEG and PNG are supported for Profile Picture.'
             form_field :profile_picture, input_type: :single_file_upload
             form_field :name, input_type: :string
             form_field :designation, input_type: :string

@@ -4,7 +4,8 @@ module Types
       class List < Types::BaseObject
         graphql_name "TeamMemberList"
 
-        field :records, [Types::Objects::TeamMember::Base], null: false
+        field :data, [Types::Objects::TeamMember::Base], null: false
+        field :paging, Types::Objects::Paging, null: false
       end
     end
   end
