@@ -57,12 +57,8 @@ module Scorable
     end
 
     def calculate_point_scale(action)
-      if PointScale.where("upper_limit > ?", points).where(action: action).order(upper_limit: :asc).present?
-        PointScale.where("upper_limit > ?", points).where(action: action).order(upper_limit: :asc).first
-
-      else
-        puts "Could not find point scale!"
-      end
+      current_points = points.to_i
+      PointScale.where("upper_limit > ?", current_points).where(action: action).order(upper_limit: :asc).first
     end
 
     def check_for_new_best_rank
