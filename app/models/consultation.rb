@@ -107,12 +107,6 @@ class Consultation < ApplicationRecord
     where(visibility: visibility)
   }
 
-  scope :consultation_status, lambda { |status|
-    return all unless status.present?
-
-    where(status: status)
-  }
-
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
   def notify_admins
