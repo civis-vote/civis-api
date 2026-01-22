@@ -60,12 +60,6 @@ class Department < ApplicationRecord
     )
   }
 
-  scope :name_filter, ->(department_ids) {
-    return all unless department_ids.present?
-    names = Department.where(id: department_ids).pluck(:name)
-    where(name: names)
-  }
-
   def picture_url
     if logo.attached?
       logo_url
