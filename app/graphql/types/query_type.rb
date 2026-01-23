@@ -24,5 +24,6 @@ module Types
     field :profanity_list,                     resolver: Queries::Profanity::List
     field :user_count_user,                    resolver: Queries::UserCount::User
     field :geo_country_code,                   resolver: Queries::GeoCountryCode
+    field :team_member_list,                   resolver: Queries::TeamMember::List
   end
 end
