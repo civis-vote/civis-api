@@ -5,15 +5,27 @@ class TeamMember < ApplicationRecord
   enum :member_type, { team: 0, advisory: 1 }
 
   include Attachable
+  include Paginator
   include CmAdmin::TeamMember
+
   has_one_attached :profile_picture
 
-  validates :name, :designation, presence: true
-  validates :profile_picture, presence: true
+  validates :name, :designation, :profile_picture, presence: true
   validate :validate_profile_picture_extension
 
   scope :active_only, -> { active }
-  scope :alphabetical, -> { order(Arel.sql("LOWER(name) ASC")) }
+  
+  scope :member_type_filter, lambda { |member_type|
+    return all if member_type.blank?
+    where(member_type: member_type)
+  }
+
+  scope :sort_records, lambda { |sort, sort_direction = "asc"|
+    return alphabetical if sort.blank?
+    order("#{sort} #{sort_direction}")
+  }
+
+  scope :alphabetical, -> { order(name: :asc) }
 
   private
 
