@@ -19,7 +19,7 @@ module CmAdmin
         cm_index do
           page_title 'Users'
 
-          filter %i[email first_name last_name], :search, placeholder: 'Search', active_by_default: :true
+          filter %i[email first_name last_name], :search, placeholder: 'Search'
           filter :cm_role_id, :multi_select, helper_method: :select_options_for_cm_role, display_name: 'Role', active_by_default: true
           filter :city_id, :multi_select, helper_method: :select_options_for_city, active_by_default: true
           filter :state_id, :multi_select, helper_method: :select_options_for_state, filter_with: :state_filter, active_by_default: true
