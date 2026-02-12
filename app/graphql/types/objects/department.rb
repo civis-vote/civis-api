@@ -10,7 +10,7 @@ module Types
       field :hindi_name, String, nil, null: true
       field :odia_name, String, nil, null: true
       field :marathi_name, String, nil, null: true
-      field :location_id, Int, nil, null: false
+      field :location_id, Int, nil, null: true
       field :department_contacts, [Types::Objects::DepartmentContact], nil, null: false
 
       def logo(resolution:)
