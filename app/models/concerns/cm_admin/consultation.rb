@@ -87,10 +87,10 @@ module CmAdmin
           column :created_by_full_name, header: 'Created By'
           column :responses_count
           column :url, header: 'Consultation PDF'
-          column :english_summary_text, header: 'English Summary'
-          column :hindi_summary_text, header: 'Hindi Summary'
-          column :odia_summary_text, header: 'Odia Summary'
-          column :marathi_summary_text, header: 'Marathi Summary'
+          column :english_summary_text, header: 'English Summary', display_if: ->(_) { false }
+          column :hindi_summary_text, header: 'Hindi Summary', display_if: ->(_) { false }
+          column :odia_summary_text, header: 'Odia Summary', display_if: ->(_) { false }
+          column :marathi_summary_text, header: 'Marathi Summary', display_if: ->(_) { false }
         end
 
         cm_show page_title: :title do
