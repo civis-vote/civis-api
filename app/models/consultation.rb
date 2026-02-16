@@ -317,4 +317,21 @@ class Consultation < ApplicationRecord
       "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
     end
   end
+
+  def english_summary_plain_text
+    english_summary.to_plain_text
+  end
+
+  def hindi_summary_plain_text
+    hindi_summary.to_plain_text
+  end
+
+  def odia_summary_plain_text
+    odia_summary.to_plain_text
+  end
+
+  def marathi_summary_plain_text
+    marathi_summary.to_plain_text
+  end
+
 end
