@@ -250,6 +250,18 @@ class Consultation < ApplicationRecord
     english_summary.to_plain_text if english_summary.present?
   end
 
+  def hindi_summary_text
+    hindi_summary.to_plain_text
+  end
+
+  def odia_summary_text
+    odia_summary.to_plain_text
+  end
+
+  def marathi_summary_text
+    marathi_summary.to_plain_text
+  end
+
   def set_consultation_expiry_job
     ConsultationExpiryJob.set(wait_until: response_deadline).perform_later(self)
     publish if public_consultation? && expired? && response_deadline > Time.current
@@ -317,4 +329,5 @@ class Consultation < ApplicationRecord
       "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
     end
   end
+
 end

@@ -87,6 +87,10 @@ module CmAdmin
           column :created_by_full_name, header: 'Created By'
           column :responses_count
           column :url, header: 'Consultation PDF'
+          column :english_summary_text, header: 'English Summary', viewable: false
+          column :hindi_summary_text, header: 'Hindi Summary', viewable: false
+          column :odia_summary_text, header: 'Odia Summary', viewable: false
+          column :marathi_summary_text, header: 'Marathi Summary', viewable: false
         end
 
         cm_show page_title: :title do
