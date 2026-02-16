@@ -212,6 +212,7 @@ module CmAdmin
             column :response_language, field_type: :enum, header: 'Language'
             column :user_full_name, header: 'Given by'
             column :response_status, header: 'Status', field_type: :enum
+            column :responder_email, header: 'Email'
           end
           tab :respondents, 'respondents', associated_model: 'respondents', layout_type: 'cm_association_index' do
             column :id
