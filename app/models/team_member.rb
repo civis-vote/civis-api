@@ -7,7 +7,7 @@ class TeamMember < ApplicationRecord
   include Attachable
   include Paginator
   include CmAdmin::TeamMember
-
+  
   has_one_attached :profile_picture
 
   validates :name, :designation, :profile_picture, presence: true
@@ -35,5 +35,4 @@ class TeamMember < ApplicationRecord
 
     errors.add(:profile_picture, 'must be a JPG or PNG image')
   end
-
 end

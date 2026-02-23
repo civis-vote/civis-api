@@ -335,4 +335,5 @@ class Consultation < ApplicationRecord
       "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
     end
   end
+
 end

@@ -111,7 +111,7 @@ module CmAdmin
             end
             row do
               cm_section 'Security and Audit' do
-                field :last_activity_at
+                field :last_activity_at, field_type: :date, format: '%d %b, %Y'
                 field :create_account_method, label: 'Authentication'
               end
               cm_section 'Log Details' do
