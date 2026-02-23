@@ -70,6 +70,5 @@ module CmAdmin
     def select_options_for_boolean(_ = nil, _ = nil)
       [['Yes', true], ['No', false]]
     end
-
   end
 end
