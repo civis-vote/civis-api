@@ -246,7 +246,8 @@ class ConsultationResponse < ApplicationRecord
 
   def user_answers
     answers_hash = {}
-
+    return answers_hash if response_round.nil?
+    
     response_round.questions.each do |question|
       answer_data = if answers.present?
                       answers.find { |ans| ans['question_id'].to_i == question.id }
