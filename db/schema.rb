@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_13_141639) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_22_165228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "pg_catalog.plpgsql"
@@ -237,6 +237,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_141639) do
     t.index ["consultation_id"], name: "index_consultation_hindi_summaries_on_consultation_id"
   end
 
+  create_table "consultation_kannada_summaries", force: :cascade do |t|
+    t.bigint "consultation_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["consultation_id"], name: "index_consultation_kannada_summaries_on_consultation_id"
+  end
+
   create_table "consultation_marathi_summaries", force: :cascade do |t|
     t.bigint "consultation_id"
     t.datetime "created_at", null: false
@@ -330,6 +337,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_141639) do
     t.bigint "theme_id"
     t.string "title", null: false
     t.string "title_hindi"
+    t.string "title_kannada"
     t.string "title_marathi"
     t.string "title_odia"
     t.datetime "updated_at", null: false
@@ -362,6 +370,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_141639) do
     t.jsonb "meta"
     t.string "name"
     t.string "name_hindi"
+    t.string "name_kannada"
     t.string "name_marathi"
     t.string "name_odia"
     t.datetime "updated_at", null: false
@@ -496,6 +505,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_141639) do
     t.integer "position"
     t.string "question_text"
     t.string "question_text_hindi"
+    t.text "question_text_kannada"
     t.text "question_text_marathi"
     t.string "question_text_odia"
     t.integer "question_type"
@@ -675,6 +685,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_13_141639) do
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"
   add_foreign_key "constant_maps", "constants"
   add_foreign_key "consultation_hindi_summaries", "consultations"
+  add_foreign_key "consultation_kannada_summaries", "consultations"
   add_foreign_key "consultation_marathi_summaries", "consultations"
   add_foreign_key "consultation_odia_summaries", "consultations"
   add_foreign_key "consultation_response_votes", "consultation_responses"

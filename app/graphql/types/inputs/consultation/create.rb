@@ -9,6 +9,7 @@ module Types
         argument :odia_title, String, nil, required: false
         argument :hindi_title, String, nil, required: false
         argument :marathi_title, String, nil, required: false
+        argument :kannada_title, String, nil, required: false
         argument :url, String, nil, required: true
         argument :response_deadline, Types::Objects::DateTime, nil, required: false
         argument :review_type, Types::Enums::ConsultationReviewType, nil, required: false
@@ -25,6 +26,10 @@ module Types
 
         def marathi_title
           object.title_marathi if object.title_marathi.present?
+        end
+
+        def kannada_title
+          object.title_kannada if object.title_kannada.present?
         end
       end
     end

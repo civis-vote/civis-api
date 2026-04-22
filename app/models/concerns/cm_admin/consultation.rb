@@ -91,6 +91,7 @@ module CmAdmin
           column :hindi_summary_text, header: 'Hindi Summary', viewable: false
           column :odia_summary_text, header: 'Odia Summary', viewable: false
           column :marathi_summary_text, header: 'Marathi Summary', viewable: false
+          column :kannada_summary_text, header: 'Kannada Summary', viewable: false
         end
 
         cm_show page_title: :title do
@@ -169,6 +170,7 @@ module CmAdmin
               field :title_hindi, label: 'Title in Hindi'
               field :title_odia, label: 'Title in Odia'
               field :title_marathi, label: 'Title in Marathi'
+              field :title_kannada, label: 'Title in Kannada'
               field :theme_name, label: 'Theme'
               field :consultation_feedback_email
               field :officer_name, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -195,6 +197,7 @@ module CmAdmin
               field :hindi_summary, field_type: :rich_text
               field :odia_summary, field_type: :rich_text
               field :marathi_summary, field_type: :rich_text
+              field :kannada_summary, field_type: :rich_text
             end
             cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
               field :response_submission_message, field_type: :rich_text
@@ -232,6 +235,7 @@ module CmAdmin
             form_field :title_hindi, input_type: :string
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
+            form_field :title_kannada, input_type: :string
             form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
@@ -264,6 +268,7 @@ module CmAdmin
             form_field :title_hindi, input_type: :string
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
+            form_field :title_kannada, input_type: :string
             form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :private_response, input_type: :switch
@@ -290,6 +295,7 @@ module CmAdmin
             form_field :hindi_summary, input_type: :rich_text
             form_field :odia_summary, input_type: :rich_text
             form_field :marathi_summary, input_type: :rich_text
+            form_field :kannada_summary, input_type: :rich_text
           end
           cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
             form_field :response_submission_message, input_type: :rich_text

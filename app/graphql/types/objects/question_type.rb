@@ -10,6 +10,7 @@ module Types
       field :hindi_question_text, String, nil, null: true
       field :odia_question_text, String, nil, null: true
       field :marathi_question_text, String, nil, null: true
+      field :kannada_question_text, String, nil, null: true
       field :parent, Types::Objects::QuestionType, nil, null: true
       field :sub_questions, [Types::Objects::QuestionType], nil, null: true
       field :selected_options_limit, Integer, nil, null: true
@@ -29,6 +30,10 @@ module Types
 
       def marathi_question_text
         object.question_text_marathi if object.question_text_marathi.present?
+      end
+
+      def kannada_question_text
+        object.question_text_kannada if object.question_text_kannada.present?
       end
 
       def is_conditional_question

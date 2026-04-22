@@ -10,6 +10,7 @@ module Types
       field :hindi_name, String, nil, null: true
       field :odia_name, String, nil, null: true
       field :marathi_name, String, nil, null: true
+      field :kannada_name, String, nil, null: true
       field :location_id, Int, nil, null: true
       field :department_contacts, [Types::Objects::DepartmentContact], nil, null: false
 
@@ -27,6 +28,10 @@ module Types
 
       def marathi_name
         object.name_marathi if object.name_marathi.present?
+      end
+
+      def kannada_name
+        object.name_kannada if object.name_kannada.present?
       end
     end
   end
