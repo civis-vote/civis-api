@@ -45,6 +45,7 @@ module Types
         field :hindi_title, String, nil, null: true
         field :odia_title, String, nil, null: true
         field :marathi_title, String, nil, null: true
+        field :kannada_title, String, nil, null: true
         field :updated_at, Types::Objects::DateTime, nil, null: false
         field :url, String, nil, null: false
         field :responses_reading_times, Integer, "Reading times of all the responses in this consultation", null: false
@@ -55,6 +56,7 @@ module Types
         field :hindi_summary, String, nil, null: true
         field :odia_summary, String, nil, null: true
         field :marathi_summary, String, nil, null: true
+        field :kannada_summary, String, nil, null: true
         field :summary_hindi, String, nil, null: true
         field :page, String, nil, null: true
         field :consultation_partner_responses, [Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
@@ -100,6 +102,10 @@ module Types
           object.title_marathi
         end
 
+        def kannada_title
+          object.title_kannada
+        end
+
         def english_summary
           return unless object.english_summary.to_s.present?
 
@@ -122,6 +128,12 @@ module Types
           return unless object.marathi_summary.to_s.present?
 
           object.marathi_summary_rich_text
+        end
+
+        def kannada_summary
+          return unless object.kannada_summary.to_s.present?
+
+          object.kannada_summary_rich_text
         end
 
         def shared_responses(sort:, sort_direction:)
