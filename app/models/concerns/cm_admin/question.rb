@@ -7,8 +7,8 @@ module CmAdmin
         actions only: []
         set_icon 'far fa-newspaper'
         visible_on_sidebar false
-        permit_additional_fields [{ sub_questions_attributes: %i[id question_text question_text_hindi question_text_odia _destroy
-                                                                 question_text_marathi position conditional_question_id] }]
+        permit_additional_fields [{ sub_questions_attributes: %i[id question_text question_text_hindi question_text_odia 
+                                                                 question_text_marathi question_text_kannada position conditional_question_id _destroy] }]
 
         cm_index do
           page_title 'Questions'
@@ -64,6 +64,7 @@ module CmAdmin
                 field :question_text_hindi
                 field :question_text_odia
                 field :question_text_marathi
+                field :question_text_kannada
                 field :question_text, field_type: :association, association_name: 'conditional_question',
                                       association_type: 'belongs_to', label: 'Conditional Question'
               end
@@ -81,6 +82,7 @@ module CmAdmin
             form_field :question_text_hindi, input_type: :string
             form_field :question_text_odia, input_type: :string
             form_field :question_text_marathi, input_type: :string
+            form_field :question_text_kannada, input_type: :string
             form_field :question_type, input_type: :single_select, is_required: true,
                                        html_attrs: { 'data-action': 'change->fields#show',
                                                      'data-cm-visible-id': 'accept_voice_message',
@@ -96,6 +98,7 @@ module CmAdmin
                 form_field :question_text_hindi, input_type: :string
                 form_field :question_text_odia, input_type: :string
                 form_field :question_text_marathi, input_type: :string
+                form_field :question_text_kannada, input_type: :string
                 form_field :conditional_question_id, input_type: :single_select
               end
             end
@@ -108,6 +111,7 @@ module CmAdmin
             form_field :question_text_hindi, input_type: :string
             form_field :question_text_odia, input_type: :string
             form_field :question_text_marathi, input_type: :string
+            form_field :question_text_kannada, input_type: :string
             form_field :question_type, input_type: :single_select, is_required: true,
                                        html_attrs: { 'data-action': 'change->fields#show',
                                                      'data-cm-visible-id': 'accept_voice_message',
@@ -124,6 +128,7 @@ module CmAdmin
                 form_field :question_text_hindi, input_type: :string
                 form_field :question_text_odia, input_type: :string
                 form_field :question_text_marathi, input_type: :string
+                form_field :question_text_kannada, input_type: :string
                 form_field :conditional_question_id, input_type: :single_select, helper_method: :selected_conditional_option
               end
             end

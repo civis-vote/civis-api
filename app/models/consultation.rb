@@ -37,6 +37,7 @@ class Consultation < ApplicationRecord
   has_rich_text :hindi_summary
   has_rich_text :odia_summary
   has_rich_text :marathi_summary
+  has_rich_text :kannada_summary
 
   has_one_attached :consultation_logo
 
@@ -214,6 +215,10 @@ class Consultation < ApplicationRecord
     convert_to_rich_text(marathi_summary.to_s)
   end
 
+  def kannada_summary_rich_text
+    convert_to_rich_text(kannada_summary.to_s)
+  end
+
   def response_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}/summary",
                                                                                 query: "response_token=#{response_token}" }))
@@ -262,6 +267,10 @@ class Consultation < ApplicationRecord
     marathi_summary.to_plain_text
   end
 
+  def kannada_summary_text
+    kannada_summary.to_plain_text
+  end
+
   def set_consultation_expiry_job
     ConsultationExpiryJob.set(wait_until: response_deadline).perform_later(self)
     publish if public_consultation? && expired? && response_deadline > Time.current
@@ -283,6 +292,7 @@ class Consultation < ApplicationRecord
     consultation.hindi_summary = hindi_summary
     consultation.odia_summary = odia_summary
     consultation.marathi_summary = marathi_summary
+    consultation.kannada_summary = kannada_summary
     consultation.save!
     consultation.consultation_logo.attach(consultation_logo.blob)
 

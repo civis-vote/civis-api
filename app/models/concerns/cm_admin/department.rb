@@ -85,6 +85,7 @@ module CmAdmin
               field :name_hindi, label: 'Name in Hindi'
               field :name_odia, label: 'Name in Odia'
               field :name_marathi, label: 'Name in Marathi'
+              field :name_kannada, label: 'Name in Kannada'
               field :level, field_type: :enum
               field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :location_name, label: 'Location'
@@ -118,6 +119,7 @@ module CmAdmin
             form_field :name_hindi, input_type: :string, label: 'Name in Hindi'
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
+            form_field :name_kannada, input_type: :string, label: 'Name in Kannada'
             form_field :level, input_type: :single_select
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
@@ -139,6 +141,7 @@ module CmAdmin
             form_field :name_hindi, input_type: :string, label: 'Name in Hindi'
             form_field :name_odia, input_type: :string, label: 'Name in Odia'
             form_field :name_marathi, input_type: :string, label: 'Name in Marathi'
+            form_field :name_kannada, input_type: :string, label: 'Name in Kannada'
             form_field :level, input_type: :single_select
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
