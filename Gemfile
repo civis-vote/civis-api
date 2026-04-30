@@ -32,7 +32,7 @@ gem 'sidekiq'
 
 gem 'simple_form'
 
-gem 'roo', '~> 2.8.0'
+gem 'roo'
 
 gem 'roo-xls'
 
