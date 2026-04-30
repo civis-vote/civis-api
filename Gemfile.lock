@@ -379,7 +379,7 @@ GEM
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
     language_server-protocol (3.17.0.3)
-    lexxy (0.9.10.beta)
+    lexxy (0.8.6.beta)
       rails (>= 8.0.2)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -744,6 +744,7 @@ DEPENDENCIES
   jbuilder
   jwt
   kaminari
+  lexxy (= 0.8.6.beta)
   listen
   mini_magick
   omniauth
