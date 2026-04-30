@@ -67,4 +67,7 @@ Rails.application.configure do
 
   Rails.application.routes.default_url_options[:host] = "localhost:3000"
   Rails.application.config.allowed_cors_origins = ['localhost:[0-9]+', 'https?://127.0.0.1:[0-9]+']
+
+  config.assets.css_compressor = nil
+
 end
