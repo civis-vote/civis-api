@@ -744,7 +744,6 @@ DEPENDENCIES
   jbuilder
   jwt
   kaminari
-  lexxy (= 0.8.6.beta)
   listen
   mini_magick
   omniauth
