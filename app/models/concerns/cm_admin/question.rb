@@ -7,8 +7,8 @@ module CmAdmin
         actions only: []
         set_icon 'far fa-newspaper'
         visible_on_sidebar false
-        permit_additional_fields [{ sub_questions_attributes: %i[id question_text question_text_hindi question_text_odia _destroy
-                                                                 question_text_marathi question_text_kannada position conditional_question_id] }]
+        permit_additional_fields [{ sub_questions_attributes: %i[id question_text question_text_hindi question_text_odia 
+                                                                 question_text_marathi question_text_kannada position conditional_question_id _destroy] }]
 
         cm_index do
           page_title 'Questions'
