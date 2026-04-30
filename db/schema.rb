@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_22_165228) do
+ActiveRecord::Schema[8.1].define(version: 2026_04_30_152437) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
+  enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
   enable_extension "uuid-ossp"
 
@@ -82,6 +83,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_165228) do
     t.bigint "commenter_id"
     t.string "commenter_type"
     t.datetime "created_at", null: false
+    t.citext "created_by_email"
+    t.string "created_by_name"
     t.datetime "updated_at", null: false
     t.index ["commentable_type", "commentable_id"], name: "index_cm_comments_on_commentable"
     t.index ["commenter_type", "commenter_id"], name: "index_cm_comments_on_commenter"
@@ -199,6 +202,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_165228) do
     t.string "name"
     t.string "string", default: "/cm_admin/users"
     t.datetime "updated_at", null: false
+  end
+
+  create_table "cm_support_ticket_employees", force: :cascade do |t|
+    t.bigint "cm_support_ticket_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "employee_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cm_support_ticket_id"], name: "index_cm_support_ticket_employees_on_cm_support_ticket_id"
+  end
+
+  create_table "cm_support_tickets", force: :cascade do |t|
+    t.integer "bridge_status", default: 0
+    t.string "browser_name"
+    t.string "browser_version"
+    t.integer "cm_admin_installation_id"
+    t.string "cm_admin_version"
+    t.integer "cm_bridge_ticket_id"
+    t.datetime "created_at", null: false
+    t.citext "created_by_email"
+    t.bigint "created_by_id"
+    t.string "created_by_name"
+    t.text "description"
+    t.string "name"
+    t.integer "platform_status", default: 0
+    t.integer "platform_ticket_id"
+    t.integer "priority", default: 0
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.string "updated_by_name"
+    t.index ["created_by_id"], name: "index_cm_support_tickets_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_cm_support_tickets_on_updated_by_id"
   end
 
   create_table "cm_user_mentions", force: :cascade do |t|
@@ -683,6 +717,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_22_165228) do
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"
+  add_foreign_key "cm_support_ticket_employees", "cm_support_tickets"
+  add_foreign_key "cm_support_tickets", "users", column: "created_by_id"
+  add_foreign_key "cm_support_tickets", "users", column: "updated_by_id"
   add_foreign_key "constant_maps", "constants"
   add_foreign_key "consultation_hindi_summaries", "consultations"
   add_foreign_key "consultation_kannada_summaries", "consultations"
