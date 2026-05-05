@@ -39,9 +39,9 @@ module CmAdmin
 
           column :position
           column :question_text
-          column :is_optional, field_type: :custom, helper_method: :format_boolean_value, header: 'Optional?'
+          column :is_optional, field_type: :boolean, header: 'Optional?'
           column :question_type, field_type: :enum
-          column :conditional_question?, field_type: :custom, helper_method: :format_boolean_value
+          column :conditional_question?, field_type: :boolean
         end
 
         cm_show page_title: :question_text do
@@ -50,13 +50,13 @@ module CmAdmin
               field :id, label: 'ID'
               field :question_text
               field :question_type, field_type: :enum
-              field :is_optional, field_type: :custom, helper_method: :format_boolean_value, label: 'Optional?'
+              field :is_optional, field_type: :boolean, label: 'Optional?'
               field :position
-              field :accept_voice_message, field_type: :custom, helper_method: :format_boolean_value
+              field :accept_voice_message, field_type: :boolean
               field :selected_options_limit, display_if: ->(obj) { obj.multiple_choice? || obj.checkbox? }
-              field :has_choice_priority, field_type: :custom, helper_method: :format_boolean_value,
+              field :has_choice_priority, field_type: :boolean,
                                           display_if: ->(obj) { obj.multiple_choice? || obj.checkbox? }
-              field :supports_other, label: 'Other Option', field_type: :custom, helper_method: :format_boolean_value
+              field :supports_other, label: 'Other Option', field_type: :boolean
             end
             cm_section 'Options', display_if: ->(record) { record.display_options? } do
               nested_form_field :sub_questions do

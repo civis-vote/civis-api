@@ -34,11 +34,6 @@ module CmAdmin
       ::Location.state.pluck(:name, :id)
     end
 
-    def format_boolean_value(record, field_name)
-      value = record.send(field_name)
-      value.present? ? 'Yes' : 'No'
-    end
-
     def select_options_for_wordindex(_ = nil, _ = nil)
       ::Wordindex.pluck(:word, :id)
     end
