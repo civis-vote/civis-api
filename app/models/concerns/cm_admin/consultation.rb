@@ -180,14 +180,14 @@ module CmAdmin
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :response_deadline, field_type: :datetime
-              field :show_discuss_section, field_type: :custom, helper_method: :format_boolean_value
+              field :show_discuss_section, field_type: :boolean
               field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :feedback_url, label: 'Consultation Page', field_type: :link
               field :response_url, label: 'Consultation Summary', field_type: :link, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :consultation_logo, field_type: :image, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-              field :is_satisfaction_rating_optional, field_type: :custom, helper_method: :format_boolean_value,
+              field :is_satisfaction_rating_optional, field_type: :boolean,
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-              field :show_satisfaction_rating, field_type: :custom, helper_method: :format_boolean_value, label: 'Show Satisfaction Rating Question?'
+              field :show_satisfaction_rating, field_type: :boolean, label: 'Show Satisfaction Rating Question?'
               field :question_flow, field_type: :enum
               field :segment_names, label: 'Segments'
               field :created_by_full_name, label: 'Created By'

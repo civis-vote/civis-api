@@ -32,9 +32,9 @@ module CmAdmin
           tab :questions, 'questions', associated_model: 'questions', layout_type: 'cm_association_index' do
             column :position
             column :question_text
-            column :is_optional, field_type: :custom, helper_method: :format_boolean_value, header: 'Optional?'
+            column :is_optional, field_type: :boolean, header: 'Optional?'
             column :question_type, field_type: :enum
-            column :conditional_question?, field_type: :custom, helper_method: :format_boolean_value
+            column :conditional_question?, field_type: :boolean
           end
         end
       end
