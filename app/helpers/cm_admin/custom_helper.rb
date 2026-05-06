@@ -66,5 +66,9 @@ module CmAdmin
       [['Yes', true], ['No', false]]
     end
 
+    def select_options_for_constant(_ = nil, _ = nil)
+      ::Constant.order(:name, :id).map { |constant| [constant.name, constant.id] }
+    end
+
   end
 end

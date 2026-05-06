@@ -227,6 +227,14 @@ module CmAdmin
                            header: 'User'
             column :created_at, field_type: :date, format: '%d %b, %Y'
           end
+          tab :clauses, 'clauses', associated_model: 'clauses', layout_type: 'cm_association_index',
+                                       associated_model_name: 'Clause' do
+            column :clause_id, header: 'Clause ID'
+            column :clause_title, header: 'Clause Title'
+            column :clause_type_names, header: 'Clause Type'
+            column :stakeholder_impact, header: 'Stakeholder Impact'
+            column :keywords, header: 'Keywords'
+          end
         end
 
         cm_new page_title: 'Add Consultation', page_description: 'Enter all details to add Consultation' do

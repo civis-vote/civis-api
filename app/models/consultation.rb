@@ -51,6 +51,7 @@ class Consultation < ApplicationRecord
   has_many :anonymous_responses, -> { anonymous }, class_name: "ConsultationResponse"
   has_many :response_rounds
   has_many :respondents, through: :response_rounds
+  has_many :clauses, dependent: :destroy
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
 
