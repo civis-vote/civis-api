@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_04_30_152437) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_06_110159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -75,6 +75,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_152437) do
     t.datetime "updated_at", null: false
     t.string "url"
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
+  end
+
+  create_table "clauses", force: :cascade do |t|
+    t.string "clause_id", null: false
+    t.string "clause_title", null: false
+    t.bigint "clause_type_id"
+    t.bigint "consultation_id", null: false
+    t.datetime "created_at", null: false
+    t.string "keywords"
+    t.string "stakeholder_impact"
+    t.datetime "updated_at", null: false
+    t.index ["clause_type_id"], name: "index_clauses_on_clause_type_id"
+    t.index ["consultation_id"], name: "index_clauses_on_consultation_id"
   end
 
   create_table "cm_comments", force: :cascade do |t|
@@ -712,6 +725,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_04_30_152437) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "case_studies", "themes"
+  add_foreign_key "clauses", "constants", column: "clause_type_id"
+  add_foreign_key "clauses", "consultations"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
   add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
