@@ -21,7 +21,7 @@ module CmAdmin
 
           column :clause_id
           column :clause_title
-          column :clause_type_names, header: 'Clause Type'
+          column :clause_type_name, header: 'Clause Type'
           column :stakeholder_impact
           column :keywords
           column :consultation, header: 'Consultation', field_type: :association, 
@@ -34,7 +34,7 @@ module CmAdmin
             cm_show_section 'Clause details' do
               field :clause_id, label: 'Clause ID'
               field :clause_title
-              field :clause_type_names, label: 'Clause Type'
+              field :clause_type_name, label: 'Clause Type'
               field :stakeholder_impact
               field :keywords
             end
