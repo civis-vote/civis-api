@@ -24,8 +24,6 @@ module CmAdmin
           column :clause_type_name, header: 'Clause Type'
           column :stakeholder_impact
           column :keywords
-          column :consultation, header: 'Consultation', field_type: :association, 
-                 association_name: :consultation, association_type: 'belongs_to'
           column :created_at, field_type: :date, format: '%d %b, %Y'
         end
 
