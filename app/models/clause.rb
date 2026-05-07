@@ -10,8 +10,5 @@ class Clause < ApplicationRecord
   validates :clause_id, :clause_title, presence: true
 
   delegate :title, to: :consultation, prefix: true, allow_nil: true
-
-  def clause_type_names
-    clause_type&.name
-  end
+  delegate :name, to: :clause_type, prefix: true, allow_nil: true
 end

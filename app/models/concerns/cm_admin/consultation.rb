@@ -231,7 +231,7 @@ module CmAdmin
                                        associated_model_name: 'Clause' do
             column :clause_id, header: 'Clause ID'
             column :clause_title, header: 'Clause Title'
-            column :clause_type_names, header: 'Clause Type'
+            column :clause_type_name, header: 'Clause Type'
             column :stakeholder_impact, header: 'Stakeholder Impact'
             column :keywords, header: 'Keywords'
           end
