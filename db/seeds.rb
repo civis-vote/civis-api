@@ -99,3 +99,8 @@ end
 
 puts '---> Creating Glossary Word'
 Fabricate.times(10, :wordindex)
+
+puts '---> Creating Clause Extraction AI Platform Setting'
+CmPlatformSetting.create(
+  name: 'Agent Clause Table Prompt',
+  value: 'Extract clauses from the provided consultation PDF document. For each clause identified, provide the following information in JSON format:')

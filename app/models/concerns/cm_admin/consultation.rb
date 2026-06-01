@@ -77,6 +77,15 @@ module CmAdmin
             @consultation
           end
 
+          custom_action name: 'extract_clauses', route_type: 'member', verb: 'patch', path: ':id/extract_clauses',
+                        icon_name: 'fa-solid fa-magic', display_type: :button,
+                        display_if: ->(consultation) { consultation.url.present? },
+                        success_message: ->(_) { { header: 'Clause Extraction Started', body: 'Clause extraction is in progress. Please refresh in a few minutes to see extracted clauses.' } } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.extract_clauses
+            consultation
+          end
+
           column :id
           column :title
           column :department_name, header: 'Department'
