@@ -740,7 +740,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
-  cm-admin (= 6.2.20.beta1)!
+  cm-admin!
   cm-geocoder
   cocoon
   database_cleaner
