@@ -774,6 +774,7 @@ DEPENDENCIES
   simple_form
   sitemap_generator
   slim-rails
+  sprockets-rails
   stimulus-rails
   turbo-rails
   tzinfo-data
