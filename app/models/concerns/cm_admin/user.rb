@@ -1,7 +1,7 @@
 module CmAdmin
   module User
     extend ActiveSupport::Concern
-    CM_ROLE_TAG_CLASS = { Admin: 'completed', Moderator: 'active-two', Citizen: 'active-one' }.freeze
+    CM_ROLE_TAG_CLASS = { Admin: 'cm-badge-green', Moderator: 'cm-badge-yellow', Citizen: 'cm-badge-blue' }.freeze
 
     included do
       cm_admin do
