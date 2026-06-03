@@ -2,7 +2,7 @@ module CmAdmin
   module Department
     extend ActiveSupport::Concern
 
-    STATUS_TAG_COLORS = { approved: 'bg-success', not_approved: 'bg-danger' }.freeze
+    STATUS_TAG_COLORS = { approved: 'cm-badge-green', not_approved: 'cm-badge-red' }.freeze
 
     included do
       cm_admin do
