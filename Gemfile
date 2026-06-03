@@ -100,7 +100,6 @@ gem 'http'
 gem 'psych', '< 4'
 
 gem 'importmap-rails'
-gem 'sassc-rails'
 gem 'turbo-rails'
 
 gem 'airbrake'
