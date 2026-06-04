@@ -1,7 +1,7 @@
 GEM
   remote: https://cm-gems.commutatus.com/
   specs:
-    cm-admin (7.0.6)
+    cm-admin (7.0.7)
       blueprinter
       caxlsx_rails
       cocoon (~> 1.2.15)
@@ -383,7 +383,7 @@ GEM
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
     language_server-protocol (3.17.0.3)
-    lexxy (0.9.15.alpha.3)
+    lexxy (0.9.15.alpha.4)
       rails (>= 8.0.2)
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
