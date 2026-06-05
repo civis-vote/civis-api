@@ -198,4 +198,4 @@ CmPlatformSetting.find_or_create_by(
 
     Focus on identifying substantive policy changes, regulatory requirements, and significant modifications that stakeholders need to understand.
   PROMPT
-)
+end
