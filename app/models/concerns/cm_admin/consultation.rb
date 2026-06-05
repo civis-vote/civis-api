@@ -240,10 +240,10 @@ module CmAdmin
                                        associated_model_name: 'Clause' do
             column :clause_id, header: 'Clause ID'
             column :clause_title, header: 'Clause Title'
+            column :what_is_being_proposed
             column :clause_type_name, header: 'Clause Type'
             column :stakeholder_impact, header: 'Stakeholder Impact'
             column :keywords, header: 'Keywords'
-            column :what_is_being_proposed
           end
         end
 
