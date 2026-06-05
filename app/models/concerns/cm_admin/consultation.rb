@@ -172,6 +172,16 @@ module CmAdmin
             @consultation
           end
 
+          custom_action name: 'summarise_pdf', route_type: 'member', verb: 'patch',
+                        path: ':id/summarise_pdf', icon_name: 'fa-solid fa-magic',
+                        display_type: :button,
+                        display_if: ->(consultation) { consultation.pdf.attached? },
+                        success_message: ->(_) { { header: 'Summarisation Started', body: 'AI summarisation is in progress. Please refresh in a few minutes to see the summary.' } } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.summarise_pdf
+            consultation
+          end
+
           tab :profile, '' do
             cm_section 'Consultation details' do
               field :id, label: 'Consultation ID'
@@ -194,6 +204,7 @@ module CmAdmin
               field :feedback_url, label: 'Consultation Page', field_type: :link
               field :response_url, label: 'Consultation Summary', field_type: :link, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :consultation_logo, field_type: :image, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :pdf, field_type: :attachment, label: 'Consultation PDF'
               field :is_satisfaction_rating_optional, field_type: :boolean,
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :show_satisfaction_rating, field_type: :boolean, label: 'Show Satisfaction Rating Question?'
@@ -202,6 +213,7 @@ module CmAdmin
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
+              field :ai_summary, field_type: :rich_text, label: 'AI Summary'
               field :english_summary, field_type: :rich_text
               field :hindi_summary, field_type: :rich_text
               field :odia_summary, field_type: :rich_text
@@ -263,6 +275,7 @@ module CmAdmin
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :pdf, input_type: :single_file_upload
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
@@ -296,6 +309,7 @@ module CmAdmin
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :pdf, input_type: :single_file_upload
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
