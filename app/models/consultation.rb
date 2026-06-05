@@ -315,6 +315,10 @@ class Consultation < ApplicationRecord
     end
   end
 
+  def extract_clauses
+    ExtractClausesJob.perform_later(id)
+  end
+
   private
 
   def set_default_value_for_organisation_consultation
