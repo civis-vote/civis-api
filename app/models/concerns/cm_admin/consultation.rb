@@ -2,7 +2,7 @@ module CmAdmin
   module Consultation
     extend ActiveSupport::Concern
 
-    STATUS_TAG_COLORS = { submitted: 'bg-info', published: 'bg-success', rejected: 'bg-danger', expired: 'bg-dark' }.freeze
+    STATUS_TAG_COLORS = { submitted: 'cm-badge-cyan', published: 'cm-badge-green', rejected: 'cm-badge-red', expired: 'cm-badge-gray' }.freeze
 
     included do
       cm_admin do

@@ -100,7 +100,6 @@ gem 'http'
 gem 'psych', '< 4'
 
 gem 'importmap-rails'
-gem 'sassc-rails'
 gem 'turbo-rails'
 
 gem 'airbrake'
@@ -111,4 +110,5 @@ gem 'apollo_upload_server'
 gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
 gem 'cm-geocoder'
 gem 'positioning'
+gem 'sprockets-rails'
 gem 'stimulus-rails'
