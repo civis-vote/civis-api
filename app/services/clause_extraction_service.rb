@@ -45,17 +45,22 @@ class ClauseExtractionService
 
   def download_pdf
     @temp_files ||= []
-    
+
     begin
       uri = URI.parse(consultation.url)
+
+      # Validate URL scheme and format
+      return nil unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+      return nil unless uri.host.present?
+
       temp_file = Tempfile.new(['consultation_pdf', '.pdf'])
       temp_file.binmode
       @temp_files << temp_file
 
-      URI.open(uri, 'rb') do |remote_file|
+      URI.open(uri, 'rb', open_timeout: 30, read_timeout: 300) do |remote_file|
         temp_file.write(remote_file.read)
       end
-      
+
       temp_file.close
       temp_file.path
     rescue StandardError => e
@@ -70,7 +75,8 @@ class ClauseExtractionService
 
   def extract_clauses_from_pdf(pdf_path, prompt)
     client = OpenAI::Client.new(
-      access_token: Rails.application.credentials.openai[:api_key]
+      access_token: Rails.application.credentials.openai[:api_key],
+      request_timeout: 600 
     )
 
     pdf_file = File.open(pdf_path, 'rb')
@@ -85,7 +91,8 @@ class ClauseExtractionService
       # Send PDF to model with prompt
       response = client.responses.create(
         parameters: {
-          model: "gpt-4o",
+          model: "gpt-4.1",
+          temperature: 0,
           input: [
             {
               role: "user",
@@ -100,18 +107,22 @@ class ClauseExtractionService
                 }
               ]
             }
-          ],
-          text: {
-            format: {
-              type: "json_object"
-            }
-          }
+          ]
         }
       )
 
-      # Parse JSON response
-      response_text = response.dig("output", 0, "content", 0, "text")
+      response_text = response["output"]
+        .flat_map { |o| o["content"] || [] }
+        .map { |c| c["text"] }
+        .compact
+        .join("\n")
+        .gsub(/\A```(?:json)?\s*|\s*```\z/m, '')
+        .strip
       JSON.parse(response_text)
+    rescue JSON::ParserError => e
+      Rails.logger.error("Failed to parse OpenAI response as JSON: #{e.message}")
+      Rails.logger.error("Response text: #{response_text[0..500]}")
+      nil
     ensure
       pdf_file&.close
       begin
@@ -152,8 +163,9 @@ class ClauseExtractionService
   def build_clause(clause_data, index)
     Clause.new(
       consultation: consultation,
-      clause_id: clause_data['clause_id'] || "CL-#{index.to_s.rjust(3, '0')}",
+      clause_id: clause_data['clause_id'] || "CL-#{index.to_s.rjust(4, '0')}",
       clause_title: clause_data['clause_title'],
+      what_is_being_proposed: clause_data['what_is_proposed'],
       clause_type: find_clause_type(clause_data['clause_type']),
       stakeholder_impact: clause_data['stakeholder_impact'],
       keywords: clause_data['keywords']&.is_a?(Array) ? clause_data['keywords'].join(', ') : clause_data['keywords']
@@ -163,11 +175,13 @@ class ClauseExtractionService
   def find_clause_type(type_name)
     return nil unless type_name.present?
 
-    constant = Constant.find_by(constant_type: :clause_type, name: type_name)
+    normalized_type = type_name.to_s.strip.titleize
+
+    constant = Constant.find_by(constant_type: :clause_type, name: normalized_type)
 
     unless constant
       available_types = Constant.where(constant_type: :clause_type).pluck(:name).join(', ')
-      Rails.logger.warn("Clause type '#{type_name}' not found. Available types: #{available_types}. Skipping clause.")
+      Rails.logger.warn("Clause type '#{type_name}' (normalized: '#{normalized_type}') not found. Available types: #{available_types}. Skipping clause.")
     end
 
     constant

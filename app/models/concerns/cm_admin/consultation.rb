@@ -243,6 +243,7 @@ module CmAdmin
             column :clause_type_name, header: 'Clause Type'
             column :stakeholder_impact, header: 'Stakeholder Impact'
             column :keywords, header: 'Keywords'
+            column :what_is_being_proposed
           end
         end
 
