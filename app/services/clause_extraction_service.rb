@@ -1,4 +1,3 @@
-require 'open-uri'
 require 'tempfile'
 require 'openai'
 
@@ -13,12 +12,12 @@ class ClauseExtractionService
 
   def call
     return failure_result("Consultation not found") unless consultation
-    return failure_result("Consultation URL is required") unless consultation.url&.present?
+    return failure_result("Consultation PDF is required") unless consultation.pdf.attached?
 
     begin
-      # Download PDF
-      pdf_path = download_pdf
-      return failure_result("Failed to download PDF") unless pdf_path
+      # Get PDF path from attached file
+      pdf_path = get_pdf_path
+      return failure_result("Failed to get PDF path") unless pdf_path
 
       # Get prompt from platform settings
       prompt = get_extraction_prompt
@@ -30,7 +29,7 @@ class ClauseExtractionService
 
       # Create clause records
       created_clauses = create_clauses(clauses_data)
-      
+
       success_result(created_clauses)
     rescue StandardError => e
       Rails.logger.error("Clause extraction failed for Consultation #{consultation.id}: #{e.message}")
@@ -43,28 +42,23 @@ class ClauseExtractionService
 
   private
 
-  def download_pdf
+  def get_pdf_path
     @temp_files ||= []
 
     begin
-      uri = URI.parse(consultation.url)
-
-      # Validate URL scheme and format
-      return nil unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
-      return nil unless uri.host.present?
-
+      # Download the attached PDF to a temp file
       temp_file = Tempfile.new(['consultation_pdf', '.pdf'])
       temp_file.binmode
       @temp_files << temp_file
 
-      URI.open(uri, 'rb', open_timeout: 30, read_timeout: 300) do |remote_file|
-        temp_file.write(remote_file.read)
+      consultation.pdf.download do |chunk|
+        temp_file.write(chunk)
       end
 
       temp_file.close
       temp_file.path
     rescue StandardError => e
-      Rails.logger.error("Failed to download PDF from #{consultation.url}: #{e.message}")
+      Rails.logger.error("Failed to get PDF from consultation #{consultation.id}: #{e.message}")
       nil
     end
   end
