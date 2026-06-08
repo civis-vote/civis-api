@@ -466,8 +466,6 @@ class UserMailer < ApplicationMailer
     otp = user.otp_requests.active.last&.otp
     return unless otp
 
-    formatted_otp = otp.to_s[0, 3] + ' ' + otp.to_s[3, 3]
-
     @@postmark_client.deliver_with_template(
       from: @@from_email,
       to: user.email,
@@ -475,7 +473,8 @@ class UserMailer < ApplicationMailer
       template_model: template_model_base.merge!({ name: user.first_name,
         product_url: Rails.application.config.client_url[:host],
         otp: otp,
-        formatted_otp: formatted_otp
+        otp_first: otp.to_s[0, 3],
+        otp_second: otp.to_s[3, 3]
       })
     )
   end
