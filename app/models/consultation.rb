@@ -321,7 +321,7 @@ class Consultation < ApplicationRecord
 
   def pdf_content_type
     return unless pdf.attached?
-    errors.add(:pdf, 'Only PDF fiels are supported') unless pdf.blob.content_type == 'application/pdf'
+    errors.add(:pdf, 'Only PDF files are supported') unless pdf.blob.content_type == 'application/pdf'
   end
 
   def pdf_file_size

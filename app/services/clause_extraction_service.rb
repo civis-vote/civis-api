@@ -70,7 +70,7 @@ class ClauseExtractionService
   def extract_clauses_from_pdf(pdf_path, prompt)
     client = OpenAI::Client.new(
       access_token: Rails.application.credentials.openai[:api_key],
-      request_timeout: 600 
+      request_timeout: 600
     )
 
     pdf_file = File.open(pdf_path, 'rb')
