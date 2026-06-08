@@ -24,6 +24,7 @@ module CmAdmin
           column :clause_type_name, header: 'Clause Type'
           column :stakeholder_impact
           column :keywords
+          column :what_is_being_proposed
           column :created_at, field_type: :date, format: '%d %b, %Y'
         end
 
@@ -35,6 +36,7 @@ module CmAdmin
               field :clause_type_name, label: 'Clause Type'
               field :stakeholder_impact
               field :keywords
+              field :what_is_being_proposed
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
@@ -47,6 +49,7 @@ module CmAdmin
           cm_section 'Details' do
             form_field :clause_id, input_type: :string, label: 'Clause ID'
             form_field :clause_title, input_type: :string
+            form_field :what_is_being_proposed, input_type: :text
             form_field :clause_type_id, input_type: :single_select, helper_method: :select_options_for_clause_type
             form_field :stakeholder_impact, input_type: :string
             form_field :keywords, input_type: :string
@@ -57,6 +60,7 @@ module CmAdmin
           cm_section 'Details' do
             form_field :clause_id, input_type: :string, label: 'Clause ID'
             form_field :clause_title, input_type: :string
+            form_field :what_is_being_proposed, input_type: :text
             form_field :clause_type_id, input_type: :single_select, helper_method: :select_options_for_clause_type
             form_field :stakeholder_impact, input_type: :string
             form_field :keywords, input_type: :string

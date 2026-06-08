@@ -77,6 +77,15 @@ module CmAdmin
             @consultation
           end
 
+          custom_action name: 'extract_clauses', route_type: 'member', verb: 'patch', path: ':id/extract_clauses',
+                        icon_name: 'fa-solid fa-magic', display_type: :button,
+                        display_if: ->(consultation) { consultation.pdf.attached? },
+                        success_message: ->(_) { { header: 'Clause Extraction Started', body: 'Clause extraction is in progress. Please refresh in a few minutes to see extracted clauses.' } } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.extract_clauses
+            consultation
+          end
+
           column :id
           column :title
           column :department_name, header: 'Department'
@@ -185,6 +194,7 @@ module CmAdmin
               field :feedback_url, label: 'Consultation Page', field_type: :link
               field :response_url, label: 'Consultation Summary', field_type: :link, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :consultation_logo, field_type: :image, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :pdf, field_type: :attachment, label: 'Consultation PDF'
               field :is_satisfaction_rating_optional, field_type: :boolean,
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :show_satisfaction_rating, field_type: :boolean, label: 'Show Satisfaction Rating Question?'
@@ -231,6 +241,7 @@ module CmAdmin
                                        associated_model_name: 'Clause' do
             column :clause_id, header: 'Clause ID'
             column :clause_title, header: 'Clause Title'
+            column :what_is_being_proposed
             column :clause_type_name, header: 'Clause Type'
             column :stakeholder_impact, header: 'Stakeholder Impact'
             column :keywords, header: 'Keywords'
@@ -253,6 +264,7 @@ module CmAdmin
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :pdf, input_type: :single_file_upload, label: 'Consultation PDF'
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
@@ -286,6 +298,7 @@ module CmAdmin
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :pdf, input_type: :single_file_upload, label: 'Consultation PDF'
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
