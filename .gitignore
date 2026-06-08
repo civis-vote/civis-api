@@ -43,3 +43,6 @@ config/environments/_add_gem_paths.js
 # Created and maintained by the Finder application in every folder in macOS
 .DS_Store
 .idea
+
+/app/assets/builds/*
+!/app/assets/builds/.keep

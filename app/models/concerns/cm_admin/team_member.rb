@@ -2,7 +2,7 @@ module CmAdmin
   module TeamMember
     extend ActiveSupport::Concern
 
-    STATUS_TAG_CLASS = { :active => 'completed', :inactive => 'danger' }.freeze
+    STATUS_TAG_CLASS = { :active => 'cm-badge-green', :inactive => 'cm-badge-gray' }.freeze
 
     included do
       cm_admin do

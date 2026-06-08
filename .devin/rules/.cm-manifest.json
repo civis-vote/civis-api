@@ -1,0 +1,11 @@
+{
+  "commit": "a916145a2f08b68273df70c15728a6fdfc62e196",
+  "platform": "rails",
+  "managed_rules": [
+    "active-record.md",
+    "cm-admin.md",
+    "commit-message.md",
+    "prettier.md",
+    "rubocop.md"
+  ]
+}
