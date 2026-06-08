@@ -79,7 +79,7 @@ module CmAdmin
 
           custom_action name: 'extract_clauses', route_type: 'member', verb: 'patch', path: ':id/extract_clauses',
                         icon_name: 'fa-solid fa-magic', display_type: :button,
-                        display_if: ->(consultation) { consultation.url.present? },
+                        display_if: ->(consultation) { consultation.pdf.attached? },
                         success_message: ->(_) { { header: 'Clause Extraction Started', body: 'Clause extraction is in progress. Please refresh in a few minutes to see extracted clauses.' } } do
             consultation = ::Consultation.find(params[:id])
             consultation.extract_clauses
@@ -252,10 +252,10 @@ module CmAdmin
                                        associated_model_name: 'Clause' do
             column :clause_id, header: 'Clause ID'
             column :clause_title, header: 'Clause Title'
+            column :what_is_being_proposed
             column :clause_type_name, header: 'Clause Type'
             column :stakeholder_impact, header: 'Stakeholder Impact'
             column :keywords, header: 'Keywords'
-            column :what_is_being_proposed
           end
         end
 

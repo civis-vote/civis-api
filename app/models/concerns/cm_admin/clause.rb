@@ -49,10 +49,10 @@ module CmAdmin
           cm_section 'Details' do
             form_field :clause_id, input_type: :string, label: 'Clause ID'
             form_field :clause_title, input_type: :string
+            form_field :what_is_being_proposed, input_type: :text
             form_field :clause_type_id, input_type: :single_select, helper_method: :select_options_for_clause_type
             form_field :stakeholder_impact, input_type: :string
             form_field :keywords, input_type: :string
-            form_field :what_is_being_proposed, input_type: :text
           end
         end
 
@@ -60,10 +60,10 @@ module CmAdmin
           cm_section 'Details' do
             form_field :clause_id, input_type: :string, label: 'Clause ID'
             form_field :clause_title, input_type: :string
+            form_field :what_is_being_proposed, input_type: :text
             form_field :clause_type_id, input_type: :single_select, helper_method: :select_options_for_clause_type
             form_field :stakeholder_impact, input_type: :string
             form_field :keywords, input_type: :string
-            form_field :what_is_being_proposed, input_type: :text
           end
         end
       end
