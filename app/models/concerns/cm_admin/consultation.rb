@@ -275,7 +275,7 @@ module CmAdmin
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-            form_field :pdf, input_type: :single_file_upload
+            form_field :pdf, input_type: :single_file_upload, label: 'Consultation PDF'
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
@@ -309,7 +309,7 @@ module CmAdmin
             form_field :show_discuss_section, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :consultation_feedback_email, input_type: :string
             form_field :consultation_logo, input_type: :single_file_upload, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-            form_field :pdf, input_type: :single_file_upload
+            form_field :pdf, input_type: :single_file_upload, label: 'Consultation PDF'
             form_field :officer_name, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department

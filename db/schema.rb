@@ -86,7 +86,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.string "keywords"
     t.string "stakeholder_impact"
     t.datetime "updated_at", null: false
-    t.string "what_is_being_proposed"
+    t.text "what_is_being_proposed"
     t.index ["clause_type_id"], name: "index_clauses_on_clause_type_id"
     t.index ["consultation_id"], name: "index_clauses_on_consultation_id"
   end
