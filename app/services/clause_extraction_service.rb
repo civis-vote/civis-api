@@ -74,12 +74,18 @@ class ClauseExtractionService
     )
 
     pdf_file = File.open(pdf_path, 'rb')
-    file = client.files.upload(
-      parameters: {
-        file: pdf_file,
-        purpose: "user_data"
-      }
-    )
+
+    begin
+      file = client.files.upload(
+        parameters: {
+          file: pdf_file,
+          purpose: "user_data"
+        }
+      )
+    rescue StandardError => e
+      pdf_file&.close
+      raise e
+    end
 
     begin
       # Send PDF to model with prompt
