@@ -23,6 +23,8 @@ Rails.application.routes.draw do
 
   root 'cm_admin/static#index'
 
+  get :health, to: 'application#health'
+
   get 'signin_google', to: 'oauth#redirect_to_provider'
   get 'signin_linkedin', to: 'oauth#redirect_to_provider'
   get 'signin_facebook', to: 'oauth#redirect_to_provider'
