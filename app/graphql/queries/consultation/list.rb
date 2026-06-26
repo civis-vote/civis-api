@@ -10,12 +10,14 @@ module Queries
       argument :sort, Types::Enums::ConsultationSorts, required: false, default_value: nil
       argument :sort_direction, Types::Enums::SortDirections, required: false, default_value: nil
       argument :status_filter, String, required: false, default_value: nil
+      argument :area_of_impact_filter, [Int], required: false, default_value: nil
 
       type Types::Objects::Consultation::List, null: true
 
-      def resolve(featured_filter:, status_filter:, department_filter:, theme_filter:, per_page:, page:, sort:, sort_direction:)
+      def resolve(featured_filter:, status_filter:, department_filter:, theme_filter:, area_of_impact_filter:, per_page:, page:, sort:, sort_direction:)
         ::Consultation.includes(:anonymous_responses).public_consultation.featured_filter(featured_filter)
                       .status_filter(status_filter).department_filter(department_filter).theme_filter(theme_filter)
+                      .area_of_impact_filter(area_of_impact_filter)
                       .sort_records(sort, sort_direction).list(per_page, page)
       end
     end
