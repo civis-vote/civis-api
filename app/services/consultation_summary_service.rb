@@ -12,7 +12,7 @@ class ConsultationSummaryService
 
   def call
     return failure_result("Consultation not found") unless consultation
-    return failure_result("Consultation PDF is required") unless consultation.pdf.attached?
+    return failure_result("Consultation PDF is required") unless consultation.consultation_pdf.attached?
 
     begin
       # Extract PDF from Active Storage
@@ -46,9 +46,9 @@ class ConsultationSummaryService
     @temp_files ||= []
 
     begin
-      return nil unless consultation.pdf.attached?
+      return nil unless consultation.consultation_pdf.attached?
 
-      pdf_blob = consultation.pdf.blob
+      pdf_blob = consultation.consultation_pdf.blob
       temp_file = Tempfile.new(['consultation_pdf', '.pdf'])
       temp_file.binmode
       @temp_files << temp_file
