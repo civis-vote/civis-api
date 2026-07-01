@@ -12,7 +12,7 @@ class ClauseExtractionService
 
   def call
     return failure_result("Consultation not found") unless consultation
-    return failure_result("Consultation PDF is required") unless consultation.pdf.attached?
+    return failure_result("Consultation PDF is required") unless consultation.consultation_pdf.attached?
 
     begin
       # Get PDF path from attached file
@@ -51,7 +51,7 @@ class ClauseExtractionService
       temp_file.binmode
       @temp_files << temp_file
 
-      consultation.pdf.download do |chunk|
+      consultation.consultation_pdf.download do |chunk|
         temp_file.write(chunk)
       end
 
