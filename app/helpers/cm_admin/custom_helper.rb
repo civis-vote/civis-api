@@ -59,7 +59,8 @@ module CmAdmin
     end
 
     def selected_conditional_option(record, _)
-      [[record&.conditional_question&.question_text, record&.conditional_question&.id]]
+      return [] if record&.conditional_question.blank?
+      [[record.conditional_question.question_text, record.conditional_question.id]]
     end
 
     def select_options_for_boolean(_ = nil, _ = nil)
