@@ -58,6 +58,7 @@ class Consultation < ApplicationRecord
   has_many :clauses, dependent: :destroy
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
+  has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
 
   validates_presence_of :response_deadline, :question_flow
 
@@ -87,6 +88,12 @@ class Consultation < ApplicationRecord
     return all unless theme_id.present?
 
     where(theme_id: theme_id)
+  }
+
+  scope :area_of_impact_filter, lambda { |area_of_impact_ids|
+    return all unless area_of_impact_ids.present?
+
+    joins(:constant_maps).where(constant_maps: { constant_id: area_of_impact_ids }).distinct
   }
 
   scope :featured_filter, lambda { |featured|
@@ -123,6 +130,10 @@ class Consultation < ApplicationRecord
 
   def segment_names
     segments.map(&:name).join(", ")
+  end
+
+  def area_of_impact_names
+    area_of_impacts.map(&:name).join(", ")
   end
 
   def publish

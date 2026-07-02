@@ -7,7 +7,7 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        permit_additional_fields [segment_ids: []]
+        permit_additional_fields [segment_ids: [], area_of_impact_ids: []]
         set_icon 'fas fa-clipboard-list'
         set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
         sortable_columns [
@@ -26,6 +26,8 @@ module CmAdmin
           filter :theme_id, :multi_select, helper_method: :select_options_for_theme
           filter :review_type, :multi_select
           filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
+          filter :area_of_impact_ids, :multi_select, helper_method: :select_options_for_area_of_impact,
+                 filter_with: :area_of_impact_filter, display_name: 'Area of Impact'
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
                         icon_name: 'fa-solid fa-check', display_type: :button,
@@ -199,6 +201,7 @@ module CmAdmin
                                                       display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :show_satisfaction_rating, field_type: :boolean, label: 'Show Satisfaction Rating Question?'
               field :question_flow, field_type: :enum
+              field :area_of_impact_names, label: 'Area of Impact'
               field :segment_names, label: 'Segments'
               field :created_by_full_name, label: 'Created By'
             end
@@ -276,6 +279,8 @@ module CmAdmin
             form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
+            form_field :area_of_impact_ids, input_type: :multi_select,
+                                            helper_method: :select_options_for_area_of_impact, label: 'Area of Impact'
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
@@ -310,6 +315,8 @@ module CmAdmin
             form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
+            form_field :area_of_impact_ids, input_type: :multi_select,
+                                            helper_method: :select_options_for_area_of_impact, label: 'Area of Impact'
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
