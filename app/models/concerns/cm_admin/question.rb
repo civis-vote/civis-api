@@ -32,7 +32,7 @@ module CmAdmin
             @questions = ::Question.main_questions.where(response_round_id:).search_filter(params[:search])
             @questions = @questions.where.not(id: params[:question_id]) if params[:question_id].present?
             {
-              "results": @questions.map { |question| { "id": question.id, "text": question.question_text } },
+              "results": @questions.map { |question| { "id": question.id, "title": question.question_text } },
               "pagination": { "more": false }
             }
           end

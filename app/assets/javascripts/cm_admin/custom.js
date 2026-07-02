@@ -22,26 +22,24 @@ document.addEventListener("turbo:load", function () {
       response_round_id: responseRoundId ?? ""
     };
 
-    const element = document.querySelector(
+    const elements = document.querySelectorAll(
       '[data-field-name="conditional_question_id"]'
     );
 
-    if (!element) return;
+    if (!elements.length) return;
 
-    window.cmSelect(element, {
-      url: url,
-      queryData: queryData
+    elements.forEach(function (el) {
+      window.cmSelect(el, {
+        url: url,
+        queryData: queryData
+      });
     });
 
   }
 
-  $(document).on(
-    "click",
-    '.nested-table-footer [data-association="sub_question"]',
-    function () {
-      updateConditionalQuestionOptions();
-    }
-  );
+  document.addEventListener('cm-nested-forms:added', function() {
+    updateConditionalQuestionOptions();
+  });
   updateConditionalQuestionOptions();
 
   $(document).on("change", '[data-field-name="question_type"]', function () {
