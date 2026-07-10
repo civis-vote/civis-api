@@ -184,16 +184,6 @@ module CmAdmin
             @consultation
           end
 
-          custom_action name: 'summarise_pdf', route_type: 'member', verb: 'patch',
-                        path: ':id/summarise_pdf', icon_name: 'fa-solid fa-magic',
-                        display_type: :button,
-                        display_if: ->(consultation) { consultation.consultation_pdf.attached? },
-                        success_message: ->(_) { { header: 'Summarisation Started', body: 'AI summarisation is in progress. Please refresh in a few minutes to see the summary.' } } do
-            consultation = ::Consultation.find(params[:id])
-            consultation.summarise_pdf
-            consultation
-          end
-
           tab :profile, '' do
             cm_section 'Consultation details' do
               field :id, label: 'Consultation ID'
