@@ -38,6 +38,7 @@ class Consultation < ApplicationRecord
   has_rich_text :odia_summary
   has_rich_text :marathi_summary
   has_rich_text :kannada_summary
+  has_rich_text :ai_summary
 
   has_one_attached :consultation_logo
   has_one_attached :consultation_pdf
@@ -328,15 +329,21 @@ class Consultation < ApplicationRecord
     ExtractClausesJob.perform_later(id)
   end
 
+  def summarise_pdf
+    ConsultationSummaryJob.perform_later(self)
+  end
+
   private
 
   def pdf_content_type
     return unless consultation_pdf.attached?
+
     errors.add(:consultation_pdf, 'Only PDF files are supported') unless consultation_pdf.blob.content_type == 'application/pdf'
   end
 
   def pdf_file_size
     return unless consultation_pdf.attached?
+
     errors.add(:consultation_pdf, 'PDF must be less than 50MB') if consultation_pdf.blob.byte_size > 50.megabytes
   end
 

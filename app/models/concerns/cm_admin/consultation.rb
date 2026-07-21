@@ -88,6 +88,16 @@ module CmAdmin
             consultation
           end
 
+          custom_action name: 'summarise_pdf', display_name: 'Summarise PDF', route_type: 'member', verb: 'patch',
+                        path: ':id/summarise_pdf', icon_name: 'fa-solid fa-magic',
+                        display_type: :button,
+                        display_if: ->(consultation) { consultation.consultation_pdf.attached? },
+                        success_message: ->(_) { { header: 'Summarisation Started', body: 'AI summarisation is in progress. Please refresh in a few minutes to see the summary.' } } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.summarise_pdf
+            consultation
+          end
+
           column :id
           column :title
           column :department_name, header: 'Department'
@@ -206,6 +216,7 @@ module CmAdmin
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
+              field :ai_summary, field_type: :rich_text, label: 'AI Summary'
               field :english_summary, field_type: :rich_text
               field :hindi_summary, field_type: :rich_text
               field :odia_summary, field_type: :rich_text

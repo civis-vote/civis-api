@@ -434,6 +434,8 @@ GEM
     nio4r (2.7.5)
     nokogiri (1.19.3-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.19.3-x86_64-darwin)
+      racc (~> 1.4)
     nokogiri (1.19.3-x86_64-linux-gnu)
       racc (~> 1.4)
     oauth2 (1.4.11)
@@ -550,6 +552,7 @@ GEM
     rb-readline (0.5.5)
     rbtree3 (0.7.1)
     rdoc (6.3.4.1)
+    redcarpet (3.6.1)
     redis (5.2.0)
       redis-client (>= 0.22.0)
     redis-client (0.29.0)
@@ -721,6 +724,7 @@ GEM
 PLATFORMS
   arm64-darwin-24
   arm64-darwin-25
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -768,6 +772,7 @@ DEPENDENCIES
   rails-erd
   razorpay
   rb-readline
+  redcarpet
   redis
   roo
   roo-xls
