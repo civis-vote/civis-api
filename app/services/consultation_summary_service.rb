@@ -1,5 +1,5 @@
 require 'tempfile'
-require 'openai'
+require 'ruby_llm'
 require 'redcarpet'
 
 class ConsultationSummaryService
@@ -23,7 +23,7 @@ class ConsultationSummaryService
       prompt = get_summarisation_prompt
       return failure_result("Summarisation prompt not configured") unless prompt
 
-      # Summarise PDF using OpenAI
+      # Summarise PDF using RubyLLM
       summary_text = summarise_pdf(pdf_path, prompt)
       return failure_result("No summary generated") if summary_text.blank?
 
@@ -67,61 +67,13 @@ class ConsultationSummaryService
   end
 
   def summarise_pdf(pdf_path, prompt)
-    client = OpenAI::Client.new(
-      access_token: Rails.application.credentials.openai[:api_key],
-      request_timeout: 600
-    )
+    chat = RubyLLM.chat
+      .with_model('gpt-4.1')
+      .with_schema(ConsultationSummarySchema)
+      .with_temperature(0)
 
-    pdf_file = File.open(pdf_path, 'rb')
-    file = client.files.upload(
-      parameters: {
-        file: pdf_file,
-        purpose: "user_data"
-      }
-    )
-
-    begin
-      response = client.responses.create(
-        parameters: {
-          model: "gpt-4.1",
-          temperature: 0,
-          input: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "input_file",
-                  file_id: file["id"]
-                },
-                {
-                  type: "input_text",
-                  text: prompt
-                }
-              ]
-            }
-          ]
-        }
-      )
-
-      response_text = response["output"]
-        .flat_map { |o| o["content"] || [] }
-        .map { |c| c["text"] }
-        .compact
-        .join("\n")
-        .strip
-
-      response_text
-    rescue StandardError => e
-      Rails.logger.error("Failed to get response from OpenAI: #{e.message}")
-      nil
-    ensure
-      pdf_file&.close
-      begin
-        client.files.delete(id: file["id"])
-      rescue StandardError => e
-        Rails.logger.warn("Failed to delete OpenAI file #{file["id"]}: #{e.message}")
-      end
-    end
+    response = chat.ask(prompt, with: pdf_path)
+    response.content['summary'] || response.content.to_s
   end
 
   def update_consultation_summary(summary_text)

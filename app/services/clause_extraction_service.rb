@@ -1,5 +1,5 @@
 require 'tempfile'
-require 'openai'
+require 'ruby_llm'
 
 class ClauseExtractionService
 
@@ -23,7 +23,7 @@ class ClauseExtractionService
       prompt = get_extraction_prompt
       return failure_result("Extraction prompt not configured") unless prompt
 
-      # Extract clauses using OpenAI
+      # Extract clauses using RubyLLM
       clauses_data = extract_clauses_from_pdf(pdf_path, prompt)
       return failure_result("No clauses extracted") if clauses_data.blank?
 
@@ -68,69 +68,13 @@ class ClauseExtractionService
   end
 
   def extract_clauses_from_pdf(pdf_path, prompt)
-    client = OpenAI::Client.new(
-      access_token: Rails.application.credentials.openai[:api_key],
-      request_timeout: 600
-    )
+    chat = RubyLLM.chat
+      .with_model('gpt-4.1')
+      .with_schema(ConsultationClausesResponseSchema)
+      .with_temperature(0)
 
-    pdf_file = File.open(pdf_path, 'rb')
-
-    begin
-      file = client.files.upload(
-        parameters: {
-          file: pdf_file,
-          purpose: "user_data"
-        }
-      )
-    rescue StandardError => e
-      pdf_file&.close
-      raise e
-    end
-
-    begin
-      # Send PDF to model with prompt
-      response = client.responses.create(
-        parameters: {
-          model: "gpt-4.1",
-          temperature: 0,
-          input: [
-            {
-              role: "user",
-              content: [
-                {
-                  type: "input_file",
-                  file_id: file["id"]
-                },
-                {
-                  type: "input_text",
-                  text: prompt
-                }
-              ]
-            }
-          ]
-        }
-      )
-
-      response_text = response["output"]
-        .flat_map { |o| o["content"] || [] }
-        .map { |c| c["text"] }
-        .compact
-        .join("\n")
-        .gsub(/\A```(?:json)?\s*|\s*```\z/m, '')
-        .strip
-      JSON.parse(response_text)
-    rescue JSON::ParserError => e
-      Rails.logger.error("Failed to parse OpenAI response as JSON: #{e.message}")
-      Rails.logger.error("Response text: #{response_text[0..500]}")
-      nil
-    ensure
-      pdf_file&.close
-      begin
-        client.files.delete(id: file["id"])
-      rescue StandardError => e
-        Rails.logger.warn("Failed to delete OpenAI file #{file["id"]}: #{e.message}")
-      end
-    end
+    response = chat.ask(prompt, with: pdf_path)
+    response.content
   end
 
   def create_clauses(clauses_data)
