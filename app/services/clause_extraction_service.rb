@@ -89,9 +89,11 @@ class ClauseExtractionService
     created_clauses = []
 
     ActiveRecord::Base.transaction do
+      consultation.clauses.destroy_all
+
       clauses_array.each_with_index do |clause_data, index|
         clause = build_clause(clause_data, index + 1)
-        
+
         if clause.valid?
           clause.save!
           created_clauses << clause
