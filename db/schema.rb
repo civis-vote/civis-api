@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
     t.bigint "record_id", null: false
     t.string "record_type", null: false
@@ -41,7 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
     t.bigint "byte_size", null: false
     t.string "checksum"
     t.string "content_type"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "filename", null: false
     t.string "key", null: false
     t.text "metadata"
@@ -95,7 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
     t.string "keywords"
     t.string "stakeholder_impact"
     t.datetime "updated_at", null: false
-    t.text "what_is_being_proposed"
+    t.string "what_is_being_proposed"
     t.index ["clause_type_id"], name: "index_clauses_on_clause_type_id"
     t.index ["consultation_id"], name: "index_clauses_on_consultation_id"
   end
@@ -171,13 +171,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
     t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
   end
 
-  create_table "cm_page_builder_rails_page_components", id: :string, force: :cascade do |t|
+  create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
     t.string "component_type"
     t.string "content"
     t.datetime "created_at", null: false
     t.bigint "page_id", null: false
     t.integer "position"
     t.datetime "updated_at", null: false
+    t.string "uuid", null: false
     t.index ["page_id"], name: "index_cm_page_builder_rails_page_components_on_page_id"
   end
 
@@ -321,6 +322,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.integer "vote_direction"
+    t.index ["consultation_response_id", "user_id"], name: "consultation_response_id_and_user_id_index", unique: true
     t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
     t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
   end
@@ -351,6 +353,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
     t.integer "subjective_answer_count"
     t.integer "template_id"
     t.integer "templates_count", default: 0
+    t.jsonb "transcription_errors", default: [], null: false
+    t.integer "transcription_status", default: 0, null: false
     t.integer "up_vote_count", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"

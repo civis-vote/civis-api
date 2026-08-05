@@ -27,6 +27,12 @@ class ConsultationResponse < ApplicationRecord
     marathi: "Marathi",
     odia: "Odia"
   }
+  enum :transcription_status, {
+    not_available: 0,
+    pending: 1,
+    completed: 2,
+    failed: 3
+  }
 
   include Paginator
   include Scorable::ConsultationResponse
@@ -135,15 +141,18 @@ class ConsultationResponse < ApplicationRecord
 
   def submit_voice_responses(voice_responses)
     updated_response = []
+    attachment_ids = []
     voice_responses&.each do |answer|
       question_id = answer[:question_id]
       file = answer[:file]
       voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
-      updated_response << { question_id:, attachment_id: attachment.id }
+      attachment_ids << attachment.id
+      updated_response << { question_id:, attachment_id: attachment.id, transcription: nil }
     end
-    update!(voice_responses: updated_response)
+    update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
+    attachment_ids.each { |aid| TranscribeVoiceMessageJob.perform_later(id, aid) }
   end
 
   def update_reading_time
