@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
+ActiveRecord::Schema[8.1].define(version: 2026_08_04_190000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -75,6 +75,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.datetime "updated_at", null: false
     t.string "url"
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
+  end
+
+  create_table "clause_feedbacks", force: :cascade do |t|
+    t.bigint "clause_id", null: false
+    t.bigint "consultation_response_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["clause_id"], name: "index_clause_feedbacks_on_clause_id"
+    t.index ["consultation_response_id"], name: "index_clause_feedbacks_on_consultation_response_id"
   end
 
   create_table "clauses", force: :cascade do |t|
@@ -377,6 +386,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.integer "question_flow", default: 0
     t.integer "reading_time", default: 0
     t.datetime "response_deadline", precision: nil
+    t.jsonb "response_summary", default: {}
     t.uuid "response_token"
     t.integer "review_type", default: 0
     t.boolean "show_discuss_section", default: true, null: false
@@ -726,6 +736,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "case_studies", "themes"
+  add_foreign_key "clause_feedbacks", "clauses"
+  add_foreign_key "clause_feedbacks", "consultation_responses"
   add_foreign_key "clauses", "constants", column: "clause_type_id"
   add_foreign_key "clauses", "consultations"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
