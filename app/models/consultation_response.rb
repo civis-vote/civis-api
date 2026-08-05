@@ -265,6 +265,11 @@ class ConsultationResponse < ApplicationRecord
     response_round.questions.each do |question|
       answer_data = (answers.find { |ans| ans['question_id'].to_i == question.id } if answers.present?)
 
+      if answer_data.blank? && question.accept_voice_message? && voice_responses.present?
+        voice_entry = voice_responses.find { |entry| entry['question_id'].to_i == question.id || entry[:question_id].to_i == question.id }
+        answer_data = { 'question_id' => question.id.to_s, 'answer' => voice_entry['transcription'] } if voice_entry&.dig('transcription')
+      end
+
       formatted_answer = if answer_data.present?
                            answer_text = if answer_data['answer'].is_a?(Array)
                                            format_multiple_choice_answer(answer_data)
