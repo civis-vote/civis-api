@@ -59,6 +59,11 @@ class VoiceMessageTranscriptionProcessor
       voice_responses = consultation_response.voice_responses
       return if voice_responses.blank?
 
+      voice_entry = voice_responses.find do |entry|
+        entry['attachment_id'] == @attachment_id || entry[:attachment_id] == @attachment_id
+      end
+      return unless voice_entry
+
       updated = voice_responses.map do |entry|
         next entry unless entry['attachment_id'] == @attachment_id || entry[:attachment_id] == @attachment_id
 
@@ -69,8 +74,32 @@ class VoiceMessageTranscriptionProcessor
         )
       end
 
-      consultation_response.update!(voice_responses: updated, transcription_status: :completed, transcription_errors: [])
+      question_id = voice_entry['question_id'] || voice_entry[:question_id]
+      merged_answers = merge_transcription_into_answers(consultation_response.answers, question_id, result[:transcription])
+
+      consultation_response.update!(
+        voice_responses: updated,
+        answers: merged_answers,
+        transcription_status: :completed,
+        transcription_errors: []
+      )
     end
+  end
+
+  def merge_transcription_into_answers(answers, question_id, transcription)
+    new_entry = { 'question_id' => question_id.to_s, 'answer' => transcription }
+    return [new_entry] if answers.blank?
+
+    found = false
+    updated = answers.map do |ans|
+      if ans['question_id'].to_s == question_id.to_s
+        found = true
+        ans.merge('answer' => transcription)
+      else
+        ans
+      end
+    end
+    found ? updated : updated + [new_entry]
   end
 
   def mark_transcription_failed(errors)
