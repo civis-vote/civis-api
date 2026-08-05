@@ -7,6 +7,8 @@ class Clause < ApplicationRecord
   belongs_to :consultation
   belongs_to :clause_type, class_name: 'Constant', optional: true
 
+  has_many :clause_feedbacks, dependent: :destroy
+
   validates :clause_id, :clause_title, presence: true
 
   delegate :title, to: :consultation, prefix: true, allow_nil: true

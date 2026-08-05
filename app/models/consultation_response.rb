@@ -2,18 +2,18 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   has_paper_trail
 
-  enum :visibility, { 
+  enum :visibility, {
     shared: 0,
     anonymous: 1
   }
-  enum :response_status, { 
+  enum :response_status, {
     acceptable: 0,
     under_review: 1,
-    unacceptable: 2 
+    unacceptable: 2
   }
-  enum :source, { 
+  enum :source, {
     platform: 0,
-    off_platform: 1 
+    off_platform: 1
   }
   enum :satisfaction_rating, %i[
     dissatisfied
@@ -44,6 +44,8 @@ class ConsultationResponse < ApplicationRecord
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
   has_many :down_votes, -> { down }, class_name: "ConsultationResponseVote"
   has_many :votes, class_name: "ConsultationResponseVote"
+  has_many :clause_feedbacks, dependent: :destroy
+
   belongs_to :respondent, optional: true
   belongs_to :response_round
   belongs_to :organisation, optional: true
@@ -60,6 +62,8 @@ class ConsultationResponse < ApplicationRecord
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
   delegate :title, to: :consultation, prefix: true, allow_nil: true
+
+  accepts_nested_attributes_for :clause_feedbacks, allow_destroy: true
 
   # scopes
   scope :consultation_filter, lambda { |consultation_id|
@@ -132,7 +136,8 @@ class ConsultationResponse < ApplicationRecord
   def submit_voice_responses(voice_responses)
     updated_response = []
     voice_responses&.each do |answer|
-      question_id, file = answer[:question_id], answer[:file]
+      question_id = answer[:question_id]
+      file = answer[:file]
       voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
@@ -247,22 +252,18 @@ class ConsultationResponse < ApplicationRecord
   def user_answers
     answers_hash = {}
     return answers_hash if response_round.nil?
-    
+
     response_round.questions.each do |question|
-      answer_data = if answers.present?
-                      answers.find { |ans| ans['question_id'].to_i == question.id }
-                    else
-                      nil
-                    end
+      answer_data = (answers.find { |ans| ans['question_id'].to_i == question.id } if answers.present?)
 
       formatted_answer = if answer_data.present?
                            answer_text = if answer_data['answer'].is_a?(Array)
-                                          format_multiple_choice_answer(answer_data)
-                                        elsif answer_data['answer'].is_a?(Integer)
-                                          Question.find(answer_data['answer']).question_text
-                                        else
-                                          answer_data['answer']
-                                        end
+                                           format_multiple_choice_answer(answer_data)
+                                         elsif answer_data['answer'].is_a?(Integer)
+                                           Question.find(answer_data['answer']).question_text
+                                         else
+                                           answer_data['answer']
+                                         end
 
                            empty_string = answer_data.key?('is_other') && answer_data['answer'].present? ? ',' : ' '
 
