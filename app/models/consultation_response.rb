@@ -2,19 +2,18 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   has_paper_trail
 
-
-  enum :visibility, { 
+  enum :visibility, {
     shared: 0,
     anonymous: 1
   }
-  enum :response_status, { 
+  enum :response_status, {
     acceptable: 0,
     under_review: 1,
-    unacceptable: 2 
+    unacceptable: 2
   }
-  enum :source, { 
+  enum :source, {
     platform: 0,
-    off_platform: 1 
+    off_platform: 1
   }
   enum :satisfaction_rating, %i[
     dissatisfied
@@ -27,6 +26,12 @@ class ConsultationResponse < ApplicationRecord
     hindi: "Hindi",
     marathi: "Marathi",
     odia: "Odia"
+  }
+  enum :transcription_status, {
+    not_available: 0,
+    pending: 1,
+    completed: 2,
+    failed: 3
   }
 
   include Paginator
@@ -131,14 +136,18 @@ class ConsultationResponse < ApplicationRecord
 
   def submit_voice_responses(voice_responses)
     updated_response = []
+    attachment_ids = []
     voice_responses&.each do |answer|
-      question_id, file = answer[:question_id], answer[:file]
+      question_id = answer[:question_id]
+      file = answer[:file]
       voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
-      updated_response << { question_id:, attachment_id: attachment.id }
+      attachment_ids << attachment.id
+      updated_response << { question_id:, attachment_id: attachment.id, transcription: nil }
     end
-    update!(voice_responses: updated_response)
+    update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
+    attachment_ids.each { |aid| TranscribeVoiceMessageJob.perform_later(id, aid) }
   end
 
   def update_reading_time
@@ -247,22 +256,23 @@ class ConsultationResponse < ApplicationRecord
   def user_answers
     answers_hash = {}
     return answers_hash if response_round.nil?
-    
+
     response_round.questions.each do |question|
-      answer_data = if answers.present?
-                      answers.find { |ans| ans['question_id'].to_i == question.id }
-                    else
-                      nil
-                    end
+      answer_data = (answers.find { |ans| ans['question_id'].to_i == question.id } if answers.present?)
+
+      if answer_data.blank? && question.accept_voice_message? && voice_responses.present?
+        voice_entry = voice_responses.find { |entry| entry['question_id'].to_i == question.id || entry[:question_id].to_i == question.id }
+        answer_data = { 'question_id' => question.id.to_s, 'answer' => voice_entry['transcription'] } if voice_entry&.dig('transcription')
+      end
 
       formatted_answer = if answer_data.present?
                            answer_text = if answer_data['answer'].is_a?(Array)
-                                          format_multiple_choice_answer(answer_data)
-                                        elsif answer_data['answer'].is_a?(Integer)
-                                          Question.find(answer_data['answer']).question_text
-                                        else
-                                          answer_data['answer']
-                                        end
+                                           format_multiple_choice_answer(answer_data)
+                                         elsif answer_data['answer'].is_a?(Integer)
+                                           Question.find(answer_data['answer']).question_text
+                                         else
+                                           answer_data['answer']
+                                         end
 
                            empty_string = answer_data.key?('is_other') && answer_data['answer'].present? ? ',' : ' '
 
