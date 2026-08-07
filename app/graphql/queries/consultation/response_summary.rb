@@ -9,7 +9,7 @@ module Queries
 
       def resolve(id:)
         consultation = ::Consultation.find(id)
-        consultation.response_summary.presence
+        consultation.response_summary
       end
     end
   end
