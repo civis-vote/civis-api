@@ -4,23 +4,23 @@ class Consultation < ApplicationRecord
 
   attr_accessor :respondent_emails
 
-  enum :status, { 
+  enum :status, {
     submitted: 0,
     published: 1,
     rejected: 2,
-    expired: 3 
+    expired: 3
   }
-  enum :review_type, { 
+  enum :review_type, {
     consultation: 0,
-    policy: 1 
+    policy: 1
   }
-  enum :visibility, { 
+  enum :visibility, {
     public_consultation: 0,
-    private_consultation: 1 
+    private_consultation: 1
   }
-  enum :question_flow, { 
+  enum :question_flow, {
     question_list: 0,
-    single_question: 1 
+    single_question: 1
   }
 
   acts_as_paranoid
@@ -56,6 +56,7 @@ class Consultation < ApplicationRecord
   has_many :response_rounds
   has_many :respondents, through: :response_rounds
   has_many :clauses, dependent: :destroy
+  has_one :response_summary, dependent: :destroy
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
   has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
@@ -170,6 +171,77 @@ class Consultation < ApplicationRecord
     end
     UserUpVoteResponsesEmailJob.perform_later(self)
     UseResponseAsTemplateEmailJob.perform_later(self)
+    compute_response_summary
+  end
+
+  def compute_response_summary
+    acceptable = responses.acceptable_responses
+    response_round = response_rounds.order(:created_at).last
+    questions = response_round&.questions&.main_questions&.order(:position) || []
+
+    question_summaries = questions.map do |question|
+      build_question_summary_attributes(question, acceptable)
+    end
+
+    response_summary&.destroy
+    create_response_summary!(total_responses: acceptable.size, question_summaries_attributes: question_summaries)
+  end
+
+  def build_question_summary_attributes(question, all_responses)
+    answered = all_responses.select { |r| r.answers&.any? { |a| a['question_id'].to_i == question.id } }
+
+    attributes = {
+      question_id: question.id,
+      question_text: question.question_text,
+      question_type: Question.question_types[question.question_type],
+      is_optional: question.is_optional,
+      position: question.position,
+      total_responses: answered.size
+    }
+
+    if question.display_options?
+      attributes.merge!(build_option_breakdown_attributes(question, answered))
+    elsif question.long_text?
+      attributes[:text_response_count] = answered.size
+    end
+
+    if question.accept_voice_message
+      attributes[:voice_response_count] = answered.count do |r|
+        r.voice_responses&.any? { |v| v['question_id'].to_i == question.id }
+      end
+    end
+
+    attributes
+  end
+
+  def build_option_breakdown_attributes(question, responses)
+    option_counts = Hash.new(0)
+    other_count = 0
+
+    responses.each do |response|
+      answer_data = response.answers&.find { |a| a['question_id'].to_i == question.id }
+      next unless answer_data
+
+      other_count += 1 if answer_data['is_other']
+
+      selected_ids = Array(answer_data['answer'])
+      selected_ids.each do |sid|
+        option_counts[sid.to_i] += 1 if sid.is_a?(Integer) || sid.to_s.match?(/\A\d+\z/)
+      end
+    end
+
+    total = responses.size.to_f
+    breakdown = question.sub_questions.map do |option|
+      count = option_counts[option.id]
+      {
+        option_id: option.id,
+        option_text: option.question_text,
+        selection_count: count,
+        percentage: total.positive? ? ((count / total) * 100).round(2) : 0.0
+      }
+    end
+
+    { option_breakdowns_attributes: breakdown, other_option_count: other_count }
   end
 
   def responded_on(user = Current.user)
@@ -332,19 +404,21 @@ class Consultation < ApplicationRecord
 
   def pdf_content_type
     return unless consultation_pdf.attached?
+
     errors.add(:consultation_pdf, 'Only PDF files are supported') unless consultation_pdf.blob.content_type == 'application/pdf'
   end
 
   def pdf_file_size
     return unless consultation_pdf.attached?
+
     errors.add(:consultation_pdf, 'PDF must be less than 50MB') if consultation_pdf.blob.byte_size > 50.megabytes
   end
 
   def set_default_value_for_organisation_consultation
-    if Current.user&.role?('organisation_employee')
-      self.organisation_id = Current.user&.organisation_id
-      self.visibility = :private_consultation
-    end
+    return unless Current.user&.role?('organisation_employee')
+
+    self.organisation_id = Current.user&.organisation_id
+    self.visibility = :private_consultation
   end
 
   def set_created_by
@@ -369,5 +443,4 @@ class Consultation < ApplicationRecord
       "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
     end
   end
-
 end

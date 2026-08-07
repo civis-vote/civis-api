@@ -11,7 +11,7 @@ module Mutations
           raise Unauthorized, I18n.t('consultation_response.unauthorized')
         end
 
-        consultation_response_input = consultation_response.to_h.except(:voice_responses)
+        consultation_response_input = consultation_response.to_h.except(:voice_responses, :clause_feedbacks)
 
         created_consultation_response = ::ConsultationResponse.new consultation_response_input
         created_consultation_response.user = user
@@ -30,14 +30,32 @@ module Mutations
           raise IncompleteEntity, "Response already submitted by User"
         end
 
-        created_consultation_response.save!
-        created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
+        ActiveRecord::Base.transaction do
+          created_consultation_response.save!
+          created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
+          create_clause_feedbacks(created_consultation_response, consultation_response.clause_feedbacks)
+        end
         created_consultation_response
       end
 
+      def create_clause_feedbacks(consultation_response, feedbacks)
+        return if feedbacks.blank?
+
+        clause_ids = ::Clause.where(consultation_id: consultation_response.consultation_id).pluck(:id)
+        feedbacks.each do |feedback|
+          next unless clause_ids.include?(feedback[:clause_id])
+
+          consultation_response.clause_feedbacks.create!(
+            clause_id: feedback[:clause_id],
+            feedback_comment: feedback[:feedback_comment],
+            feedback_reason: feedback[:feedback_reason]
+          )
+        end
+      end
+
       def submission_allowed?(consultation_id)
-        return true if (Rails.env.staging? && consultation_id.eql?(::Consultation::SKIP_AUTH_STAGING_ID)) || 
-                      (Rails.env.production? && consultation_id.eql?(::Consultation::SKIP_AUTH_PRODUCTION_ID))
+        return true if (Rails.env.staging? && consultation_id.eql?(::Consultation::SKIP_AUTH_STAGING_ID)) ||
+                       (Rails.env.production? && consultation_id.eql?(::Consultation::SKIP_AUTH_PRODUCTION_ID))
 
         false
       end

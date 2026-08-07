@@ -12,6 +12,7 @@ module Types
     field :consultation_response_profile,      resolver: Queries::ConsultationResponse::Profile
     field :consultation_response_venter_map,   resolver: Queries::ConsultationResponse::VenterMap
     field :consultation_profile,               resolver: Queries::Consultation::Profile
+    field :consultation_response_summary,      resolver: Queries::Consultation::ResponseSummary
     field :impact_stats,                       resolver: Queries::Stats::Impact
     field :location_list,                      resolver: Queries::Location::List
     field :location_autocomplete,              resolver: Queries::Location::Autocomplete

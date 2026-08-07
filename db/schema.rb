@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
+ActiveRecord::Schema[8.1].define(version: 20_260_804_190_000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -24,7 +24,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.bigint "record_id", null: false
     t.string "record_type", null: false
     t.datetime "updated_at", null: false
-    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+    t.index %w[record_type record_id name], name: "index_action_text_rich_texts_uniqueness", unique: true
   end
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -34,7 +34,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.bigint "record_id", null: false
     t.string "record_type", null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
-    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+    t.index %w[record_type record_id name blob_id], name: "index_active_storage_attachments_uniqueness", unique: true
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -52,7 +52,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   create_table "active_storage_variant_records", force: :cascade do |t|
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
-    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+    t.index %w[blob_id variation_digest], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
   create_table "api_keys", force: :cascade do |t|
@@ -75,6 +75,50 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.datetime "updated_at", null: false
     t.string "url"
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
+  end
+
+  create_table "response_option_breakdowns", force: :cascade do |t|
+    t.integer "option_id", null: false
+    t.string "option_text", null: false
+    t.float "percentage", null: false, default: 0.0
+    t.integer "selection_count", null: false, default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "response_question_summary_id", null: false
+    t.index ["response_question_summary_id"], name: "index_response_option_breakdowns_on_rqs_id"
+  end
+
+  create_table "response_question_summaries", force: :cascade do |t|
+    t.boolean "is_optional", null: false, default: false
+    t.integer "other_option_count"
+    t.integer "position"
+    t.integer "question_id", null: false
+    t.string "question_text", null: false
+    t.string "question_type", null: false
+    t.integer "text_response_count"
+    t.integer "total_responses", null: false, default: 0
+    t.integer "voice_response_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "response_summary_id", null: false
+    t.index ["response_summary_id"], name: "index_response_question_summaries_on_response_summary_id"
+  end
+
+  create_table "response_summaries", force: :cascade do |t|
+    t.integer "total_responses", null: false, default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "consultation_id", null: false
+    t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
+  end
+
+  create_table "clause_feedbacks", force: :cascade do |t|
+    t.bigint "clause_id", null: false
+    t.bigint "consultation_response_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["clause_id"], name: "index_clause_feedbacks_on_clause_id"
+    t.index ["consultation_response_id"], name: "index_clause_feedbacks_on_consultation_response_id"
   end
 
   create_table "clauses", force: :cascade do |t|
@@ -100,8 +144,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.citext "created_by_email"
     t.string "created_by_name"
     t.datetime "updated_at", null: false
-    t.index ["commentable_type", "commentable_id"], name: "index_cm_comments_on_commentable"
-    t.index ["commenter_type", "commenter_id"], name: "index_cm_comments_on_commenter"
+    t.index %w[commentable_type commentable_id], name: "index_cm_comments_on_commentable"
+    t.index %w[commenter_type commenter_id], name: "index_cm_comments_on_commenter"
   end
 
   create_table "cm_cron_job_logs", force: :cascade do |t|
@@ -177,7 +221,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.string "container_type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["container_type", "container_id"], name: "container_composite_index"
+    t.index %w[container_type container_id], name: "container_composite_index"
   end
 
   create_table "cm_permissions", force: :cascade do |t|
@@ -188,7 +232,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.datetime "created_at", null: false
     t.string "scope_name"
     t.datetime "updated_at", null: false
-    t.index ["ar_model_name", "action_name", "cm_role_id"], name: "index_cm_permissions_on_model_action_role", unique: true
+    t.index %w[ar_model_name action_name cm_role_id], name: "index_cm_permissions_on_model_action_role", unique: true
     t.index ["cm_role_id"], name: "index_cm_permissions_on_cm_role_id"
   end
 
@@ -205,9 +249,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.string "updated_by_type"
     t.text "value"
     t.index ["category_id"], name: "index_cm_platform_settings_on_category_id"
-    t.index ["created_by_type", "created_by_id"], name: "index_cm_platform_settings_on_created_by"
+    t.index %w[created_by_type created_by_id], name: "index_cm_platform_settings_on_created_by"
     t.index ["slug"], name: "index_cm_platform_settings_on_slug"
-    t.index ["updated_by_type", "updated_by_id"], name: "index_cm_platform_settings_on_updated_by"
+    t.index %w[updated_by_type updated_by_id], name: "index_cm_platform_settings_on_updated_by"
   end
 
   create_table "cm_roles", force: :cascade do |t|
@@ -256,8 +300,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.bigint "mentioned_id"
     t.string "mentioned_type"
     t.datetime "updated_at", null: false
-    t.index ["mentionable_type", "mentionable_id"], name: "index_cm_user_mentions_on_mentionable"
-    t.index ["mentioned_type", "mentioned_id"], name: "index_cm_user_mentions_on_mentioned"
+    t.index %w[mentionable_type mentionable_id], name: "index_cm_user_mentions_on_mentionable"
+    t.index %w[mentioned_type mentioned_id], name: "index_cm_user_mentions_on_mentioned"
   end
 
   create_table "constant_maps", force: :cascade do |t|
@@ -267,7 +311,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.string "mappable_type"
     t.datetime "updated_at", null: false
     t.index ["constant_id"], name: "index_constant_maps_on_constant_id"
-    t.index ["mappable_type", "mappable_id"], name: "index_constant_maps_on_mappable"
+    t.index %w[mappable_type mappable_id], name: "index_constant_maps_on_mappable"
   end
 
   create_table "constants", force: :cascade do |t|
@@ -352,7 +396,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.index ["organisation_id"], name: "index_consultation_responses_on_organisation_id"
     t.index ["respondent_id"], name: "index_consultation_responses_on_respondent_id"
     t.index ["response_round_id"], name: "index_consultation_responses_on_response_round_id"
-    t.index ["response_status", "visibility"], name: "index_consultation_responses_on_response_status_and_visibility"
+    t.index %w[response_status visibility], name: "index_consultation_responses_on_response_status_and_visibility"
     t.index ["user_id"], name: "index_consultation_responses_on_user_id"
   end
 
@@ -440,7 +484,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.integer "status", default: 0
     t.datetime "updated_at", null: false
     t.string "url"
-    t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
+    t.index %w[exported_by_type exported_by_id], name: "index_file_exports_on_exported_by"
   end
 
   create_table "file_imports", force: :cascade do |t|
@@ -453,7 +497,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.jsonb "error_report", default: {}
     t.integer "status", default: 0
     t.datetime "updated_at", null: false
-    t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
+    t.index %w[added_by_type added_by_id], name: "index_file_imports_on_added_by"
   end
 
   create_table "game_actions", force: :cascade do |t|
@@ -670,7 +714,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.inet "last_sign_in_ip"
     t.string "locale", default: "en"
     t.datetime "locked_at", precision: nil
-    t.jsonb "notification_settings", default: {"newsletter_subscription" => true, "notify_for_new_consultation" => true}
+    t.jsonb "notification_settings", default: { "newsletter_subscription" => true, "notify_for_new_consultation" => true }
     t.bigint "organisation_id"
     t.string "organization"
     t.string "phone_number"
@@ -696,7 +740,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
+    t.index %w[invited_by_type invited_by_id], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
@@ -710,7 +754,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.text "object"
     t.text "object_changes"
     t.string "whodunnit"
-    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+    t.index %w[item_type item_id], name: "index_versions_on_item_type_and_item_id"
   end
 
   create_table "wordindices", force: :cascade do |t|
@@ -726,6 +770,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "case_studies", "themes"
+  add_foreign_key "clause_feedbacks", "clauses"
+  add_foreign_key "clause_feedbacks", "consultation_responses"
   add_foreign_key "clauses", "constants", column: "clause_type_id"
   add_foreign_key "clauses", "consultations"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
@@ -762,7 +808,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   add_foreign_key "respondents", "organisations"
   add_foreign_key "respondents", "response_rounds"
   add_foreign_key "respondents", "users"
+  add_foreign_key "response_option_breakdowns", "response_question_summaries"
+  add_foreign_key "response_question_summaries", "response_summaries"
   add_foreign_key "response_rounds", "consultations"
+  add_foreign_key "response_summaries", "consultations"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end
