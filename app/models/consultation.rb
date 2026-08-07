@@ -57,6 +57,7 @@ class Consultation < ApplicationRecord
   has_many :response_rounds
   has_many :respondents, through: :response_rounds
   has_many :clauses, dependent: :destroy
+  has_one :response_summary, dependent: :destroy
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
   has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
@@ -185,20 +186,19 @@ class Consultation < ApplicationRecord
     response_round = response_rounds.order(:created_at).last
     questions = response_round&.questions&.main_questions&.order(:position) || []
 
-    summary = {
-      consultation_id: id,
-      total_responses: acceptable.size,
-      questions: questions.map { |question| build_question_summary(question, acceptable) }
-    }
+    question_summaries = questions.map do |question|
+      build_question_summary_attributes(question, acceptable)
+    end
 
-    update_column(:response_summary, summary)
+    response_summary&.destroy
+    create_response_summary!(total_responses: acceptable.size, question_summaries_attributes: question_summaries)
   end
 
-  def build_question_summary(question, all_responses)
+  def build_question_summary_attributes(question, all_responses)
     answered = all_responses.select { |r| r.answers&.any? { |a| a['question_id'].to_i == question.id } }
 
-    summary = {
-      id: question.id,
+    attributes = {
+      question_id: question.id,
       question_text: question.question_text,
       question_type: Question.question_types[question.question_type],
       is_optional: question.is_optional,
@@ -207,21 +207,21 @@ class Consultation < ApplicationRecord
     }
 
     if question.display_options?
-      summary.merge!(build_option_breakdown(question, answered))
+      attributes.merge!(build_option_breakdown_attributes(question, answered))
     elsif question.long_text?
-      summary[:text_response_count] = answered.size
+      attributes[:text_response_count] = answered.size
     end
 
     if question.accept_voice_message
-      summary[:voice_response_count] = answered.count do |r|
+      attributes[:voice_response_count] = answered.count do |r|
         r.voice_responses&.any? { |v| v['question_id'].to_i == question.id }
       end
     end
 
-    summary
+    attributes
   end
 
-  def build_option_breakdown(question, responses)
+  def build_option_breakdown_attributes(question, responses)
     option_counts = Hash.new(0)
     other_count = 0
 
@@ -248,7 +248,7 @@ class Consultation < ApplicationRecord
       }
     end
 
-    { option_breakdown: breakdown, other_option_count: other_count }
+    { option_breakdowns_attributes: breakdown, other_option_count: other_count }
   end
 
   def responded_on(user = Current.user)
