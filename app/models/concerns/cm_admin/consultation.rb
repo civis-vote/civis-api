@@ -269,7 +269,7 @@ module CmAdmin
                                                   'data-cm-toggle-value': 'private_consultation' }
             form_field :organisation_id, input_type: :single_select, helper_method: :select_options_for_organisation,
                                          display_if: ->(_) { !Current.user&.role?('organisation_employee') },
-                                         html_attrs: { 'data-fields-target': 'cmVisible' },
+                                         html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-depends-on': 'visibility' },
                                          label: 'Organisation'
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -312,7 +312,7 @@ module CmAdmin
                                                   'data-cm-toggle-value': 'private_consultation' }
             form_field :organisation_id, input_type: :single_select, helper_method: :select_options_for_organisation,
                                          display_if: ->(_) { !Current.user&.role?('organisation_employee') },
-                                         html_attrs: { 'data-fields-target': 'cmVisible' },
+                                         html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-depends-on': 'visibility' },
                                          label: 'Organisation'
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
