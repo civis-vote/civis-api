@@ -7,7 +7,7 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        permit_additional_fields [:organisation_id, { segment_ids: [], area_of_impact_ids: [] }]
+        permit_additional_fields [{ segment_ids: [], area_of_impact_ids: [] }]
         set_icon 'fas fa-clipboard-list'
         set_policy_scopes [
           { scope_name: 'organisation_only', display_name: 'Organisation Only' },
