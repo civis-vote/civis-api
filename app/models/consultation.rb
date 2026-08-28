@@ -4,23 +4,23 @@ class Consultation < ApplicationRecord
 
   attr_accessor :respondent_emails
 
-  enum :status, { 
+  enum :status, {
     submitted: 0,
     published: 1,
     rejected: 2,
-    expired: 3 
+    expired: 3
   }
-  enum :review_type, { 
+  enum :review_type, {
     consultation: 0,
-    policy: 1 
+    policy: 1
   }
-  enum :visibility, { 
+  enum :visibility, {
     public_consultation: 0,
-    private_consultation: 1 
+    private_consultation: 1
   }
-  enum :question_flow, { 
+  enum :question_flow, {
     question_list: 0,
-    single_question: 1 
+    single_question: 1
   }
 
   acts_as_paranoid
@@ -62,6 +62,7 @@ class Consultation < ApplicationRecord
 
   validates_presence_of :response_deadline, :question_flow
 
+  before_validation :reset_organisation_id_for_public_consultations, on: %i[create update]
   before_validation :set_created_by, :set_default_value_for_organisation_consultation, on: :create
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
   after_commit :create_response_round, on: :create
@@ -332,19 +333,25 @@ class Consultation < ApplicationRecord
 
   def pdf_content_type
     return unless consultation_pdf.attached?
+
     errors.add(:consultation_pdf, 'Only PDF files are supported') unless consultation_pdf.blob.content_type == 'application/pdf'
   end
 
   def pdf_file_size
     return unless consultation_pdf.attached?
+
     errors.add(:consultation_pdf, 'PDF must be less than 50MB') if consultation_pdf.blob.byte_size > 50.megabytes
   end
 
+  def reset_organisation_id_for_public_consultations
+    self.organisation_id = nil if public_consultation? && organisation_id.present?
+  end
+
   def set_default_value_for_organisation_consultation
-    if Current.user&.role?('organisation_employee')
-      self.organisation_id = Current.user&.organisation_id
-      self.visibility = :private_consultation
-    end
+    return unless Current.user&.role?('organisation_employee')
+
+    self.organisation_id = Current.user&.organisation_id
+    self.visibility = :private_consultation
   end
 
   def set_created_by
@@ -369,5 +376,4 @@ class Consultation < ApplicationRecord
       "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
     end
   end
-
 end
