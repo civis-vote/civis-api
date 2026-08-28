@@ -263,12 +263,14 @@ module CmAdmin
             form_field :title_marathi, input_type: :string
             form_field :title_kannada, input_type: :string
             form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
-            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                    html_attrs: { 'data-action': 'change->fields#show',
+                                                  'data-cm-visible-id': 'organisation_id',
+                                                  'data-cm-toggle-value': 'private_consultation' }
             form_field :organisation_id, input_type: :single_select, helper_method: :select_options_for_organisation,
-                                         display_if: lambda { |consultation|
-                                           !Current.user&.role?('organisation_employee') &&
-                                             (consultation&.new_record? || consultation&.private_consultation?)
-                                         }, label: 'Organisation'
+                                         display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                         html_attrs: { 'data-fields-target': 'cmVisible' },
+                                         label: 'Organisation'
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :show_satisfaction_rating, input_type: :switch, label: 'Show Satisfaction Rating Question?',
@@ -304,12 +306,14 @@ module CmAdmin
             form_field :title_marathi, input_type: :string
             form_field :title_kannada, input_type: :string
             form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
-            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                    html_attrs: { 'data-action': 'change->fields#show',
+                                                  'data-cm-visible-id': 'organisation_id',
+                                                  'data-cm-toggle-value': 'private_consultation' }
             form_field :organisation_id, input_type: :single_select, helper_method: :select_options_for_organisation,
-                                         display_if: lambda { |consultation|
-                                           !Current.user&.role?('organisation_employee') &&
-                                             (consultation&.new_record? || consultation&.private_consultation?)
-                                         }, label: 'Organisation'
+                                         display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                         html_attrs: { 'data-fields-target': 'cmVisible' },
+                                         label: 'Organisation'
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :show_satisfaction_rating, input_type: :switch, label: 'Show Satisfaction Rating Question?',
