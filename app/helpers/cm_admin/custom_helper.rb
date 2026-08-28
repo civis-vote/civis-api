@@ -50,6 +50,10 @@ module CmAdmin
       ::CmRole.pluck(:name, :id)
     end
 
+    def select_options_for_organisation(_ = nil, _ = nil)
+      ::Organisation.active.pluck(:name, :id)
+    end
+
     def select_options_for_organisation_engagement_type(_ = nil, _ = nil)
       ::Organisation.engagement_types.keys.map { |et| [et, et] }
     end
@@ -60,12 +64,12 @@ module CmAdmin
 
     def selected_conditional_option(record, _)
       return [] if record&.conditional_question.blank?
+
       [[record.conditional_question.question_text, record.conditional_question.id]]
     end
 
     def select_options_for_boolean(_ = nil, _ = nil)
       [['Yes', true], ['No', false]]
     end
-
   end
 end

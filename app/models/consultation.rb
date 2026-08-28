@@ -65,6 +65,7 @@ class Consultation < ApplicationRecord
   validates_presence_of :response_deadline, :question_flow
 
   before_validation :set_created_by, :set_default_value_for_organisation_consultation, on: :create
+  before_validation :reset_organisation_id_for_public_consultations, on: %i[create update]
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
   after_commit :create_response_round, on: :create
   after_commit :notify_admins, on: :create
@@ -73,6 +74,7 @@ class Consultation < ApplicationRecord
   delegate :name, to: :department, prefix: true, allow_nil: true
   delegate :count, to: :responses, prefix: true, allow_nil: true
   delegate :name, to: :theme, prefix: true, allow_nil: true
+  delegate :name, to: :organisation, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -129,6 +131,19 @@ class Consultation < ApplicationRecord
   }
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
+
+  scope :organisation_and_public_only, lambda { |user = nil|
+    user ||= Current.user
+
+    return none if user.blank?
+
+    if user.organisation_id.present?
+      where(organisation_id: user.organisation_id)
+        .or(where(visibility: :public_consultation, organisation_id: nil))
+    else
+      where(visibility: :public_consultation, organisation_id: nil)
+    end
+  }
 
   def notify_admins
     self.response_token = SecureRandom.uuid unless response_token
@@ -425,10 +440,14 @@ class Consultation < ApplicationRecord
     errors.add(:consultation_pdf, 'PDF must be less than 50MB') if consultation_pdf.blob.byte_size > 50.megabytes
   end
 
-  def set_default_value_for_organisation_consultation
-    return unless Current.user&.role?('organisation_employee')
+  def reset_organisation_id_for_public_consultations
+    self.organisation_id = nil if public_consultation? && organisation_id.present?
+  end
 
-    self.organisation_id = Current.user&.organisation_id
+  def set_default_value_for_organisation_consultation
+    return if Current.user&.organisation_id.nil?
+
+    self.organisation_id ||= Current.user&.organisation_id
     self.visibility = :private_consultation
   end
 
