@@ -62,8 +62,8 @@ class Consultation < ApplicationRecord
 
   validates_presence_of :response_deadline, :question_flow
 
-  before_validation :reset_organisation_id_for_public_consultations, on: %i[create update]
-  before_validation :set_created_by, :set_default_value_for_organisation_consultation, on: :create
+  before_validation :set_created_by, :set_default_value_for_organisation_consultation, :reset_organisation_id_for_public_consultations, on: :create
+  before_validation :reset_organisation_id_for_public_consultations, on: :update
   after_commit :set_consultation_expiry_job, if: :saved_change_to_response_deadline?
   after_commit :create_response_round, on: :create
   after_commit :notify_admins, on: :create
