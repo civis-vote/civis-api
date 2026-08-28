@@ -365,7 +365,7 @@ class Consultation < ApplicationRecord
     return if Current.user&.organisation_id.nil?
 
     self.organisation_id ||= Current.user&.organisation_id
-    self.visibility ||= :private_consultation
+    self.visibility = :private_consultation
   end
 
   def set_created_by
