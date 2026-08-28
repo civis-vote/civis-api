@@ -72,6 +72,7 @@ class Consultation < ApplicationRecord
   delegate :name, to: :department, prefix: true, allow_nil: true
   delegate :count, to: :responses, prefix: true, allow_nil: true
   delegate :name, to: :theme, prefix: true, allow_nil: true
+  delegate :name, to: :organisation, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
     return all unless status.present?
@@ -123,7 +124,7 @@ class Consultation < ApplicationRecord
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
-  scope :viewable_by, lambda { |user = nil|
+  scope :organisation_and_public_only, lambda { |user = nil|
     user ||= Current.user
 
     return none if user.blank?
@@ -361,10 +362,10 @@ class Consultation < ApplicationRecord
   end
 
   def set_default_value_for_organisation_consultation
-    return unless Current.user&.role?('organisation_employee')
+    return if Current.user&.organisation_id.nil?
 
-    self.organisation_id = Current.user&.organisation_id
-    self.visibility = :private_consultation
+    self.organisation_id ||= Current.user&.organisation_id
+    self.visibility ||= :private_consultation
   end
 
   def set_created_by

@@ -9,7 +9,10 @@ module CmAdmin
         actions only: []
         permit_additional_fields [:organisation_id, { segment_ids: [], area_of_impact_ids: [] }]
         set_icon 'fas fa-clipboard-list'
-        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        set_policy_scopes [
+          { scope_name: 'organisation_only', display_name: 'Organisation Only' },
+          { scope_name: 'organisation_and_public_only', display_name: 'Organisation and Public Only' }
+        ]
         sortable_columns [
           { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
           { column: 'updated_at', display_name: 'Updated At' },
@@ -190,6 +193,7 @@ module CmAdmin
               field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :url, label: 'URL of Consultation PDF'
               field :department_name, label: 'Department'
+              field :organisation_name, label: 'Organisation', display_if: ->(record) { record.organisation_id.present? }
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :response_deadline, field_type: :datetime
