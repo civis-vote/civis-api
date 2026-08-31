@@ -10,8 +10,7 @@ module CmAdmin
         permit_additional_fields [{ segment_ids: [], area_of_impact_ids: [] }]
         set_icon 'fas fa-clipboard-list'
         set_policy_scopes [
-          { scope_name: 'organisation_only', display_name: 'Organisation Only' },
-          { scope_name: 'organisation_and_public_only', display_name: 'Organisation and Public Only' }
+          { scope_name: 'organisation_only', display_name: 'Organisation Only' }
         ]
         sortable_columns [
           { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
