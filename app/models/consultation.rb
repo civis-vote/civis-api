@@ -349,9 +349,9 @@ class Consultation < ApplicationRecord
   end
 
   def set_default_value_for_organisation_consultation
-    return if Current.user&.organisation_id.nil?
+    return unless Current.user&.role?('organisation_employee')
 
-    self.organisation_id ||= Current.user&.organisation_id
+    self.organisation_id = Current.user&.organisation_id
     self.visibility = :private_consultation
   end
 
