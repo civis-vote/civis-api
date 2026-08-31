@@ -132,19 +132,6 @@ class Consultation < ApplicationRecord
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
-  scope :organisation_and_public_only, lambda { |user = nil|
-    user ||= Current.user
-
-    return none if user.blank?
-
-    if user.organisation_id.present?
-      where(organisation_id: user.organisation_id)
-        .or(where(visibility: :public_consultation, organisation_id: nil))
-    else
-      where(visibility: :public_consultation, organisation_id: nil)
-    end
-  }
-
   def notify_admins
     self.response_token = SecureRandom.uuid unless response_token
     save!
@@ -445,9 +432,9 @@ class Consultation < ApplicationRecord
   end
 
   def set_default_value_for_organisation_consultation
-    return if Current.user&.organisation_id.nil?
+    return unless Current.user&.role?('organisation_employee')
 
-    self.organisation_id ||= Current.user&.organisation_id
+    self.organisation_id = Current.user&.organisation_id
     self.visibility = :private_consultation
   end
 
