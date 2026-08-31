@@ -1,10 +1,13 @@
 {
-  "commit": "a916145a2f08b68273df70c15728a6fdfc62e196",
+  "commit": "21e9c009a4591b5fe5a5fc74600761c14a2e7945",
   "platform": "rails",
   "managed_rules": [
     "active-record.md",
     "cm-admin.md",
+    "comments.md",
     "commit-message.md",
+    "css-variables.md",
+    "jobs.md",
     "prettier.md",
     "rubocop.md"
   ]

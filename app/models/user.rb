@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   has_paper_trail
 
+  ORGANISATION_EMPLOYEE_ROLE_NAME = 'Organisation Employee'.freeze
+
   include Attachable
   include Paginator
   include Scorable::User
@@ -38,16 +40,16 @@ class User < ApplicationRecord
   validate :check_organisation_role_only_for_employee
 
   # enums
-  enum :role, { 
+  enum :role, {
     citizen: 0,
-    admin: 1, 
-    moderator: 2, 
-    organisation_employee: 3 
+    admin: 1,
+    moderator: 2,
+    organisation_employee: 3
   }
   enum :best_rank_type, {
-    national: 0, 
-    state: 1, 
-    city: 2 
+    national: 0,
+    state: 1,
+    city: 2
   }
 
   # store accessors
@@ -159,7 +161,7 @@ class User < ApplicationRecord
   def responses_count
     responses.count
   end
-  
+
   def themes_participated_in
     responses
       .joins(:consultation).group('consultations.theme_id')
@@ -176,7 +178,6 @@ class User < ApplicationRecord
       .pluck('departments.name')
       .join(', ')
   end
-
 
   def update_last_activity
     update last_activity_at: Date.today
@@ -286,7 +287,7 @@ class User < ApplicationRecord
   end
 
   def password_complexity
-    return unless password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$/)
+    return unless password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&]).{8,}$/)
 
     errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
   end
@@ -302,7 +303,7 @@ class User < ApplicationRecord
   end
 
   def check_organisation_role_only_for_employee
-    return unless cm_role.name == 'Organisation Employee'
+    return unless cm_role&.name == ORGANISATION_EMPLOYEE_ROLE_NAME
 
     errors.add(:cm_role, "Organisation employee role is only allowed when organisation is present") if organisation_id.blank?
     errors
