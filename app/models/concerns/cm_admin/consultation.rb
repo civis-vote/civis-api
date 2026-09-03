@@ -7,9 +7,11 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        permit_additional_fields [segment_ids: [], area_of_impact_ids: []]
+        permit_additional_fields [{ segment_ids: [], area_of_impact_ids: [] }]
         set_icon 'fas fa-clipboard-list'
-        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        set_policy_scopes [
+          { scope_name: 'organisation_only', display_name: 'Organisation Only' }
+        ]
         sortable_columns [
           { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
           { column: 'updated_at', display_name: 'Updated At' },
@@ -21,13 +23,13 @@ module CmAdmin
 
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
           filter :status, :multi_select, active_by_default: true
-          filter :response_deadline, :date , active_by_default: true
-          filter :visibility, :multi_select,  active_by_default: true
+          filter :response_deadline, :date, active_by_default: true
+          filter :visibility, :multi_select, active_by_default: true
           filter :theme_id, :multi_select, helper_method: :select_options_for_theme
           filter :review_type, :multi_select
           filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
           filter :area_of_impact_ids, :multi_select, helper_method: :select_options_for_area_of_impact,
-                 filter_with: :area_of_impact_filter, display_name: 'Area of Impact'
+                                                     filter_with: :area_of_impact_filter, display_name: 'Area of Impact'
 
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
                         icon_name: 'fa-solid fa-check', display_type: :button,
@@ -73,8 +75,8 @@ module CmAdmin
                         icon_name: 'fa-solid fa-file-export', display_type: :button do
             @consultation = ::Consultation.find(params[:id])
             file_export = ::FileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
-                                            expires_at: DateTime.now + 1.day, export_type: :custom_export,
-                                            associated_model_id: @consultation.id, action_name: 'export_responses')
+                                               expires_at: DateTime.now + 1.day, export_type: :custom_export,
+                                               associated_model_id: @consultation.id, action_name: 'export_responses')
             ::ConsultationResponsesExportJob.perform_later(file_export:)
             @consultation
           end
@@ -82,7 +84,9 @@ module CmAdmin
           custom_action name: 'extract_clauses', route_type: 'member', verb: 'patch', path: ':id/extract_clauses',
                         icon_name: 'fa-solid fa-magic', display_type: :button,
                         display_if: ->(consultation) { consultation.consultation_pdf.attached? },
-                        success_message: ->(_) { { header: 'Clause Extraction Started', body: 'Clause extraction is in progress. Please refresh in a few minutes to see extracted clauses.' } } do
+                        success_message: lambda { |_|
+                          { header: 'Clause Extraction Started', body: 'Clause extraction is in progress. Please refresh in a few minutes to see extracted clauses.' }
+                        } do
             consultation = ::Consultation.find(params[:id])
             consultation.extract_clauses
             consultation
@@ -188,13 +192,16 @@ module CmAdmin
               field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :url, label: 'URL of Consultation PDF'
               field :department_name, label: 'Department'
+              field :organisation_name, label: 'Organisation', display_if: ->(record) { record.organisation_id.present? }
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :response_deadline, field_type: :datetime
               field :show_discuss_section, field_type: :boolean
               field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
               field :feedback_url, label: 'Consultation Page', field_type: :link
-              field :response_url, label: 'Consultation Summary', field_type: :link, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+              field :response_url, label: 'Consultation Summary', field_type: :link, display_if: lambda { |_|
+                !Current.user&.role?('organisation_employee')
+              }
               field :consultation_logo, field_type: :image, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :consultation_pdf, field_type: :attachment, label: 'Consultation PDF'
               field :is_satisfaction_rating_optional, field_type: :boolean,
@@ -241,7 +248,7 @@ module CmAdmin
             column :created_at, field_type: :date, format: '%d %b, %Y'
           end
           tab :clauses, 'clauses', associated_model: 'clauses', layout_type: 'cm_association_index',
-                                       associated_model_name: 'Clause' do
+                                   associated_model_name: 'Clause' do
             column :clause_id, header: 'Clause ID'
             column :clause_title, header: 'Clause Title'
             column :what_is_being_proposed
@@ -259,7 +266,14 @@ module CmAdmin
             form_field :title_marathi, input_type: :string
             form_field :title_kannada, input_type: :string
             form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
-            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                    html_attrs: { 'data-action': 'change->fields#show',
+                                                  'data-cm-visible-id': 'organisation_id',
+                                                  'data-cm-toggle-value': 'private_consultation' }
+            form_field :organisation_id, input_type: :single_select, helper_method: :select_options_for_organisation,
+                                         display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                         html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-depends-on': 'visibility' },
+                                         label: 'Organisation'
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :show_satisfaction_rating, input_type: :switch, label: 'Show Satisfaction Rating Question?',
@@ -295,7 +309,14 @@ module CmAdmin
             form_field :title_marathi, input_type: :string
             form_field :title_kannada, input_type: :string
             form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
-            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
+            form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                    html_attrs: { 'data-action': 'change->fields#show',
+                                                  'data-cm-visible-id': 'organisation_id',
+                                                  'data-cm-toggle-value': 'private_consultation' }
+            form_field :organisation_id, input_type: :single_select, helper_method: :select_options_for_organisation,
+                                         display_if: ->(_) { !Current.user&.role?('organisation_employee') },
+                                         html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-depends-on': 'visibility' },
+                                         label: 'Organisation'
             form_field :private_response, input_type: :switch
             form_field :is_satisfaction_rating_optional, input_type: :switch, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :show_satisfaction_rating, input_type: :switch, label: 'Show Satisfaction Rating Question?',

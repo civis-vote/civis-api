@@ -84,7 +84,7 @@ module CmAdmin
                 field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
                 field :city_name, header: 'City'
                 field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
-                            label: 'Organisation'
+                             label: 'Organisation'
                 field :points
                 field :rank
                 field :segment_names, label: 'Segments'
@@ -96,7 +96,7 @@ module CmAdmin
                 field :is_verified, field_type: :boolean, label: 'Phone verified'
               end
             end
-            
+
             row do
               cm_section 'Participation Snapshot' do
                 field :responses_count, label: 'Response count'
@@ -108,7 +108,6 @@ module CmAdmin
                 field :notify_for_new_consultation, label: 'Notify for New Consultation'
                 field :newsletter_subscription
               end
-
             end
             row do
               cm_section 'Security and Audit' do
@@ -121,7 +120,6 @@ module CmAdmin
                 field :last_active_at, field_type: :date, format: '%d %b, %Y'
               end
             end
-
           end
           tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index',
                                        associated_model_name: 'ConsultationResponse' do
@@ -133,15 +131,17 @@ module CmAdmin
         end
 
         cm_new page_title: 'Add User', page_description: 'Enter all details to add User' do
-          cm_section 'Details' do
+          cm_section 'Details', dynamic_fields: lambda { |_user, associated_record|
+            default_role_id = associated_record.is_a?(Organisation) ? ::CmRole.find_by(name: ::User::ORGANISATION_EMPLOYEE_ROLE_NAME)&.id : nil
             form_field :email, input_type: :string
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
-                                    label: 'Role', placeholder: 'Select Role'
+                                    label: 'Role', placeholder: 'Select Role', default_value: ->(_) { default_role_id },
+                                    html_attrs: { readonly: default_role_id.present? }
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
-          end
+          }
         end
 
         cm_edit page_title: 'Edit User', page_description: 'Enter all details to edit User' do
@@ -150,7 +150,7 @@ module CmAdmin
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
-                                    label: 'Role', placeholder: 'Select Role'
+                                    label: 'Role', placeholder: 'Select Role', disabled: ->(record) { record.organisation.present? }
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end
