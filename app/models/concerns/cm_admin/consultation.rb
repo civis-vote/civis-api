@@ -289,7 +289,7 @@ module CmAdmin
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
             form_field :cta_label, input_type: :string, label: 'CTA Label',
-                                   helper_text: 'Custom label for the Home Page showcase CTA button. Defaults to "Participate" if left blank.'
+                                   helper_text: 'Custom label for the Home Page showcase CTA button.'
             alert_box header: 'Time Zone Notice', type: :warning,
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
@@ -334,7 +334,7 @@ module CmAdmin
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
             form_field :cta_label, input_type: :string, label: 'CTA Label',
-                                   helper_text: 'Custom label for the Home Page showcase CTA button. Defaults to "Participate" if left blank.'
+                                   helper_text: 'Custom label for the Home Page showcase CTA button.'
             alert_box header: 'Time Zone Notice', type: :warning,
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
