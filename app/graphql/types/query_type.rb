@@ -8,6 +8,7 @@ module Types
     field :theme_list,                         resolver: Queries::Theme::List
     field :consultation_list,                  resolver: Queries::Consultation::List
     field :consultation_analysis,              resolver: Queries::Consultation::Analysis
+    field :home_page_showcase_slides,          resolver: Queries::Consultation::HomePageShowcaseSlides
     field :consultation_response_list,         resolver: Queries::ConsultationResponse::List
     field :consultation_response_profile,      resolver: Queries::ConsultationResponse::Profile
     field :consultation_response_venter_map,   resolver: Queries::ConsultationResponse::VenterMap
