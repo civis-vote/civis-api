@@ -4,7 +4,7 @@ module Types
       graphql_name "ShowcaseSlideCta"
       description "Call-to-action for a showcase slide"
 
-      field :label, String, null: false
+      field :label, String, null: true
       field :url, String, null: false
     end
   end

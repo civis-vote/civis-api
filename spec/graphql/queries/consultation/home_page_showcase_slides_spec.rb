@@ -31,7 +31,7 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
   def create_consultation(status:, visibility: :public_consultation, response_deadline: 10.days.from_now,
                           url: Faker::Internet.url, cta_label: nil)
     consultation = Fabricate(:consultation, visibility: visibility, response_deadline: response_deadline, url: url)
-    consultation.update_columns(status: ::Consultation.statuses[status],
+    consultation.update_columns(status: Consultation.statuses[status],
                                 published_at: status == :published ? Time.now : nil,
                                 cta_label: cta_label)
     consultation.reload
@@ -87,7 +87,7 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
       expect(slide['description']).to be_a(String)
       expect(slide['status']).to eq('published')
       expect(slide['responseDeadline']).to be_present
-      expect(slide['cta']).to eq({ 'label' => 'Participate', 'url' => 'https://example.com/consultation' })
+      expect(slide['cta']).to eq({ 'label' => nil, 'url' => 'https://example.com/consultation' })
     end
 
     it 'uses the custom cta_label when set' do
@@ -98,11 +98,11 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
       expect(slide['cta']).to eq({ 'label' => 'Have Your Say', 'url' => 'https://example.com/consultation' })
     end
 
-    it 'falls back to "Participate" when cta_label is not set' do
+    it 'returns null label when cta_label is not set' do
       consultation = create_consultation(status: :published, url: 'https://example.com/consultation', cta_label: nil)
 
       slide = slides.find { |s| s['id'] == consultation.id }
-      expect(slide['cta']['label']).to eq('Participate')
+      expect(slide['cta']['label']).to be_nil
     end
 
     it 'returns null cta when the consultation has no url' do

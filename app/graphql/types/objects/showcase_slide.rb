@@ -30,7 +30,7 @@ module Types
       def cta
         return nil unless object.url.present?
 
-        { label: object.cta_label.presence || "Participate", url: object.url }
+        { label: object.cta_label, url: object.url }
       end
 
       def status
