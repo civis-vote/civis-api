@@ -49,7 +49,7 @@ Returns a list of `ShowcaseSlide` objects (`[ShowcaseSlide]!`).
 
 | Field | Type | Nullable | Description |
 |-------|------|----------|-------------|
-| `label` | `String` | No | CTA button label. Uses the consultation's `cta_label` column if set; falls back to `"Participate"`. |
+| `label` | `String` | Yes | CTA button label. Uses the consultation's `cta_label` column if set; `null` when not set. |
 | `url` | `String` | No | The consultation's `url` |
 
 ## Backend behaviour
@@ -60,7 +60,7 @@ The resolver (`Queries::Consultation::HomePageShowcaseSlides`) applies the follo
 2. **Status filter** — defaults to `published`, excluding `submitted`, `rejected`, and `expired` consultations from the Home Page by default.
 3. **Non-null response_deadline** — consultations without a `response_deadline` are excluded.
 4. **Ordering** — `response_deadline ASC` (soonest deadline first).
-5. **Limit** — caps the number of results (default 20).
+5. **Limit** — caps the number of results (default 20, maximum 50).
 
 ### Key requirement
 
@@ -71,7 +71,7 @@ Draft (`submitted`) and archived (`expired`/`rejected`) content does not appear 
 A new `cta_label` string column was added to the `consultations` table, allowing each consultation to specify a custom CTA button label for the Home Page showcase.
 
 - When `cta_label` is set on a consultation, it is used as the CTA label.
-- When `cta_label` is blank/nil, the label defaults to `"Participate"`.
+- When `cta_label` is blank/nil, the label is `null`.
 - The CTA object is `null` entirely when the consultation has no `url`.
 
 ### Migration
@@ -120,7 +120,7 @@ The spec file contains 12 tests covering:
 6. Empty list when no published consultations exist
 7. All required Home Page fields are present in the response
 8. Custom `cta_label` is used when set
-9. Falls back to `"Participate"` when `cta_label` is not set
+9. Returns `null` label when `cta_label` is not set
 10. CTA is null when consultation has no URL
 11. Private consultations are excluded
 12. Status filtering works when a different status is passed
