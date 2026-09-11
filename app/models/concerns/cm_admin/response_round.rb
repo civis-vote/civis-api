@@ -5,7 +5,7 @@ module CmAdmin
     included do
       cm_admin do
         actions only: %i[index show delete custom_action_modal export history]
-        set_icon 'far fa-newspaper'
+        icon_name 'far fa-newspaper'
         visible_on_sidebar false
 
         cm_index do

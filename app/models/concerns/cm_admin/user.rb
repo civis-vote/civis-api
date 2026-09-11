@@ -6,15 +6,13 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-users'
-        permit_additional_fields [segment_ids: []]
-        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
-        sortable_columns [
-          { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
-          { column: 'updated_at', display_name: 'Updated At' },
-          { column: 'points', display_name: 'Points' },
-          { column: 'rank', display_name: 'Rank' }
-        ]
+        icon_name 'fas fa-users'
+        additional_permitted_fields [segment_ids: []]
+        policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        sort column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc'
+        sort column: 'updated_at', display_name: 'Updated At'
+        sort column: 'points', display_name: 'Points'
+        sort column: 'rank', display_name: 'Rank'
 
         cm_index do
           page_title 'Users'
@@ -27,7 +25,7 @@ module CmAdmin
           filter :updated_at, :date, placeholder: 'Updated at'
           column :full_name
           column :email
-          column :cm_role_name, header: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
+          column :cm_role_name, header: 'Role', field_type: :badge, badge_class: CM_ROLE_TAG_CLASS
           column :created_at, field_type: :date, format: '%d %b, %Y', header: 'Joining Date'
           column :points
           column :city_name, header: 'City'
@@ -77,10 +75,10 @@ module CmAdmin
 
           tab :profile, '' do
             row do
-              cm_show_section 'Profile Details' do
+              cm_section 'Profile Details' do
                 field :profile_picture, field_type: :image
                 field :full_name
-                field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
+                field :cm_role_name, label: 'Role', field_type: :badge, badge_class: CM_ROLE_TAG_CLASS
                 field :city_name, header: 'City'
                 field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
                              label: 'Organisation'

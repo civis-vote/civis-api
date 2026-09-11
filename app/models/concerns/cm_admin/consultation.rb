@@ -7,16 +7,14 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        permit_additional_fields [{ segment_ids: [], area_of_impact_ids: [] }]
-        set_icon 'fas fa-clipboard-list'
-        set_policy_scopes [
+        additional_permitted_fields [{ segment_ids: [], area_of_impact_ids: [] }]
+        icon_name 'fas fa-clipboard-list'
+        policy_scopes [
           { scope_name: 'organisation_only', display_name: 'Organisation Only' }
         ]
-        sortable_columns [
-          { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
-          { column: 'updated_at', display_name: 'Updated At' },
-          { column: 'consultation_responses_count', display_name: 'Response Count' }
-        ]
+        sort column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc'
+        sort column: 'updated_at', display_name: 'Updated At'
+        sort column: 'consultation_responses_count', display_name: 'Response Count'
 
         cm_index do
           page_title 'Consultations'
@@ -105,7 +103,7 @@ module CmAdmin
           column :id
           column :title
           column :department_name, header: 'Department'
-          column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+          column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
           column :theme_name, header: 'Theme'
           column :response_deadline, field_type: :date, format: '%d %b, %Y'
           column :created_at, field_type: :date, format: '%d %b, %Y'
@@ -207,7 +205,7 @@ module CmAdmin
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :response_deadline, field_type: :datetime
               field :show_discuss_section, field_type: :boolean
-              field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+              field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
               field :feedback_url, label: 'Consultation Page', field_type: :link
               field :response_url, label: 'Consultation Summary', field_type: :link, display_if: lambda { |_|
                 !Current.user&.role?('organisation_employee')
