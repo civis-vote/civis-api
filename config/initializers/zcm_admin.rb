@@ -5,7 +5,7 @@ Rails.application.reloader.to_prepare do
     # config.authorized_roles = [:super_admin?]
     config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
-                              ResponseRound, Question, FileImport, FileExport, Respondent, TeamMember, Clause, Constant, CmPlatformSetting, ApiToken, ShowcaseSlide]
+                              ResponseRound, Question, FileImport, FileExport, Respondent, TeamMember, Clause, Constant, CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt]
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
