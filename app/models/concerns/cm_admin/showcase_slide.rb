@@ -8,13 +8,11 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-images'
+        icon_name 'fas fa-images'
 
-        sortable_columns [
-          { column: 'position', display_name: 'Position', default: true, default_direction: 'asc' },
-          { column: 'created_at', display_name: 'Created At' },
-          { column: 'updated_at', display_name: 'Updated At' }
-        ]
+        sort column: 'position', display_name: 'Position', default: true, default_direction: 'asc'
+        sort column: 'created_at', display_name: 'Created At'
+        sort column: 'updated_at', display_name: 'Updated At'
 
         cm_index do
           page_title 'Showcase Slides'
@@ -24,7 +22,7 @@ module CmAdmin
 
           column :id
           column :title
-          column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+          column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
           column :position, header: 'Position'
           column :published_at, field_type: :date, format: '%d %b, %Y'
           column :archived_at, field_type: :date, format: '%d %b, %Y'
@@ -67,7 +65,7 @@ module CmAdmin
               field :video_url, label: 'Video URL', display_if: ->(slide) { slide.video_url.present? }
               field :cta_label
               field :cta_url, label: 'CTA URL'
-              field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+              field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
               field :position, label: 'Position'
             end
             cm_section 'Log Details' do
