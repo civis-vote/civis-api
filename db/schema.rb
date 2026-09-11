@@ -664,14 +664,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.datetime "archived_at"
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
-    t.string "cta_label"
+    t.string "cta_label", null: false
     t.integer "position"
     t.datetime "published_at"
     t.integer "status", default: 0, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
-    t.string "url"
+    t.string "cta_url", null: false
     t.string "video_url"
     t.index ["created_by_id"], name: "index_showcase_slides_on_created_by_id"
     t.index ["updated_by_id"], name: "index_showcase_slides_on_updated_by_id"

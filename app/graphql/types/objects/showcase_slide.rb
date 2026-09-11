@@ -10,7 +10,8 @@ module Types
       field :image, Types::Objects::AttachmentType, "Image/media for the slide", null: true do
         argument :resolution, String, required: false, default_value: nil
       end
-      field :cta, Types::Objects::ShowcaseSlideCta, "Call-to-action for the slide", null: true
+      field :cta_label, String, "Label for the call-to-action button", null: false
+      field :cta_url, String, "URL for the call-to-action button", null: false
       field :video_url, String, "Video URL for the slide", null: true
       field :status, Types::Enums::ShowcaseSlideStatuses, "Status of the slide", null: false
       field :position, Int, "Display order of the slide (ascending)", null: true
@@ -22,12 +23,6 @@ module Types
 
       def image(resolution:)
         attachment_with_resolution(:image, resolution)
-      end
-
-      def cta
-        return nil unless object.url.present?
-
-        { label: object.cta_label, url: object.url }
       end
     end
   end

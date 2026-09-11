@@ -2,9 +2,9 @@ class CreateShowcaseSlides < ActiveRecord::Migration[8.1]
   def change
     create_table :showcase_slides do |t|
       t.string :title, null: false
-      t.string :url
+      t.string :cta_url, null: false
       t.string :video_url
-      t.string :cta_label
+      t.string :cta_label, null: false
       t.integer :status, default: 0, null: false
       t.integer :position
       t.datetime :published_at

@@ -12,7 +12,7 @@ class ShowcaseSlide < ApplicationRecord
   has_rich_text :description
   has_one_attached :image
 
-  validates_presence_of :title
+  validates_presence_of :title, :description, :banner_type, :cta_label, :cta_url, :position
 
   def banner_type
     return @banner_type if @banner_type.present?
@@ -29,8 +29,6 @@ class ShowcaseSlide < ApplicationRecord
 
     where(status: status)
   }
-
-  scope :published_only, -> { where(status: :published) }
 
   scope :ordered_by_position, -> { order(position: :asc) }
 

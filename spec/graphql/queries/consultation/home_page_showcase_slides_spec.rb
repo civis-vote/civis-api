@@ -9,7 +9,8 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
           title
           description
           image { url }
-          cta { label url }
+          ctaLabel
+          ctaUrl
           videoUrl
           status
           position
@@ -28,8 +29,8 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
 
   let(:slides) { result.dig('data', 'homePageShowcaseSlides') }
 
-  def create_slide(status: :published, position: nil, url: Faker::Internet.url, cta_label: nil, video_url: nil)
-    Fabricate(:showcase_slide, status: status, position: position, url: url, cta_label: cta_label, video_url: video_url)
+  def create_slide(status: :published, position: rand(1..100), cta_url: Faker::Internet.url, cta_label: 'Learn More', video_url: nil)
+    Fabricate(:showcase_slide, status: status, position: position, cta_url: cta_url, cta_label: cta_label, video_url: video_url)
   end
 
   describe 'homePageShowcaseSlides query' do
@@ -66,36 +67,24 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
     end
 
     it 'returns the fields required by the Home Page' do
-      slide_record = create_slide(status: :published, url: 'https://example.com/consultation')
+      slide_record = create_slide(status: :published, cta_url: 'https://example.com/consultation')
 
       slide = slides.first
       expect(slide['id']).to eq(slide_record.id)
       expect(slide['title']).to eq(slide_record.title)
       expect(slide['description']).to be_a(String)
       expect(slide['status']).to eq('published')
-      expect(slide['cta']).to eq({ 'label' => nil, 'url' => 'https://example.com/consultation' })
+      expect(slide['ctaLabel']).to eq('Learn More')
+      expect(slide['ctaUrl']).to eq('https://example.com/consultation')
     end
 
     it 'uses the custom cta_label when set' do
-      slide_record = create_slide(status: :published, url: 'https://example.com/consultation',
+      slide_record = create_slide(status: :published, cta_url: 'https://example.com/consultation',
                                   cta_label: 'Have Your Say')
 
       slide = slides.find { |s| s['id'] == slide_record.id }
-      expect(slide['cta']).to eq({ 'label' => 'Have Your Say', 'url' => 'https://example.com/consultation' })
-    end
-
-    it 'returns null label when cta_label is not set' do
-      slide_record = create_slide(status: :published, url: 'https://example.com/consultation', cta_label: nil)
-
-      slide = slides.find { |s| s['id'] == slide_record.id }
-      expect(slide['cta']['label']).to be_nil
-    end
-
-    it 'returns null cta when the slide has no url' do
-      slide_record = create_slide(status: :published, url: nil)
-
-      slide = slides.find { |s| s['id'] == slide_record.id }
-      expect(slide['cta']).to be_nil
+      expect(slide['ctaLabel']).to eq('Have Your Say')
+      expect(slide['ctaUrl']).to eq('https://example.com/consultation')
     end
 
     it 'returns the video_url when set' do
