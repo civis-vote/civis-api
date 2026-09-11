@@ -758,7 +758,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   capybara (>= 2.15)
-  cm-admin!
+  cm-admin (= 7.2.26)!
   cm-geocoder
   cocoon
   database_cleaner
@@ -789,7 +789,7 @@ DEPENDENCIES
   psych (< 4)
   puma
   rack-cors
-  rails
+  rails (= 8.1.3)
   rails-erd
   razorpay
   rb-readline
