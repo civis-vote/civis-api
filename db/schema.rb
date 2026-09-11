@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_10_170741) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -401,7 +401,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_170741) do
     t.datetime "published_at", precision: nil
     t.integer "question_flow", default: 0
     t.integer "reading_time", default: 0
-    t.datetime "response_deadline", precision: nil
+    t.datetime "response_deadline"
     t.uuid "response_token"
     t.integer "review_type", default: 0
     t.boolean "show_discuss_section", default: true, null: false
@@ -559,6 +559,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_170741) do
     t.integer "upper_limit"
   end
 
+  create_table "positions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "profanities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "created_by_id"
@@ -653,6 +659,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_170741) do
     t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
+  create_table "showcase_slides", force: :cascade do |t|
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "cta_label"
+    t.integer "position"
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.string "url"
+    t.string "video_url"
+    t.index ["created_by_id"], name: "index_showcase_slides_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_showcase_slides_on_updated_by_id"
   end
 
   create_table "team_members", force: :cascade do |t|
@@ -828,6 +851,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_10_170741) do
   add_foreign_key "response_question_summaries", "response_summaries"
   add_foreign_key "response_rounds", "consultations"
   add_foreign_key "response_summaries", "consultations"
+  add_foreign_key "showcase_slides", "users", column: "created_by_id"
+  add_foreign_key "showcase_slides", "users", column: "updated_by_id"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end

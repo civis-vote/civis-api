@@ -2,20 +2,21 @@
 
 ## Overview
 
-A new GraphQL query `homePageShowcaseSlides` exposes Consultations as showcase slides for the Home Page. The query returns only **public** consultations, defaults to **published** status, and orders slides by **response_deadline ascending** (soonest deadline first).
+A GraphQL query `homePageShowcaseSlides` returns showcase slides for the Home Page from the standalone `ShowcaseSlide` model. The query defaults to **published** status and orders slides by **position ascending** (lowest position number first).
 
 ## Query
 
 ```graphql
-query GetHomePageShowcaseSlides($status: ConsultationStatuses, $limit: Int) {
+query GetHomePageShowcaseSlides($status: ShowcaseSlideStatuses, $limit: Int) {
   homePageShowcaseSlides(status: $status, limit: $limit) {
     id
     title
     description
     image { url }
     cta { label url }
+    videoUrl
     status
-    responseDeadline
+    position
     publishedAt
   }
 }
@@ -25,7 +26,7 @@ query GetHomePageShowcaseSlides($status: ConsultationStatuses, $limit: Int) {
 
 | Argument | Type | Required | Default | Description |
 |----------|------|----------|---------|-------------|
-| `status` | `ConsultationStatuses` | No | `published` | Filters consultations by status. Exposed so the client can request other statuses if needed. |
+| `status` | `ShowcaseSlideStatuses` | No | `published` | Filters slides by status. Exposed so the client can request other statuses if needed. |
 | `limit` | `Int` | No | `20` | Maximum number of slides to return. |
 
 ### Return type
@@ -36,51 +37,80 @@ Returns a list of `ShowcaseSlide` objects (`[ShowcaseSlide]!`).
 
 | Field | Type | Nullable | Description |
 |-------|------|----------|-------------|
-| `id` | `Int` | No | ID of the consultation |
-| `title` | `String` | No | Title of the consultation |
-| `description` | `String` | Yes | English summary text of the consultation |
-| `image` | `AttachmentType` | Yes | Consultation logo image. Accepts an optional `resolution` argument (e.g. `"300x200"`). |
-| `cta` | `ShowcaseSlideCta` | Yes | Call-to-action. `null` when the consultation has no `url`. |
-| `status` | `ConsultationStatuses` | No | Status of the consultation (`submitted`, `published`, `rejected`, `expired`) |
-| `responseDeadline` | `DateTime` | Yes | Response deadline (used for ordering) |
-| `publishedAt` | `DateTime` | Yes | When the consultation was published |
+| `id` | `Int` | No | ID of the showcase slide |
+| `title` | `String` | No | Title of the slide |
+| `description` | `String` | Yes | Description text of the slide |
+| `image` | `AttachmentType` | Yes | Image for the slide. Accepts an optional `resolution` argument (e.g. `"300x200"`). |
+| `cta` | `ShowcaseSlideCta` | Yes | Call-to-action. `null` when the slide has no `url`. |
+| `videoUrl` | `String` | Yes | Video URL for the slide. |
+| `status` | `ShowcaseSlideStatuses` | No | Status of the slide (`draft`, `published`, `archived`) |
+| `position` | `Int` | Yes | Display order (ascending) |
+| `publishedAt` | `DateTime` | Yes | When the slide was published |
 
 #### ShowcaseSlideCta fields
 
 | Field | Type | Nullable | Description |
 |-------|------|----------|-------------|
-| `label` | `String` | Yes | CTA button label. Uses the consultation's `cta_label` column if set; `null` when not set. |
-| `url` | `String` | No | The consultation's `url` |
+| `label` | `String` | Yes | CTA button label. Uses the slide's `cta_label` column if set; `null` when not set. |
+| `url` | `String` | No | The slide's `url` |
 
 ## Backend behaviour
 
 The resolver (`Queries::Consultation::HomePageShowcaseSlides`) applies the following filters internally:
 
-1. **Public consultations only** — uses the `public_consultation` scope to exclude private consultations.
-2. **Status filter** — defaults to `published`, excluding `submitted`, `rejected`, and `expired` consultations from the Home Page by default.
-3. **Non-null response_deadline** — consultations without a `response_deadline` are excluded.
-4. **Ordering** — `response_deadline ASC` (soonest deadline first).
-5. **Limit** — caps the number of results (default 20, maximum 50).
+1. **Status filter** — defaults to `published`, excluding `draft` and `archived` slides from the Home Page by default.
+2. **Ordering** — `position ASC` (lowest position number first).
+3. **Limit** — caps the number of results (default 20).
 
 ### Key requirement
 
-Draft (`submitted`) and archived (`expired`/`rejected`) content does not appear in the Home Page response unless the client explicitly passes a different `status` argument.
+Draft and archived content does not appear in the Home Page response unless the client explicitly passes a different `status` argument.
 
 ## CTA label field
 
-A new `cta_label` string column was added to the `consultations` table, allowing each consultation to specify a custom CTA button label for the Home Page showcase.
+Each `ShowcaseSlide` has a `cta_label` string column for a custom CTA button label.
 
-- When `cta_label` is set on a consultation, it is used as the CTA label.
+- When `cta_label` is set on a slide, it is used as the CTA label.
 - When `cta_label` is blank/nil, the label is `null`.
-- The CTA object is `null` entirely when the consultation has no `url`.
+- The CTA object is `null` entirely when the slide has no `url`.
+
+## ShowcaseSlide model
+
+The `ShowcaseSlide` is a standalone model with no association to `Consultation`.
+
+### Fields
+
+- `title` (string, required)
+- `description` (rich text)
+- `url` (string) — CTA URL
+- `video_url` (string) — Video URL
+- `cta_label` (string) — CTA button label
+- `status` (integer enum: `draft`, `published`, `archived`)
+- `position` (integer) — display order
+- `published_at` (datetime)
+- `archived_at` (datetime)
+- `image` (ActiveStorage attachment)
 
 ### Migration
 
 ```ruby
-# db/migrate/20260910111505_add_cta_label_to_consultations.rb
-class AddCtaLabelToConsultations < ActiveRecord::Migration[8.1]
+# db/migrate/20260911044844_create_showcase_slides.rb
+class CreateShowcaseSlides < ActiveRecord::Migration[8.1]
   def change
-    add_column :consultations, :cta_label, :string
+    create_table :showcase_slides do |t|
+      t.string :title, null: false
+      t.string :url
+      t.string :video_url
+      t.string :cta_label
+      t.integer :status, default: 0, null: false
+      t.integer :position
+      t.datetime :published_at
+      t.datetime :archived_at
+      t.references :created_by, foreign_key: { to_table: :users }, index: true
+      t.references :updated_by, foreign_key: { to_table: :users }, index: true
+
+      t.timestamps
+    end
   end
 end
 ```
@@ -91,40 +121,30 @@ end
 
 | File | Purpose |
 |------|---------|
+| `app/models/showcase_slide.rb` | Standalone ShowcaseSlide model |
+| `app/models/concerns/cm_admin/showcase_slide.rb` | cm-admin panel for ShowcaseSlide |
 | `app/graphql/types/objects/showcase_slide_cta.rb` | GraphQL type for the CTA (`label`, `url`) |
-| `app/graphql/types/objects/showcase_slide.rb` | GraphQL type wrapping Consultation with Home Page fields |
+| `app/graphql/types/objects/showcase_slide.rb` | GraphQL type for ShowcaseSlide |
 | `app/graphql/queries/consultation/home_page_showcase_slides.rb` | Resolver for the `homePageShowcaseSlides` query |
-| `db/migrate/20260910111505_add_cta_label_to_consultations.rb` | Migration adding `cta_label` column |
-| `spec/graphql/queries/consultation/home_page_showcase_slides_spec.rb` | RSpec tests (12 examples) |
-| `spec/fabricators/department_fabricator.rb` | Department fabricator for tests |
-| `spec/fabricators/department_contact_fabricator.rb` | DepartmentContact fabricator for tests |
-
-### Modified files
-
-| File | Change |
-|------|--------|
-| `app/graphql/types/query_type.rb` | Registered `home_page_showcase_slides` field |
-| `spec/fabricators/consultation_fabricator.rb` | Fixed outdated `ministry_id`/`Ministry` references to `department`/`Department` |
-| `config/storage.yml` | Fixed pre-existing bug: `.dump` on nil in commented-out ERB lines |
-| `spec/rails_helper.rb` | Added fabrication require and test queue adapter config |
+| `db/migrate/20260911044844_create_showcase_slides.rb` | Migration creating `showcase_slides` table |
+| `spec/fabricators/showcase_slide_fabricator.rb` | Fabricator for ShowcaseSlide tests |
+| `spec/graphql/queries/consultation/home_page_showcase_slides_spec.rb` | RSpec tests (11 examples) |
 
 ## Test coverage
 
-The spec file contains 12 tests covering:
+The spec file contains 11 tests covering:
 
 1. Published slides are returned by default
-2. Submitted (draft) slides are not returned
-3. Expired slides are not returned
-4. Rejected slides are not returned
-5. Multiple published slides returned in correct order (response_deadline asc)
-6. Empty list when no published consultations exist
-7. All required Home Page fields are present in the response
-8. Custom `cta_label` is used when set
-9. Returns `null` label when `cta_label` is not set
-10. CTA is null when consultation has no URL
-11. Private consultations are excluded
-12. Status filtering works when a different status is passed
-13. Limit argument constrains the number of results
+2. Expired slides are not returned
+3. Rejected slides are not returned
+4. Multiple published slides returned in correct order (position asc)
+5. Empty list when no published slides exist
+6. All required Home Page fields are present in the response
+7. Custom `cta_label` is used when set
+8. Returns `null` label when `cta_label` is not set
+9. CTA is null when slide has no URL
+10. Status filtering works when a different status is passed
+11. Limit argument constrains the number of results
 
 ## Example usage
 
@@ -138,7 +158,7 @@ query GetHomePageShowcase {
     description
     cta { label url }
     status
-    responseDeadline
+    position
   }
 }
 ```
@@ -149,12 +169,12 @@ Response:
   "data": {
     "homePageShowcaseSlides": [
       {
-        "id": 42,
+        "id": 1,
         "title": "Public Consultation on Urban Planning",
-        "description": "Summary of the consultation...",
+        "description": "Summary of the slide...",
         "cta": { "label": "Have Your Say", "url": "https://civis.in/consultations/42" },
         "status": "published",
-        "responseDeadline": "2026-09-20T18:30:00Z"
+        "position": 1
       }
     ]
   }
@@ -175,8 +195,8 @@ query GetHomePageShowcase {
 ### With explicit status
 
 ```graphql
-query GetSubmittedConsultations {
-  homePageShowcaseSlides(status: submitted) {
+query GetDraftSlides {
+  homePageShowcaseSlides(status: draft) {
     id
     title
     status
