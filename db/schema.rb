@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_11_100527) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -29,7 +29,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "name", null: false
     t.bigint "record_id", null: false
     t.string "record_type", null: false
@@ -41,7 +41,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.bigint "byte_size", null: false
     t.string "checksum"
     t.string "content_type"
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.string "filename", null: false
     t.string "key", null: false
     t.text "metadata"
@@ -77,6 +77,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
   end
 
+  create_table "clause_feedbacks", force: :cascade do |t|
+    t.bigint "clause_id", null: false
+    t.bigint "consultation_response_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["clause_id"], name: "index_clause_feedbacks_on_clause_id"
+    t.index ["consultation_response_id"], name: "index_clause_feedbacks_on_consultation_response_id"
+  end
+
   create_table "clauses", force: :cascade do |t|
     t.string "clause_id", null: false
     t.string "clause_title", null: false
@@ -86,7 +95,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.string "keywords"
     t.string "stakeholder_impact"
     t.datetime "updated_at", null: false
-    t.text "what_is_being_proposed"
+    t.string "what_is_being_proposed"
     t.index ["clause_type_id"], name: "index_clauses_on_clause_type_id"
     t.index ["consultation_id"], name: "index_clauses_on_consultation_id"
   end
@@ -162,13 +171,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
   end
 
-  create_table "cm_page_builder_rails_page_components", id: :string, force: :cascade do |t|
+  create_table "cm_notifiables", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "notifiable_id", null: false
+    t.string "notifiable_type", null: false
+    t.integer "notification_type", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "value", null: false
+    t.index ["notifiable_type", "notifiable_id"], name: "index_cm_notifiables_on_notifiable"
+    t.index ["notification_type"], name: "index_cm_notifiables_on_notification_type"
+  end
+
+  create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
     t.string "component_type"
     t.string "content"
     t.datetime "created_at", null: false
     t.bigint "page_id", null: false
     t.integer "position"
     t.datetime "updated_at", null: false
+    t.string "uuid", null: false
     t.index ["page_id"], name: "index_cm_page_builder_rails_page_components_on_page_id"
   end
 
@@ -312,6 +333,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.integer "vote_direction"
+    t.index ["consultation_response_id", "user_id"], name: "consultation_response_id_and_user_id_index", unique: true
     t.index ["consultation_response_id"], name: "index_consultation_response_votes_on_consultation_response_id"
     t.index ["user_id"], name: "index_consultation_response_votes_on_user_id"
   end
@@ -342,6 +364,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.integer "subjective_answer_count"
     t.integer "template_id"
     t.integer "templates_count", default: 0
+    t.jsonb "transcription_errors", default: [], null: false
+    t.integer "transcription_status", default: 0, null: false
     t.integer "up_vote_count", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
@@ -376,7 +400,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.datetime "published_at", precision: nil
     t.integer "question_flow", default: 0
     t.integer "reading_time", default: 0
-    t.datetime "response_deadline", precision: nil
+    t.datetime "response_deadline"
     t.uuid "response_token"
     t.integer "review_type", default: 0
     t.boolean "show_discuss_section", default: true, null: false
@@ -534,6 +558,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.integer "upper_limit"
   end
 
+  create_table "positions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "profanities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "created_by_id"
@@ -578,12 +608,47 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.index ["user_id"], name: "index_respondents_on_user_id"
   end
 
+  create_table "response_option_breakdowns", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "option_id", null: false
+    t.string "option_text", null: false
+    t.float "percentage", default: 0.0, null: false
+    t.bigint "response_question_summary_id", null: false
+    t.integer "selection_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["response_question_summary_id"], name: "idx_on_response_question_summary_id_f5a4ef0ddb"
+  end
+
+  create_table "response_question_summaries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "is_optional", default: false, null: false
+    t.integer "other_option_count"
+    t.integer "position"
+    t.integer "question_id", null: false
+    t.string "question_text", null: false
+    t.string "question_type", null: false
+    t.bigint "response_summary_id", null: false
+    t.integer "text_response_count"
+    t.integer "total_responses", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "voice_response_count"
+    t.index ["response_summary_id"], name: "index_response_question_summaries_on_response_summary_id"
+  end
+
   create_table "response_rounds", force: :cascade do |t|
     t.bigint "consultation_id"
     t.datetime "created_at", null: false
     t.integer "round_number"
     t.datetime "updated_at", null: false
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
+  end
+
+  create_table "response_summaries", force: :cascade do |t|
+    t.bigint "consultation_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "total_responses", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -593,6 +658,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
+  create_table "showcase_slides", force: :cascade do |t|
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "cta_label"
+    t.string "cta_url"
+    t.integer "position"
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.string "video_url"
+    t.index ["created_by_id"], name: "index_showcase_slides_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_showcase_slides_on_updated_by_id"
   end
 
   create_table "team_members", force: :cascade do |t|
@@ -703,6 +785,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   end
 
   create_table "versions", force: :cascade do |t|
+    t.string "action_name"
+    t.string "action_type"
     t.datetime "created_at"
     t.string "event", null: false
     t.bigint "item_id", null: false
@@ -710,6 +794,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
     t.text "object"
     t.text "object_changes"
     t.string "whodunnit"
+    t.index ["action_name"], name: "index_versions_on_action_name"
+    t.index ["action_type"], name: "index_versions_on_action_type"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
@@ -726,6 +812,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "case_studies", "themes"
+  add_foreign_key "clause_feedbacks", "clauses"
+  add_foreign_key "clause_feedbacks", "consultation_responses"
   add_foreign_key "clauses", "constants", column: "clause_type_id"
   add_foreign_key "clauses", "consultations"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
@@ -762,7 +850,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_05_051830) do
   add_foreign_key "respondents", "organisations"
   add_foreign_key "respondents", "response_rounds"
   add_foreign_key "respondents", "users"
+  add_foreign_key "response_option_breakdowns", "response_question_summaries"
+  add_foreign_key "response_question_summaries", "response_summaries"
   add_foreign_key "response_rounds", "consultations"
+  add_foreign_key "response_summaries", "consultations"
+  add_foreign_key "showcase_slides", "users", column: "created_by_id"
+  add_foreign_key "showcase_slides", "users", column: "updated_by_id"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end
