@@ -4,7 +4,6 @@ Fabricator(:showcase_slide) do
   cta_url { Faker::Internet.url }
   video_url { nil }
   cta_label { 'Learn More' }
-  banner_type { 'image' }
   status { :published }
   position { rand(1..100) }
   published_at { Time.now }

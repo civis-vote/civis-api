@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
+RSpec.describe Queries::Consultation::ShowcaseSlides, type: :graphql do
   let(:query) do
     <<~GQL
-      query GetHomePageShowcaseSlides($status: ShowcaseSlideStatuses, $limit: Int) {
-        homePageShowcaseSlides(status: $status, limit: $limit) {
+      query GetShowcaseSlides($limit: Int) {
+        showcaseSlides(limit: $limit) {
           id
           title
           description
@@ -27,13 +27,13 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
     CivisApiSchema.execute(query, variables: variables, context: context)
   end
 
-  let(:slides) { result.dig('data', 'homePageShowcaseSlides') }
+  let(:slides) { result.dig('data', 'showcaseSlides') }
 
   def create_slide(status: :published, position: rand(1..100), cta_url: Faker::Internet.url, cta_label: 'Learn More', video_url: nil)
     Fabricate(:showcase_slide, status: status, position: position, cta_url: cta_url, cta_label: cta_label, video_url: video_url)
   end
 
-  describe 'homePageShowcaseSlides query' do
+  describe 'showcaseSlides query' do
     it 'returns only published slides by default' do
       published = create_slide(status: :published)
       draft = create_slide(status: :draft)
@@ -99,19 +99,6 @@ RSpec.describe Queries::Consultation::HomePageShowcaseSlides, type: :graphql do
 
       slide = slides.find { |s| s['id'] == slide_record.id }
       expect(slide['videoUrl']).to be_nil
-    end
-
-    context 'when a status argument is provided' do
-      let(:variables) { { status: 'draft' } }
-
-      it 'returns slides matching the requested status' do
-        draft = create_slide(status: :draft)
-        published = create_slide(status: :published)
-
-        ids = slides.map { |s| s['id'] }
-        expect(ids).to include(draft.id)
-        expect(ids).not_to include(published.id)
-      end
     end
 
     context 'when a limit argument is provided' do

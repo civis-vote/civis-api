@@ -85,18 +85,8 @@ module CmAdmin
           cm_section 'Details' do
             form_field :title
             form_field :description, input_type: :rich_text
-            form_field :banner_type, input_type: :single_select,
-                                     label: 'Banner Type',
-                                     collection: [%w[Image image], %w[Video video]],
-                                     helper_text: 'Choose Image to upload an image for the banner.',
-                                     html_attrs: { 'data-action': 'change->fields#show',
-                                                   'data-cm-visible-id': 'image video_url',
-                                                   'data-cm-toggle-values': '{"image":"image","video":"video_url"}' }
-            form_field :image, input_type: :single_file_upload, is_required: true,
-                               html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-id': 'image' }
-            form_field :video_url, label: 'Video URL', is_required: true,
-                                   helper_text: 'Provide a Youtube video URL for video banners.',
-                                   html_attrs: { 'data-fields-target': 'cmVisible' }
+            form_field :image, input_type: :single_file_upload
+            form_field :video_url, label: 'Video URL', helper_text: 'Provide a Youtube video URL for video banners.'
             form_field :cta_label
             form_field :cta_url, label: 'CTA URL'
             form_field :position, input_type: :integer, label: 'Position',
@@ -108,18 +98,8 @@ module CmAdmin
           cm_section 'Details' do
             form_field :title
             form_field :description, input_type: :rich_text
-            form_field :banner_type, input_type: :single_select,
-                                     label: 'Banner Type',
-                                     collection: [%w[Image image], %w[Video video]],
-                                     helper_text: 'Choose Image to upload an image for the banner.',
-                                     html_attrs: { 'data-action': 'change->fields#show',
-                                                   'data-cm-visible-id': 'image video_url',
-                                                   'data-cm-toggle-values': '{"image":"image","video_url":"video"}' }
-            form_field :image, input_type: :single_file_upload, is_required: true,
-                               html_attrs: { 'data-fields-target': 'cmVisible' }
-            form_field :video_url, label: 'Video URL', is_required: true,
-                                   helper_text: 'Provide a Youtube video URL for video banners.',
-                                   html_attrs: { 'data-fields-target': 'cmVisible' }
+            form_field :image, input_type: :single_file_upload
+            form_field :video_url, label: 'Video URL', helper_text: 'Provide a Youtube video URL for video banners.'
             form_field :cta_label
             form_field :cta_url, label: 'CTA URL'
             form_field :position, input_type: :integer, label: 'Position',

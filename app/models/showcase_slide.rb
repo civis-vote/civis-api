@@ -7,28 +7,10 @@ class ShowcaseSlide < ApplicationRecord
 
   enum :status, %i[draft published archived]
 
-  attr_writer :banner_type
-
   has_rich_text :description
   has_one_attached :image
 
-  validates_presence_of :title, :description, :banner_type, :cta_label, :cta_url, :position
-
-  def banner_type
-    return @banner_type if @banner_type.present?
-
-    if image.attached?
-      'image'
-    else
-      (video_url.present? ? 'video' : nil)
-    end
-  end
-
-  scope :status_filter, lambda { |status|
-    return all unless status.present?
-
-    where(status: status)
-  }
+  validates_presence_of :title, :description, :cta_label, :cta_url, :position
 
   scope :ordered_by_position, -> { order(position: :asc) }
 
