@@ -46,7 +46,7 @@ module CmAdmin
 
           custom_action name: 'archive', route_type: 'member', verb: 'patch', path: ':id/archive',
                         icon_name: 'fa-solid fa-box-archive', display_type: :button,
-                        display_if: ->(slide) { slide.published? } do
+                        display_if: lambda(&:published?) do
             slide = ::ShowcaseSlide.find(params[:id])
             slide.archive
             slide
@@ -56,6 +56,7 @@ module CmAdmin
             cm_section 'Slide details' do
               field :title
               field :description
+              field :banner_type, label: 'Banner Type'
               field :image, field_type: :image
               field :url, label: 'CTA URL'
               field :video_url, label: 'Video URL'
@@ -78,9 +79,18 @@ module CmAdmin
           cm_section 'Details' do
             form_field :title, input_type: :string
             form_field :description, input_type: :rich_text
-            form_field :image, input_type: :single_file_upload
+            form_field :banner_type, input_type: :single_select,
+                                     label: 'Banner Type',
+                                     collection: [%w[Image image], %w[Video video]],
+                                     helper_text: 'Choose Image to upload an image, or Video to provide a video URL.',
+                                     html_attrs: { 'data-action': 'change->fields#show',
+                                                   'data-cm-visible-id': 'image video_url',
+                                                   'data-cm-toggle-values': '{"image":"image","video":"video"}' }
+            form_field :image, input_type: :single_file_upload,
+                               html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-id': 'image' }
             form_field :url, input_type: :string, label: 'CTA URL'
-            form_field :video_url, input_type: :string, label: 'Video URL'
+            form_field :video_url, input_type: :string, label: 'Video URL',
+                                   html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-id': 'video' }
             form_field :cta_label, input_type: :string, label: 'CTA Label'
             form_field :position, input_type: :integer, label: 'Display Order',
                                   helper_text: 'Controls the display order on the Home Page (ascending).'
@@ -91,9 +101,18 @@ module CmAdmin
           cm_section 'Details' do
             form_field :title, input_type: :string
             form_field :description, input_type: :rich_text
-            form_field :image, input_type: :single_file_upload
+            form_field :banner_type, input_type: :single_select,
+                                     label: 'Banner Type',
+                                     collection: [%w[Image image], %w[Video video]],
+                                     helper_text: 'Choose Image to upload an image, or Video to provide a video URL.',
+                                     html_attrs: { 'data-action': 'change->fields#show',
+                                                   'data-cm-visible-id': 'image video_url',
+                                                   'data-cm-toggle-values': '{"image":"image","video":"video"}' }
+            form_field :image, input_type: :single_file_upload,
+                               html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-id': 'image' }
             form_field :url, input_type: :string, label: 'CTA URL'
-            form_field :video_url, input_type: :string, label: 'Video URL'
+            form_field :video_url, input_type: :string, label: 'Video URL',
+                                   html_attrs: { 'data-fields-target': 'cmVisible', 'data-cm-id': 'video' }
             form_field :cta_label, input_type: :string, label: 'CTA Label'
             form_field :position, input_type: :integer, label: 'Display Order',
                                   helper_text: 'Controls the display order on the Home Page (ascending).'
