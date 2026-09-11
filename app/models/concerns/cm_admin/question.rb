@@ -5,17 +5,17 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'far fa-newspaper'
+        icon_name 'far fa-newspaper'
         visible_on_sidebar false
-        permit_additional_fields [{ sub_questions_attributes: %i[id question_text question_text_hindi question_text_odia 
+        additional_permitted_fields [{ sub_questions_attributes: %i[id question_text question_text_hindi question_text_odia 
                                                                  question_text_marathi question_text_kannada position conditional_question_id _destroy] }]
 
         cm_index do
           page_title 'Questions'
 
-          sortable_columns [{ column: 'position', display_name: 'Position', default: true, default_direction: 'asc' },
-                            { column: 'created_at', display_name: 'Created At' },
-                            { column: 'updated_at', display_name: 'Updated At' }]
+          sort column: 'position', display_name: 'Position', default: true, default_direction: 'asc'
+          sort column: 'created_at', display_name: 'Created At'
+          sort column: 'updated_at', display_name: 'Updated At'
 
           filter %i[question_text], :search, placeholder: 'Search'
           filter :is_optional, :single_select, helper_method: :select_options_for_boolean

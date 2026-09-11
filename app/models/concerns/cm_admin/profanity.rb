@@ -5,7 +5,7 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'far fa-newspaper'
+        icon_name 'far fa-newspaper'
         cm_index do
           page_title 'Profanities'
 
