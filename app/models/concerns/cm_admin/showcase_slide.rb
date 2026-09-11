@@ -34,7 +34,12 @@ module CmAdmin
 
         cm_show page_title: :title do
           custom_action name: 'publish', route_type: 'member', verb: 'patch', path: ':id/publish',
-                        icon_name: 'fa-solid fa-check', display_type: :button,
+                        icon_name: 'fa-solid fa-check', display_type: :modal,
+                        modal_configuration: {
+                          title: 'Publish Showcase Slide',
+                          description: 'Are you sure you want to publish this showcase slide?',
+                          confirmation_text: 'Publish'
+                        },
                         display_if: ->(slide) { slide.draft? || slide.archived? } do
             slide = ::ShowcaseSlide.find(params[:id])
             slide.publish
@@ -42,7 +47,12 @@ module CmAdmin
           end
 
           custom_action name: 'archive', route_type: 'member', verb: 'patch', path: ':id/archive',
-                        icon_name: 'fa-solid fa-box-archive', display_type: :button,
+                        icon_name: 'fa-solid fa-box-archive', display_type: :modal,
+                        modal_configuration: {
+                          title: 'Archive Showcase Slide',
+                          description: 'Are you sure you want to archive this showcase slide?',
+                          confirmation_text: 'Archive'
+                        },
                         display_if: lambda(&:published?) do
             slide = ::ShowcaseSlide.find(params[:id])
             slide.archive
