@@ -385,7 +385,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.integer "consultation_responses_count", default: 0
     t.datetime "created_at", null: false
     t.integer "created_by_id"
-    t.string "cta_label"
     t.datetime "deleted_at", precision: nil
     t.bigint "department_id", null: false
     t.datetime "feedback_email_clicked_at"

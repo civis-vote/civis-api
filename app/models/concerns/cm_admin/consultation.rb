@@ -102,7 +102,6 @@ module CmAdmin
           column :created_by_full_name, header: 'Created By'
           column :responses_count
           column :url, header: 'Consultation PDF'
-          column :cta_label, header: 'CTA Label'
           column :english_summary_text, header: 'English Summary', viewable: false
           column :hindi_summary_text, header: 'Hindi Summary', viewable: false
           column :odia_summary_text, header: 'Odia Summary', viewable: false
@@ -192,7 +191,6 @@ module CmAdmin
               field :officer_name, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :url, label: 'URL of Consultation PDF'
-              field :cta_label, label: 'CTA Label'
               field :department_name, label: 'Department'
               field :organisation_name, label: 'Organisation', display_if: ->(record) { record.organisation_id.present? }
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -288,8 +286,6 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
-            form_field :cta_label, input_type: :string, label: 'CTA Label',
-                                   helper_text: 'Custom label for the Home Page showcase CTA button.'
             alert_box header: 'Time Zone Notice', type: :warning,
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
@@ -333,8 +329,6 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
-            form_field :cta_label, input_type: :string, label: 'CTA Label',
-                                   helper_text: 'Custom label for the Home Page showcase CTA button.'
             alert_box header: 'Time Zone Notice', type: :warning,
                       body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
             form_field :response_deadline, input_type: :date_time
