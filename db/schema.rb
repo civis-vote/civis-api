@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_11_183159) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_14_120005) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -779,7 +779,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_183159) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.boolean "active", default: true
     t.integer "best_rank"
     t.integer "best_rank_type"
     t.string "callback_url"
@@ -828,6 +827,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_183159) do
     t.integer "sign_in_count", default: 0, null: false
     t.string "sign_up_ip"
     t.integer "state_rank"
+    t.integer "status", default: 0, null: false
     t.string "uid"
     t.string "unconfirmed_email"
     t.string "unlock_token"

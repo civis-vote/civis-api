@@ -34,6 +34,26 @@ module CmAdmin
         end
 
         cm_show page_title: :full_name do
+          custom_action name: 'disable_user', route_type: 'member', verb: 'patch', icon_name: 'fa-solid fa-ban',
+                        display_if: lambda(&:active?),
+                        modal_configuration: { title: 'Disable User', confirmation_text: 'Confirm',
+                                               description: 'Are you sure you want to disable this user?' },
+                        path: ':id/disable_user', display_type: :modal do
+            @user = ::User.find(params[:id])
+            @user.disabled!
+            @user
+          end
+
+          custom_action name: 'activate_user', route_type: 'member', verb: 'patch', icon_name: 'fa-regular fa-circle-check',
+                        display_if: lambda(&:disabled?),
+                        modal_configuration: { title: 'Activate User', confirmation_text: 'Confirm',
+                                               description: 'Are you sure you want to activate this user?' },
+                        path: ':id/activate_user', display_type: :modal do
+            @user = ::User.find(params[:id])
+            @user.active!
+            @user
+          end
+
           bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
                       success_message: ->(success) { "Successfully Deleted #{success.size} users." },
                       error_message: lambda { |errors|
