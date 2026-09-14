@@ -809,6 +809,7 @@ DEPENDENCIES
   ruby-progressbar
   ruby_llm
   ruby_llm-schema
+  ruby-vips (>= 2.2.1)
   scout_apm
   selenium-webdriver
   sidekiq
