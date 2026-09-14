@@ -5,8 +5,8 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-tags'
-        permit_additional_fields [segment_ids: []]
+        icon_name 'fas fa-tags'
+        additional_permitted_fields [segment_ids: []]
 
         cm_index do
           page_title 'Themes'

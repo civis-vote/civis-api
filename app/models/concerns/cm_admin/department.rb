@@ -7,13 +7,11 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-suitcase'
-        permit_additional_fields [segment_ids: []]
-        sortable_columns [
-          { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
-          { column: 'updated_at', display_name: 'Updated At' },
-          { column: 'consultations_consultation_responses_count', display_name: 'Response Count' }
-        ]
+        icon_name 'fas fa-suitcase'
+        additional_permitted_fields [segment_ids: []]
+        sort column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc'
+        sort column: 'updated_at', display_name: 'Updated At'
+        sort column: 'consultations_consultation_responses_count', display_name: 'Response Count'
 
         cm_index do
           page_title 'Departments'
@@ -41,7 +39,7 @@ module CmAdmin
 
           column :name
           column :created_by_full_name, header: 'Created By'
-          column :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+          column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
           column :location_name, header: 'Location'
         end
 
@@ -87,7 +85,7 @@ module CmAdmin
               field :name_marathi, label: 'Name in Marathi'
               field :name_kannada, label: 'Name in Kannada'
               field :level, field_type: :enum
-              field :status, field_type: :tag, tag_class: STATUS_TAG_COLORS
+              field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
               field :location_name, label: 'Location'
               field :segment_names, label: 'Segments'
               field :created_by_full_name, label: 'Created By'
@@ -105,7 +103,7 @@ module CmAdmin
           end
           tab :consultations, 'consultations', associated_model: :consultations, layout_type: 'cm_association_index' do
             column :title
-            column :status, field_type: :tag, tag_class: CmAdmin::Consultation::STATUS_TAG_COLORS
+            column :status, field_type: :badge, badge_class: CmAdmin::Consultation::STATUS_TAG_COLORS
             column :response_deadline, field_type: :date, format: '%d %b, %Y'
             column :created_by_full_name, header: 'Created By'
           end
