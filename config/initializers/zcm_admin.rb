@@ -22,6 +22,9 @@ Rails.application.reloader.to_prepare do
         path: :cm_index_consultation_path
       },
       {
+        path: :cm_index_showcase_slide_path
+      },
+      {
         path: :cm_index_organisation_path
       },
       {
