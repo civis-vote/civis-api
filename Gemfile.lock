@@ -793,6 +793,7 @@ DEPENDENCIES
   rubocop-rails
   ruby-openai
   ruby-progressbar
+  ruby-vips (>= 2.2.1)
   scout_apm
   selenium-webdriver
   sidekiq
