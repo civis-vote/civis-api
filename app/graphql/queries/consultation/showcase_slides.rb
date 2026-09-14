@@ -8,7 +8,7 @@ module Queries
       type [Types::Objects::ShowcaseSlide], null: false
 
       def resolve(limit:)
-        ::ShowcaseSlide.where(status: :published)
+        ::ShowcaseSlide.published.ordered_by_position.limit(limit)
                        .ordered_by_position
                        .limit(limit)
       end
