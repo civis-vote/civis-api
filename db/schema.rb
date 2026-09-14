@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_11_183159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -62,6 +62,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
     t.index ["user_id"], name: "index_api_keys_on_user_id"
+  end
+
+  create_table "api_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.integer "status", default: 0
+    t.string "token"
+    t.integer "token_type", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
   create_table "case_studies", force: :cascade do |t|
@@ -132,6 +143,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.string "name", null: false
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "cm_email_logs", force: :cascade do |t|
+    t.jsonb "attachment_metadata"
+    t.text "bcc"
+    t.text "cc"
+    t.datetime "created_at", null: false
+    t.jsonb "delivery_method_options"
+    t.string "error_code"
+    t.datetime "failed_at"
+    t.text "failure_reason"
+    t.string "from_email"
+    t.string "from_name"
+    t.string "in_reply_to"
+    t.string "message_id"
+    t.string "module_name"
+    t.string "partial_file_path"
+    t.text "raw_error_response"
+    t.bigint "record_id"
+    t.string "record_type"
+    t.string "record_url"
+    t.string "references"
+    t.string "reply_to"
+    t.datetime "sent_at"
+    t.integer "status", default: 0, null: false
+    t.string "subject"
+    t.string "template_name"
+    t.text "to"
+    t.bigint "triggered_by_id"
+    t.string "triggered_by_type"
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_cm_email_logs_on_created_at"
+    t.index ["message_id"], name: "index_cm_email_logs_on_message_id"
+    t.index ["module_name"], name: "index_cm_email_logs_on_module_name"
+    t.index ["record_type", "record_id"], name: "index_cm_email_logs_on_record"
+    t.index ["status"], name: "index_cm_email_logs_on_status"
+    t.index ["triggered_by_id"], name: "index_cm_email_logs_on_triggered_by_id"
   end
 
   create_table "cm_geo_ip_locations", force: :cascade do |t|
@@ -229,6 +277,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.index ["created_by_type", "created_by_id"], name: "index_cm_platform_settings_on_created_by"
     t.index ["slug"], name: "index_cm_platform_settings_on_slug"
     t.index ["updated_by_type", "updated_by_id"], name: "index_cm_platform_settings_on_updated_by"
+  end
+
+  create_table "cm_prompts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "name", null: false
+    t.citext "slug", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.index ["created_by_id"], name: "index_cm_prompts_on_created_by_id"
+    t.index ["name"], name: "index_cm_prompts_on_name", unique: true
+    t.index ["slug"], name: "index_cm_prompts_on_slug", unique: true
+    t.index ["updated_by_id"], name: "index_cm_prompts_on_updated_by_id"
   end
 
   create_table "cm_roles", force: :cascade do |t|
@@ -664,14 +725,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.datetime "archived_at"
     t.datetime "created_at", null: false
     t.bigint "created_by_id"
-    t.string "cta_label", null: false
+    t.string "cta_label"
+    t.string "cta_url"
     t.integer "position"
     t.datetime "published_at"
     t.integer "status", default: 0, null: false
     t.string "title", null: false
     t.datetime "updated_at", null: false
     t.bigint "updated_by_id"
-    t.string "cta_url", null: false
     t.string "video_url"
     t.index ["created_by_id"], name: "index_showcase_slides_on_created_by_id"
     t.index ["updated_by_id"], name: "index_showcase_slides_on_updated_by_id"
@@ -785,6 +846,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
   end
 
   create_table "versions", force: :cascade do |t|
+    t.string "action_name"
+    t.string "action_type"
     t.datetime "created_at"
     t.string "event", null: false
     t.bigint "item_id", null: false
@@ -792,6 +855,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
     t.text "object"
     t.text "object_changes"
     t.string "whodunnit"
+    t.index ["action_name"], name: "index_versions_on_action_name"
+    t.index ["action_type"], name: "index_versions_on_action_type"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
@@ -807,16 +872,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_11_044844) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "api_tokens", "users"
   add_foreign_key "case_studies", "themes"
   add_foreign_key "clause_feedbacks", "clauses"
   add_foreign_key "clause_feedbacks", "consultation_responses"
   add_foreign_key "clauses", "constants", column: "clause_type_id"
   add_foreign_key "clauses", "consultations"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
+  add_foreign_key "cm_email_logs", "users", column: "triggered_by_id"
   add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"
+  add_foreign_key "cm_prompts", "users", column: "created_by_id"
+  add_foreign_key "cm_prompts", "users", column: "updated_by_id"
   add_foreign_key "cm_support_ticket_employees", "cm_support_tickets"
   add_foreign_key "cm_support_tickets", "users", column: "created_by_id"
   add_foreign_key "cm_support_tickets", "users", column: "updated_by_id"

@@ -21,6 +21,7 @@ class User < ApplicationRecord
   belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
   has_many :otp_requests, dependent: :destroy
   has_many :api_keys, dependent: :destroy
+  has_many :api_tokens, dependent: :destroy
   has_many :game_actions, dependent: :destroy
   has_many :point_events, dependent: :destroy
   has_many :responses, class_name: "ConsultationResponse"
