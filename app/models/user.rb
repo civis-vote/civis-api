@@ -47,6 +47,10 @@ class User < ApplicationRecord
     moderator: 2,
     organisation_employee: 3
   }
+  enum :status, {
+    active: 0,
+    disabled: 1
+  }
   enum :best_rank_type, {
     national: 0,
     state: 1,
@@ -112,8 +116,6 @@ class User < ApplicationRecord
     cm_role_ids = ::CmRole.where(name: role_names).pluck(:id)
     where(cm_role_id: cm_role_ids)
   }
-
-  scope :active, -> { where(active: true) }
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
@@ -256,7 +258,7 @@ class User < ApplicationRecord
     emails.each do |email|
       user = ::User.invite!(
         { email: email, organisation_id: params[:organisation_id], skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now,
-          role: "organisation_employee", active: params[:active] }, current_user
+          role: "organisation_employee", status: params[:active] == false ? :disabled : :active }, current_user
       )
       raw_token = user.raw_invitation_token
       user_record = ::User.find_by(email: email.strip)
@@ -282,7 +284,7 @@ class User < ApplicationRecord
   end
 
   def deactivate(organisation_id)
-    self.active = false
+    self.status = :disabled
     save(validate: false)
     Organisation.decrement_counter(:users_count, organisation_id)
   end
