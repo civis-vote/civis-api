@@ -40,6 +40,7 @@ module Types
         end
         field :status, Types::Enums::ConsultationStatuses, nil, null: false
         field :question_flow, String, nil, null: true
+        field :response_summary, Types::Objects::ConsultationResponse::Summary, "Aggregated response summary (computed on expiry)", null: true
         field :summary, String, nil, null: true
         field :title, String, nil, null: false
         field :hindi_title, String, nil, null: true
