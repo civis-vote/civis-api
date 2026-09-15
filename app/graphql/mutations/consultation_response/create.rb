@@ -35,6 +35,10 @@ module Mutations
           created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
           create_clause_feedbacks(created_consultation_response, consultation_response.clause_feedbacks)
         end
+
+        created_consultation_response.voice_responses.each do |entry|
+          TranscribeVoiceMessageJob.perform_later(created_consultation_response.id, entry['attachment_id'])
+        end
         created_consultation_response
       end
 

@@ -9,7 +9,11 @@ class VoiceMessageTranscriptionProcessor
 
   def call
     return failure('ConsultationResponse not found') unless consultation_response
-    return failure('Voice message attachment not found') unless attachment
+
+    if attachment.nil?
+      mark_transcription_failed(['Voice message attachment not found'])
+      return failure('Voice message attachment not found')
+    end
 
     context = build_context
     result = VoiceMessageTranscriptionService.new(attachment, context).call
