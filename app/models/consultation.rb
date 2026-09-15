@@ -166,7 +166,7 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
-    ConsultationSummaryJob.perform_later(id)
+    ConsultationSummaryJob.perform_later(self)
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?
