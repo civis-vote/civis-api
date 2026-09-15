@@ -14,8 +14,10 @@ class VoiceMessageTranscriptionProcessor
     context = build_context
     result = VoiceMessageTranscriptionService.new(attachment, context).call
 
-    if result[:success]
+    if result[:success] && result[:is_proper_transcription]
       update_voice_response_transcription(result)
+    elsif result[:success] && !result[:is_proper_transcription]
+      mark_transcription_failed(['Transcription is not proper — audio may be inaudible or unintelligible'])
     else
       mark_transcription_failed(result[:errors])
     end
@@ -110,6 +112,7 @@ class VoiceMessageTranscriptionProcessor
 
   def failure(message)
     @errors << message
-    { success: false, transcription: nil, detected_language: nil, confidence: nil, errors: @errors }
+    { success: false, transcription: nil, detected_language: nil, confidence: nil,
+      is_proper_transcription: false, errors: @errors }
   end
 end

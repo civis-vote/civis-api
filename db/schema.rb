@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -64,6 +64,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.index ["user_id"], name: "index_api_keys_on_user_id"
   end
 
+  create_table "api_tokens", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "expires_at"
+    t.integer "status", default: 0
+    t.string "token"
+    t.integer "token_type", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_api_tokens_on_user_id"
+  end
+
   create_table "case_studies", force: :cascade do |t|
     t.integer "case_study_type"
     t.datetime "created_at", null: false
@@ -81,8 +92,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.bigint "clause_id", null: false
     t.bigint "consultation_response_id", null: false
     t.datetime "created_at", null: false
-    t.text "feedback_comment"
-    t.text "feedback_reason"
     t.datetime "updated_at", null: false
     t.index ["clause_id"], name: "index_clause_feedbacks_on_clause_id"
     t.index ["consultation_response_id"], name: "index_clause_feedbacks_on_consultation_response_id"
@@ -136,6 +145,43 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "cm_email_logs", force: :cascade do |t|
+    t.jsonb "attachment_metadata"
+    t.text "bcc"
+    t.text "cc"
+    t.datetime "created_at", null: false
+    t.jsonb "delivery_method_options"
+    t.string "error_code"
+    t.datetime "failed_at"
+    t.text "failure_reason"
+    t.string "from_email"
+    t.string "from_name"
+    t.string "in_reply_to"
+    t.string "message_id"
+    t.string "module_name"
+    t.string "partial_file_path"
+    t.text "raw_error_response"
+    t.bigint "record_id"
+    t.string "record_type"
+    t.string "record_url"
+    t.string "references"
+    t.string "reply_to"
+    t.datetime "sent_at"
+    t.integer "status", default: 0, null: false
+    t.string "subject"
+    t.string "template_name"
+    t.text "to"
+    t.bigint "triggered_by_id"
+    t.string "triggered_by_type"
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_cm_email_logs_on_created_at"
+    t.index ["message_id"], name: "index_cm_email_logs_on_message_id"
+    t.index ["module_name"], name: "index_cm_email_logs_on_module_name"
+    t.index ["record_type", "record_id"], name: "index_cm_email_logs_on_record"
+    t.index ["status"], name: "index_cm_email_logs_on_status"
+    t.index ["triggered_by_id"], name: "index_cm_email_logs_on_triggered_by_id"
+  end
+
   create_table "cm_geo_ip_locations", force: :cascade do |t|
     t.string "continent_code"
     t.string "continent_name"
@@ -171,6 +217,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.index ["ar_model_name"], name: "index_cm_index_preferences_on_ar_model_name"
     t.index ["associated_ar_model_name"], name: "index_cm_index_preferences_on_associated_ar_model_name"
     t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
+  end
+
+  create_table "cm_notifiables", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "notifiable_id", null: false
+    t.string "notifiable_type", null: false
+    t.integer "notification_type", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.string "value", null: false
+    t.index ["notifiable_type", "notifiable_id"], name: "index_cm_notifiables_on_notifiable"
+    t.index ["notification_type"], name: "index_cm_notifiables_on_notification_type"
   end
 
   create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
@@ -220,6 +277,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.index ["created_by_type", "created_by_id"], name: "index_cm_platform_settings_on_created_by"
     t.index ["slug"], name: "index_cm_platform_settings_on_slug"
     t.index ["updated_by_type", "updated_by_id"], name: "index_cm_platform_settings_on_updated_by"
+  end
+
+  create_table "cm_prompts", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "name", null: false
+    t.citext "slug", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.index ["created_by_id"], name: "index_cm_prompts_on_created_by_id"
+    t.index ["name"], name: "index_cm_prompts_on_name", unique: true
+    t.index ["slug"], name: "index_cm_prompts_on_slug", unique: true
+    t.index ["updated_by_id"], name: "index_cm_prompts_on_updated_by_id"
   end
 
   create_table "cm_roles", force: :cascade do |t|
@@ -391,8 +461,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.datetime "published_at", precision: nil
     t.integer "question_flow", default: 0
     t.integer "reading_time", default: 0
-    t.datetime "response_deadline", precision: nil
-    t.jsonb "response_summary", default: {}
+    t.datetime "response_deadline"
     t.uuid "response_token"
     t.integer "review_type", default: 0
     t.boolean "show_discuss_section", default: true, null: false
@@ -460,6 +529,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
   end
 
   create_table "file_imports", force: :cascade do |t|
+    t.string "action_name"
     t.bigint "added_by_id", null: false
     t.string "added_by_type", null: false
     t.bigint "associated_model_id"
@@ -467,6 +537,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.jsonb "error_report", default: {}
+    t.integer "import_type"
+    t.string "importer_class_name"
     t.integer "status", default: 0
     t.datetime "updated_at", null: false
     t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
@@ -550,6 +622,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.integer "upper_limit"
   end
 
+  create_table "positions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "name"
+    t.datetime "updated_at", null: false
+  end
+
   create_table "profanities", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.integer "created_by_id"
@@ -594,12 +672,47 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.index ["user_id"], name: "index_respondents_on_user_id"
   end
 
+  create_table "response_option_breakdowns", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "option_id", null: false
+    t.string "option_text", null: false
+    t.float "percentage", default: 0.0, null: false
+    t.bigint "response_question_summary_id", null: false
+    t.integer "selection_count", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["response_question_summary_id"], name: "idx_on_response_question_summary_id_f5a4ef0ddb"
+  end
+
+  create_table "response_question_summaries", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.boolean "is_optional", default: false, null: false
+    t.integer "other_option_count"
+    t.integer "position"
+    t.integer "question_id", null: false
+    t.string "question_text", null: false
+    t.string "question_type", null: false
+    t.bigint "response_summary_id", null: false
+    t.integer "text_response_count"
+    t.integer "total_responses", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.integer "voice_response_count"
+    t.index ["response_summary_id"], name: "index_response_question_summaries_on_response_summary_id"
+  end
+
   create_table "response_rounds", force: :cascade do |t|
     t.bigint "consultation_id"
     t.datetime "created_at", null: false
     t.integer "round_number"
     t.datetime "updated_at", null: false
     t.index ["consultation_id"], name: "index_response_rounds_on_consultation_id"
+  end
+
+  create_table "response_summaries", force: :cascade do |t|
+    t.bigint "consultation_id", null: false
+    t.datetime "created_at", null: false
+    t.integer "total_responses", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -609,6 +722,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.datetime "updated_at", null: false
     t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
     t.index ["updated_at"], name: "index_sessions_on_updated_at"
+  end
+
+  create_table "showcase_slides", force: :cascade do |t|
+    t.datetime "archived_at"
+    t.datetime "created_at", null: false
+    t.bigint "created_by_id"
+    t.string "cta_label"
+    t.string "cta_url"
+    t.integer "position"
+    t.datetime "published_at"
+    t.integer "status", default: 0, null: false
+    t.string "title", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "updated_by_id"
+    t.string "video_url"
+    t.index ["created_by_id"], name: "index_showcase_slides_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_showcase_slides_on_updated_by_id"
   end
 
   create_table "team_members", force: :cascade do |t|
@@ -652,7 +782,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.boolean "active", default: true
     t.integer "best_rank"
     t.integer "best_rank_type"
     t.string "callback_url"
@@ -701,6 +830,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.integer "sign_in_count", default: 0, null: false
     t.string "sign_up_ip"
     t.integer "state_rank"
+    t.integer "status", default: 0, null: false
     t.string "uid"
     t.string "unconfirmed_email"
     t.string "unlock_token"
@@ -719,6 +849,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
   end
 
   create_table "versions", force: :cascade do |t|
+    t.string "action_name"
+    t.string "action_type"
     t.datetime "created_at"
     t.string "event", null: false
     t.bigint "item_id", null: false
@@ -726,6 +858,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
     t.text "object"
     t.text "object_changes"
     t.string "whodunnit"
+    t.index ["action_name"], name: "index_versions_on_action_name"
+    t.index ["action_type"], name: "index_versions_on_action_type"
     t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
   end
 
@@ -741,16 +875,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
+  add_foreign_key "api_tokens", "users"
   add_foreign_key "case_studies", "themes"
   add_foreign_key "clause_feedbacks", "clauses"
   add_foreign_key "clause_feedbacks", "consultation_responses"
   add_foreign_key "clauses", "constants", column: "clause_type_id"
   add_foreign_key "clauses", "consultations"
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
+  add_foreign_key "cm_email_logs", "users", column: "triggered_by_id"
   add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"
+  add_foreign_key "cm_prompts", "users", column: "created_by_id"
+  add_foreign_key "cm_prompts", "users", column: "updated_by_id"
   add_foreign_key "cm_support_ticket_employees", "cm_support_tickets"
   add_foreign_key "cm_support_tickets", "users", column: "created_by_id"
   add_foreign_key "cm_support_tickets", "users", column: "updated_by_id"
@@ -780,7 +918,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_08_05_102000) do
   add_foreign_key "respondents", "organisations"
   add_foreign_key "respondents", "response_rounds"
   add_foreign_key "respondents", "users"
+  add_foreign_key "response_option_breakdowns", "response_question_summaries"
+  add_foreign_key "response_question_summaries", "response_summaries"
   add_foreign_key "response_rounds", "consultations"
+  add_foreign_key "response_summaries", "consultations"
+  add_foreign_key "showcase_slides", "users", column: "created_by_id"
+  add_foreign_key "showcase_slides", "users", column: "updated_by_id"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end

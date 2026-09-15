@@ -1,5 +1,5 @@
 class ConsultationSummaryService
-  SUMMARY_MODEL = 'openai/gpt-5.6-luna'.freeze
+  SUMMARY_MODEL = 'gpt-5.6-luna'.freeze
   PROMPT_FILE = Rails.root.join('config/prompts/consultation_ai_summary.prompt').freeze
 
   LANGUAGES = {
@@ -109,12 +109,27 @@ class ConsultationSummaryService
   end
 
   def generate_summary(prompt)
-    chat = RubyLLM.chat(
-      model: SUMMARY_MODEL,
-      provider: :openrouter,
-      assume_model_exists: true
+    client = OpenAI::Client.new(
+      access_token: Rails.application.credentials.openai[:api_key],
+      request_timeout: OpenAIService::REQUEST_TIMEOUT
     )
-    chat.ask(prompt)&.content
+
+    response = client.responses.create(
+      parameters: {
+        model: SUMMARY_MODEL,
+        input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }]
+      }
+    )
+
+    response['output']
+      .flat_map { |o| o['content'] || [] }
+      .map { |c| c['text'] }
+      .compact
+      .join("\n")
+      .strip
+  rescue StandardError => e
+    Rails.logger.error("ConsultationSummaryService: OpenAI request failed: #{e.message}")
+    nil
   end
 
   def success_result(summaries)
