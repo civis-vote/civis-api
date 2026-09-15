@@ -179,8 +179,9 @@ class OpenAIService
 
       1. Identify the language of the transcription (e.g., English, Hindi, Marathi, Odia, Kannada or a mix).
       2. Clean up the transcription if it contains errors, garbled text, or improper formatting — but preserve the speaker's exact meaning and wording. Do not translate.
-      3. If the transcription is entirely inaudible, unintelligible, or empty, set is_proper_transcription to false and return the raw text as-is.
-      4. Provide a confidence score (0.0 to 1.0) based on how clear and complete the transcription appears.
+      3. Remove obvious duplications introduced by the speech-to-text model (e.g., if the same phrase is repeated consecutively and appears to be a model artifact rather than the speaker actually repeating themselves, keep only one instance).
+      4. If the transcription is entirely inaudible, unintelligible, or empty, set is_proper_transcription to false and return the raw text as-is.
+      5. Provide a confidence score (0.0 to 1.0) based on how clear and complete the transcription appears.
 
       Original transcription context and instructions:
       #{original_prompt}
