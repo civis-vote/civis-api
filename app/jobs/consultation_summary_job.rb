@@ -1,8 +1,17 @@
 class ConsultationSummaryJob < ApplicationJob
   queue_as :default
 
-  def perform(consultation)
+  MAX_TRANSCRIPTION_RETRIES = 10
+  RETRY_DELAY = 1.minute
+
+  def perform(consultation, retry_count = 0)
     Rails.logger.info("ConsultationSummaryJob: Starting summarisation for Consultation #{consultation.id}")
+
+    if pending_voice_transcriptions?(consultation) && retry_count < MAX_TRANSCRIPTION_RETRIES
+      Rails.logger.info("ConsultationSummaryJob: Waiting for voice transcriptions for Consultation #{consultation.id} (attempt #{retry_count + 1})")
+      self.class.set(wait: RETRY_DELAY).perform_later(consultation, retry_count + 1)
+      return
+    end
 
     service = ConsultationSummaryService.new(consultation)
     result = service.call
@@ -19,5 +28,11 @@ class ConsultationSummaryJob < ApplicationJob
     Rails.logger.error(e.backtrace.join("\n"))
 
     { success: false, message: "Job failed: #{e.message}", errors: [e.message] }
+  end
+
+  private
+
+  def pending_voice_transcriptions?(consultation)
+    consultation.responses.acceptable.exists?(transcription_status: :pending)
   end
 end
