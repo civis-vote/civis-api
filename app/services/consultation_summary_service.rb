@@ -41,7 +41,7 @@ class ConsultationSummaryService
 
     return failure_result("AI summary generation returned empty content for all languages") if summaries.blank?
 
-    consultation.update!(response_summary: summaries)
+    consultation.save(validate: false)
     success_result(summaries)
   rescue StandardError => e
     Rails.logger.error("ConsultationSummaryService failed for Consultation #{consultation.id}: #{e.message}")
