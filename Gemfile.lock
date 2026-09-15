@@ -263,6 +263,7 @@ GEM
     dry_validation_parser (0.1.12)
       dry-types (~> 1)
       dry-validation (~> 1)
+    erb (6.0.7)
     erubi (1.13.1)
     et-orbi (1.4.2)
       tzinfo
@@ -278,8 +279,9 @@ GEM
       multipart-post (~> 2.0)
     faraday-net_http (3.4.1)
       net-http (>= 0.5.0)
+    faraday-retry (2.4.0)
+      faraday (~> 2.0)
     ffi (1.17.4-arm64-darwin)
-    ffi (1.17.4-x86_64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
@@ -440,8 +442,6 @@ GEM
     nio4r (2.7.5)
     nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
-    nokogiri (1.19.4-x86_64-darwin)
-      racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
     oauth2 (1.4.11)
@@ -556,6 +556,10 @@ GEM
     rb-inotify (0.11.1)
       ffi (~> 1.0)
     rb-readline (0.5.5)
+    rbs (4.2.0)
+      logger
+      prism (>= 1.6.0)
+      tsort
     rbtree3 (0.7.1)
     rdoc (8.0.0)
       erb
@@ -639,6 +643,17 @@ GEM
     ruby-vips (2.3.0)
       ffi (~> 1.12)
       logger
+    ruby_llm (1.16.0)
+      base64
+      event_stream_parser (~> 1)
+      faraday (>= 1.10.0)
+      faraday-multipart (>= 1)
+      faraday-net_http (>= 1)
+      faraday-retry (>= 1)
+      marcel (~> 1)
+      ruby_llm-schema (~> 0)
+      zeitwerk (~> 2)
+    ruby_llm-schema (0.4.0)
     rubyzip (2.4.1)
     scout_apm (5.6.4)
       parser
@@ -793,6 +808,8 @@ DEPENDENCIES
   ruby-openai
   ruby-progressbar
   ruby-vips (>= 2.2.1)
+  ruby_llm
+  ruby_llm-schema
   scout_apm
   selenium-webdriver
   sidekiq
