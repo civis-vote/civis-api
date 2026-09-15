@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_14_120005) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -529,6 +529,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_14_120005) do
   end
 
   create_table "file_imports", force: :cascade do |t|
+    t.string "action_name"
     t.bigint "added_by_id", null: false
     t.string "added_by_type", null: false
     t.bigint "associated_model_id"
@@ -536,6 +537,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_14_120005) do
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.jsonb "error_report", default: {}
+    t.integer "import_type"
+    t.string "importer_class_name"
     t.integer "status", default: 0
     t.datetime "updated_at", null: false
     t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"

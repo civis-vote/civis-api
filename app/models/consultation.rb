@@ -40,6 +40,12 @@ class Consultation < ApplicationRecord
   has_rich_text :kannada_summary
   has_rich_text :ai_summary
 
+  has_rich_text :english_response_summary
+  has_rich_text :hindi_response_summary
+  has_rich_text :marathi_response_summary
+  has_rich_text :odia_response_summary
+  has_rich_text :kannada_response_summary
+
   has_one_attached :consultation_logo
   has_one_attached :consultation_pdf
 
@@ -167,6 +173,7 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
+    ConsultationSummaryJob.perform_later(id)
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?

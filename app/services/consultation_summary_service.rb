@@ -1,8 +1,15 @@
-require 'tempfile'
-require 'ruby_llm'
-require 'redcarpet'
-
 class ConsultationSummaryService
+  SUMMARY_MODEL = 'gpt-5.6-luna'.freeze
+  PROMPT_FILE = Rails.root.join('config/prompts/consultation_ai_summary.prompt').freeze
+
+  LANGUAGES = {
+    'English' => :english_response_summary,
+    'Hindi' => :hindi_response_summary,
+    'Marathi' => :marathi_response_summary,
+    'Odia' => :odia_response_summary,
+    'Kannada' => :kannada_response_summary
+  }.freeze
+
   attr_reader :consultation, :errors
 
   def initialize(consultation)
@@ -12,124 +19,134 @@ class ConsultationSummaryService
 
   def call
     return failure_result("Consultation not found") unless consultation
-    return failure_result("Consultation PDF is required") unless consultation.consultation_pdf.attached?
+    return failure_result("Consultation has no acceptable responses") unless consultation.responses.acceptable.exists?
 
-    begin
-      # Extract PDF from Active Storage
-      pdf_path = extract_pdf_from_storage
-      return failure_result("Failed to extract PDF from storage") unless pdf_path
+    responses_data = collect_question_responses
+    return failure_result("No question responses found to summarize") if responses_data.blank?
 
-      # Get prompt from platform settings
-      prompt = get_summarisation_prompt
-      return failure_result("Summarisation prompt not configured") unless prompt
+    summaries = {}
 
-      # Summarise PDF using RubyLLM
-      summary_text = summarise_pdf(pdf_path, prompt)
-      return failure_result("No summary generated") if summary_text.blank?
+    LANGUAGES.each do |language, attribute|
+      Rails.logger.info("ConsultationSummaryService: Generating #{language} summary for Consultation #{consultation.id}")
+      prompt = build_prompt(responses_data, language)
+      result = generate_summary(prompt)
 
-      # Update consultation with summary
-      update_consultation_summary(summary_text)
-
-      success_result(summary_text)
-    rescue StandardError => e
-      Rails.logger.error("Consultation summarisation failed for Consultation #{consultation.id}: #{e.message}")
-      Rails.logger.error(e.backtrace.join("\n"))
-      failure_result("Summarisation failed: #{e.message}")
-    ensure
-      cleanup_temp_files
+      if result.present?
+        consultation.send("#{attribute}=", result)
+        summaries[language] = result
+      else
+        Rails.logger.warn("ConsultationSummaryService: Empty summary for #{language} on Consultation #{consultation.id}")
+      end
     end
+
+    return failure_result("AI summary generation returned empty content for all languages") if summaries.blank?
+
+    consultation.save(validate: false)
+    success_result(summaries)
+  rescue StandardError => e
+    Rails.logger.error("ConsultationSummaryService failed for Consultation #{consultation.id}: #{e.message}")
+    Rails.logger.error(e.backtrace.join("\n"))
+    failure_result("Summary generation failed: #{e.message}")
   end
 
   private
 
-  def extract_pdf_from_storage
-    @temp_files ||= []
+  def collect_question_responses
+    responses = consultation.responses.acceptable.includes(:response_round, :user)
+    formatted = []
 
-    begin
-      return nil unless consultation.consultation_pdf.attached?
+    responses.each_with_index do |response, index|
+      response_entry = build_response_entry(response, index + 1)
+      formatted << response_entry if response_entry.present?
+    end
 
-      pdf_blob = consultation.consultation_pdf.blob
-      temp_file = Tempfile.new(['consultation_pdf', '.pdf'])
-      temp_file.binmode
-      @temp_files << temp_file
+    formatted
+  end
 
-      temp_file.write(pdf_blob.download)
-      temp_file.close
-      temp_file.path
-    rescue StandardError => e
-      Rails.logger.error("Failed to extract PDF from Active Storage for Consultation #{consultation.id}: #{e.message}")
-      nil
+  def build_response_entry(response, index)
+    if response.response_round&.questions&.present?
+      build_question_answer_entry(response, index)
+    elsif response.response_text.present?
+      build_generic_response_entry(response, index)
     end
   end
 
-  def get_summarisation_prompt
-    CmPlatformSetting.find_by(slug: 'agent-draft-summariser-prompt')&.value
+  def build_question_answer_entry(response, index)
+    answers_hash = response.user_answers
+    return nil if answers_hash.blank? || answers_hash.values.all?(&:blank?)
+
+    qa_pairs = answers_hash.map do |question_text, answer_text|
+      next if answer_text.blank?
+
+      "    Q: #{question_text}\n    A: #{answer_text}"
+    end.compact
+
+    return nil if qa_pairs.blank?
+
+    <<~ENTRY
+      Response ##{index}:
+      #{qa_pairs.join("\n")}
+    ENTRY
   end
 
-  def summarise_pdf(pdf_path, prompt)
-    chat = RubyLLM.chat
-      .with_model('gpt-4.1')
-      .with_schema(ConsultationSummarySchema)
-      .with_temperature(0)
+  def build_generic_response_entry(response, index)
+    text = response.response_text.to_plain_text
+    return nil if text.blank?
 
-    response = chat.ask(prompt, with: pdf_path)
-    response.content['summary'] || response.content.to_s
+    <<~ENTRY
+      Response ##{index}:
+      #{text}
+    ENTRY
   end
 
-  def update_consultation_summary(summary_text)
-    html = markdown_to_html(summary_text)
-    consultation.ai_summary = html
-    consultation.save
+  def build_prompt(responses_data, language)
+    File.read(PROMPT_FILE).strip
+        .gsub('{{CONSULTATION_TITLE}}', consultation.title.to_s)
+        .gsub('{{CONSULTATION_TYPE}}', consultation.review_type.to_s)
+        .gsub('{{DEPARTMENT_NAME}}', consultation.department_name.to_s)
+        .gsub('{{RESPONSES_DATA}}', responses_data.join("\n\n"))
+        .gsub('{{OUTPUT_LANGUAGE}}', language)
   end
 
-  def markdown_to_html(text)
-    renderer = Redcarpet::Render::HTML.new(
-      hard_wrap: true,
-      no_links: false,
-      safe_links_only: true
+  def generate_summary(prompt)
+    client = OpenAI::Client.new(
+      access_token: Rails.application.credentials.openai[:api_key],
+      request_timeout: OpenAIService::REQUEST_TIMEOUT
     )
-    markdown = Redcarpet::Markdown.new(
-      renderer,
-      autolink: true,
-      tables: true,
-      fenced_code_blocks: true,
-      strikethrough: true,
-      superscript: true,
-      underline: true,
-      lax_spacing: true,
-      space_after_headers: false
+
+    response = client.responses.create(
+      parameters: {
+        model: SUMMARY_MODEL,
+        input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }]
+      }
     )
-    markdown.render(text)
+
+    response['output']
+      .flat_map { |o| o['content'] || [] }
+      .map { |c| c['text'] }
+      .compact
+      .join("\n")
+      .strip
+  rescue StandardError => e
+    Rails.logger.error("ConsultationSummaryService: OpenAI request failed: #{e.message}")
+    nil
   end
 
-  def cleanup_temp_files
-    return unless @temp_files
-
-    @temp_files.each do |file|
-      begin
-        file.close if file.respond_to?(:close)
-        File.unlink(file.path) if File.exist?(file.path)
-      rescue StandardError => e
-        Rails.logger.warn("Failed to cleanup temp file #{file&.path}: #{e.message}")
-      end
-    end
-    @temp_files = nil
-  end
-
-  def success_result(summary)
+  def success_result(summaries)
     {
       success: true,
-      summary: summary,
-      message: "Successfully generated summary"
+      summaries: summaries,
+      message: "AI summaries generated successfully for #{summaries.keys.join(', ')}"
     }
   end
 
   def failure_result(message)
+    @errors << message
     {
       success: false,
       summary: nil,
       message: message,
-      errors: [message]
+      errors: @errors
     }
   end
 end

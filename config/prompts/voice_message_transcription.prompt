@@ -12,9 +12,11 @@ CONTEXT: The audio contains citizen consultation responses — feedback, opinion
   - Hindi
   - Marathi
   - Odia
+  - Kannada
   - Hinglish (Hindi + English mix)
   - Marathi-English mix
   - Odia-English mix
+  - Kannada-English mix
 
 NOTE ON DYNAMIC CONTEXT: Use the consultation topic, expected response language, and question text above as context to better understand the audio. However, transcribe what is actually spoken — if the speaker uses a different language than the expected response language, transcribe in the language actually spoken. Do not force the expected language onto the transcription.
 
@@ -32,18 +34,20 @@ TRANSCRIPTION RULES:
 LANGUAGE RULES:
   - Identify the language(s) being spoken and transcribe in that same language.
   - If the speaker switches between languages mid-sentence or mid-thought, transcribe each part in the language it was spoken in.
-  - Preserve English exactly as spoken. Do not translate English into Hindi, Marathi, or Odia.
+  - Preserve English exactly as spoken. Do not translate English into Hindi, Marathi, Odia, or Kannada.
   - Preserve Hindi exactly as spoken. Do not translate Hindi into English or any other language.
   - Preserve Marathi exactly as spoken. Do not translate Marathi into English or any other language.
   - Preserve Odia exactly as spoken. Do not translate Odia into English or any other language.
+  - Preserve Kannada exactly as spoken. Do not translate Kannada into English or any other language.
   - If the speaker uses Hinglish or mixed language, transcribe it exactly as spoken — keep the mix intact.
   - Transcribe each language in its native script:
       - English words: write in Latin/English script.
       - Hindi words: write in Devanagari script (the native Hindi script), NOT transliterated to Latin. For example, write the Hindi word for "yes" as हाँ, not "haan".
       - Marathi words: write in Devanagari script (the native Marathi script), NOT transliterated to Latin.
       - Odia words: write in Odia script (the native Odia script), NOT transliterated to Latin. For example, write the Odia word for "yes" as ହଁ, not "haan". If the voice is in Odia, the transcription must be fully in Odia script.
+      - Kannada words: write in Kannada script (the native Kannada script), NOT transliterated to Latin. For example, write the Kannada word for "yes" as ಹೌದು, not "haudu". If the voice is in Kannada, the transcription must be fully in Kannada script.
   - When the speaker mixes languages (e.g., Odia + English), transcribe each word in the script of the language it was spoken in. Do not force the entire transcript into a single script.
-  - Only use Hindi, Marathi, or Odia words if they were actually spoken. Do not insert them.
+  - Only use Hindi, Marathi, Odia, or Kannada words if they were actually spoken. Do not insert them.
 
 FILLER & STUTTER RULE:
   - Include natural speech disfluencies exactly as spoken, including:
@@ -89,4 +93,4 @@ FINAL CHECK:
   - Ensure all fillers and stutters are preserved.
   - Ensure names are handled consistently.
   - Ensure languages are preserved as spoken (no translation).
-  - Ensure each language is transcribed in its native script (Odia in Odia script, Hindi/Marathi in Devanagari, English in Latin). If the voice is in Odia, the transcription must be fully in Odia script.
+  - Ensure each language is transcribed in its native script (Odia in Odia script, Hindi/Marathi in Devanagari, Kannada in Kannada script, English in Latin). If the voice is in Odia, the transcription must be fully in Odia script. If the voice is in Kannada, the transcription must be fully in Kannada script.
