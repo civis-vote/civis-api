@@ -177,7 +177,7 @@ class OpenAIService
     <<~PROMPT
       You are a transcription refinement assistant. Below is a raw transcription of a voice message from a citizen consultation response. Your task is to:
 
-      1. Identify the language of the transcription (e.g., English, Hindi, Marathi, Odia, Kannada, or a mix).
+      1. Identify the language of the transcription (e.g., English, Hindi, Marathi, Odia, Kannada or a mix).
       2. Clean up the transcription if it contains errors, garbled text, or improper formatting — but preserve the speaker's exact meaning and wording. Do not translate.
       3. If the transcription is entirely inaudible, unintelligible, or empty, set is_proper_transcription to false and return the raw text as-is.
       4. Provide a confidence score (0.0 to 1.0) based on how clear and complete the transcription appears.

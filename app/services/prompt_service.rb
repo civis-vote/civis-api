@@ -34,6 +34,7 @@ module PromptService
     end
 
     def voice_transcription(context = {})
+      context[:supported_languages] = ConsultationResponse::SUPPORTED_LANGUAGES.join(', ')
       from_file('voice_message_transcription.prompt', context)
     end
 
@@ -43,7 +44,8 @@ module PromptService
       return template if variables.blank?
 
       variables.reduce(template) do |result, (key, value)|
-        result.gsub("{{#{key}}}", value.to_s)
+        placeholder = key.to_s.upcase
+        result.gsub("{{#{placeholder}}}", value.to_s)
       end
     end
   end
