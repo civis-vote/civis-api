@@ -32,6 +32,10 @@ module Mutations
 
         created_consultation_response.save!
         created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
+
+        created_consultation_response.voice_responses.each do |entry|
+          TranscribeVoiceMessageJob.perform_later(created_consultation_response.id, entry['attachment_id'])
+        end
         created_consultation_response
       end
 
