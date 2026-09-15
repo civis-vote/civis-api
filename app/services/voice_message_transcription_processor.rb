@@ -79,12 +79,13 @@ class VoiceMessageTranscriptionProcessor
       question_id = voice_entry['question_id'] || voice_entry[:question_id]
       merged_answers = merge_transcription_into_answers(consultation_response.answers, question_id, result[:transcription])
 
-      consultation_response.update!(
+      consultation_response.assign_attributes(
         voice_responses: updated,
         answers: merged_answers,
         transcription_status: :completed,
         transcription_errors: []
       )
+      consultation_response.save(validate: false)
     end
   end
 
@@ -106,7 +107,8 @@ class VoiceMessageTranscriptionProcessor
 
   def mark_transcription_failed(errors)
     consultation_response.with_lock do
-      consultation_response.update!(transcription_status: :failed, transcription_errors: errors)
+      consultation_response.assign_attributes(transcription_status: :failed, transcription_errors: errors)
+      consultation_response.save(validate: false)
     end
   end
 
