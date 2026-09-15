@@ -5,7 +5,7 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-tags'
+        icon_name 'fas fa-tags'
 
         cm_index do
           page_title 'Constants'

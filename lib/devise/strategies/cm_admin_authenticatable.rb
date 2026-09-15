@@ -3,12 +3,14 @@ module Devise
   module Strategies
     class CmAdminAuthenticatable < Authenticatable
       def valid?
-        params.dig(:user, :email).present?
+        email.present?
       end
 
       def authenticate!
-        @user = User.find_by(email: params[:user][:email])
-        if @user&.can_access_admin_panel?
+        @user = User.find_by(email: email)
+        if @user&.disabled?
+          fail!('Your account has been disabled. Please contact your administrator.')
+        elsif @user&.can_access_admin_panel?
           success!
         else
           fail!('This email doesn’t match our records. Please contact your admin for help.')
@@ -17,7 +19,14 @@ module Devise
 
       def success!
         @user.create_otp_request if CmAdmin.config.auth_method == :otp
-        redirect!("/sign_in_with_credentials?email=#{CGI.escape(@user.email)}")
+
+        redirect!("/sign_in_with_credentials?email=#{URI.encode_www_form_component(@user.email)}")
+      end
+
+      private
+
+      def email
+        params[:identifier].presence || params.dig(:user, :email).presence || params[:email].presence
       end
     end
   end
