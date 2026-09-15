@@ -5,9 +5,9 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-building'
-        permit_additional_fields [segment_ids: []]
-        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        icon_name 'fas fa-building'
+        additional_permitted_fields [segment_ids: []]
+        policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
 
         cm_index do
           page_title 'Organisations'
@@ -42,7 +42,7 @@ module CmAdmin
             column :id
             column :title
             column :department_name, header: 'Department'
-            column :status, field_type: :tag, tag_class: ::CmAdmin::Consultation::STATUS_TAG_COLORS
+            column :status, field_type: :badge, badge_class: ::CmAdmin::Consultation::STATUS_TAG_COLORS
             column :response_deadline, field_type: :date, format: '%d %b, %Y'
             column :created_at, field_type: :date, format: '%d %b, %Y'
             column :created_by_full_name, header: 'Created By'

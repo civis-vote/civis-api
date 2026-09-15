@@ -7,8 +7,8 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-users'
-        permit_additional_fields [segment_ids: []]
+        icon_name 'fas fa-users'
+        additional_permitted_fields [segment_ids: []]
 
         cm_index do
           page_title 'Team Members'
@@ -19,7 +19,7 @@ module CmAdmin
           column :name
           column :designation
           column :member_type, field_type: :enum
-          column :status, field_type: :tag, tag_class: STATUS_TAG_CLASS
+          column :status, field_type: :badge, badge_class: STATUS_TAG_CLASS
         end
 
         cm_show page_title: :name do
@@ -30,7 +30,7 @@ module CmAdmin
               field :designation
               field :linkedin_url
               field :member_type, field_type: :enum
-              field :status, field_type: :tag, tag_class: STATUS_TAG_CLASS
+              field :status, field_type: :badge, badge_class: STATUS_TAG_CLASS
             end
 
             cm_section 'Log Details' do

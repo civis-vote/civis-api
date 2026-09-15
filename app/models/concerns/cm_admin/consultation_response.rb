@@ -5,8 +5,8 @@ module CmAdmin
     included do
       cm_admin do
         actions only: %i[index show delete custom_action_modal export history]
-        set_icon 'far fa-newspaper'
-        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        icon_name 'far fa-newspaper'
+        policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
 
         cm_index do
           page_title 'Consultation Responses'
@@ -47,7 +47,7 @@ module CmAdmin
 
         cm_show page_title: :id do
           tab :profile, '' do
-            cm_show_section 'Consultation Response Details' do
+            cm_section 'Consultation Response Details' do
               field :consultation_title
               field :user_response
               field :user_full_name, label: 'Given by'
