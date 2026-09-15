@@ -6,15 +6,13 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-users'
-        permit_additional_fields [segment_ids: []]
-        set_policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
-        sortable_columns [
-          { column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc' },
-          { column: 'updated_at', display_name: 'Updated At' },
-          { column: 'points', display_name: 'Points' },
-          { column: 'rank', display_name: 'Rank' }
-        ]
+        icon_name 'fas fa-users'
+        additional_permitted_fields [segment_ids: []]
+        policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
+        sort column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc'
+        sort column: 'updated_at', display_name: 'Updated At'
+        sort column: 'points', display_name: 'Points'
+        sort column: 'rank', display_name: 'Rank'
 
         cm_index do
           page_title 'Users'
@@ -28,7 +26,7 @@ module CmAdmin
 
           column :full_name
           column :email
-          column :cm_role_name, header: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
+          column :cm_role_name, header: 'Role', field_type: :badge, badge_class: CM_ROLE_TAG_CLASS
           column :created_at, field_type: :date, format: '%d %b, %Y', header: 'Joining Date'
           column :points
           column :city_name, header: 'City'
@@ -36,6 +34,26 @@ module CmAdmin
         end
 
         cm_show page_title: :full_name do
+          custom_action name: 'disable_user', route_type: 'member', verb: 'patch', icon_name: 'fa-solid fa-ban',
+                        display_if: lambda(&:active?),
+                        modal_configuration: { title: 'Disable User', confirmation_text: 'Confirm',
+                                               description: 'Are you sure you want to disable this user?' },
+                        path: ':id/disable_user', display_type: :modal do
+            @user = ::User.find(params[:id])
+            @user.disabled!
+            @user
+          end
+
+          custom_action name: 'activate_user', route_type: 'member', verb: 'patch', icon_name: 'fa-regular fa-circle-check',
+                        display_if: lambda(&:disabled?),
+                        modal_configuration: { title: 'Activate User', confirmation_text: 'Confirm',
+                                               description: 'Are you sure you want to activate this user?' },
+                        path: ':id/activate_user', display_type: :modal do
+            @user = ::User.find(params[:id])
+            @user.active!
+            @user
+          end
+
           bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
                       success_message: ->(success) { "Successfully Deleted #{success.size} users." },
                       error_message: lambda { |errors|
@@ -78,13 +96,13 @@ module CmAdmin
 
           tab :profile, '' do
             row do
-              cm_show_section 'Profile Details' do
+              cm_section 'Profile Details' do
                 field :profile_picture, field_type: :image
                 field :full_name
-                field :cm_role_name, label: 'Role', field_type: :tag, tag_class: CM_ROLE_TAG_CLASS
+                field :cm_role_name, label: 'Role', field_type: :badge, badge_class: CM_ROLE_TAG_CLASS
                 field :city_name, header: 'City'
                 field :name, field_type: :association, association_name: 'organisation', association_type: 'belongs_to',
-                            label: 'Organisation'
+                             label: 'Organisation'
                 field :points
                 field :rank
                 field :segment_names, label: 'Segments'
@@ -96,7 +114,7 @@ module CmAdmin
                 field :is_verified, field_type: :boolean, label: 'Phone verified'
               end
             end
-            
+
             row do
               cm_section 'Participation Snapshot' do
                 field :responses_count, label: 'Response count'
@@ -108,7 +126,6 @@ module CmAdmin
                 field :notify_for_new_consultation, label: 'Notify for New Consultation'
                 field :newsletter_subscription
               end
-
             end
             row do
               cm_section 'Security and Audit' do
@@ -121,7 +138,6 @@ module CmAdmin
                 field :last_active_at, field_type: :date, format: '%d %b, %Y'
               end
             end
-
           end
           tab :responses, 'responses', associated_model: 'responses', layout_type: 'cm_association_index',
                                        associated_model_name: 'ConsultationResponse' do
@@ -133,15 +149,17 @@ module CmAdmin
         end
 
         cm_new page_title: 'Add User', page_description: 'Enter all details to add User' do
-          cm_section 'Details' do
+          cm_section 'Details', dynamic_fields: lambda { |_user, associated_record|
+            default_role_id = associated_record.is_a?(Organisation) ? ::CmRole.find_by(name: ::User::ORGANISATION_EMPLOYEE_ROLE_NAME)&.id : nil
             form_field :email, input_type: :string
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
-                                    label: 'Role', placeholder: 'Select Role'
+                                    label: 'Role', placeholder: 'Select Role', default_value: ->(_) { default_role_id },
+                                    html_attrs: { readonly: default_role_id.present? }
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
-          end
+          }
         end
 
         cm_edit page_title: 'Edit User', page_description: 'Enter all details to edit User' do
@@ -150,7 +168,7 @@ module CmAdmin
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
-                                    label: 'Role', placeholder: 'Select Role'
+                                    label: 'Role', placeholder: 'Select Role', disabled: ->(record) { record.organisation.present? }
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end

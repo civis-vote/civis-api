@@ -5,13 +5,11 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        set_icon 'fas fa-file-contract'
-        permit_additional_fields [clause_type_id: []]
+        icon_name 'fas fa-file-contract'
+        additional_permitted_fields [clause_type_id: []]
 
-        sortable_columns [
-          { column: 'created_at', display_name: 'Created At' },
-          { column: 'clause_id', display_name: 'Clause ID', default: true, default_direction: 'asc' }
-        ]
+        sort column: 'created_at', display_name: 'Created At'
+        sort column: 'clause_id', display_name: 'Clause ID', default: true, default_direction: 'asc'
 
         cm_index do
           page_title 'Clauses'
@@ -30,7 +28,7 @@ module CmAdmin
 
         cm_show page_title: :clause_title do
           tab :profile, '' do
-            cm_show_section 'Clause details' do
+            cm_section 'Clause details' do
               field :clause_id, label: 'Clause ID'
               field :clause_title
               field :clause_type_name, label: 'Clause Type'

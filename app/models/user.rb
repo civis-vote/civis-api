@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   has_paper_trail
 
+  ORGANISATION_EMPLOYEE_ROLE_NAME = 'Organisation Employee'.freeze
+
   include Attachable
   include Paginator
   include Scorable::User
@@ -19,6 +21,7 @@ class User < ApplicationRecord
   belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
   has_many :otp_requests, dependent: :destroy
   has_many :api_keys, dependent: :destroy
+  has_many :api_tokens, dependent: :destroy
   has_many :game_actions, dependent: :destroy
   has_many :point_events, dependent: :destroy
   has_many :responses, class_name: "ConsultationResponse"
@@ -38,16 +41,20 @@ class User < ApplicationRecord
   validate :check_organisation_role_only_for_employee
 
   # enums
-  enum :role, { 
+  enum :role, {
     citizen: 0,
-    admin: 1, 
-    moderator: 2, 
-    organisation_employee: 3 
+    admin: 1,
+    moderator: 2,
+    organisation_employee: 3
+  }
+  enum :status, {
+    active: 0,
+    disabled: 1
   }
   enum :best_rank_type, {
-    national: 0, 
-    state: 1, 
-    city: 2 
+    national: 0,
+    state: 1,
+    city: 2
   }
 
   # store accessors
@@ -110,8 +117,6 @@ class User < ApplicationRecord
     where(cm_role_id: cm_role_ids)
   }
 
-  scope :active, -> { where(active: true) }
-
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
   def self.notify_for_new_consultation_filter
@@ -159,7 +164,7 @@ class User < ApplicationRecord
   def responses_count
     responses.count
   end
-  
+
   def themes_participated_in
     responses
       .joins(:consultation).group('consultations.theme_id')
@@ -176,7 +181,6 @@ class User < ApplicationRecord
       .pluck('departments.name')
       .join(', ')
   end
-
 
   def update_last_activity
     update last_activity_at: Date.today
@@ -254,7 +258,7 @@ class User < ApplicationRecord
     emails.each do |email|
       user = ::User.invite!(
         { email: email, organisation_id: params[:organisation_id], skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now,
-          role: "organisation_employee", active: params[:active] }, current_user
+          role: "organisation_employee", status: params[:active] == false ? :disabled : :active }, current_user
       )
       raw_token = user.raw_invitation_token
       user_record = ::User.find_by(email: email.strip)
@@ -280,13 +284,13 @@ class User < ApplicationRecord
   end
 
   def deactivate(organisation_id)
-    self.active = false
+    self.status = :disabled
     save(validate: false)
     Organisation.decrement_counter(:users_count, organisation_id)
   end
 
   def password_complexity
-    return unless password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&]).{8,}$/)
+    return unless password.present? && !password.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@!%*#?&]).{8,}$/)
 
     errors.add :password, "Password length min 8 charcter and include at least one alphabet, one special character, and one digit"
   end
@@ -302,7 +306,7 @@ class User < ApplicationRecord
   end
 
   def check_organisation_role_only_for_employee
-    return unless cm_role.name == 'Organisation Employee'
+    return unless cm_role&.name == ORGANISATION_EMPLOYEE_ROLE_NAME
 
     errors.add(:cm_role, "Organisation employee role is only allowed when organisation is present") if organisation_id.blank?
     errors
