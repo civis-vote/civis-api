@@ -2,6 +2,8 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   has_paper_trail
 
+  SUPPORTED_LANGUAGES = %w[English Hindi Marathi Odia Kannada].freeze
+
   enum :visibility, {
     shared: 0,
     anonymous: 1
@@ -21,12 +23,7 @@ class ConsultationResponse < ApplicationRecord
     somewhat_satisfied
     satisfied
   ]
-  enum :response_language, {
-    english: "English",
-    hindi: "Hindi",
-    marathi: "Marathi",
-    odia: "Odia"
-  }
+  enum :response_language, SUPPORTED_LANGUAGES.map { |lang| [lang.downcase.to_sym, lang] }.to_h
   enum :transcription_status, {
     not_available: 0,
     pending: 1,
