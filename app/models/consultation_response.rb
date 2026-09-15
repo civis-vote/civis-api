@@ -144,7 +144,6 @@ class ConsultationResponse < ApplicationRecord
       updated_response << { question_id:, attachment_id: attachment.id, transcription: nil }
     end
     update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
-    attachment_ids.each { |aid| TranscribeVoiceMessageJob.perform_later(id, aid) }
   end
 
   def update_reading_time
