@@ -23,6 +23,11 @@ jobs:
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     env:
       BUNDLE_CM___GEMS__COMMUTATUS__COM: ${{ secrets.BUNDLE_CM___GEMS__COMMUTATUS__COM }}
@@ -39,11 +44,27 @@ jobs:
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
 
+      - name: Set up test credentials
+        run: |
+          export RAILS_MASTER_KEY=$(openssl rand -hex 16)
+          rm -f config/credentials.yml.enc
+          bundle exec ruby -e "
+            require 'active_support/encrypted_file'
+            file = ActiveSupport::EncryptedFile.new(
+              content_path: 'config/credentials.yml.enc',
+              key_path: 'config/master.key',
+              env_key: 'RAILS_MASTER_KEY',
+              raise_if_missing_key: true
+            )
+            file.write('---\n')
+          "
+          echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" >> $GITHUB_ENV
+
       - name: Set up database
         run: |
           cp config/database.yml.ci config/database.yml
           RAILS_ENV=test bundle exec rails db:create
-          RAILS_ENV=test bundle exec rails db:setup
+          RAILS_ENV=test bundle exec rails db:schema:load
 
       - name: Precompile assets
         run: RAILS_ENV=test bundle exec rails assets:precompile
