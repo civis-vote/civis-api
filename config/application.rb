@@ -11,6 +11,11 @@ module CivisApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
+    # Use environment-specific RAILS_*_KEY env var for credentials when the
+    # corresponding key file is absent (e.g. on Hatchbox). Must be set before
+    # any Rails.application.credentials access below.
+    config.credentials.env_key = "RAILS_#{Rails.env.upcase}_KEY"
+
     config.action_mailer.delivery_method = :postmark
     config.action_mailer.postmark_settings = { api_token: Rails.application.credentials.dig(:postmark, :api_key) }
 
