@@ -185,8 +185,10 @@ class Consultation < ApplicationRecord
       build_question_summary_attributes(question, acceptable)
     end
 
-    response_summary&.destroy
-    create_response_summary!(total_responses: acceptable.size, question_summaries_attributes: question_summaries)
+    ActiveRecord::Base.transaction do
+      response_summary&.destroy
+      create_response_summary!(total_responses: acceptable.size, question_summaries_attributes: question_summaries)
+    end
   end
 
   def build_question_summary_attributes(question, all_responses)

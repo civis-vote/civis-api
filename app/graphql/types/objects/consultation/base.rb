@@ -62,6 +62,7 @@ module Types
         field :page, String, nil, null: true
         field :consultation_partner_responses, [Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
         field :area_of_impacts, [Types::Objects::Constant], nil, null: true
+        field :clauses, [Types::Objects::Clause], nil, null: true
         field :has_user_filled_response_in_current_response_round, Boolean, null: true
 
         def has_user_filled_response_in_current_response_round
@@ -167,6 +168,10 @@ module Types
 
         def response_rounds
           object.response_rounds.order(:created_at)
+        end
+
+        def clauses
+          object.clauses.order(:id)
         end
 
         def enforce_private_response
