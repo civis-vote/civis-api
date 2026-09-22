@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_132742) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -141,6 +141,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
     t.string "cron_string", null: false
     t.datetime "last_run_at"
     t.string "name", null: false
+    t.text "notification_emails"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
   end
