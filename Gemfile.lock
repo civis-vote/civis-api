@@ -263,7 +263,6 @@ GEM
     dry_validation_parser (0.1.12)
       dry-types (~> 1)
       dry-validation (~> 1)
-    erb (6.0.7)
     erubi (1.13.1)
     et-orbi (1.4.2)
       tzinfo
@@ -281,6 +280,7 @@ GEM
       net-http (>= 0.5.0)
     ffi (1.17.4-aarch64-linux-gnu)
     ffi (1.17.4-arm64-darwin)
+    ffi (1.17.4-x86_64-darwin)
     ffi (1.17.4-x86_64-linux-gnu)
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
@@ -443,6 +443,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.19.4-arm64-darwin)
       racc (~> 1.4)
+    nokogiri (1.19.4-x86_64-darwin)
+      racc (~> 1.4)
     nokogiri (1.19.4-x86_64-linux-gnu)
       racc (~> 1.4)
     oauth2 (1.4.11)
@@ -557,16 +559,9 @@ GEM
     rb-inotify (0.11.1)
       ffi (~> 1.0)
     rb-readline (0.5.5)
-    rbs (4.2.0)
-      logger
-      prism (>= 1.6.0)
-      tsort
     rbtree3 (0.7.1)
-    rdoc (8.0.0)
-      erb
-      prism (>= 1.6.0)
-      rbs (>= 4.0.0)
-      tsort
+    rdoc (6.3.4.1)
+    redcarpet (3.6.1)
     redis (5.2.0)
       redis-client (>= 0.22.0)
     redis-client (0.30.1)
@@ -740,6 +735,7 @@ GEM
 PLATFORMS
   aarch64-linux
   arm64-darwin-25
+  x86_64-darwin-22
   x86_64-linux
 
 DEPENDENCIES
@@ -787,6 +783,7 @@ DEPENDENCIES
   rails-erd
   razorpay
   rb-readline
+  redcarpet
   redis
   roo
   roo-xls
