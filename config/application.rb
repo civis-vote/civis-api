@@ -11,6 +11,14 @@ module CivisApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
+    # Rails.application.credentials always uses ENV["RAILS_MASTER_KEY"] as the
+    # env_key (hardcoded in Rails::Application#encrypted), ignoring
+    # config.credentials.env_key. Set RAILS_MASTER_KEY from the environment-
+    # specific key (e.g. RAILS_STAGING_KEY) so credentials decrypt correctly
+    # when the key file is absent (e.g. on Hatchbox). Must run before any
+    # Rails.application.credentials access below.
+    ENV["RAILS_MASTER_KEY"] ||= ENV.fetch("RAILS_#{Rails.env.upcase}_KEY", nil)
+
     config.action_mailer.delivery_method = :postmark
     config.action_mailer.postmark_settings = { api_token: Rails.application.credentials.dig(:postmark, :api_key) }
 
@@ -34,7 +42,8 @@ module CivisApi
       custom_allowed_attributes = Set.new(%w[controls data-controller role style frameborder])
       ActionText::ContentHelper.allowed_attributes = (default_allowed_attributes + custom_allowed_attributes).freeze
 
-      default_allowed_tags = Rails::HTML5::Sanitizer.safe_list_sanitizer.allowed_tags + Set.new([ActionText::Attachment.tag_name, "figure", "figcaption"])
+      default_allowed_tags = Rails::HTML5::Sanitizer.safe_list_sanitizer.allowed_tags + Set.new([ActionText::Attachment.tag_name, "figure",
+                                                                                                 "figcaption"])
       custom_allowed_tags = Set.new(%w[iframe table tr td th])
       ActionText::ContentHelper.allowed_tags = (default_allowed_tags + custom_allowed_tags).freeze
     end
@@ -44,26 +53,26 @@ module CivisApi
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
-    #Referrer Policy
+    # Referrer Policy
     Rails.application.configure do
       config.action_dispatch.default_headers = {
         'Referrer-Policy' => 'strict-origin-when-cross-origin'
       }
     end
 
-    #X-Content-Type-Options
-    Rails.application.configure do 
-      config.action_dispatch.default_headers = { 'X-Content-Type-Options' => 'nosniff' } 
+    # X-Content-Type-Options
+    Rails.application.configure do
+      config.action_dispatch.default_headers = { 'X-Content-Type-Options' => 'nosniff' }
     end
 
-    #X-Frame-Options 
-    Rails.application.configure do 
-      config.action_dispatch.default_headers = { 'X-Frame-Options' => 'SAMEORIGIN' } 
+    # X-Frame-Options
+    Rails.application.configure do
+      config.action_dispatch.default_headers = { 'X-Frame-Options' => 'SAMEORIGIN' }
     end
 
-    #X-XSS-Protection
-    Rails.application.configure do 
-      config.action_dispatch.default_headers = { 'X-XSS-Protection' => '1; mode=block' } 
+    # X-XSS-Protection
+    Rails.application.configure do
+      config.action_dispatch.default_headers = { 'X-XSS-Protection' => '1; mode=block' }
     end
   end
 end
