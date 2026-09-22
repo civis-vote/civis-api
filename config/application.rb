@@ -11,14 +11,6 @@ module CivisApi
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.1
 
-    # Rails.application.credentials always uses ENV["RAILS_MASTER_KEY"] as the
-    # env_key (hardcoded in Rails::Application#encrypted), ignoring
-    # config.credentials.env_key. Set RAILS_MASTER_KEY from the environment-
-    # specific key (e.g. RAILS_STAGING_KEY) so credentials decrypt correctly
-    # when the key file is absent (e.g. on Hatchbox). Must run before any
-    # Rails.application.credentials access below.
-    ENV["RAILS_MASTER_KEY"] ||= ENV.fetch("RAILS_#{Rails.env.upcase}_KEY", nil)
-
     config.action_mailer.delivery_method = :postmark
     config.action_mailer.postmark_settings = { api_token: Rails.application.credentials.dig(:postmark, :api_key) }
 
