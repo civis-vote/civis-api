@@ -40,6 +40,7 @@ module Types
         end
         field :status, Types::Enums::ConsultationStatuses, nil, null: false
         field :question_flow, String, nil, null: true
+        field :response_summary, Types::Objects::ConsultationResponse::Summary, "Aggregated response summary (computed on expiry)", null: true
         field :summary, String, nil, null: true
         field :title, String, nil, null: false
         field :hindi_title, String, nil, null: true
@@ -61,6 +62,7 @@ module Types
         field :page, String, nil, null: true
         field :consultation_partner_responses, [Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
         field :area_of_impacts, [Types::Objects::Constant], nil, null: true
+        field :clauses, [Types::Objects::Clause], nil, null: true
         field :has_user_filled_response_in_current_response_round, Boolean, null: true
 
         def has_user_filled_response_in_current_response_round
@@ -166,6 +168,10 @@ module Types
 
         def response_rounds
           object.response_rounds.order(:created_at)
+        end
+
+        def clauses
+          object.clauses.order(:id)
         end
 
         def enforce_private_response
