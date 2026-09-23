@@ -37,14 +37,16 @@ class ConsultationSummaryService
   def update_consultation_summary(summary_text)
     html = markdown_to_html(summary_text)
     consultation.ai_summary = html
-    consultation.save
+    consultation.save!
   end
 
   def markdown_to_html(text)
     renderer = Redcarpet::Render::HTML.new(
       hard_wrap: true,
       no_links: false,
-      safe_links_only: true
+      safe_links_only: true,
+      escape_html: true,
+      filter_html: true
     )
     markdown = Redcarpet::Markdown.new(
       renderer,
