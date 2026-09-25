@@ -61,7 +61,7 @@ jobs:
               env_key: 'RAILS_MASTER_KEY',
               raise_if_missing_key: true
             )
-            file.write('---\n')
+            file.write('{}')
           "
           echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" >> $GITHUB_ENV
 
