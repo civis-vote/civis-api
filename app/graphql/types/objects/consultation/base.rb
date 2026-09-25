@@ -190,6 +190,10 @@ module Types
           object.response_rounds.order(:created_at)
         end
 
+        def clauses
+          object.clauses.order(:id)
+        end
+
         def enforce_private_response
           object.private_response?
         end

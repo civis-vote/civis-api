@@ -58,7 +58,7 @@ class OpenAIService
     temp_file.close
     temp_file.path
   rescue StandardError => e
-    Rails.logger.error("Failed to download attachment: #{e.message}")
+    Airbrake.notify(e)
     nil
   end
 
@@ -116,8 +116,7 @@ class OpenAIService
     response_text = response_text.gsub(/\A```(?:json)?\s*|\s*```\z/m, '').strip
     JSON.parse(response_text)
   rescue JSON::ParserError => e
-    Rails.logger.error("Failed to parse OpenAI response as JSON: #{e.message}")
-    Rails.logger.error("Response text: #{response_text[0..500]}")
+    Airbrake.notify(e)
     nil
   end
 
@@ -126,7 +125,7 @@ class OpenAIService
 
     client.files.delete(id: uploaded_file['id'])
   rescue StandardError => e
-    Rails.logger.warn("Failed to delete OpenAI file #{uploaded_file['id']}: #{e.message}")
+    Airbrake.notify(e)
   end
 
   def send_audio_request(audio_path, model, language)
@@ -198,7 +197,7 @@ class OpenAIService
       file.close if file.respond_to?(:close)
       FileUtils.rm_f(file.path)
     rescue StandardError => e
-      Rails.logger.warn("Failed to cleanup temp file #{file&.path}: #{e.message}")
+      Airbrake.notify(e)
     end
     @temp_files = []
   end

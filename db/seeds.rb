@@ -58,43 +58,44 @@ end
 
 puts '---> Publish some consultations'
 Consultation.where(status: :submitted).order('RANDOM()').limit(30).each do |consultation|
-	 consultation.publish
+  consultation.publish
 end
 
 puts '---> Reject some consultations'
 Consultation.where(status: :submitted).order('RANDOM()').limit(10).each do |consultation|
-	 consultation.reject
+  consultation.reject
 end
 
 puts '---> Expire some consultations'
 Consultation.where(status: :published).order('RANDOM()').limit(10).each do |consultation|
-	 consultation.expire
+  consultation.expire
 end
 
 puts '---> Responding to some consultations'
 Consultation.where(status: %i[published rejected]).each do |consultation|
-	 response_count = [0, 1, 2, 3, 4, 5].sample
-	 Fabricate.times(response_count, :response_round, consultation_id: consultation.id)
-	 begin
- 		 puts '---> Creating Response Round for consultations'
-  		Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id, response_round_id: consultation.response_rounds.last.id)
+  response_count = [0, 1, 2, 3, 4, 5].sample
+  Fabricate.times(response_count, :response_round, consultation_id: consultation.id)
+  begin
+    puts '---> Creating Response Round for consultations'
+    Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id,
+                                                            response_round_id: consultation.response_rounds.last.id)
   rescue ActiveRecord::RecordInvalid => e
-  		puts "---> #{e.record.errors.full_messages.join('\n')}"
- 	end
+    puts "---> #{e.record.errors.full_messages.join('\n')}"
+  end
 end
 
 puts '---> Creating Question to consultation'
 Fabricate.times(10, :question)
 Question.all.each do |question|
-	 puts '---> Creating sub questions'
-	 Fabricate.times(4, :question, parent_id: question.id)
+  puts '---> Creating sub questions'
+  Fabricate.times(4, :question, parent_id: question.id)
 end
 
 puts '---> Creating Organisation and employees'
 Fabricate.times(5, :organisation)
 Organisation.all.each do |organisation|
-	 puts '---> Creating Employees'
-	 Fabricate.times(3, :user, role: :organisation_employee, organisation_id: organisation.id)
+  puts '---> Creating Employees'
+  Fabricate.times(3, :user, role: :organisation_employee, organisation_id: organisation.id)
 end
 
 puts '---> Creating Glossary Word'

@@ -24,6 +24,7 @@ class ConsultationSummaryJob < ApplicationJob
   rescue StandardError => e
     Rails.logger.error("ConsultationSummaryJob: Unexpected error for Consultation #{consultation_id}: #{e.message}")
     Rails.logger.error(e.backtrace.join("\n"))
+    Airbrake.notify(e)
 
     { success: false, message: "Job failed: #{e.message}", errors: [e.message] }
   end
