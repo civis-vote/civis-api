@@ -1,0 +1,17 @@
+h2 style="font-size: 24px; font-weight: 600; color: #212529; margin: 0 0 16px;"
+  | New contact form submission
+p style="font-size: 16px; color: #5F6166; margin: 0 0 16px;"
+  | Someone submitted the contact form with the following details:
+table style="border-collapse: collapse; width: 100%; margin: 0 0 16px;"
+  tr
+    td style="padding: 8px 0; font-weight: 600; color: #212529; width: 40%;" Name
+    td style="padding: 8px 0; color: #5F6166;" = name
+  tr
+    td style="padding: 8px 0; font-weight: 600; color: #212529;" Phone Number
+    td style="padding: 8px 0; color: #5F6166;" = phone_number.presence || '—'
+  tr
+    td style="padding: 8px 0; font-weight: 600; color: #212529;" Organisation
+    td style="padding: 8px 0; color: #5F6166;" = organisation_name.presence || '—'
+  tr
+    td style="padding: 8px 0; font-weight: 600; color: #212529; vertical-align: top;" Message
+    td style="padding: 8px 0; color: #5F6166; white-space: pre-line;" = message
