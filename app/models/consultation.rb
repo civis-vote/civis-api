@@ -38,6 +38,7 @@ class Consultation < ApplicationRecord
   has_rich_text :odia_summary
   has_rich_text :marathi_summary
   has_rich_text :kannada_summary
+  has_rich_text :ai_summary
 
   has_one_attached :consultation_logo
   has_one_attached :consultation_pdf
@@ -402,6 +403,10 @@ class Consultation < ApplicationRecord
 
   def extract_clauses
     ExtractClausesJob.perform_later(id)
+  end
+
+  def summarise_pdf
+    ConsultationSummaryJob.perform_later(self)
   end
 
   private

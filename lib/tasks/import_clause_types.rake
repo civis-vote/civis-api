@@ -10,7 +10,8 @@ namespace :import_records_from_array do
       "Procedural",
       "Compliance",
       "Enforcement",
-      "Definition"
+      "Definition",
+      "Other"
     ].each do |clause_type_name|
       Constant.create(constant_type: :clause_type, name: clause_type_name)
     end
