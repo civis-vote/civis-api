@@ -13,7 +13,7 @@ on:
 jobs:
   test:
     if: "!contains(github.event.head_commit.message, '[skip-tests]')"
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     services:
       postgres:
@@ -36,6 +36,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Install system dependencies (libvips)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips42t64 || sudo apt-get install -y libvips42
+
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -56,15 +61,31 @@ jobs:
               env_key: 'RAILS_MASTER_KEY',
               raise_if_missing_key: true
             )
-            file.write('---\n')
+            file.write('{}')
           "
           echo "RAILS_MASTER_KEY=$RAILS_MASTER_KEY" >> $GITHUB_ENV
 
       - name: Set up database
         run: |
           cp config/database.yml.ci config/database.yml
-          RAILS_ENV=test bundle exec rails db:create
-          RAILS_ENV=test bundle exec rails db:schema:load
+          # Rails boots cannot run before the schema exists: cm-admin's model
+          # DSL (default_sort_columns -> model.columns) queries the DB at boot.
+          # Create the database and load the schema without booting the app.
+          bundle exec ruby -e "
+            require 'active_record'
+            require 'pg'
+            require 'yaml'
+            db_config = YAML.load_file('config/database.yml')['test']
+            conn = PG.connect(host: db_config['host'], user: db_config['username'], password: db_config['password'], dbname: 'postgres')
+            begin
+              conn.exec(\"CREATE DATABASE #{db_config['database']}\")
+            rescue PG::DuplicateDatabase
+            end
+            conn.close
+            ActiveRecord::Base.establish_connection(db_config)
+            ActiveRecord::Schema.verbose = false
+            load 'db/schema.rb'
+          "
 
       - name: Precompile assets
         run: RAILS_ENV=test bundle exec rails assets:precompile
