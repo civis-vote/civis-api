@@ -1,4 +1,12 @@
 class VoiceMessageTranscriptionService
+  LANGUAGE_CODES = {
+    'english' => 'en',
+    'hindi' => 'hi',
+    'marathi' => 'mr',
+    'odia' => 'or',
+    'kannada' => 'kn'
+  }.freeze
+
   attr_reader :attachment, :errors
 
   def initialize(attachment, context = {})
@@ -15,7 +23,11 @@ class VoiceMessageTranscriptionService
     )
     return failure('Transcription prompt not configured') unless prompt
 
-    result = OpenAIService.new.transcribe_audio(attachment: attachment, prompt: prompt)
+    result = OpenAIService.new.transcribe_audio(
+      attachment: attachment,
+      prompt: prompt,
+      language: language_code
+    )
     return failure('Transcription returned empty content') if result.blank? || result['transcription'].blank?
 
     {
@@ -31,6 +43,10 @@ class VoiceMessageTranscriptionService
   end
 
   private
+
+  def language_code
+    LANGUAGE_CODES[@context[:response_language].to_s.downcase]
+  end
 
   def failure(message)
     @errors << message
