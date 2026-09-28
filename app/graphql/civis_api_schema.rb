@@ -1,4 +1,6 @@
 class CivisApiSchema < GraphQL::Schema
+  use GraphQL::Schema::Visibility
+
   mutation(Types::MutationType)
   query(Types::QueryType)
 

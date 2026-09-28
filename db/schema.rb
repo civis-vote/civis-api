@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_22_132742) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -88,6 +88,41 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
   end
 
+  create_table "response_option_breakdowns", force: :cascade do |t|
+    t.integer "option_id", null: false
+    t.string "option_text", null: false
+    t.float "percentage", null: false, default: 0.0
+    t.integer "selection_count", null: false, default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "response_question_summary_id", null: false
+    t.index ["response_question_summary_id"], name: "index_response_option_breakdowns_on_rqs_id"
+  end
+
+  create_table "response_question_summaries", force: :cascade do |t|
+    t.boolean "is_optional", null: false, default: false
+    t.integer "other_option_count"
+    t.integer "position"
+    t.integer "question_id", null: false
+    t.string "question_text", null: false
+    t.string "question_type", null: false
+    t.integer "text_response_count"
+    t.integer "total_responses", null: false, default: 0
+    t.integer "voice_response_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "response_summary_id", null: false
+    t.index ["response_summary_id"], name: "index_response_question_summaries_on_response_summary_id"
+  end
+
+  create_table "response_summaries", force: :cascade do |t|
+    t.integer "total_responses", null: false, default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "consultation_id", null: false
+    t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
+  end
+
   create_table "clause_feedbacks", force: :cascade do |t|
     t.bigint "clause_id", null: false
     t.bigint "consultation_response_id", null: false
@@ -141,6 +176,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_14_143403) do
     t.string "cron_string", null: false
     t.datetime "last_run_at"
     t.string "name", null: false
+    t.text "notification_emails"
     t.integer "status", default: 0, null: false
     t.datetime "updated_at", null: false
   end
