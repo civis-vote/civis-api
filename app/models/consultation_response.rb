@@ -50,6 +50,8 @@ class ConsultationResponse < ApplicationRecord
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
   has_many :down_votes, -> { down }, class_name: "ConsultationResponseVote"
   has_many :votes, class_name: "ConsultationResponseVote"
+  has_many :clause_feedbacks, dependent: :destroy
+
   belongs_to :respondent, optional: true
   belongs_to :response_round
   belongs_to :organisation, optional: true
@@ -65,6 +67,8 @@ class ConsultationResponse < ApplicationRecord
 
   delegate :full_name, to: :user, prefix: true, allow_nil: true
   delegate :title, to: :consultation, prefix: true, allow_nil: true
+
+  accepts_nested_attributes_for :clause_feedbacks, allow_destroy: true
 
   # scopes
   scope :consultation_filter, lambda { |consultation_id|

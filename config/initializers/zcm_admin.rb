@@ -6,7 +6,7 @@ Rails.application.reloader.to_prepare do
     config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
                               ResponseRound, Question, FileImport, FileExport, Respondent, TeamMember, Clause, Constant,
-                              CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt]
+                              CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog]
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
@@ -70,6 +70,10 @@ Rails.application.reloader.to_prepare do
       {
         display_name: 'API Tokens',
         path: :cm_index_api_token_path
+      },
+      {
+        display_name: 'Cron Jobs',
+        path: :cm_index_cm_cron_job_path
       }
     ]
   end
