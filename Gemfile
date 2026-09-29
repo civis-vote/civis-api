@@ -114,3 +114,5 @@ gem 'positioning'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
 gem 'ruby-openai'
+
+gem "rack-attack", "~> 6.8"

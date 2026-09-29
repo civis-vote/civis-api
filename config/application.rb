@@ -29,6 +29,8 @@ module CivisApi
     config.autoload_paths << Rails.root.join("lib")
     config.eager_load_paths << Rails.root.join("lib")
 
+    config.middleware.use Rack::Attack
+
     config.after_initialize do
       default_allowed_attributes = Rails::HTML5::Sanitizer.safe_list_sanitizer.allowed_attributes + ActionText::Attachment::ATTRIBUTES.to_set
       custom_allowed_attributes = Set.new(%w[controls data-controller role style frameborder])
