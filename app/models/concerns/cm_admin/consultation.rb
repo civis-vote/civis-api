@@ -349,6 +349,7 @@ module CmAdmin
                                             helper_method: :select_options_for_area_of_impact, label: 'Area of Impact'
           end
           cm_section 'Summary' do
+            form_field :ai_summary, input_type: :rich_text
             form_field :english_summary, input_type: :rich_text
             form_field :hindi_summary, input_type: :rich_text
             form_field :odia_summary, input_type: :rich_text
