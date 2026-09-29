@@ -1,4 +1,4 @@
-# Restricts a GraphQL resolver to a set of allowed origins, checked against the
+# Restricts a GraphQL resolver to a set of allowed domains, checked against the
 # request's Origin header. A listed domain matches itself and any subdomain.
 #
 #   include HostGuard
@@ -17,21 +17,22 @@ module HostGuard
   GRAPHQL_PATH = '/graphql'.freeze
 
   included do
-    class_attribute :host_guard_allowed_origins, instance_accessor: false, default: [].freeze
+    class_attribute :host_guard_domains, instance_accessor: false, default: [].freeze
   end
 
   class_methods do
-    def host_guard(*origins, throttle: nil)
-      self.host_guard_allowed_origins = origins.flatten.filter_map { |origin| normalize_origin(origin) }.freeze
+    def host_guard(*domains, throttle: nil)
+      self.host_guard_domains = domains.flatten.filter_map do |domain|
+        domain.to_s.strip.downcase.sub(%r{\Ahttps?://}, '').sub(%r{/.*\z}, '').sub(/:\d+\z/, '').presence
+      end.freeze
       register_throttle(throttle) if throttle
     end
 
     def valid_host?(context)
-      origin = context[:request]&.origin
-      return false if origin.blank?
+      host = URI.parse(context[:request]&.origin.to_s).host.to_s.downcase
+      return false if host.blank?
 
-      host = URI.parse(origin).host.to_s.downcase
-      host_guard_allowed_origins.any? { |domain| host == domain || host.end_with?(".#{domain}") }
+      host_guard_domains.any? { |domain| host == domain || host.end_with?(".#{domain}") }
     rescue URI::InvalidURIError
       false
     end
@@ -58,15 +59,6 @@ module HostGuard
 
         req.ip if body.match?(/\b#{Regexp.escape(field_name)}\b/)
       end
-    end
-
-    def normalize_origin(origin)
-      origin = origin.to_s.strip.downcase.sub(%r{/+\z}, '')
-      return if origin.blank?
-
-      URI.parse(origin).host || URI.parse("//#{origin}").host
-    rescue URI::InvalidURIError
-      nil
     end
   end
 
