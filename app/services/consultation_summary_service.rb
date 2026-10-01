@@ -22,7 +22,9 @@ class ConsultationSummaryService
   def call
     return failure_result("Consultation not found") unless consultation
     return failure_result("Consultation has no acceptable responses") unless consultation.responses.acceptable.exists?
-    return { success: true, summaries: {}, message: "Response summaries already generated" } if response_summaries_present?
+    if response_summaries_present?
+      return { success: true, summaries: {}, message: "Response summaries already generated", errors: [] }
+    end
 
     responses_data = collect_question_responses
     return failure_result("No question responses found to summarize") if responses_data.blank?
@@ -112,20 +114,22 @@ class ConsultationSummaryService
 
   def build_prompt(responses_data, language)
     File.read(PROMPT_FILE).strip
-        .gsub('{{CONSULTATION_TITLE}}', consultation.title.to_s)
-        .gsub('{{CONSULTATION_TYPE}}', consultation.review_type.to_s)
-        .gsub('{{DEPARTMENT_NAME}}', consultation.department_name.to_s)
-        .gsub('{{RESPONSES_DATA}}', responses_data.join("\n\n"))
-        .gsub('{{OUTPUT_LANGUAGE}}', language)
+        .gsub('{{CONSULTATION_TITLE}}') { consultation.title.to_s }
+        .gsub('{{CONSULTATION_TYPE}}') { consultation.review_type.to_s }
+        .gsub('{{DEPARTMENT_NAME}}') { consultation.department_name.to_s }
+        .gsub('{{RESPONSES_DATA}}') { responses_data.join("\n\n") }
+        .gsub('{{OUTPUT_LANGUAGE}}') { language }
   end
 
-  def generate_summary(prompt)
-    client = OpenAI::Client.new(
+  def openai_client
+    @openai_client ||= OpenAI::Client.new(
       access_token: Rails.application.credentials.openai[:api_key],
       request_timeout: OpenAIService::REQUEST_TIMEOUT
     )
+  end
 
-    response = client.responses.create(
+  def generate_summary(prompt)
+    response = openai_client.responses.create(
       parameters: {
         model: SUMMARY_MODEL,
         input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }]
