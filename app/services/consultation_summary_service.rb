@@ -27,16 +27,12 @@ class ConsultationSummaryService
     summaries = {}
 
     LANGUAGES.each do |language, attribute|
-      Rails.logger.info("ConsultationSummaryService: Generating #{language} summary for Consultation #{consultation.id}")
       prompt = build_prompt(responses_data, language)
       result = generate_summary(prompt)
+      next unless result.present?
 
-      if result.present?
-        consultation.send("#{attribute}=", result)
-        summaries[language] = result
-      else
-        Rails.logger.warn("ConsultationSummaryService: Empty summary for #{language} on Consultation #{consultation.id}")
-      end
+      consultation.send("#{attribute}=", result)
+      summaries[language] = result
     end
 
     return failure_result("AI summary generation returned empty content for all languages") if summaries.blank?
@@ -44,8 +40,7 @@ class ConsultationSummaryService
     consultation.save(validate: false)
     success_result(summaries)
   rescue StandardError => e
-    Rails.logger.error("ConsultationSummaryService failed for Consultation #{consultation.id}: #{e.message}")
-    Rails.logger.error(e.backtrace.join("\n"))
+    Airbrake.notify(e)
     failure_result("Summary generation failed: #{e.message}")
   end
 
@@ -117,19 +112,31 @@ class ConsultationSummaryService
     response = client.responses.create(
       parameters: {
         model: SUMMARY_MODEL,
-        input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }]
+        input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }],
+        text: { format: StructuredOutputService.consultation_summary }
       }
     )
 
-    response['output']
-      .flat_map { |o| o['content'] || [] }
-      .map { |c| c['text'] }
-      .compact
-      .join("\n")
-      .strip
+    response_text = response['output']
+                    .flat_map { |o| o['content'] || [] }
+                    .map { |c| c['text'] }
+                    .compact
+                    .join("\n")
+                    .strip
+
+    format_summary(JSON.parse(response_text))
   rescue StandardError => e
-    Rails.logger.error("ConsultationSummaryService: OpenAI request failed: #{e.message}")
+    Airbrake.notify(e)
     nil
+  end
+
+  def format_summary(result)
+    sections = %w[frequently_raised diverging_views also_raised].map do |key|
+      section = result[key]
+      "#{section['label']}: #{Array(section['points']).join(', ')}"
+    end
+
+    [result['opening_paragraph'], *sections].join("\n")
   end
 
   def success_result(summaries)
@@ -144,7 +151,7 @@ class ConsultationSummaryService
     @errors << message
     {
       success: false,
-      summary: nil,
+      summaries: nil,
       message: message,
       errors: @errors
     }
