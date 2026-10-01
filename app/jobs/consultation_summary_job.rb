@@ -1,14 +1,7 @@
 class ConsultationSummaryJob < ApplicationJob
   queue_as :default
 
-  def perform(consultation_id)
-    consultation = Consultation.find_by(id: consultation_id)
-
-    unless consultation
-      Rails.logger.error("ConsultationSummaryJob: Consultation not found with ID #{consultation_id}")
-      return
-    end
-
+  def perform(consultation)
     Rails.logger.info("ConsultationSummaryJob: Starting AI summary generation for Consultation #{consultation.id}")
 
     service = ConsultationSummaryService.new(consultation)
@@ -22,8 +15,9 @@ class ConsultationSummaryJob < ApplicationJob
 
     result
   rescue StandardError => e
-    Rails.logger.error("ConsultationSummaryJob: Unexpected error for Consultation #{consultation_id}: #{e.message}")
+    Rails.logger.error("ConsultationSummaryJob: Unexpected error for Consultation #{consultation.id}: #{e.message}")
     Rails.logger.error(e.backtrace.join("\n"))
+    Airbrake.notify(e)
 
     { success: false, message: "Job failed: #{e.message}", errors: [e.message] }
   end
