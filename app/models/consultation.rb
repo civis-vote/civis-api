@@ -40,6 +40,12 @@ class Consultation < ApplicationRecord
   has_rich_text :kannada_summary
   has_rich_text :ai_summary
 
+  has_rich_text :english_response_summary
+  has_rich_text :hindi_response_summary
+  has_rich_text :marathi_response_summary
+  has_rich_text :odia_response_summary
+  has_rich_text :kannada_response_summary
+
   has_one_attached :consultation_logo
   has_one_attached :consultation_pdf
 
@@ -161,6 +167,7 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
+    ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?
@@ -310,6 +317,26 @@ class Consultation < ApplicationRecord
 
   def kannada_summary_rich_text
     convert_to_rich_text(kannada_summary.to_s)
+  end
+
+  def english_response_summary_rich_text
+    convert_to_rich_text(english_response_summary.to_s)
+  end
+
+  def hindi_response_summary_rich_text
+    convert_to_rich_text(hindi_response_summary.to_s)
+  end
+
+  def odia_response_summary_rich_text
+    convert_to_rich_text(odia_response_summary.to_s)
+  end
+
+  def marathi_response_summary_rich_text
+    convert_to_rich_text(marathi_response_summary.to_s)
+  end
+
+  def kannada_response_summary_rich_text
+    convert_to_rich_text(kannada_response_summary.to_s)
   end
 
   def response_url
