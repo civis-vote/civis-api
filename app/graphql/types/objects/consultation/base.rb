@@ -17,6 +17,7 @@ module Types
         field :consultation_logo, Types::Objects::AttachmentType, nil, null: true do
           argument :resolution, String, required: false, default_value: nil
         end
+        field :consultation_pdf, Types::Objects::AttachmentType, nil, null: true
         field :department, Types::Objects::Department, nil, null: false
         field :theme, Types::Objects::Theme, nil, null: true
         field :consultation_responses_count, Integer, nil, null: false
@@ -83,6 +84,10 @@ module Types
 
         def consultation_logo(resolution:)
           attachment_with_resolution(:consultation_logo, resolution)
+        end
+
+        def consultation_pdf
+          attachment_with_resolution(:consultation_pdf, nil)
         end
 
         def page
