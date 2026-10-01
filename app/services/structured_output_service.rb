@@ -2,7 +2,6 @@ module StructuredOutputService
   class << self
     def clause_extraction
       clause_types = Constant.where(constant_type: :clause_type).pluck(:name)
-      clause_types << 'Other' unless clause_types.include?('Other')
 
       {
         type: 'json_schema',

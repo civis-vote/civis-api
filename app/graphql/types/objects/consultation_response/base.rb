@@ -10,7 +10,7 @@ module Types
         field :id,	Integer, "ID of the consultation", null: false
         field :is_verified, Boolean, "Email verification of the user", null: true
         field :points, Float, "Points earned by submitting this response", null: false
-        field :reading_time, Integer, "Reading time of this response", null: false
+        field :reading_time, Integer, "Reading time of this response", null: true
         field :response_text, String, nil, null: true
         field :response_status, Integer, nil, null: false
         field :round_number, Integer, nil, null: true

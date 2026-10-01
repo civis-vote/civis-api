@@ -38,6 +38,7 @@ class Consultation < ApplicationRecord
   has_rich_text :odia_summary
   has_rich_text :marathi_summary
   has_rich_text :kannada_summary
+  has_rich_text :ai_summary
 
   has_rich_text :english_response_summary
   has_rich_text :hindi_response_summary
