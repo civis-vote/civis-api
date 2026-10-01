@@ -77,46 +77,5 @@ module StructuredOutputService
         }
       }
     end
-
-    def consultation_summary
-      section = lambda do |description|
-        {
-          type: 'object',
-          properties: {
-            label: {
-              type: 'string',
-              description: 'Section heading translated into the output language'
-            },
-            points: {
-              type: 'array',
-              items: { type: 'string' },
-              description: description
-            }
-          },
-          required: %w[label points],
-          additionalProperties: false
-        }
-      end
-
-      {
-        type: 'json_schema',
-        name: 'consultation_summary',
-        strict: true,
-        schema: {
-          type: 'object',
-          properties: {
-            opening_paragraph: {
-              type: 'string',
-              description: 'Opening paragraph (2-4 sentences) capturing the overall sentiment and the strongest theme across responses'
-            },
-            frequently_raised: section.call('Points that most respondents agreed on or raised repeatedly'),
-            diverging_views: section.call('Points where respondents disagreed or expressed uncertainty'),
-            also_raised: section.call('Notable minority viewpoints, unique suggestions, or less frequent but worth-noting points')
-          },
-          required: %w[opening_paragraph frequently_raised diverging_views also_raised],
-          additionalProperties: false
-        }
-      }
-    end
   end
 end
