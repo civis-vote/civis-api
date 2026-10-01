@@ -1,3 +1,5 @@
+require 'redcarpet'
+
 class ConsultationSummaryService
   SUMMARY_MODEL = 'gpt-5.6-luna'.freeze
   PROMPT_FILE = Rails.root.join('config/prompts/consultation_ai_summary.prompt').freeze
@@ -31,8 +33,9 @@ class ConsultationSummaryService
       result = generate_summary(prompt)
       next unless result.present?
 
-      consultation.send("#{attribute}=", result)
-      summaries[language] = result
+      html = markdown_to_html(result)
+      consultation.send("#{attribute}=", html)
+      summaries[language] = html
     end
 
     return failure_result("AI summary generation returned empty content for all languages") if summaries.blank?
@@ -112,31 +115,41 @@ class ConsultationSummaryService
     response = client.responses.create(
       parameters: {
         model: SUMMARY_MODEL,
-        input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }],
-        text: { format: StructuredOutputService.consultation_summary }
+        input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }]
       }
     )
 
-    response_text = response['output']
-                    .flat_map { |o| o['content'] || [] }
-                    .map { |c| c['text'] }
-                    .compact
-                    .join("\n")
-                    .strip
-
-    format_summary(JSON.parse(response_text))
+    response['output']
+      .flat_map { |o| o['content'] || [] }
+      .map { |c| c['text'] }
+      .compact
+      .join("\n")
+      .strip
   rescue StandardError => e
     Airbrake.notify(e)
     nil
   end
 
-  def format_summary(result)
-    sections = %w[frequently_raised diverging_views also_raised].map do |key|
-      section = result[key]
-      "#{section['label']}: #{Array(section['points']).join(', ')}"
-    end
-
-    [result['opening_paragraph'], *sections].join("\n")
+  def markdown_to_html(text)
+    renderer = Redcarpet::Render::HTML.new(
+      hard_wrap: true,
+      no_links: false,
+      safe_links_only: true,
+      escape_html: true,
+      filter_html: true
+    )
+    markdown = Redcarpet::Markdown.new(
+      renderer,
+      autolink: true,
+      tables: true,
+      fenced_code_blocks: true,
+      strikethrough: true,
+      superscript: true,
+      underline: true,
+      lax_spacing: true,
+      space_after_headers: false
+    )
+    markdown.render(text)
   end
 
   def success_result(summaries)
