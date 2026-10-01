@@ -22,6 +22,7 @@ class ConsultationSummaryService
   def call
     return failure_result("Consultation not found") unless consultation
     return failure_result("Consultation has no acceptable responses") unless consultation.responses.acceptable.exists?
+    return { success: true, summaries: {}, message: "Response summaries already generated" } if response_summaries_present?
 
     responses_data = collect_question_responses
     return failure_result("No question responses found to summarize") if responses_data.blank?
@@ -29,6 +30,8 @@ class ConsultationSummaryService
     summaries = {}
 
     LANGUAGES.each do |language, attribute|
+      next if consultation.send(attribute).present?
+
       prompt = build_prompt(responses_data, language)
       result = generate_summary(prompt)
       next unless result.present?
@@ -150,6 +153,10 @@ class ConsultationSummaryService
       space_after_headers: false
     )
     markdown.render(text)
+  end
+
+  def response_summaries_present?
+    LANGUAGES.values.all? { |attribute| consultation.send(attribute).present? }
   end
 
   def success_result(summaries)

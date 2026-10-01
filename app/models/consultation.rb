@@ -173,7 +173,7 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
-    ConsultationSummaryJob.perform_later(self)
+    ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?
