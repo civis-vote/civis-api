@@ -228,7 +228,7 @@ module CmAdmin
               field :marathi_summary, field_type: :rich_text
               field :kannada_summary, field_type: :rich_text
             end
-            cm_section 'AI Response Summaries' do
+            cm_section 'AI Response Summaries', display_if: ->(record) { record.english_response_summary.present? } do
               field :english_response_summary, field_type: :rich_text, label: 'English'
               field :hindi_response_summary, field_type: :rich_text, label: 'Hindi'
               field :odia_response_summary, field_type: :rich_text, label: 'Odia'
