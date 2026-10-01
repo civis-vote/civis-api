@@ -1,6 +1,6 @@
 require 'redcarpet'
 
-class ConsultationSummaryService
+class ConsultationPdfSummaryService
   attr_reader :consultation, :errors
 
   def initialize(consultation)
@@ -12,24 +12,20 @@ class ConsultationSummaryService
     return failure_result("Consultation not found") unless consultation
     return failure_result("Consultation PDF is required") unless consultation.consultation_pdf.attached?
 
-    begin
-      prompt = PromptService.draft_summarisation
-      return failure_result("Summarisation prompt not configured") unless prompt
+    prompt = PromptService.draft_summarisation
+    return failure_result("Summarisation prompt not configured") unless prompt
 
-      summary_text = OpenAIService.new.call(
-        attachment: consultation.consultation_pdf,
-        prompt: prompt
-      )
-      return failure_result("No summary generated") if summary_text.blank?
+    summary_text = OpenAIService.new.call(
+      attachment: consultation.consultation_pdf,
+      prompt: prompt
+    )
+    return failure_result("No summary generated") if summary_text.blank?
 
-      update_consultation_summary(summary_text)
-
-      success_result(summary_text)
-    rescue StandardError => e
-      Rails.logger.error("Consultation summarisation failed for Consultation #{consultation.id}: #{e.message}")
-      Rails.logger.error(e.backtrace.join("\n"))
-      failure_result("Summarisation failed: #{e.message}")
-    end
+    update_consultation_summary(summary_text)
+    success_result(summary_text)
+  rescue StandardError => e
+    Airbrake.notify(e)
+    failure_result("Summarisation failed: #{e.message}")
   end
 
   private
@@ -37,7 +33,7 @@ class ConsultationSummaryService
   def update_consultation_summary(summary_text)
     html = markdown_to_html(summary_text)
     consultation.ai_summary = html
-    consultation.save!
+    consultation.save(validate: false)
   end
 
   def markdown_to_html(text)
@@ -66,16 +62,17 @@ class ConsultationSummaryService
     {
       success: true,
       summary: summary,
-      message: "Successfully generated summary"
+      message: "Successfully generated PDF summary"
     }
   end
 
   def failure_result(message)
+    @errors << message
     {
       success: false,
       summary: nil,
       message: message,
-      errors: [message]
+      errors: @errors
     }
   end
 end

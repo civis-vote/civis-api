@@ -406,7 +406,7 @@ class Consultation < ApplicationRecord
   end
 
   def summarise_pdf
-    ConsultationSummaryJob.perform_later(self)
+    ConsultationPdfSummaryJob.perform_later(self)
   end
 
   private
