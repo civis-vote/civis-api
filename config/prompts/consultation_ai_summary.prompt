@@ -8,7 +8,7 @@ CONSULTATION CONTEXT:
   - Department: {{DEPARTMENT_NAME}}
 
 RESPONSES DATA:
-The following are all the responses submitted by citizens/respondents to the consultation's questions. Each response contains question-answer pairs. Clause-specific feedback has been excluded — only direct question responses are included.
+The following are all the responses submitted by citizens/respondents to the consultation's questions. Each response contains question-answer pairs; lines prefixed with "Voice message transcription:" are transcribed voice answers. Clause-specific feedback has been excluded — only direct question responses are included.
 
 {{RESPONSES_DATA}}
 

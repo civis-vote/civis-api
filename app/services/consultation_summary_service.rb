@@ -61,7 +61,7 @@ class ConsultationSummaryService
   def build_response_entry(response, index)
     if response.response_round&.questions&.present?
       build_question_answer_entry(response, index)
-    elsif response.response_text.present?
+    else
       build_generic_response_entry(response, index)
     end
   end
@@ -85,13 +85,23 @@ class ConsultationSummaryService
   end
 
   def build_generic_response_entry(response, index)
-    text = response.response_text.to_plain_text
-    return nil if text.blank?
+    parts = []
+    text = response.response_text&.to_plain_text
+    parts << text if text.present?
+    parts.concat(voice_transcriptions(response))
+    return nil if parts.blank?
 
     <<~ENTRY
       Response ##{index}:
-      #{text}
+      #{parts.join("\n")}
     ENTRY
+  end
+
+  def voice_transcriptions(response)
+    Array(response.voice_responses).filter_map do |entry|
+      transcription = entry['transcription'] || entry[:transcription]
+      "Voice message transcription: #{transcription}" if transcription.present?
+    end
   end
 
   def build_prompt(responses_data, language)
