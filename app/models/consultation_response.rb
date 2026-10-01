@@ -2,6 +2,8 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   has_paper_trail
 
+  SUPPORTED_LANGUAGES = %w[English Hindi Marathi Odia Kannada].freeze
+
   enum :visibility, {
     shared: 0,
     anonymous: 1
@@ -21,11 +23,12 @@ class ConsultationResponse < ApplicationRecord
     somewhat_satisfied
     satisfied
   ]
-  enum :response_language, {
-    english: "English",
-    hindi: "Hindi",
-    marathi: "Marathi",
-    odia: "Odia"
+  enum :response_language, SUPPORTED_LANGUAGES.map { |lang| [lang.downcase.to_sym, lang] }.to_h
+  enum :transcription_status, {
+    not_available: 0,
+    pending: 1,
+    completed: 2,
+    failed: 3
   }
 
   include Paginator
@@ -134,15 +137,17 @@ class ConsultationResponse < ApplicationRecord
 
   def submit_voice_responses(voice_responses)
     updated_response = []
+    attachment_ids = []
     voice_responses&.each do |answer|
       question_id = answer[:question_id]
       file = answer[:file]
       voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
-      updated_response << { question_id:, attachment_id: attachment.id }
+      attachment_ids << attachment.id
+      updated_response << { question_id:, attachment_id: attachment.id, transcription: nil }
     end
-    update!(voice_responses: updated_response)
+    update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
   end
 
   def update_reading_time
@@ -254,6 +259,11 @@ class ConsultationResponse < ApplicationRecord
 
     response_round.questions.each do |question|
       answer_data = (answers.find { |ans| ans['question_id'].to_i == question.id } if answers.present?)
+
+      if answer_data.blank? && question.accept_voice_message? && voice_responses.present?
+        voice_entry = voice_responses.find { |entry| entry['question_id'].to_i == question.id || entry[:question_id].to_i == question.id }
+        answer_data = { 'question_id' => question.id.to_s, 'answer' => voice_entry['transcription'] } if voice_entry&.dig('transcription')
+      end
 
       formatted_answer = if answer_data.present?
                            answer_text = if answer_data['answer'].is_a?(Array)
