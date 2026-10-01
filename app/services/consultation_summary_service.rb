@@ -27,16 +27,12 @@ class ConsultationSummaryService
     summaries = {}
 
     LANGUAGES.each do |language, attribute|
-      Rails.logger.info("ConsultationSummaryService: Generating #{language} summary for Consultation #{consultation.id}")
       prompt = build_prompt(responses_data, language)
       result = generate_summary(prompt)
+      next unless result.present?
 
-      if result.present?
-        consultation.send("#{attribute}=", result)
-        summaries[language] = result
-      else
-        Rails.logger.warn("ConsultationSummaryService: Empty summary for #{language} on Consultation #{consultation.id}")
-      end
+      consultation.send("#{attribute}=", result)
+      summaries[language] = result
     end
 
     return failure_result("AI summary generation returned empty content for all languages") if summaries.blank?

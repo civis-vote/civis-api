@@ -2,23 +2,10 @@ class ConsultationSummaryJob < ApplicationJob
   queue_as :default
 
   def perform(consultation)
-    Rails.logger.info("ConsultationSummaryJob: Starting AI summary generation for Consultation #{consultation.id}")
-
     service = ConsultationSummaryService.new(consultation)
-    result = service.call
-
-    if result[:success]
-      Rails.logger.info("ConsultationSummaryJob: Successfully generated AI summary for Consultation #{consultation.id}")
-    else
-      Rails.logger.error("ConsultationSummaryJob: Failed to generate AI summary for Consultation #{consultation.id}: #{result[:message]}")
-    end
-
-    result
+    service.call
   rescue StandardError => e
-    Rails.logger.error("ConsultationSummaryJob: Unexpected error for Consultation #{consultation.id}: #{e.message}")
-    Rails.logger.error(e.backtrace.join("\n"))
     Airbrake.notify(e)
-
     { success: false, message: "Job failed: #{e.message}", errors: [e.message] }
   end
 end

@@ -24,8 +24,6 @@ class ConsultationPdfSummaryService
     update_consultation_summary(summary_text)
     success_result(summary_text)
   rescue StandardError => e
-    Rails.logger.error("ConsultationPdfSummaryService failed for Consultation #{consultation.id}: #{e.message}")
-    Rails.logger.error(e.backtrace.join("\n"))
     Airbrake.notify(e)
     failure_result("Summarisation failed: #{e.message}")
   end
