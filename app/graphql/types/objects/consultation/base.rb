@@ -145,23 +145,23 @@ module Types
         end
 
         def english_response_summary
-          object.english_response_summary.to_s
+          object.english_response_summary_rich_text
         end
 
         def hindi_response_summary
-          object.hindi_response_summary.to_s
+          object.hindi_response_summary_rich_text
         end
 
         def odia_response_summary
-          object.odia_response_summary.to_s
+          object.odia_response_summary_rich_text
         end
 
         def marathi_response_summary
-          object.marathi_response_summary.to_s
+          object.marathi_response_summary_rich_text
         end
 
         def kannada_response_summary
-          object.kannada_response_summary.to_s
+          object.kannada_response_summary_rich_text
         end
 
         def shared_responses(sort:, sort_direction:)

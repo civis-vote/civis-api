@@ -363,6 +363,15 @@ module CmAdmin
             form_field :marathi_summary, input_type: :rich_text
             form_field :kannada_summary, input_type: :rich_text
           end
+
+          cm_section 'AI Response Summaries', display_if: ->(record) { record.english_response_summary.present? } do
+            form_field :english_response_summary, input_type: :rich_text, label: 'English'
+            form_field :hindi_response_summary, input_type: :rich_text, label: 'Hindi'
+            form_field :odia_response_summary, input_type: :rich_text, label: 'Odia'
+            form_field :marathi_response_summary, input_type: :rich_text, label: 'Marathi'
+            form_field :kannada_response_summary, input_type: :rich_text, label: 'Kannada'
+          end
+
           cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
             form_field :response_submission_message, input_type: :rich_text
           end
