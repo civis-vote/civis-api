@@ -1,0 +1,33 @@
+# Devin snapshot-setup blueprint for civis-api
+# Rails 8.1 / Ruby 3.4.7 / PostgreSQL / Sidekiq (see Procfile, .ruby-version, config/database.yml)
+
+initialize:
+  - run: |
+      sudo apt-get update
+      sudo apt-get install -y postgresql postgresql-contrib libpq-dev redis-server imagemagick
+      sudo service postgresql start
+      sudo -u postgres psql -c "CREATE ROLE \"${USER:-devin}\" LOGIN SUPERUSER;" || true
+      gem install bundler --conservative
+      bundle install
+      DB_USER="${DB_USER:-${USER:-devin}}" bin/rails db:prepare
+
+maintenance:
+  - run: |
+      sudo service postgresql start || true
+      sudo service redis-server start || true
+      bundle check || bundle install
+      export DB_USER="${DB_USER:-${USER:-devin}}"
+
+knowledge:
+  - name: lint
+    contents: |
+      bundle exec rubocop
+  - name: test
+    contents: |
+      RAILS_ENV=test DB_USER="${DB_USER:-${USER:-devin}}" bundle exec rspec
+  - name: startup
+    contents: |
+      # Web server:
+      DB_USER="${DB_USER:-${USER:-devin}}" bin/rails s
+      # Background worker (Procfile):
+      #   bundle exec sidekiq -e development
