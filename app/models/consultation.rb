@@ -173,6 +173,8 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
+    self.feedback_submitted_at = DateTime.now unless feedback_submitted_at.present?
+    save!
     ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
