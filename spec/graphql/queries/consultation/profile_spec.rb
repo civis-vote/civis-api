@@ -9,8 +9,8 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
   let(:consultation) do
     Consultation.create!(title: "Consultation #{SecureRandom.hex(4)}", department: department,
                          response_deadline: 10.days.from_now, question_flow: :question_list,
-                         feedback_submitted_at: 1.day.ago, acknowledged_at: 20.hours.ago,
-                         policy_released_at: 10.hours.ago)
+                         published_at: 5.days.ago, feedback_submitted_at: 1.day.ago,
+                         acknowledged_at: 20.hours.ago, policy_released_at: 10.hours.ago)
   end
 
   let(:query) do
@@ -38,7 +38,8 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
     end
 
     it 'returns null when the timeline timestamps are not set' do
-      consultation.update!(feedback_submitted_at: nil, acknowledged_at: nil, policy_released_at: nil)
+      consultation.update!(published_at: nil, feedback_submitted_at: nil, acknowledged_at: nil,
+                           policy_released_at: nil)
 
       expect(profile['feedbackSubmittedAt']).to be_nil
       expect(profile['acknowledgedAt']).to be_nil
