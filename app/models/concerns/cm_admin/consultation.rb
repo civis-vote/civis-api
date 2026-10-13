@@ -232,7 +232,7 @@ module CmAdmin
               field :response_submission_message, field_type: :rich_text
             end
             cm_section 'Timeline' do
-              field :published_at, field_type: :datetime, label: 'Published Deadline'
+              field :published_at, field_type: :datetime, label: 'Published At'
               field :feedback_submitted_at, field_type: :datetime, label: 'Feedback Submitted At'
               field :acknowledged_at, field_type: :datetime, label: 'Acknowledged At'
               field :policy_released_at, field_type: :datetime, label: 'Policy Released At'
