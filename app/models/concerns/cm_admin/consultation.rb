@@ -367,8 +367,6 @@ module CmAdmin
           end
 
           cm_section 'Timeline' do
-            form_field :published_at, input_type: :date_time, label: 'Published Deadline',
-                                      helper_text: 'Auto-filled when the consultation is published. Can be edited if needed.'
             form_field :feedback_submitted_at, input_type: :date_time, label: 'Feedback Submitted At',
                                                helper_text: 'Auto-filled when the feedback report emails are sent on expiry. Can be edited if needed.'
             form_field :acknowledged_at, input_type: :date_time, label: 'Acknowledged At'

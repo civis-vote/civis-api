@@ -18,7 +18,6 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
       query GetConsultation($id: Int!) {
         consultationProfile(id: $id) {
           id
-          publishedDeadline
           feedbackSubmittedAt
           acknowledgedAt
           policyReleasedAt
@@ -33,7 +32,6 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
 
   describe 'timeline fields' do
     it 'returns the timeline timestamps' do
-      expect(profile['publishedDeadline']).to eq(consultation.published_at.utc.iso8601)
       expect(profile['feedbackSubmittedAt']).to eq(consultation.feedback_submitted_at.utc.iso8601)
       expect(profile['acknowledgedAt']).to eq(consultation.acknowledged_at.utc.iso8601)
       expect(profile['policyReleasedAt']).to eq(consultation.policy_released_at.utc.iso8601)
@@ -43,7 +41,6 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
       consultation.update!(published_at: nil, feedback_submitted_at: nil, acknowledged_at: nil,
                            policy_released_at: nil)
 
-      expect(profile['publishedDeadline']).to be_nil
       expect(profile['feedbackSubmittedAt']).to be_nil
       expect(profile['acknowledgedAt']).to be_nil
       expect(profile['policyReleasedAt']).to be_nil

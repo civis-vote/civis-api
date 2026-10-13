@@ -25,7 +25,6 @@ module Types
         field :feedback_submitted_at, Types::Objects::DateTime, "Time when the feedback report was submitted.", null: true
         field :acknowledged_at, Types::Objects::DateTime, "Time when the feedback report was acknowledged.", null: true
         field :policy_released_at, Types::Objects::DateTime, "Time when the policy was released.", null: true
-        field :published_deadline, Types::Objects::DateTime, "Time when the consultation was published.", null: true
         field :enforce_private_response, Boolean, nil, null: false
         field :response_deadline, Types::Objects::DateTime, "Deadline to submit responses.", null: false
         field :responses, Types::Connections::ConsultationResponse, nil, null: true do
@@ -185,10 +184,6 @@ module Types
 
         def enforce_private_response
           object.private_response?
-        end
-
-        def published_deadline
-          object.published_at
         end
 
         def response_deadline
