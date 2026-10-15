@@ -30,10 +30,15 @@ module Mutations
           raise IncompleteEntity, "Response already submitted by User"
         end
 
-        ActiveRecord::Base.transaction do
+        created_consultation_response = ActiveRecord::Base.transaction do
           created_consultation_response.save!
           created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
           create_clause_feedbacks(created_consultation_response, consultation_response.clause_feedbacks)
+          created_consultation_response
+        end
+
+        created_consultation_response.voice_responses.each do |entry|
+          TranscribeVoiceMessageJob.perform_later(created_consultation_response.id, entry['attachment_id'])
         end
         created_consultation_response
       end
