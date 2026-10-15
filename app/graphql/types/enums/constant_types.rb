@@ -1,3 +1,5 @@
 class Types::Enums::ConstantTypes < Types::BaseEnum
-  value "ministry_category"
+  ::CONSTANT_TYPES.each do |constant_type|
+    value constant_type.to_s
+  end
 end
