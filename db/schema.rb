@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_09_22_132742) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -478,6 +478,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_132742) do
   end
 
   create_table "consultations", force: :cascade do |t|
+    t.datetime "acknowledged_at"
     t.string "consultation_feedback_email"
     t.integer "consultation_responses_count", default: 0
     t.datetime "created_at", null: false
@@ -488,11 +489,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_09_22_132742) do
     t.datetime "feedback_email_delivered_at"
     t.string "feedback_email_message_id"
     t.datetime "feedback_email_opened_at"
+    t.datetime "feedback_submitted_at"
     t.boolean "is_featured", default: false
     t.boolean "is_satisfaction_rating_optional", default: false, null: false
     t.string "officer_designation"
     t.string "officer_name"
     t.integer "organisation_id"
+    t.datetime "policy_released_at"
     t.integer "private_response", default: 0
     t.datetime "published_at", precision: nil
     t.integer "question_flow", default: 0
