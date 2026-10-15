@@ -168,6 +168,8 @@ class Consultation < ApplicationRecord
     return unless responses.acceptable.size.positive?
 
     ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
+    self.feedback_submitted_at = DateTime.now unless feedback_submitted_at.present?
+    save!
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?

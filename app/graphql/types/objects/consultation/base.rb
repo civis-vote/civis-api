@@ -22,6 +22,9 @@ module Types
         field :theme, Types::Objects::Theme, nil, null: true
         field :consultation_responses_count, Integer, nil, null: false
         field :published_at, Types::Objects::DateTime, nil, null: true
+        field :feedback_submitted_at, Types::Objects::DateTime, "Time when the feedback report was submitted.", null: true
+        field :acknowledged_at, Types::Objects::DateTime, "Time when the feedback report was acknowledged.", null: true
+        field :policy_released_at, Types::Objects::DateTime, "Time when the policy was released.", null: true
         field :enforce_private_response, Boolean, nil, null: false
         field :response_deadline, Types::Objects::DateTime, "Deadline to submit responses.", null: false
         field :responses, Types::Connections::ConsultationResponse, nil, null: true do
