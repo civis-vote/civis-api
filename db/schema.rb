@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -820,6 +820,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
+  create_table "user_theme_preferences", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "theme_id", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["theme_id"], name: "index_user_theme_preferences_on_theme_id"
+    t.index ["user_id", "theme_id"], name: "index_user_theme_preferences_on_user_id_and_theme_id", unique: true
+    t.index ["user_id"], name: "index_user_theme_preferences_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.integer "best_rank"
     t.integer "best_rank_type"
@@ -963,6 +973,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
   add_foreign_key "response_summaries", "consultations"
   add_foreign_key "showcase_slides", "users", column: "created_by_id"
   add_foreign_key "showcase_slides", "users", column: "updated_by_id"
+  add_foreign_key "user_theme_preferences", "themes"
+  add_foreign_key "user_theme_preferences", "users"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end
