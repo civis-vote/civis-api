@@ -5,7 +5,7 @@ Rails.application.reloader.to_prepare do
     # config.authorized_roles = [:super_admin?]
     config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
-                              ResponseRound, Question, FileImport, FileExport, Respondent, TeamMember, Clause, Constant,
+                              ResponseRound, Question, CtFileImport, CtFileExport, Respondent, TeamMember, Clause, Constant,
                               CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog]
 
     config.project_name = Rails.configuration.x.project_settings.name
@@ -53,11 +53,11 @@ Rails.application.reloader.to_prepare do
       },
       {
         display_name: 'File Imports',
-        path: :cm_index_file_import_path
+        path: :cm_index_ct_file_import_path
       },
       {
         display_name: 'File Exports',
-        path: :cm_index_file_export_path
+        path: :cm_index_ct_file_export_path
       },
       {
         display_name: 'Constants',

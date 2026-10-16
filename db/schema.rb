@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_115321) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -378,6 +378,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.index ["mentioned_type", "mentioned_id"], name: "index_cm_user_mentions_on_mentioned"
   end
 
+  create_table "cm_webhook_events", force: :cascade do |t|
+    t.integer "cm_service"
+    t.integer "host_service"
+    t.string "event_type", null: false
+    t.integer "status", default: 0, null: false
+    t.string "event_id"
+    t.string "uuid", null: false
+    t.text "error_message"
+    t.datetime "processed_at"
+    t.string "eventable_type"
+    t.bigint "eventable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cm_service", "event_id", "event_type"], name: "idx_on_cm_service_event_id_event_type_a39dc27451"
+    t.index ["cm_service"], name: "index_cm_webhook_events_on_cm_service"
+    t.index ["created_at"], name: "index_cm_webhook_events_on_created_at"
+    t.index ["event_id"], name: "index_cm_webhook_events_on_event_id"
+    t.index ["event_type"], name: "index_cm_webhook_events_on_event_type"
+    t.index ["eventable_type", "eventable_id"], name: "index_cm_webhook_events_on_eventable"
+    t.index ["host_service", "event_id", "event_type"], name: "idx_on_host_service_event_id_event_type_5ad8fb1d14"
+    t.index ["host_service"], name: "index_cm_webhook_events_on_host_service"
+    t.index ["status"], name: "index_cm_webhook_events_on_status"
+    t.index ["uuid"], name: "index_cm_webhook_events_on_uuid", unique: true
+  end
+
   create_table "constant_maps", force: :cascade do |t|
     t.bigint "constant_id", null: false
     t.datetime "created_at", null: false
@@ -521,6 +546,40 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.index ["theme_id"], name: "index_consultations_on_theme_id"
   end
 
+  create_table "ct_file_exports", force: :cascade do |t|
+    t.string "action_name"
+    t.integer "associated_model_id"
+    t.string "associated_model_name"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_report", default: {}
+    t.datetime "expires_at"
+    t.integer "export_type", default: 0
+    t.bigint "exported_by_id", null: false
+    t.string "exported_by_type", null: false
+    t.jsonb "params", default: {}
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
+  end
+
+  create_table "ct_file_imports", force: :cascade do |t|
+    t.string "action_name"
+    t.bigint "added_by_id", null: false
+    t.string "added_by_type", null: false
+    t.bigint "associated_model_id"
+    t.string "associated_model_name"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_report", default: {}
+    t.integer "import_type"
+    t.string "importer_class_name"
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
+  end
+
   create_table "department_contacts", force: :cascade do |t|
     t.integer "contact_type"
     t.datetime "created_at", null: false
@@ -547,40 +606,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.string "name_odia"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
-  end
-
-  create_table "file_exports", force: :cascade do |t|
-    t.string "action_name"
-    t.integer "associated_model_id"
-    t.string "associated_model_name"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.jsonb "error_report", default: {}
-    t.datetime "expires_at"
-    t.integer "export_type", default: 0
-    t.bigint "exported_by_id", null: false
-    t.string "exported_by_type", null: false
-    t.jsonb "params", default: {}
-    t.integer "status", default: 0
-    t.datetime "updated_at", null: false
-    t.string "url"
-    t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
-  end
-
-  create_table "file_imports", force: :cascade do |t|
-    t.string "action_name"
-    t.bigint "added_by_id", null: false
-    t.string "added_by_type", null: false
-    t.bigint "associated_model_id"
-    t.string "associated_model_name"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.jsonb "error_report", default: {}
-    t.integer "import_type"
-    t.string "importer_class_name"
-    t.integer "status", default: 0
-    t.datetime "updated_at", null: false
-    t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
   end
 
   create_table "game_actions", force: :cascade do |t|
