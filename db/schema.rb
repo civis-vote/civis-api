@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_115321) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_125938) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -88,39 +88,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_115321) do
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
   end
 
-  create_table "response_option_breakdowns", force: :cascade do |t|
-    t.integer "option_id", null: false
-    t.string "option_text", null: false
-    t.float "percentage", null: false, default: 0.0
-    t.integer "selection_count", null: false, default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "response_question_summary_id", null: false
-    t.index ["response_question_summary_id"], name: "index_response_option_breakdowns_on_rqs_id"
-  end
-
-  create_table "response_question_summaries", force: :cascade do |t|
-    t.boolean "is_optional", null: false, default: false
-    t.integer "other_option_count"
-    t.integer "position"
-    t.integer "question_id", null: false
-    t.string "question_text", null: false
-    t.string "question_type", null: false
-    t.integer "text_response_count"
-    t.integer "total_responses", null: false, default: 0
-    t.integer "voice_response_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "response_summary_id", null: false
-    t.index ["response_summary_id"], name: "index_response_question_summaries_on_response_summary_id"
-  end
-
-  create_table "response_summaries", force: :cascade do |t|
-    t.integer "total_responses", null: false, default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "consultation_id", null: false
-    t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
   end
 
   create_table "clause_feedbacks", force: :cascade do |t|
@@ -241,19 +208,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_115321) do
     t.index ["network"], name: "index_cm_geo_ip_networks_on_network", using: :gist
   end
 
-  create_table "cm_index_preferences", force: :cascade do |t|
-    t.string "ar_model_name", null: false
-    t.string "associated_ar_model_name"
-    t.datetime "created_at", null: false
-    t.string "hidden_columns", default: [], array: true
-    t.integer "records_per_page", default: 20
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.string "visible_columns", default: [], array: true
-    t.index ["ar_model_name"], name: "index_cm_index_preferences_on_ar_model_name"
-    t.index ["associated_ar_model_name"], name: "index_cm_index_preferences_on_associated_ar_model_name"
-    t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
-  end
 
   create_table "cm_notifiables", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -580,6 +534,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_115321) do
     t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
   end
 
+  create_table "ct_page_views", force: :cascade do |t|
+    t.string "owner_type", null: false
+    t.bigint "owner_id", null: false
+    t.citext "name", null: false
+    t.string "ar_model_name", null: false
+    t.string "associated_ar_model_name", default: "", null: false
+    t.string "visible_columns", default: [], array: true
+    t.string "hidden_columns", default: [], array: true
+    t.boolean "is_default", default: false, null: false
+    t.integer "view_type", default: 0
+    t.integer "records_per_page", default: 20
+    t.jsonb "filter_params", default: {}
+    t.json "sort_params", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ar_model_name"], name: "index_ct_page_views_on_ar_model_name"
+    t.index ["associated_ar_model_name"], name: "index_ct_page_views_on_associated_ar_model_name"
+    t.index ["owner_type", "owner_id", "ar_model_name", "associated_ar_model_name"], name: "index_ct_page_views_on_unique_default", unique: true, where: "(is_default = true)"
+    t.index ["owner_type", "owner_id"], name: "index_ct_page_views_on_owner"
+  end
+
   create_table "department_contacts", force: :cascade do |t|
     t.integer "contact_type"
     t.datetime "created_at", null: false
@@ -844,6 +819,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_115321) do
     t.integer "user_id"
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
+
 
   create_table "users", force: :cascade do |t|
     t.integer "best_rank"

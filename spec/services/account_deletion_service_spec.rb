@@ -49,7 +49,7 @@ RSpec.describe AccountDeletionService do
   let!(:notification_setting) { NotificationSetting.create!(user: user, on_new_consultation: true) }
   let!(:respondent) { Respondent.create!(user: user, response_round: consultation.response_rounds.first) }
   let!(:user_count) { UserCount.create!(user_id: user.id, profanity_count: 2) }
-  let!(:cm_index_preference) { CmIndexPreference.create!(user_id: user.id, ar_model_name: 'User') }
+  let!(:ct_page_view) { CtPageView.create!(owner: user, name: 'Default view', ar_model_name: 'User') }
 
   let!(:created_consultation) do
     c = Consultation.create!(title: "Created consultation #{SecureRandom.hex(4)}", department: department,
@@ -208,13 +208,13 @@ RSpec.describe AccountDeletionService do
       expect(other_user.city_rank).to eq(1)
     end
 
-    it 'deletes the notification settings, respondents, user counts and cm index preferences' do
+    it 'deletes the notification settings, respondents, user counts and ct page views' do
       service.call
 
       expect(NotificationSetting.where(user_id: user.id)).to be_empty
       expect(Respondent.where(user_id: user.id)).to be_empty
       expect(UserCount.where(user_id: user.id)).to be_empty
-      expect(CmIndexPreference.where(user_id: user.id)).to be_empty
+      expect(CtPageView.where(owner: user)).to be_empty
     end
 
     it 'nullifies invited_by references on users invited by the deleted user' do
