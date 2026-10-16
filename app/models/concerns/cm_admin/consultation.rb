@@ -101,12 +101,13 @@ module CmAdmin
             consultation
           end
 
-          column :id
           column :title
+          column :consultation_logo, field_type: :image, card_image: true
+          column :id
           column :department_name, header: 'Department'
           column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
           column :theme_name, header: 'Theme'
-          column :response_deadline, field_type: :date, format: '%d %b, %Y'
+          column :response_deadline, field_type: :date, format: '%d %b, %Y', card_footer: true
           column :created_at, field_type: :date, format: '%d %b, %Y'
           column :created_by_full_name, header: 'Created By'
           column :responses_count
