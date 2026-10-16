@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_16_125938) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -204,20 +204,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_120000) do
     t.boolean "is_anycast"
     t.index ["cm_geo_ip_location_id"], name: "index_cm_geo_ip_networks_on_cm_geo_ip_location_id"
     t.index ["network"], name: "index_cm_geo_ip_networks_on_network", using: :gist
-  end
-
-  create_table "cm_index_preferences", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "ar_model_name", null: false
-    t.string "associated_ar_model_name"
-    t.string "visible_columns", default: [], array: true
-    t.string "hidden_columns", default: [], array: true
-    t.integer "records_per_page", default: 20
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["ar_model_name"], name: "index_cm_index_preferences_on_ar_model_name"
-    t.index ["associated_ar_model_name"], name: "index_cm_index_preferences_on_associated_ar_model_name"
-    t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
   end
 
   create_table "cm_notifiables", force: :cascade do |t|
@@ -543,6 +529,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_120000) do
     t.string "importer_class_name"
     t.integer "import_type"
     t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
+  end
+
+  create_table "ct_page_views", force: :cascade do |t|
+    t.string "owner_type", null: false
+    t.bigint "owner_id", null: false
+    t.citext "name", null: false
+    t.string "ar_model_name", null: false
+    t.string "associated_ar_model_name", default: "", null: false
+    t.string "visible_columns", default: [], array: true
+    t.string "hidden_columns", default: [], array: true
+    t.boolean "is_default", default: false, null: false
+    t.integer "view_type", default: 0
+    t.integer "records_per_page", default: 20
+    t.jsonb "filter_params", default: {}
+    t.json "sort_params", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ar_model_name"], name: "index_ct_page_views_on_ar_model_name"
+    t.index ["associated_ar_model_name"], name: "index_ct_page_views_on_associated_ar_model_name"
+    t.index ["owner_type", "owner_id", "ar_model_name", "associated_ar_model_name"], name: "index_ct_page_views_on_unique_default", unique: true, where: "(is_default = true)"
+    t.index ["owner_type", "owner_id"], name: "index_ct_page_views_on_owner"
   end
 
   create_table "department_contacts", force: :cascade do |t|
