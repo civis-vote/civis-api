@@ -9,4 +9,6 @@ if [ -f "$HOME/.asdf-vars" ]; then
   set -u
 fi
 
+bundle exec rails db:migrate
+
 HATCHBOX_EVENT_TYPE=post_deploy ruby "$(dirname "$0")/lib/hatchbox_notification.rb"
