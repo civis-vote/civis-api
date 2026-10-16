@@ -2,7 +2,7 @@
 
 module Hatchbox
   module Config
-    CM_DEPLOYMENT_SLACK_WEBHOOK_URL = nil # Set SLACK_WEBHOOK_URL in Hatchbox env vars — do not commit real webhook URLs
+    CM_DEPLOYMENT_SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/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' # Set SLACK_WEBHOOK_URL in Hatchbox env vars — do not commit real webhook URLs
 
     def self.app_name
       ENV.fetch('APP_NAME', nil)
