@@ -9,10 +9,12 @@ module Mutations
         current_user = context[:current_user]
         user_input = user.to_h
 
-        current_user.preferred_theme_ids = ::Theme.where(id: user_input[:theme_ids]).ids unless user_input[:theme_ids].nil?
+        ActiveRecord::Base.transaction do
+          current_user.preferred_theme_ids = ::Theme.where(id: user_input[:theme_ids]).ids unless user_input[:theme_ids].nil?
 
-        unless user_input[:area_of_impact_ids].nil?
-          sync_area_of_impacts(current_user, ::Constant.area_of_impact.where(id: user_input[:area_of_impact_ids]).ids)
+          unless user_input[:area_of_impact_ids].nil?
+            sync_area_of_impacts(current_user, ::Constant.area_of_impact.where(id: user_input[:area_of_impact_ids]).ids)
+          end
         end
 
         current_user

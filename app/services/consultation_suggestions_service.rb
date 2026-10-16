@@ -10,6 +10,7 @@ class ConsultationSuggestionsService
   HISTORY_DEPARTMENT_SCORE = 0.5
   HISTORY_AREA_OF_IMPACT_SCORE = 0.5
   HISTORY_SCORE_CAP = 5
+  MAX_LIMIT = 50
 
   attr_reader :user, :source
 
@@ -19,6 +20,7 @@ class ConsultationSuggestionsService
   end
 
   def call(limit: 3)
+    limit = limit.clamp(1, MAX_LIMIT)
     candidates = candidate_pool.includes(:area_of_impacts).to_a
     return popular_consultations(candidates.map(&:id), limit) if candidates.empty?
 
@@ -26,7 +28,7 @@ class ConsultationSuggestionsService
     if scored.all? { |(_consultation, score)| score.zero? }
       popular_consultations(candidates.map(&:id), limit)
     else
-      scored.sort_by { |consultation, score| [-score, consultation.response_deadline] }
+      scored.sort_by { |consultation, score| [-score, consultation.response_deadline, consultation.id] }
             .first(limit)
             .map(&:first)
     end
@@ -50,7 +52,7 @@ class ConsultationSuggestionsService
 
     score = 0
     score += SAME_THEME_SCORE if source.theme_id.present? && consultation.theme_id == source.theme_id
-    score += SHARED_AREA_OF_IMPACT_SCORE * (consultation.area_of_impact_ids & source.area_of_impact_ids).size
+    score += SHARED_AREA_OF_IMPACT_SCORE * (consultation.area_of_impact_ids & source_area_of_impact_ids).size
     score += SAME_DEPARTMENT_SCORE if consultation.department_id == source.department_id
     score += FEATURED_SCORE if consultation.is_featured
     score
@@ -86,7 +88,7 @@ class ConsultationSuggestionsService
                       "WHERE consultation_responses.visibility = #{shared} " \
                       "AND consultation_responses.response_status = #{acceptable}) DESC"
                     ),
-                    'consultations.response_deadline ASC'
+                    'consultations.response_deadline ASC, consultations.id ASC'
                   )
                   .pluck(:id)
   end
@@ -95,6 +97,10 @@ class ConsultationSuggestionsService
     ids = popular_consultation_ids(candidate_ids).first(limit)
     by_id = ::Consultation.where(id: ids).index_by(&:id)
     ids.filter_map { |id| by_id[id] }
+  end
+
+  def source_area_of_impact_ids
+    @source_area_of_impact_ids ||= source.area_of_impact_ids
   end
 
   def preferred_theme_ids
