@@ -16,8 +16,9 @@ module CmAdmin
         sort column: 'updated_at', display_name: 'Updated At'
         sort column: 'consultation_responses_count', display_name: 'Response Count'
 
-        cm_index do
+        cm_index view_type: :kanban_view do
           page_title 'Consultations'
+          kanban_view 'status'
 
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
           filter :status, :multi_select, active_by_default: true
