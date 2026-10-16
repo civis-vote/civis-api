@@ -12,7 +12,10 @@ require_relative "event_types"
 module Hatchbox
   module Notification
     def self.run(event_type)
-      return unless Config.deployment_alerts?
+      unless Config.deployment_alerts?
+        puts 'Deployment alerts disabled (DEPLOYMENT_ALERTS=false)'
+        return
+      end
 
       missing_values = Config.missing_config_values
       unless missing_values.empty?
@@ -21,7 +24,11 @@ module Hatchbox
       end
 
       payload = EventTypes.build_payload(event_type)
-      EventTypes.send_notification(payload)
+      if payload.nil?
+        warn "Unknown HATCHBOX_EVENT_TYPE: #{event_type.inspect}"
+      else
+        EventTypes.send_notification(payload)
+      end
     end
   end
 end

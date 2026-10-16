@@ -34,19 +34,19 @@ module Hatchbox
       event = EVENTS[event_type]
       return nil unless event
 
-      {
-        text: "#{Config.app_name} #{event[:message]}",
-        blocks: [
-          { type: 'header', text: { type: 'plain_text', text: event[:title], emoji: true } },
-          { type: 'rich_text', elements: [
-            { type: 'rich_text_section', elements: [
-              { type: 'emoji', name: event[:emoji] },
-              { type: 'text', text: " #{Config.app_name} #{event[:message]}" }
-            ] }
-          ] },
-          { type: 'actions', elements: build_buttons(event) }
-        ]
-      }
+      blocks = [
+        { type: 'header', text: { type: 'plain_text', text: event[:title], emoji: true } },
+        { type: 'rich_text', elements: [
+          { type: 'rich_text_section', elements: [
+            { type: 'emoji', name: event[:emoji] },
+            { type: 'text', text: " #{Config.app_name} #{event[:message]}" }
+          ] }
+        ] }
+      ]
+      buttons = build_buttons(event)
+      blocks << { type: 'actions', elements: buttons } unless buttons.empty?
+
+      { text: "#{Config.app_name} #{event[:message]}", blocks: blocks }
     end
 
     def self.build_config_unavailable_payload(missing_values)
@@ -75,13 +75,16 @@ module Hatchbox
     def self.build_buttons(event)
       buttons = []
 
-      button = {
-        type: 'button',
-        text: { type: 'plain_text', text: event[:button_text] },
-        url: Config.hatchbox_logs_url
-      }
-      button[:style] = event[:button_style] if event[:button_style]
-      buttons << button
+      logs_url = Config.hatchbox_logs_url
+      unless Config.hatchbox_app_id.to_s.empty?
+        button = {
+          type: 'button',
+          text: { type: 'plain_text', text: event[:button_text] },
+          url: logs_url
+        }
+        button[:style] = event[:button_style] if event[:button_style]
+        buttons << button
+      end
 
       app_url = Config.app_url
       if app_url && !app_url.empty?
@@ -116,8 +119,15 @@ module Hatchbox
 
       response = http.request(request)
 
-      response.code.to_i.between?(200, 299)
-    rescue StandardError
+      if response.code.to_i.between?(200, 299)
+        puts 'Slack notification sent'
+        true
+      else
+        warn "Slack notification failed: HTTP #{response.code} #{response.body}"
+        false
+      end
+    rescue StandardError => e
+      warn "Slack notification error: #{e.class}: #{e.message}"
       false
     end
   end
