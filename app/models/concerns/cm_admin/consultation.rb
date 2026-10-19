@@ -102,7 +102,7 @@ module CmAdmin
           end
 
           column :id
-          column :title, card_header: true
+          column :title, card_title: true
           column :consultation_logo, field_type: :image, card_image: true
           column :department_name, header: 'Department'
           column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
