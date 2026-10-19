@@ -203,7 +203,7 @@ module CmAdmin
               field :organisation_name, label: 'Organisation', display_if: ->(record) { record.organisation_id.present? }
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-              field :response_deadline, field_type: :datetime
+              field :response_deadline, field_type: :datetime, timezone: 'Asia/Kolkata'
               field :show_discuss_section, field_type: :boolean
               field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
               field :feedback_url, label: 'Consultation Page', field_type: :link
@@ -232,10 +232,10 @@ module CmAdmin
               field :response_submission_message, field_type: :rich_text
             end
             cm_section 'Timeline' do
-              field :published_at, field_type: :datetime, label: 'Published At'
-              field :feedback_submitted_at, field_type: :datetime, label: 'Feedback Submitted At'
-              field :acknowledged_at, field_type: :datetime, label: 'Acknowledged At'
-              field :policy_released_at, field_type: :datetime, label: 'Policy Released At'
+              field :published_at, field_type: :datetime, label: 'Published At', timezone: 'Asia/Kolkata'
+              field :feedback_submitted_at, field_type: :datetime, label: 'Feedback Submitted At', timezone: 'Asia/Kolkata'
+              field :acknowledged_at, field_type: :datetime, label: 'Acknowledged At', timezone: 'Asia/Kolkata'
+              field :policy_released_at, field_type: :datetime, label: 'Policy Released At', timezone: 'Asia/Kolkata'
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
@@ -301,9 +301,9 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
-            alert_box header: 'Time Zone Notice', type: :warning,
-                      body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
-            form_field :response_deadline, input_type: :date_time
+            alert_box header: 'Time Zone Notice', type: :info,
+                      body: 'Times are displayed and stored in India Standard Time (IST, UTC+5:30).'
+            form_field :response_deadline, input_type: :date_time, timezone: 'Asia/Kolkata'
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
@@ -344,9 +344,9 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
-            alert_box header: 'Time Zone Notice', type: :warning,
-                      body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
-            form_field :response_deadline, input_type: :date_time
+            alert_box header: 'Time Zone Notice', type: :info,
+                      body: 'Times are displayed and stored in India Standard Time (IST, UTC+5:30).'
+            form_field :response_deadline, input_type: :date_time, timezone: 'Asia/Kolkata'
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
@@ -368,9 +368,10 @@ module CmAdmin
 
           cm_section 'Timeline' do
             form_field :feedback_submitted_at, input_type: :date_time, label: 'Feedback Submitted At',
+                                               timezone: 'Asia/Kolkata',
                                                helper_text: 'Auto-filled when the feedback report emails are sent on expiry. Can be edited if needed.'
-            form_field :acknowledged_at, input_type: :date_time, label: 'Acknowledged At'
-            form_field :policy_released_at, input_type: :date_time, label: 'Policy Released At'
+            form_field :acknowledged_at, input_type: :date_time, label: 'Acknowledged At', timezone: 'Asia/Kolkata'
+            form_field :policy_released_at, input_type: :date_time, label: 'Policy Released At', timezone: 'Asia/Kolkata'
           end
         end
       end
