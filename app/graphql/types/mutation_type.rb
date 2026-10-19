@@ -9,7 +9,6 @@ module Types
     field :consultation_create,                     resolver: Mutations::Consultation::Create
     field :consultation_response_create,            resolver: Mutations::ConsultationResponse::Create
     field :current_user_update,                     resolver: Mutations::CurrentUser::Update
-    field :current_user_update_preferences,         resolver: Mutations::CurrentUser::UpdatePreferences
     field :delete_account,                          resolver: Mutations::CurrentUser::Delete
     field :unsubscribe_consultation,                resolver: Mutations::User::UnsubscribeConsultation
     field :game_action_create,                      resolver: Mutations::GameAction::Create
