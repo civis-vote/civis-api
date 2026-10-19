@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
     t.datetime "updated_at", null: false
     t.integer "token_type", default: 0, null: false
     t.datetime "expires_at"
+    t.text "description"
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
@@ -498,36 +499,36 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_120000) do
   end
 
   create_table "ct_file_exports", force: :cascade do |t|
-    t.string "associated_model_name"
-    t.string "exported_by_type", null: false
-    t.bigint "exported_by_id", null: false
-    t.datetime "expires_at"
-    t.integer "status", default: 0
-    t.jsonb "params", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "associated_model_id"
     t.string "action_name"
-    t.string "url"
-    t.integer "export_type", default: 0
+    t.integer "associated_model_id"
+    t.string "associated_model_name"
     t.datetime "completed_at"
+    t.datetime "created_at", null: false
     t.jsonb "error_report", default: {}
+    t.datetime "expires_at"
+    t.integer "export_type", default: 0
+    t.bigint "exported_by_id", null: false
+    t.string "exported_by_type", null: false
+    t.jsonb "params", default: {}
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.string "url"
     t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
   end
 
   create_table "ct_file_imports", force: :cascade do |t|
-    t.string "associated_model_name"
-    t.string "added_by_type", null: false
-    t.bigint "added_by_id", null: false
-    t.jsonb "error_report", default: {}
-    t.datetime "completed_at"
-    t.integer "status", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "associated_model_id"
     t.string "action_name"
-    t.string "importer_class_name"
+    t.bigint "added_by_id", null: false
+    t.string "added_by_type", null: false
+    t.bigint "associated_model_id"
+    t.string "associated_model_name"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_report", default: {}
     t.integer "import_type"
+    t.string "importer_class_name"
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
     t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
   end
 

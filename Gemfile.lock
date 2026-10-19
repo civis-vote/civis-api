@@ -1,7 +1,7 @@
 GEM
   remote: https://cm-gems.commutatus.com/
   specs:
-    cm-admin (8.2.8)
+    cm-admin (8.2.16)
       blueprinter
       caxlsx_rails
       cocoon (~> 1.2.15)
@@ -142,7 +142,7 @@ GEM
       ice_nine (~> 0.11.0)
       thread_safe (~> 0.3, >= 0.3.1)
     base64 (0.3.0)
-    bcrypt (3.1.20)
+    bcrypt (3.1.22)
     better_errors (2.9.1)
       coderay (>= 1.0.0)
       erubi (>= 1.0.0)
@@ -202,10 +202,10 @@ GEM
     declarative (0.0.20)
     descendants_tracker (0.0.4)
       thread_safe (~> 0.3, >= 0.3.1)
-    devise (4.9.4)
+    devise (5.0.4)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
-      railties (>= 4.1.0)
+      railties (>= 7.0)
       responders
       warden (~> 1.2.3)
     devise_invitable (2.0.9)
@@ -418,7 +418,7 @@ GEM
       net-smtp
     marcel (1.2.1)
     matrix (0.4.2)
-    mcp (1.7.0)
+    mcp (1.8.0)
       json_schemer (>= 2.4)
     memoist (0.16.2)
     mini_magick (4.11.0)
@@ -586,9 +586,9 @@ GEM
       uber (< 0.2.0)
     request_store (1.7.0)
       rack (>= 1.4)
-    responders (3.1.1)
-      actionpack (>= 5.2)
-      railties (>= 5.2)
+    responders (3.2.1)
+      actionpack (>= 7.0)
+      railties (>= 7.0)
     retriable (3.1.2)
     rexml (3.3.9)
     roo (2.10.1)
