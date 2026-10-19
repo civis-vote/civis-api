@@ -73,9 +73,9 @@ module CmAdmin
           custom_action name: 'export_responses', route_type: 'member', verb: 'get', path: ':id/export_response',
                         icon_name: 'fa-solid fa-file-export', display_type: :button do
             @consultation = ::Consultation.find(params[:id])
-            file_export = ::FileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
-                                               expires_at: DateTime.now + 1.day, export_type: :custom_export,
-                                               associated_model_id: @consultation.id, action_name: 'export_responses')
+            file_export = ::CtFileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
+                                                 expires_at: DateTime.now + 1.day, export_type: :custom_export,
+                                                 associated_model_id: @consultation.id, action_name: 'export_responses')
             ::ConsultationResponsesExportJob.perform_later(file_export:)
             @consultation
           end
@@ -230,6 +230,13 @@ module CmAdmin
               field :marathi_summary, field_type: :rich_text
               field :kannada_summary, field_type: :rich_text
             end
+            cm_section 'AI Response Summaries', display_if: ->(record) { record.english_response_summary.present? } do
+              field :english_response_summary, field_type: :rich_text, label: 'English'
+              field :hindi_response_summary, field_type: :rich_text, label: 'Hindi'
+              field :odia_response_summary, field_type: :rich_text, label: 'Odia'
+              field :marathi_response_summary, field_type: :rich_text, label: 'Marathi'
+              field :kannada_response_summary, field_type: :rich_text, label: 'Kannada'
+            end
             cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
               field :response_submission_message, field_type: :rich_text
             end
@@ -364,6 +371,15 @@ module CmAdmin
             form_field :marathi_summary, input_type: :rich_text
             form_field :kannada_summary, input_type: :rich_text
           end
+
+          cm_section 'AI Response Summaries', display_if: ->(record) { record.english_response_summary.present? } do
+            form_field :english_response_summary, input_type: :rich_text, label: 'English'
+            form_field :hindi_response_summary, input_type: :rich_text, label: 'Hindi'
+            form_field :odia_response_summary, input_type: :rich_text, label: 'Odia'
+            form_field :marathi_response_summary, input_type: :rich_text, label: 'Marathi'
+            form_field :kannada_response_summary, input_type: :rich_text, label: 'Kannada'
+          end
+
           cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
             form_field :response_submission_message, input_type: :rich_text
           end
