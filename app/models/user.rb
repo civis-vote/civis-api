@@ -189,6 +189,18 @@ class User < ApplicationRecord
     preferred_themes.exists? || area_of_impacts.exists?
   end
 
+  def theme_ids=(ids)
+    return if ids.nil?
+
+    self.preferred_theme_ids = ::Theme.where(id: ids).ids
+  end
+
+  def area_of_impact_ids=(ids)
+    return if ids.nil?
+
+    super(::Constant.area_of_impact.where(id: ids).ids)
+  end
+
   def theme_response_counts
     responses.joins(:consultation).group('consultations.theme_id').count
   end
