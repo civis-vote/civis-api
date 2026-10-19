@@ -102,8 +102,8 @@ RSpec.describe ConsultationSuggestionsService do
     end
 
     it 'scores each matching preferred area of impact' do
-      user.constant_maps.create!(constant: area_of_impact_a)
-      user.constant_maps.create!(constant: area_of_impact_b)
+      user.user_preferences.create!(preferable: area_of_impact_a)
+      user.user_preferences.create!(preferable: area_of_impact_b)
 
       both_aois = create_consultation(department: department_a, area_of_impacts: [area_of_impact_a, area_of_impact_b])
       one_aoi = create_consultation(department: department_a, area_of_impacts: [area_of_impact_a])

@@ -9,11 +9,21 @@ module Queries
       type [Types::Objects::Consultation::Base], null: false
 
       def resolve(consultation_id:, limit:)
+        validate_limit!(limit)
         ::ConsultationSuggestionsService.new(user: context[:current_user], consultation_id:).call(limit:)
       end
 
       def self.authorized?(_object, context)
         context[:current_user].present?
+      end
+
+      private
+
+      def validate_limit!(limit)
+        return if (1..::ConsultationSuggestionsService::MAX_LIMIT).cover?(limit)
+
+        raise GraphQL::ExecutionError,
+              "limit must be between 1 and #{::ConsultationSuggestionsService::MAX_LIMIT}"
       end
     end
   end

@@ -29,9 +29,9 @@ class User < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
-  has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
-  has_many :user_theme_preferences, dependent: :destroy
-  has_many :preferred_themes, through: :user_theme_preferences, source: :theme
+  has_many :user_preferences, dependent: :destroy
+  has_many :preferred_themes, through: :user_preferences, source: :preferable, source_type: 'Theme'
+  has_many :area_of_impacts, -> { area_of_impact }, through: :user_preferences, source: :preferable, source_type: 'Constant'
   # has_many :responses
 
   belongs_to :organisation, counter_cache: true, optional: true

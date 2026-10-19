@@ -41,7 +41,7 @@ RSpec.describe User, type: :model do
     end
 
     it 'is true with a preferred area of impact' do
-      user.constant_maps.create!(constant: area_of_impact)
+      user.user_preferences.create!(preferable: area_of_impact)
       expect(user.has_preferences?).to be true
     end
   end

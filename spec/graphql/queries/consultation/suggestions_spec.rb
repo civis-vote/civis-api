@@ -53,6 +53,15 @@ RSpec.describe Queries::Consultation::Suggestions, type: :graphql do
       expect(suggestions.size).to eq(2)
     end
 
+    it 'rejects a limit outside 1..50' do
+      create_consultation
+
+      result = CivisApiSchema.execute(query, variables: { limit: 0 }, context: context)
+
+      expect(result.dig('data', 'consultationSuggestions')).to be_nil
+      expect(result['errors'].first['message']).to include('limit must be between 1 and 50')
+    end
+
     it 'ranks same-theme consultations first when consultationId is given' do
       source = create_consultation(theme: theme)
       same_theme = create_consultation(theme: theme)

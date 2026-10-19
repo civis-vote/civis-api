@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Mutations::CurrentUser::UpdatePreferences, type: :graphql do
+RSpec.describe Mutations::CurrentUser::Update, type: :graphql do
   let(:theme_a) { Theme.create!(name: "Theme A #{SecureRandom.hex(4)}") }
   let(:theme_b) { Theme.create!(name: "Theme B #{SecureRandom.hex(4)}") }
   let(:area_of_impact_a) { Constant.create!(name: "AoI A #{SecureRandom.hex(4)}", constant_type: :area_of_impact) }
@@ -13,9 +13,10 @@ RSpec.describe Mutations::CurrentUser::UpdatePreferences, type: :graphql do
 
   let(:query) do
     <<~GQL
-      mutation UpdatePreferences($user: CurrentUserUpdatePreferencesInput!) {
-        currentUserUpdatePreferences(user: $user) {
+      mutation UpdateUser($user: CurrentUserUpdateInput!) {
+        currentUserUpdate(user: $user) {
           id
+          firstName
           hasPreferences
         }
       }
@@ -24,15 +25,25 @@ RSpec.describe Mutations::CurrentUser::UpdatePreferences, type: :graphql do
 
   let(:context) { { current_user: user } }
   let(:result) { CivisApiSchema.execute(query, variables: variables, context: context) }
-  let(:response_data) { result.dig('data', 'currentUserUpdatePreferences') }
+  let(:response_data) { result.dig('data', 'currentUserUpdate') }
+
+  describe 'updating profile attributes' do
+    let(:variables) { { user: { firstName: 'Updated' } } }
+
+    it 'updates the profile' do
+      expect(result['errors']).to be_nil
+      expect(user.reload.first_name).to eq('Updated')
+      expect(response_data['firstName']).to eq('Updated')
+    end
+  end
 
   describe 'setting preferences' do
     let(:variables) { { user: { themeIds: [theme_a.id, theme_b.id], areaOfImpactIds: [area_of_impact_a.id] } } }
 
     it 'stores preferred themes and areas of impact' do
       expect(result['errors']).to be_nil
-      expect(user.preferred_theme_ids).to match_array([theme_a.id, theme_b.id])
-      expect(user.area_of_impacts.reload.map(&:id)).to match_array([area_of_impact_a.id])
+      expect(user.reload.preferred_theme_ids).to match_array([theme_a.id, theme_b.id])
+      expect(user.reload.area_of_impact_ids).to match_array([area_of_impact_a.id])
     end
 
     it 'returns hasPreferences true' do
@@ -43,7 +54,7 @@ RSpec.describe Mutations::CurrentUser::UpdatePreferences, type: :graphql do
       variables[:user][:areaOfImpactIds] << segment.id
 
       result
-      expect(user.area_of_impacts.reload.map(&:id)).to match_array([area_of_impact_a.id])
+      expect(user.reload.area_of_impact_ids).to match_array([area_of_impact_a.id])
     end
   end
 
@@ -52,20 +63,20 @@ RSpec.describe Mutations::CurrentUser::UpdatePreferences, type: :graphql do
 
     before do
       user.preferred_theme_ids = [theme_a.id]
-      user.constant_maps.create!(constant: area_of_impact_a)
+      user.user_preferences.create!(preferable: area_of_impact_a)
     end
 
     it 'replaces existing preferences' do
       result
-      expect(user.preferred_theme_ids).to eq([theme_b.id])
-      expect(user.area_of_impacts.reload.map(&:id)).to eq([area_of_impact_b.id])
+      expect(user.reload.preferred_theme_ids).to eq([theme_b.id])
+      expect(user.reload.area_of_impact_ids).to eq([area_of_impact_b.id])
     end
 
     it 'does not remove segment constant maps' do
       user.constant_maps.create!(constant: segment)
 
       result
-      expect(user.segments).to include(segment)
+      expect(user.reload.segments).to include(segment)
     end
   end
 
@@ -76,7 +87,7 @@ RSpec.describe Mutations::CurrentUser::UpdatePreferences, type: :graphql do
 
     it 'clears preferences and returns hasPreferences false' do
       expect(response_data['hasPreferences']).to be false
-      expect(user.preferred_theme_ids).to be_empty
+      expect(user.reload.preferred_theme_ids).to be_empty
     end
   end
 
