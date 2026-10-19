@@ -59,7 +59,7 @@ RSpec.describe Queries::Consultation::Suggestions, type: :graphql do
       result = CivisApiSchema.execute(query, variables: { limit: 0 }, context: context)
 
       expect(result.dig('data', 'consultationSuggestions')).to be_nil
-      expect(result['errors'].first['message']).to include('limit must be between 1 and 50')
+      expect(result['errors'].first['message']).to include('limit must be within 1..50')
     end
 
     it 'ranks same-theme consultations first when consultationId is given' do
