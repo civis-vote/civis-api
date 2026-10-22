@@ -82,11 +82,12 @@ class VoiceMessageTranscriptionProcessor
 
       question_id = voice_entry['question_id'] || voice_entry[:question_id]
       merged_answers = merge_transcription_into_answers(consultation_response.answers, question_id, result[:transcription])
+      all_transcribed = updated.all? { |entry| entry['transcription'].present? }
 
       consultation_response.assign_attributes(
         voice_responses: updated,
         answers: merged_answers,
-        transcription_status: :completed,
+        transcription_status: (all_transcribed ? :completed : :pending),
         transcription_errors: []
       )
       consultation_response.save(validate: false)
@@ -101,7 +102,7 @@ class VoiceMessageTranscriptionProcessor
     updated = answers.map do |ans|
       if ans['question_id'].to_s == question_id.to_s
         found = true
-        ans.merge('answer' => transcription)
+        ans['answer'].present? ? ans : ans.merge('answer' => transcription)
       else
         ans
       end
@@ -111,7 +112,14 @@ class VoiceMessageTranscriptionProcessor
 
   def mark_transcription_failed(errors)
     consultation_response.with_lock do
-      consultation_response.assign_attributes(transcription_status: :failed, transcription_errors: errors)
+      siblings_pending = Array(consultation_response.voice_responses).any? do |entry|
+        (entry['attachment_id'] != @attachment_id && entry[:attachment_id] != @attachment_id) &&
+          entry['transcription'].blank?
+      end
+      consultation_response.assign_attributes(
+        transcription_status: (siblings_pending ? :pending : :failed),
+        transcription_errors: errors
+      )
       consultation_response.save(validate: false)
     end
   end
