@@ -3,10 +3,4 @@ set -euo pipefail
 
 # Hatchbox CM Admin pre-build script
 
-if [ -f "$HOME/.asdf-vars" ]; then
-  set +u
-  source "$HOME/.asdf-vars"
-  set -u
-fi
-
 HATCHBOX_EVENT_TYPE=pre_build ruby "$(dirname "$0")/lib/hatchbox_notification.rb"

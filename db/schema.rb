@@ -818,7 +818,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
-
   create_table "users", force: :cascade do |t|
     t.integer "best_rank"
     t.integer "best_rank_type"

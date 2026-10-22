@@ -1,8 +1,0 @@
-export RAILS_ENV=staging
-asdf plugin add nodejs https://github.com/asdf-vm/asdf-nodejs.git 2>/dev/null || true
-asdf install nodejs latest
-export ASDF_NODEJS_VERSION=$(asdf latest nodejs)
-echo "ASDF_NODEJS_VERSION=$ASDF_NODEJS_VERSION"
-bundle install
-echo "Bundle install complete"
-bundle exec rake assets:precompile
