@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_16_125938) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_125938) do
     t.integer "token_type", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.text "description"
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
@@ -86,8 +87,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_125938) do
     t.datetime "updated_at", null: false
     t.string "url"
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
-  end
-
   end
 
   create_table "clause_feedbacks", force: :cascade do |t|
@@ -207,7 +206,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_16_125938) do
     t.index ["cm_geo_ip_location_id"], name: "index_cm_geo_ip_networks_on_cm_geo_ip_location_id"
     t.index ["network"], name: "index_cm_geo_ip_networks_on_network", using: :gist
   end
-
 
   create_table "cm_notifiables", force: :cascade do |t|
     t.datetime "created_at", null: false
