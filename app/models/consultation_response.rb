@@ -23,7 +23,7 @@ class ConsultationResponse < ApplicationRecord
     somewhat_satisfied
     satisfied
   ]
-  enum :response_language, SUPPORTED_LANGUAGES.map { |lang| [lang.downcase.to_sym, lang] }.to_h
+  enum(:response_language, SUPPORTED_LANGUAGES.to_h { |lang| [lang.downcase.to_sym, lang] })
   enum :transcription_status, {
     not_available: 0,
     pending: 1,
@@ -138,17 +138,19 @@ class ConsultationResponse < ApplicationRecord
 
   def submit_voice_responses(voice_responses)
     updated_response = []
-    attachment_ids = []
     voice_responses&.each do |answer|
       question_id = answer[:question_id]
       file = answer[:file]
       voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
-      attachment_ids << attachment.id
       updated_response << { question_id:, attachment_id: attachment.id, transcription: nil }
     end
-    update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
+    if updated_response.any?
+      update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
+    else
+      update!(voice_responses: updated_response)
+    end
   end
 
   def update_reading_time
