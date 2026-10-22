@@ -23,7 +23,7 @@ class ConsultationResponse < ApplicationRecord
     somewhat_satisfied
     satisfied
   ]
-  enum :response_language, SUPPORTED_LANGUAGES.to_h { |lang| [lang.downcase.to_sym, lang] }
+  enum(:response_language, SUPPORTED_LANGUAGES.to_h { |lang| [lang.downcase.to_sym, lang] })
   enum :transcription_status, {
     not_available: 0,
     pending: 1,
