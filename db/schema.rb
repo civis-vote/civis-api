@@ -818,17 +818,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
-  create_table "user_preferences", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "preferable_type", null: false
-    t.bigint "preferable_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["preferable_type", "preferable_id"], name: "index_user_preferences_on_preferable"
-    t.index ["user_id", "preferable_type", "preferable_id"], name: "index_user_preferences_on_user_and_preferable", unique: true
-    t.index ["user_id"], name: "index_user_preferences_on_user_id"
-  end
-
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
