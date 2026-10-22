@@ -1,4 +1,6 @@
 Rails.application.reloader.to_prepare do
+  CmWebhookEvent.include(HostWebhookEventHandler)
+
   CmAdmin.configure do |config|
     # Sets the default layout to be used for admin
     config.layout = 'admin'
@@ -10,6 +12,7 @@ Rails.application.reloader.to_prepare do
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
+    config.enable_webhook_processing = true
 
     config.sidebar = [
       {
