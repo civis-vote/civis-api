@@ -71,6 +71,8 @@ class CreateUserPreferences < ActiveRecord::Migration[8.1]
   end
 
   def restore_theme_preferences
+    return unless table_exists?(:user_preferences)
+
     execute <<~SQL.squish
       INSERT INTO user_theme_preferences (user_id, theme_id, created_at, updated_at)
       SELECT user_id, preferable_id, created_at, updated_at
