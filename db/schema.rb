@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -72,6 +72,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.integer "token_type", default: 0, null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.text "description"
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
@@ -86,41 +87,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.datetime "updated_at", null: false
     t.string "url"
     t.index ["theme_id"], name: "index_case_studies_on_theme_id"
-  end
-
-  create_table "response_option_breakdowns", force: :cascade do |t|
-    t.integer "option_id", null: false
-    t.string "option_text", null: false
-    t.float "percentage", null: false, default: 0.0
-    t.integer "selection_count", null: false, default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "response_question_summary_id", null: false
-    t.index ["response_question_summary_id"], name: "index_response_option_breakdowns_on_rqs_id"
-  end
-
-  create_table "response_question_summaries", force: :cascade do |t|
-    t.boolean "is_optional", null: false, default: false
-    t.integer "other_option_count"
-    t.integer "position"
-    t.integer "question_id", null: false
-    t.string "question_text", null: false
-    t.string "question_type", null: false
-    t.integer "text_response_count"
-    t.integer "total_responses", null: false, default: 0
-    t.integer "voice_response_count"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "response_summary_id", null: false
-    t.index ["response_summary_id"], name: "index_response_question_summaries_on_response_summary_id"
-  end
-
-  create_table "response_summaries", force: :cascade do |t|
-    t.integer "total_responses", null: false, default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "consultation_id", null: false
-    t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
   end
 
   create_table "clause_feedbacks", force: :cascade do |t|
@@ -239,20 +205,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.integer "represented_country_geoname_id"
     t.index ["cm_geo_ip_location_id"], name: "index_cm_geo_ip_networks_on_cm_geo_ip_location_id"
     t.index ["network"], name: "index_cm_geo_ip_networks_on_network", using: :gist
-  end
-
-  create_table "cm_index_preferences", force: :cascade do |t|
-    t.string "ar_model_name", null: false
-    t.string "associated_ar_model_name"
-    t.datetime "created_at", null: false
-    t.string "hidden_columns", default: [], array: true
-    t.integer "records_per_page", default: 20
-    t.datetime "updated_at", null: false
-    t.integer "user_id", null: false
-    t.string "visible_columns", default: [], array: true
-    t.index ["ar_model_name"], name: "index_cm_index_preferences_on_ar_model_name"
-    t.index ["associated_ar_model_name"], name: "index_cm_index_preferences_on_associated_ar_model_name"
-    t.index ["user_id"], name: "index_cm_index_preferences_on_user_id"
   end
 
   create_table "cm_notifiables", force: :cascade do |t|
@@ -376,6 +328,31 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.datetime "updated_at", null: false
     t.index ["mentionable_type", "mentionable_id"], name: "index_cm_user_mentions_on_mentionable"
     t.index ["mentioned_type", "mentioned_id"], name: "index_cm_user_mentions_on_mentioned"
+  end
+
+  create_table "cm_webhook_events", force: :cascade do |t|
+    t.integer "cm_service"
+    t.integer "host_service"
+    t.string "event_type", null: false
+    t.integer "status", default: 0, null: false
+    t.string "event_id"
+    t.string "uuid", null: false
+    t.text "error_message"
+    t.datetime "processed_at"
+    t.string "eventable_type"
+    t.bigint "eventable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cm_service", "event_id", "event_type"], name: "idx_on_cm_service_event_id_event_type_a39dc27451"
+    t.index ["cm_service"], name: "index_cm_webhook_events_on_cm_service"
+    t.index ["created_at"], name: "index_cm_webhook_events_on_created_at"
+    t.index ["event_id"], name: "index_cm_webhook_events_on_event_id"
+    t.index ["event_type"], name: "index_cm_webhook_events_on_event_type"
+    t.index ["eventable_type", "eventable_id"], name: "index_cm_webhook_events_on_eventable"
+    t.index ["host_service", "event_id", "event_type"], name: "idx_on_host_service_event_id_event_type_5ad8fb1d14"
+    t.index ["host_service"], name: "index_cm_webhook_events_on_host_service"
+    t.index ["status"], name: "index_cm_webhook_events_on_status"
+    t.index ["uuid"], name: "index_cm_webhook_events_on_uuid", unique: true
   end
 
   create_table "constant_maps", force: :cascade do |t|
@@ -521,6 +498,61 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.index ["theme_id"], name: "index_consultations_on_theme_id"
   end
 
+  create_table "ct_file_exports", force: :cascade do |t|
+    t.string "action_name"
+    t.integer "associated_model_id"
+    t.string "associated_model_name"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_report", default: {}
+    t.datetime "expires_at"
+    t.integer "export_type", default: 0
+    t.bigint "exported_by_id", null: false
+    t.string "exported_by_type", null: false
+    t.jsonb "params", default: {}
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.string "url"
+    t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
+  end
+
+  create_table "ct_file_imports", force: :cascade do |t|
+    t.string "action_name"
+    t.bigint "added_by_id", null: false
+    t.string "added_by_type", null: false
+    t.bigint "associated_model_id"
+    t.string "associated_model_name"
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.jsonb "error_report", default: {}
+    t.integer "import_type"
+    t.string "importer_class_name"
+    t.integer "status", default: 0
+    t.datetime "updated_at", null: false
+    t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
+  end
+
+  create_table "ct_page_views", force: :cascade do |t|
+    t.string "owner_type", null: false
+    t.bigint "owner_id", null: false
+    t.citext "name", null: false
+    t.string "ar_model_name", null: false
+    t.string "associated_ar_model_name", default: "", null: false
+    t.string "visible_columns", default: [], array: true
+    t.string "hidden_columns", default: [], array: true
+    t.boolean "is_default", default: false, null: false
+    t.integer "view_type", default: 0
+    t.integer "records_per_page", default: 20
+    t.jsonb "filter_params", default: {}
+    t.json "sort_params", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ar_model_name"], name: "index_ct_page_views_on_ar_model_name"
+    t.index ["associated_ar_model_name"], name: "index_ct_page_views_on_associated_ar_model_name"
+    t.index ["owner_type", "owner_id", "ar_model_name", "associated_ar_model_name"], name: "index_ct_page_views_on_unique_default", unique: true, where: "(is_default = true)"
+    t.index ["owner_type", "owner_id"], name: "index_ct_page_views_on_owner"
+  end
+
   create_table "department_contacts", force: :cascade do |t|
     t.integer "contact_type"
     t.datetime "created_at", null: false
@@ -547,40 +579,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_12_094844) do
     t.string "name_odia"
     t.datetime "updated_at", null: false
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
-  end
-
-  create_table "file_exports", force: :cascade do |t|
-    t.string "action_name"
-    t.integer "associated_model_id"
-    t.string "associated_model_name"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.jsonb "error_report", default: {}
-    t.datetime "expires_at"
-    t.integer "export_type", default: 0
-    t.bigint "exported_by_id", null: false
-    t.string "exported_by_type", null: false
-    t.jsonb "params", default: {}
-    t.integer "status", default: 0
-    t.datetime "updated_at", null: false
-    t.string "url"
-    t.index ["exported_by_type", "exported_by_id"], name: "index_file_exports_on_exported_by"
-  end
-
-  create_table "file_imports", force: :cascade do |t|
-    t.string "action_name"
-    t.bigint "added_by_id", null: false
-    t.string "added_by_type", null: false
-    t.bigint "associated_model_id"
-    t.string "associated_model_name"
-    t.datetime "completed_at"
-    t.datetime "created_at", null: false
-    t.jsonb "error_report", default: {}
-    t.integer "import_type"
-    t.string "importer_class_name"
-    t.integer "status", default: 0
-    t.datetime "updated_at", null: false
-    t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
   end
 
   create_table "game_actions", force: :cascade do |t|
