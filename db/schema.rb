@@ -818,6 +818,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
     t.index ["user_id"], name: "index_user_counts_on_user_id", unique: true
   end
 
+  create_table "user_preferences", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.bigint "preferable_id", null: false
+    t.string "preferable_type", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["preferable_type", "preferable_id"], name: "index_user_preferences_on_preferable"
+    t.index ["user_id", "preferable_type", "preferable_id"], name: "index_user_preferences_on_user_and_preferable", unique: true
+    t.index ["user_id"], name: "index_user_preferences_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.integer "best_rank"
     t.integer "best_rank_type"
@@ -961,6 +972,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_19_130000) do
   add_foreign_key "response_summaries", "consultations"
   add_foreign_key "showcase_slides", "users", column: "created_by_id"
   add_foreign_key "showcase_slides", "users", column: "updated_by_id"
+  add_foreign_key "user_preferences", "users"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
 end
