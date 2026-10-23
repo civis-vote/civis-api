@@ -1,5 +1,5 @@
 {
-  "commit": "4a59c1f76693002ef8240900e9de877cb1b5a0e4",
+  "commit": "f5e6600dff29012e14494653e751ce2547fafb51",
   "platform": "rails",
   "managed_rules": [
     "active-record.md",
@@ -10,6 +10,7 @@
     "jobs.md",
     "migrations.md",
     "prettier.md",
-    "rubocop.md"
+    "rubocop.md",
+    "services.md"
   ]
 }
