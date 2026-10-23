@@ -11,51 +11,17 @@ module Mutations
           raise Unauthorized, I18n.t('consultation_response.unauthorized')
         end
 
-        consultation_response_input = consultation_response.to_h.except(:voice_responses, :clause_feedbacks)
-
-        created_consultation_response = ::ConsultationResponse.new consultation_response_input
-        created_consultation_response.user = user
-        @consultation = ::Consultation.find(consultation_response.consultation_id)
-        active_response_round = @consultation.response_rounds.order(:created_at).last
-        created_consultation_response.response_round = active_response_round
-        if @consultation.private_consultation?
-          if @consultation.private_response? && created_consultation_response.visibility == "shared"
-            raise GraphQL::ExecutionError, "Private response is enforced, response visibility can't be shared"
-          end
-
-          respondent = ::Respondent.find_by(user: user, response_round: active_response_round)
-          created_consultation_response.respondent_id = respondent.id if respondent
-        end
-        if ::ConsultationResponse.exists?(user: user, response_round: active_response_round)
-          raise IncompleteEntity, "Response already submitted by User"
-        end
-
-        created_consultation_response = ActiveRecord::Base.transaction do
-          created_consultation_response.save!
-          created_consultation_response.submit_voice_responses(consultation_response.voice_responses)
-          create_clause_feedbacks(created_consultation_response, consultation_response.clause_feedbacks)
-          created_consultation_response
-        end
-
-        created_consultation_response.voice_responses.each do |entry|
-          TranscribeVoiceMessageJob.perform_later(created_consultation_response.id, entry['attachment_id'])
-        end
-        created_consultation_response
-      end
-
-      def create_clause_feedbacks(consultation_response, feedbacks)
-        return if feedbacks.blank?
-
-        clause_ids = ::Clause.where(consultation_id: consultation_response.consultation_id).pluck(:id)
-        feedbacks.each do |feedback|
-          next unless clause_ids.include?(feedback[:clause_id])
-
-          consultation_response.clause_feedbacks.create!(
-            clause_id: feedback[:clause_id],
-            feedback_comment: feedback[:feedback_comment],
-            feedback_reason: feedback[:feedback_reason]
-          )
-        end
+        response = ::ConsultationResponse.build_for_submission(
+          consultation_response.to_h.except(:voice_responses, :clause_feedbacks),
+          consultation: ::Consultation.find(consultation_response.consultation_id),
+          user: user
+        )
+        response.submit(
+          voice_responses: consultation_response.voice_responses,
+          clause_feedbacks: consultation_response.clause_feedbacks
+        )
+        response.enqueue_voice_transcriptions
+        response
       end
 
       def submission_allowed?(consultation_id)
