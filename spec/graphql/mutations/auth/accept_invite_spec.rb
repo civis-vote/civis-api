@@ -4,7 +4,8 @@ RSpec.describe Mutations::Auth::AcceptInvite, type: :graphql do
   let!(:city) { Location.find_or_create_by!(name: 'Test City', location_type: :city) }
   let!(:point_scale) { PointScale.find_or_create_by!(action: :user_created, points: 10, upper_limit: 100) }
   let(:department) do
-    Department.new(name: 'Test Dept', level: :national).tap { |d| d.save(validate: false) }
+    Department.create!(name: "Dept #{SecureRandom.hex(4)}", level: :national,
+                       department_contacts_attributes: [{ contact_type: :primary, email: 'dept@test.com' }])
   end
   let(:consultation) do
     Consultation.create!(title: 'Test Consultation', department: department,
@@ -46,6 +47,7 @@ RSpec.describe Mutations::Auth::AcceptInvite, type: :graphql do
     it 'accepts the invitation' do
       expect(result['errors']).to be_nil
       expect(invited_user.reload.invitation_accepted_at).to be_present
+      expect(invited_user.valid_password?('Password@123')).to be true
     end
   end
 
