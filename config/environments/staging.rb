@@ -93,8 +93,8 @@ Rails.application.configure do
 
   config.action_mailer.default_url_options = { host: ENV["HOST"], protocol: "https" }
 
-  config.client_url = { host: ENV["CLIENT_HOST"], protocol: :https }
-  config.client_v2_url = { host: ENV["CLIENT_V2_HOST"], protocol: :https }
+  config.client_url = { host: URI.parse(Rails.application.credentials.fe_url.to_s).host || ENV["CLIENT_HOST"], protocol: :https }
+  config.client_v2_url = { host: URI.parse(Rails.application.credentials.fe_v2_url.to_s).host || ENV["CLIENT_V2_HOST"], protocol: :https }
   config.host_url = { host: ENV["HOST"], protocol: :https }
 
   # Inserts middleware to perform automatic connection switching.
