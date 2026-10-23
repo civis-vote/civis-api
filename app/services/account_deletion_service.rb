@@ -67,7 +67,7 @@ class AccountDeletionService
     NotificationSetting.where(user_id: user.id).delete_all
     Respondent.where(user_id: user.id).delete_all
     UserCount.where(user_id: user.id).delete_all
-    CmIndexPreference.where(user_id: user.id).delete_all if defined?(::CmIndexPreference)
+    CtPageView.where(owner: user).delete_all if defined?(::CtPageView)
     User.where(invited_by_type: 'User', invited_by_id: user.id).update_all(invited_by_id: nil, invited_by_type: nil)
   end
 
