@@ -40,6 +40,12 @@ class Consultation < ApplicationRecord
   has_rich_text :kannada_summary
   has_rich_text :ai_summary
 
+  has_rich_text :english_response_summary
+  has_rich_text :hindi_response_summary
+  has_rich_text :marathi_response_summary
+  has_rich_text :odia_response_summary
+  has_rich_text :kannada_response_summary
+
   has_one_attached :consultation_logo
   has_one_attached :consultation_pdf
 
@@ -124,6 +130,12 @@ class Consultation < ApplicationRecord
     where(visibility: visibility)
   }
 
+  scope :consultation_status, lambda { |status|
+    return all unless status.present?
+
+    where(status: status)
+  }
+
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
   def notify_admins
@@ -163,6 +175,7 @@ class Consultation < ApplicationRecord
 
     self.feedback_submitted_at = DateTime.now unless feedback_submitted_at.present?
     save!
+    ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?
@@ -314,6 +327,26 @@ class Consultation < ApplicationRecord
     convert_to_rich_text(kannada_summary.to_s)
   end
 
+  def english_response_summary_rich_text
+    convert_to_rich_text(english_response_summary.to_s)
+  end
+
+  def hindi_response_summary_rich_text
+    convert_to_rich_text(hindi_response_summary.to_s)
+  end
+
+  def odia_response_summary_rich_text
+    convert_to_rich_text(odia_response_summary.to_s)
+  end
+
+  def marathi_response_summary_rich_text
+    convert_to_rich_text(marathi_response_summary.to_s)
+  end
+
+  def kannada_response_summary_rich_text
+    convert_to_rich_text(kannada_response_summary.to_s)
+  end
+
   def response_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}/summary",
                                                                                 query: "response_token=#{response_token}" }))
@@ -408,7 +441,7 @@ class Consultation < ApplicationRecord
   end
 
   def summarise_pdf
-    ConsultationSummaryJob.perform_later(self)
+    ConsultationPdfSummaryJob.perform_later(self)
   end
 
   private

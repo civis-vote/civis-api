@@ -3,6 +3,7 @@ require 'openai'
 
 class OpenAIService
   DEFAULT_MODEL = 'gpt-5.6-luna'.freeze
+  AUDIO_MODEL = 'whisper-1'.freeze
   REQUEST_TIMEOUT = 600
 
   class Error < StandardError; end
@@ -14,11 +15,25 @@ class OpenAIService
   end
 
   def call(attachment:, prompt:, schema_name: nil, model: DEFAULT_MODEL, temperature: nil)
-    pdf_path = download_attachment(attachment)
-    return nil unless pdf_path
+    file_path = download_attachment(attachment)
+    return nil unless file_path
 
     begin
-      send_pdf_request(pdf_path, prompt, schema_name, model, temperature)
+      send_pdf_request(file_path, prompt, schema_name, model, temperature)
+    ensure
+      cleanup_temp_files
+    end
+  end
+
+  def transcribe_audio(attachment:, prompt: nil, model: AUDIO_MODEL, language: nil)
+    audio_path = download_attachment(attachment)
+    return nil unless audio_path
+
+    begin
+      raw_text = send_audio_request(audio_path, model, language, prompt)
+      return nil unless raw_text
+
+      refine_transcription(raw_text, prompt)
     ensure
       cleanup_temp_files
     end
@@ -34,7 +49,8 @@ class OpenAIService
   end
 
   def download_attachment(attachment)
-    temp_file = Tempfile.new(['consultation_pdf', '.pdf'])
+    extension = File.extname(attachment.filename.to_s).presence || '.bin'
+    temp_file = Tempfile.new(['attachment', extension])
     temp_file.binmode
     @temp_files << temp_file
 
@@ -110,6 +126,58 @@ class OpenAIService
     client.files.delete(id: uploaded_file['id'])
   rescue StandardError => e
     Airbrake.notify(e)
+  end
+
+  def send_audio_request(audio_path, model, language, prompt)
+    audio_file = File.open(audio_path, 'rb')
+
+    parameters = { model: model, file: audio_file, response_format: 'verbose_json' }
+    parameters[:language] = language if language.present?
+    parameters[:prompt] = prompt if prompt.present?
+
+    response = client.audio.transcribe(parameters: parameters)
+    response['text'].to_s.strip
+  rescue StandardError => e
+    Rails.logger.error("Audio transcription failed: #{e.message}")
+    nil
+  ensure
+    audio_file&.close
+  end
+
+  def refine_transcription(raw_text, prompt)
+    refinement_prompt = build_refinement_prompt(raw_text, prompt)
+
+    parameters = {
+      model: DEFAULT_MODEL,
+      input: [
+        {
+          role: 'user',
+          content: [{ type: 'input_text', text: refinement_prompt }]
+        }
+      ],
+      text: { format: StructuredOutputService.voice_transcription }
+    }
+
+    response = client.responses.create(parameters: parameters)
+    result = parse_response(response, :voice_transcription)
+    return nil unless result
+
+    result
+  rescue StandardError => e
+    Rails.logger.error("Transcription refinement failed: #{e.message}")
+    {
+      'transcription' => raw_text,
+      'detected_language' => nil,
+      'is_proper_transcription' => true
+    }
+  end
+
+  def build_refinement_prompt(raw_text, original_prompt)
+    PromptService.from_file(
+      'voice_transcription_refinement.prompt',
+      original_prompt: original_prompt,
+      raw_transcription: raw_text
+    ) || raise(Error, 'Refinement prompt template missing')
   end
 
   def cleanup_temp_files

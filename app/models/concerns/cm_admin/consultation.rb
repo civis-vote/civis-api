@@ -230,6 +230,15 @@ module CmAdmin
               field :marathi_summary, field_type: :rich_text
               field :kannada_summary, field_type: :rich_text
             end
+
+            cm_section 'Response Summary' do
+              field :english_response_summary, field_type: :rich_text
+              field :hindi_response_summary, field_type: :rich_text
+              field :odia_response_summary, field_type: :rich_text
+              field :marathi_response_summary, field_type: :rich_text
+              field :kannada_response_summary, field_type: :rich_text
+            end
+
             cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
               field :response_submission_message, field_type: :rich_text
             end
