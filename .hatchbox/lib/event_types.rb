@@ -93,15 +93,8 @@ module Hatchbox
 
       response = http.request(request)
 
-      if response.code.to_i.between?(200, 299)
-        puts "Slack notification sent to #{uri.host}"
-        true
-      else
-        warn "Slack notification failed: HTTP #{response.code} #{response.body}"
-        false
-      end
-    rescue StandardError => e
-      warn "Slack notification error: #{e.class}: #{e.message}"
+      response.code.to_i.between?(200, 299)
+    rescue StandardError
       false
     end
   end
