@@ -64,15 +64,9 @@ module StructuredOutputService
             is_proper_transcription: {
               type: 'boolean',
               description: 'True if the transcription is clear and proper, false if the audio is inaudible or unintelligible'
-            },
-            confidence: {
-              type: 'number',
-              description: 'Confidence score of the transcription, between 0.0 and 1.0',
-              minimum: 0,
-              maximum: 1
             }
           },
-          required: %w[transcription detected_language is_proper_transcription confidence],
+          required: %w[transcription detected_language is_proper_transcription],
           additionalProperties: false
         }
       }

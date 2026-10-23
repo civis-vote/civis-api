@@ -153,6 +153,57 @@ class ConsultationResponse < ApplicationRecord
     end
   end
 
+  def enqueue_voice_transcriptions
+    Array(voice_responses).each do |entry|
+      TranscribeVoiceMessageJob.perform_later(id, entry['attachment_id'])
+    end
+  end
+
+  def self.build_for_submission(attributes, consultation:, user:)
+    response_round = consultation.response_rounds.order(:created_at).last
+
+    new(attributes).tap do |response|
+      response.user = user
+      response.response_round = response_round
+      response.link_private_consultation!(consultation:, user:, response_round:)
+      raise IncompleteEntity, "Response already submitted by User" if exists?(user:, response_round:)
+    end
+  end
+
+  def link_private_consultation!(consultation:, user:, response_round:)
+    return unless consultation.private_consultation?
+
+    if consultation.private_response? && visibility == "shared"
+      raise GraphQL::ExecutionError, "Private response is enforced, response visibility can't be shared"
+    end
+
+    self.respondent = ::Respondent.find_by(user:, response_round:)
+  end
+
+  def submit(voice_responses:, clause_feedbacks:)
+    transaction do
+      save!
+      submit_voice_responses(voice_responses)
+      submit_clause_feedbacks(clause_feedbacks)
+    end
+    self
+  end
+
+  def submit_clause_feedbacks(feedbacks)
+    return if feedbacks.blank?
+
+    clause_ids = ::Clause.where(consultation_id:).pluck(:id)
+    feedbacks.each do |feedback|
+      next unless clause_ids.include?(feedback[:clause_id])
+
+      clause_feedbacks.create!(
+        clause_id: feedback[:clause_id],
+        feedback_comment: feedback[:feedback_comment],
+        feedback_reason: feedback[:feedback_reason]
+      )
+    end
+  end
+
   def update_reading_time
     return unless reading_time.blank? || response_text.saved_change_to_body?
     return unless response_text && shared?

@@ -30,7 +30,7 @@ class OpenAIService
     return nil unless audio_path
 
     begin
-      raw_text = send_audio_request(audio_path, model, language)
+      raw_text = send_audio_request(audio_path, model, language, prompt)
       return nil unless raw_text
 
       refine_transcription(raw_text, prompt)
@@ -128,11 +128,12 @@ class OpenAIService
     Airbrake.notify(e)
   end
 
-  def send_audio_request(audio_path, model, language)
+  def send_audio_request(audio_path, model, language, prompt)
     audio_file = File.open(audio_path, 'rb')
 
     parameters = { model: model, file: audio_file, response_format: 'verbose_json' }
     parameters[:language] = language if language.present?
+    parameters[:prompt] = prompt if prompt.present?
 
     response = client.audio.transcribe(parameters: parameters)
     response['text'].to_s.strip
@@ -167,29 +168,16 @@ class OpenAIService
     {
       'transcription' => raw_text,
       'detected_language' => nil,
-      'is_proper_transcription' => true,
-      'confidence' => nil
+      'is_proper_transcription' => true
     }
   end
 
   def build_refinement_prompt(raw_text, original_prompt)
-    <<~PROMPT
-      You are a transcription refinement assistant. Below is a raw transcription of a voice message from a citizen consultation response. Your task is to:
-
-      1. Identify the language of the transcription (e.g., English, Hindi, Marathi, Odia, Kannada or a mix).
-      2. Clean up the transcription if it contains errors, garbled text, or improper formatting — but preserve the speaker's exact meaning and wording. Do not translate.
-      3. Remove obvious duplications introduced by the speech-to-text model (e.g., if the same phrase is repeated consecutively and appears to be a model artifact rather than the speaker actually repeating themselves, keep only one instance).
-      4. If the transcription is entirely inaudible, unintelligible, or empty, set is_proper_transcription to false and return the raw text as-is.
-      5. Provide a confidence score (0.0 to 1.0) based on how clear and complete the transcription appears.
-
-      Original transcription context and instructions:
-      #{original_prompt}
-
-      Raw transcription to refine:
-      ---
-      #{raw_text}
-      ---
-    PROMPT
+    PromptService.from_file(
+      'voice_transcription_refinement.prompt',
+      original_prompt: original_prompt,
+      raw_transcription: raw_text
+    ) || raise(Error, 'Refinement prompt template missing')
   end
 
   def cleanup_temp_files
