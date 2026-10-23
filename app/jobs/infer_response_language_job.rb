@@ -59,18 +59,11 @@ class InferResponseLanguageJob < ApplicationJob
   end
 
   def build_prompt(text)
-    <<~PROMPT
-      You are a language detector. Analyze the following text and return ONLY the language name in which it is written.
-
-      Rules:
-      1) Return exactly one word - the language name.
-      2) If multiple languages are present, return the language used for the longest content.
-      3) Prefer non-English languages over English if both are present.
-      4) Return language name in proper case (e.g., 'Hindi', 'English', 'Spanish').
-      5) Language will be one of the following: #{ConsultationResponse.response_languages.values.join(', ')}
-
-      Text to analyze: #{text}
-    PROMPT
+    PromptService.from_file(
+      'response_language_inference.prompt',
+      languages: ConsultationResponse.response_languages.values.join(', '),
+      text: CGI.escapeHTML(text)
+    )
   end
 
   def normalize_language(language)
