@@ -7,5 +7,4 @@ Fabricator(:user) do
   notify_for_new_consultation 		{ [true, false].sample }
   role														{ "citizen" }
   phone_number										{ rand(10 ** 10) }
-  after_build											{ |user, transients| user.skip_confirmation_notification! }
 end
