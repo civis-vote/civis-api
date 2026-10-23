@@ -10,10 +10,6 @@ module Queries
       type [Types::Objects::Consultation::Base], null: false
 
       def resolve(consultation_id:, limit:)
-        # graphql-ruby leaks validation failures into the argument value — re-raise so the
-        # validator's message (not a NoMethodError) is returned to the client.
-        raise limit if limit.is_a?(GraphQL::ExecutionError)
-
         ::ConsultationSuggestionsService.new(user: context[:current_user], consultation_id:).call(limit:)
       end
 
