@@ -152,6 +152,12 @@ class ConsultationResponse < ApplicationRecord
     end
   end
 
+  def enqueue_voice_transcriptions
+    Array(voice_responses).each do |entry|
+      TranscribeVoiceMessageJob.perform_later(id, entry['attachment_id'])
+    end
+  end
+
   def update_reading_time
     return unless reading_time.blank? || response_text.saved_change_to_body?
     return unless response_text && shared?

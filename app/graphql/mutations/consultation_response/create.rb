@@ -37,9 +37,7 @@ module Mutations
           created_consultation_response
         end
 
-        created_consultation_response.voice_responses.each do |entry|
-          TranscribeVoiceMessageJob.perform_later(created_consultation_response.id, entry['attachment_id'])
-        end
+        created_consultation_response.enqueue_voice_transcriptions
         created_consultation_response
       end
 

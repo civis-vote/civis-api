@@ -37,11 +37,11 @@ RSpec.describe VoiceMessageTranscriptionProcessor do
 
   let(:success_result) do
     { success: true, transcription: 'refined transcription', detected_language: 'english',
-      confidence: 0.9, is_proper_transcription: true, errors: [] }
+      is_proper_transcription: true, errors: [] }
   end
 
   let(:failure_result) do
-    { success: false, transcription: nil, detected_language: nil, confidence: nil,
+    { success: false, transcription: nil, detected_language: nil,
       is_proper_transcription: false, errors: ['Transcription failed'] }
   end
 
@@ -67,7 +67,6 @@ RSpec.describe VoiceMessageTranscriptionProcessor do
       entry = response.reload.voice_responses.first
       expect(entry['transcription']).to eq('refined transcription')
       expect(entry['detected_language']).to eq('english')
-      expect(entry['confidence']).to eq(0.9)
     end
 
     it 'merges the transcription into answers' do
