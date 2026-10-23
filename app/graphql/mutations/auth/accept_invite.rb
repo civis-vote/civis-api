@@ -7,8 +7,8 @@ module Mutations
 
       def resolve(auth:)
         user = ::User.find_by_invitation_token(auth[:invitation_token], true)
+        raise Unauthorized, "Invalid or expired invitation token" unless user.present?
         consultation = ::Consultation.find(auth[:consultation_id])
-        raise Unauthorized, "Email not found" unless user.present?
         raise Unauthorized, "Invitation expired" if consultation.response_deadline.to_date < Date.today
         attrs = auth.to_h.except!(:consultation_id)
         attrs[:password] = "#{SecureRandom.hex(20)}@a1" if attrs[:password].blank?

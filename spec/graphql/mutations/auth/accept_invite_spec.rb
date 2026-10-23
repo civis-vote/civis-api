@@ -59,6 +59,18 @@ RSpec.describe Mutations::Auth::AcceptInvite, type: :graphql do
     end
   end
 
+  describe 'when the invitation has already been accepted' do
+    let(:auth_input) { base_auth }
+
+    it 'returns an error on replay' do
+      expect(result['errors']).to be_nil
+      expect(invited_user.reload.invitation_accepted_at).to be_present
+
+      replay = CivisApiSchema.execute(query, variables: { auth: auth_input })
+      expect(replay['errors']).not_to be_nil
+    end
+  end
+
   describe 'when the consultation deadline has passed' do
     let(:consultation) do
       Consultation.create!(title: 'Expired', department: department,
