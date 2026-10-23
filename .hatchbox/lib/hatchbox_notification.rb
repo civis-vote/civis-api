@@ -14,12 +14,6 @@ module Hatchbox
     def self.run(event_type)
       return unless Config.deployment_alerts?
 
-      missing_values = Config.missing_config_values
-      unless missing_values.empty?
-        EventTypes.send_notification(EventTypes.build_config_unavailable_payload(missing_values))
-        exit 0
-      end
-
       payload = EventTypes.build_payload(event_type)
       EventTypes.send_notification(payload)
     end

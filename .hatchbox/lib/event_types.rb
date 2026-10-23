@@ -49,29 +49,6 @@ module Hatchbox
       }
     end
 
-    def self.build_config_unavailable_payload(missing_values)
-      missing_list = missing_values.map { |name| "• `#{name}`" }.join("\n")
-
-      text = ":warning: Deployment notification config for *#{Config.hatchbox_app_name}* is not available. " \
-             "These values need to be updated for this environment:\n#{missing_list}\n"
-      text += ":package: Environment: *#{Config.env_name}*\n"
-      text += ":desktop_computer: Server: *#{Config.server_name}*\n"
-      text += 'Set them under Environment Variables in the Hatchbox dashboard.'
-
-      {
-        blocks: [
-          { type: 'header', text: { type: 'plain_text', text: 'Deployment Notification Config Not Available', emoji: true } },
-          { type: 'section', text: { type: 'mrkdwn', text: text } },
-          { type: 'actions', elements: [
-            { type: 'button',
-              text: { type: 'plain_text', text: 'Environment Variables' },
-              url: Config.hatchbox_env_vars_url,
-              style: 'primary' }
-          ] }
-        ]
-      }
-    end
-
     def self.build_buttons(event)
       buttons = []
 
@@ -100,7 +77,7 @@ module Hatchbox
       return false unless payload
 
       webhook = Config.slack_webhook
-      if webhook.empty?
+      if webhook.to_s.empty?
         warn 'Error: SLACK_WEBHOOK_URL is not set'
         return false
       end
