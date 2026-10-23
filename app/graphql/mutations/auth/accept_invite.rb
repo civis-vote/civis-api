@@ -10,7 +10,9 @@ module Mutations
         consultation = ::Consultation.find(auth[:consultation_id])
         raise Unauthorized, "Email not found" unless user.present?
         raise Unauthorized, "Invitation expired" if consultation.response_deadline.to_date < Date.today
-        user = ::User.accept_invitation!(auth.to_h.except!(:consultation_id))
+        attrs = auth.to_h.except!(:consultation_id)
+        attrs[:password] = SecureRandom.hex(20) if attrs[:password].blank?
+        user = ::User.accept_invitation!(attrs)
         user.find_or_generate_api_key
         user.live_api_key
       end
