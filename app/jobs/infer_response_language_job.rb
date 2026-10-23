@@ -45,7 +45,7 @@ class InferResponseLanguageJob < ApplicationJob
 
     response = client.chat(
       parameters: {
-        model: "gpt-5-nano",
+        model: OpenAIService::DEFAULT_MODEL,
         messages: [{ role: "user", content: prompt }],
       }
     )

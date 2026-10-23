@@ -6,6 +6,6 @@ class ConsultationPdfSummaryJob < ApplicationJob
     service.call
   rescue StandardError => e
     Airbrake.notify(e)
-    { success: false, message: "Job failed: #{e.message}", errors: [e.message] }
+    raise e
   end
 end
