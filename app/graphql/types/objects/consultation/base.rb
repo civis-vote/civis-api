@@ -67,7 +67,6 @@ module Types
         field :odia_response_summary, String, nil, null: true
         field :marathi_response_summary, String, nil, null: true
         field :kannada_response_summary, String, nil, null: true
-        field :page, String, nil, null: true
         field :consultation_partner_responses, [Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
         field :area_of_impacts, [Types::Objects::Constant], nil, null: true
         field :clauses, [Types::Objects::Clause], nil, null: true
@@ -95,10 +94,6 @@ module Types
 
         def consultation_pdf
           attachment_with_resolution(:consultation_pdf, nil)
-        end
-
-        def page
-          nil
         end
 
         def hindi_title

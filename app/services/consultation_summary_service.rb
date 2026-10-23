@@ -1,3 +1,4 @@
+require 'cgi'
 require 'redcarpet'
 
 class ConsultationSummaryService
@@ -55,53 +56,46 @@ class ConsultationSummaryService
   private
 
   def collect_question_responses
-    responses = consultation.responses.acceptable.includes(:response_round, :user)
-    formatted = []
+    by_question = Hash.new { |hash, key| hash[key] = [] }
+    free_form = []
 
-    responses.each_with_index do |response, index|
-      response_entry = build_response_entry(response, index + 1)
-      formatted << response_entry if response_entry.present?
+    consultation.responses.acceptable.includes(:user, response_round: :questions).each do |response|
+      if response.response_round&.questions&.present?
+        response.user_answers.each do |question_text, answer_text|
+          by_question[question_text] << escape(answer_text.strip) if answer_text.present?
+        end
+      else
+        entry = free_form_entry(response)
+        free_form << entry if entry.present?
+      end
     end
 
-    formatted
+    format_question_blocks(by_question) + free_form
   end
 
-  def build_response_entry(response, index)
-    if response.response_round&.questions&.present?
-      build_question_answer_entry(response, index)
-    else
-      build_generic_response_entry(response, index)
+  def format_question_blocks(by_question)
+    by_question.map do |question_text, answers|
+      answer_lines = answers.map { |answer| "  <answer>#{answer}</answer>" }.join("\n")
+      <<~BLOCK
+        <question>
+          <text>#{question_text}</text>
+        #{answer_lines}
+        </question>
+      BLOCK
     end
   end
 
-  def build_question_answer_entry(response, index)
-    answers_hash = response.user_answers
-    return nil if answers_hash.blank? || answers_hash.values.all?(&:blank?)
-
-    qa_pairs = answers_hash.map do |question_text, answer_text|
-      next if answer_text.blank?
-
-      "    Q: #{question_text}\n    A: #{answer_text}"
-    end.compact
-
-    return nil if qa_pairs.blank?
-
-    <<~ENTRY
-      Response ##{index}:
-      #{qa_pairs.join("\n")}
-    ENTRY
-  end
-
-  def build_generic_response_entry(response, index)
+  def free_form_entry(response)
     parts = []
     text = response.response_text&.to_plain_text
-    parts << text if text.present?
-    parts.concat(voice_transcriptions(response))
+    parts << escape(text) if text.present?
+    parts.concat(voice_transcriptions(response).map { |line| escape(line) })
     return nil if parts.blank?
 
     <<~ENTRY
-      Response ##{index}:
+      <free_response>
       #{parts.join("\n")}
+      </free_response>
     ENTRY
   end
 
@@ -110,6 +104,10 @@ class ConsultationSummaryService
       transcription = entry['transcription'] || entry[:transcription]
       "Voice message transcription: #{transcription}" if transcription.present?
     end
+  end
+
+  def escape(text)
+    CGI.escapeHTML(text)
   end
 
   def build_prompt(responses_data, language)
