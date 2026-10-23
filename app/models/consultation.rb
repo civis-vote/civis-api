@@ -130,6 +130,12 @@ class Consultation < ApplicationRecord
     where(visibility: visibility)
   }
 
+  scope :consultation_status, lambda { |status|
+    return all unless status.present?
+
+    where(status: status)
+  }
+
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
   def notify_admins
@@ -167,9 +173,9 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
-    ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     self.feedback_submitted_at = DateTime.now unless feedback_submitted_at.present?
     save!
+    ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?

@@ -143,22 +143,32 @@ module Types
         end
 
         def english_response_summary
+          return unless object.english_response_summary.to_s.present?
+
           object.english_response_summary_rich_text
         end
 
         def hindi_response_summary
+          return unless object.hindi_response_summary.to_s.present?
+
           object.hindi_response_summary_rich_text
         end
 
         def odia_response_summary
+          return unless object.odia_response_summary.to_s.present?
+
           object.odia_response_summary_rich_text
         end
 
         def marathi_response_summary
+          return unless object.marathi_response_summary.to_s.present?
+
           object.marathi_response_summary_rich_text
         end
 
         def kannada_response_summary
+          return unless object.kannada_response_summary.to_s.present?
+
           object.kannada_response_summary_rich_text
         end
 

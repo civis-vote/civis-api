@@ -29,6 +29,9 @@ class User < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
+  has_many :user_preferences, dependent: :destroy
+  has_many :preferred_themes, through: :user_preferences, source: :preferable, source_type: 'Theme'
+  has_many :area_of_impacts, -> { area_of_impact }, through: :user_preferences, source: :preferable, source_type: 'Constant'
   # has_many :responses
 
   belongs_to :organisation, counter_cache: true, optional: true
@@ -180,6 +183,37 @@ class User < ApplicationRecord
       .order('COUNT(consultation_responses.id) DESC')
       .pluck('departments.name')
       .join(', ')
+  end
+
+  def has_preferences?
+    preferred_themes.exists? || area_of_impacts.exists?
+  end
+
+  def theme_ids=(ids)
+    return if ids.nil?
+
+    self.preferred_theme_ids = ::Theme.where(id: ids).ids
+  end
+
+  def area_of_impact_ids=(ids)
+    return if ids.nil?
+
+    super(::Constant.area_of_impact.where(id: ids).ids)
+  end
+
+  def theme_response_counts
+    responses.joins(:consultation).group('consultations.theme_id').count
+  end
+
+  def department_response_counts
+    responses.joins(:consultation).group('consultations.department_id').count
+  end
+
+  def area_of_impact_response_counts
+    responses.joins(consultation: :constant_maps)
+             .where(constant_maps: { constant_id: ::Constant.area_of_impact.select(:id) })
+             .group('constant_maps.constant_id')
+             .count
   end
 
   def update_last_activity
