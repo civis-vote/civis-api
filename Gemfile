@@ -114,6 +114,6 @@ gem 'positioning'
 gem 'redcarpet'
 gem 'ruby_llm'
 gem 'ruby_llm-schema'
-gem 'ruby-openai'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
+gem "rack-attack", "~> 6.8"
