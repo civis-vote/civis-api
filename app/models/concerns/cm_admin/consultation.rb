@@ -16,8 +16,9 @@ module CmAdmin
         sort column: 'updated_at', display_name: 'Updated At'
         sort column: 'consultation_responses_count', display_name: 'Response Count'
 
-        cm_index do
+        cm_index view_type: :kanban_view do
           page_title 'Consultations'
+          kanban_view 'status'
 
           filter %i[title title_hindi title_odia title_marathi], :search, placeholder: 'Search'
           filter :status, :multi_select, active_by_default: true
@@ -72,9 +73,9 @@ module CmAdmin
           custom_action name: 'export_responses', route_type: 'member', verb: 'get', path: ':id/export_response',
                         icon_name: 'fa-solid fa-file-export', display_type: :button do
             @consultation = ::Consultation.find(params[:id])
-            file_export = ::FileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
-                                               expires_at: DateTime.now + 1.day, export_type: :custom_export,
-                                               associated_model_id: @consultation.id, action_name: 'export_responses')
+            file_export = ::CtFileExport.create!(associated_model_name: @consultation.class.name, exported_by: ::Current.user,
+                                                 expires_at: DateTime.now + 1.day, export_type: :custom_export,
+                                                 associated_model_id: @consultation.id, action_name: 'export_responses')
             ::ConsultationResponsesExportJob.perform_later(file_export:)
             @consultation
           end
@@ -90,12 +91,23 @@ module CmAdmin
             consultation
           end
 
+          custom_action name: 'summarise_pdf', display_name: 'Summarise PDF', route_type: 'member', verb: 'patch',
+                        path: ':id/summarise_pdf', icon_name: 'fa-solid fa-magic',
+                        display_type: :button,
+                        display_if: ->(consultation) { consultation.consultation_pdf.attached? },
+                        success_message: ->(_) { { header: 'Summarisation Started', body: 'AI summarisation is in progress. Please refresh in a few minutes to see the summary.' } } do
+            consultation = ::Consultation.find(params[:id])
+            consultation.summarise_pdf
+            consultation
+          end
+
           column :id
-          column :title
+          column :title, card_title: true
+          column :consultation_logo, field_type: :image, card_image: true
           column :department_name, header: 'Department'
           column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
           column :theme_name, header: 'Theme'
-          column :response_deadline, field_type: :date, format: '%d %b, %Y'
+          column :response_deadline, field_type: :date, format: '%d %b, %Y', card_footer: true
           column :created_at, field_type: :date, format: '%d %b, %Y'
           column :created_by_full_name, header: 'Created By'
           column :responses_count
@@ -193,7 +205,7 @@ module CmAdmin
               field :organisation_name, label: 'Organisation', display_if: ->(record) { record.organisation_id.present? }
               field :review_type, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :visibility, field_type: :enum, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
-              field :response_deadline, field_type: :datetime
+              field :response_deadline, field_type: :datetime, timezone: 'Asia/Kolkata'
               field :show_discuss_section, field_type: :boolean
               field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
               field :feedback_url, label: 'Consultation Page', field_type: :link
@@ -211,14 +223,30 @@ module CmAdmin
               field :created_by_full_name, label: 'Created By'
             end
             cm_section 'Summary' do
+              field :ai_summary, field_type: :rich_text, label: 'AI Summary'
               field :english_summary, field_type: :rich_text
               field :hindi_summary, field_type: :rich_text
               field :odia_summary, field_type: :rich_text
               field :marathi_summary, field_type: :rich_text
               field :kannada_summary, field_type: :rich_text
             end
+
+            cm_section 'Response Summary' do
+              field :english_response_summary, field_type: :rich_text
+              field :hindi_response_summary, field_type: :rich_text
+              field :odia_response_summary, field_type: :rich_text
+              field :marathi_response_summary, field_type: :rich_text
+              field :kannada_response_summary, field_type: :rich_text
+            end
+
             cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
               field :response_submission_message, field_type: :rich_text
+            end
+            cm_section 'Timeline' do
+              field :published_at, field_type: :datetime, label: 'Published At', timezone: 'Asia/Kolkata'
+              field :feedback_submitted_at, field_type: :datetime, label: 'Feedback Submitted At', timezone: 'Asia/Kolkata'
+              field :acknowledged_at, field_type: :datetime, label: 'Acknowledged At', timezone: 'Asia/Kolkata'
+              field :policy_released_at, field_type: :datetime, label: 'Policy Released At', timezone: 'Asia/Kolkata'
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
@@ -284,9 +312,9 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
-            alert_box header: 'Time Zone Notice', type: :warning,
-                      body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
-            form_field :response_deadline, input_type: :date_time
+            alert_box header: 'Time Zone Notice', type: :info,
+                      body: 'Times are displayed and stored in India Standard Time (IST, UTC+5:30).'
+            form_field :response_deadline, input_type: :date_time, timezone: 'Asia/Kolkata'
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
@@ -327,9 +355,9 @@ module CmAdmin
             form_field :officer_designation, input_type: :string, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :department_id, input_type: :single_select, helper_method: :select_options_for_department
             form_field :url, input_type: :string
-            alert_box header: 'Time Zone Notice', type: :warning,
-                      body: 'Times shown are in UTC (Coordinated Universal Time). Remember to convert to your local time when making selections.'
-            form_field :response_deadline, input_type: :date_time
+            alert_box header: 'Time Zone Notice', type: :info,
+                      body: 'Times are displayed and stored in India Standard Time (IST, UTC+5:30).'
+            form_field :response_deadline, input_type: :date_time, timezone: 'Asia/Kolkata'
             form_field :review_type, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
             form_field :question_flow, input_type: :single_select
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
@@ -338,14 +366,32 @@ module CmAdmin
                                             helper_method: :select_options_for_area_of_impact, label: 'Area of Impact'
           end
           cm_section 'Summary' do
+            form_field :ai_summary, input_type: :rich_text
             form_field :english_summary, input_type: :rich_text
             form_field :hindi_summary, input_type: :rich_text
             form_field :odia_summary, input_type: :rich_text
             form_field :marathi_summary, input_type: :rich_text
             form_field :kannada_summary, input_type: :rich_text
           end
+
+          cm_section 'AI Response Summaries', display_if: ->(record) { record.english_response_summary.present? } do
+            form_field :english_response_summary, input_type: :rich_text, label: 'English'
+            form_field :hindi_response_summary, input_type: :rich_text, label: 'Hindi'
+            form_field :odia_response_summary, input_type: :rich_text, label: 'Odia'
+            form_field :marathi_response_summary, input_type: :rich_text, label: 'Marathi'
+            form_field :kannada_response_summary, input_type: :rich_text, label: 'Kannada'
+          end
+
           cm_section 'Thank You Message', display_if: ->(_) { !Current.user&.role?('organisation_employee') } do
             form_field :response_submission_message, input_type: :rich_text
+          end
+
+          cm_section 'Timeline' do
+            form_field :feedback_submitted_at, input_type: :date_time, label: 'Feedback Submitted At',
+                                               timezone: 'Asia/Kolkata',
+                                               helper_text: 'Auto-filled when the feedback report emails are sent on expiry. Can be edited if needed.'
+            form_field :acknowledged_at, input_type: :date_time, label: 'Acknowledged At', timezone: 'Asia/Kolkata'
+            form_field :policy_released_at, input_type: :date_time, label: 'Policy Released At', timezone: 'Asia/Kolkata'
           end
         end
       end

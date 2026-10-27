@@ -9,10 +9,12 @@ module Mutations
         current_user = context[:current_user]
         user_input = user.to_h
         profile_picture = user_input.delete(:profile_picture_file)
-        current_user.update! user_input
-        if profile_picture.present?
-          current_user.save_attachment_with_base64(:profile_picture, profile_picture[:content], profile_picture[:filename])
+
+        ActiveRecord::Base.transaction do
+          current_user.update! user_input
         end
+
+        current_user.save_attachment_with_base64(:profile_picture, profile_picture[:content], profile_picture[:filename]) if profile_picture.present?
         current_user
       end
 
