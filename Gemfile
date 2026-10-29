@@ -106,6 +106,7 @@ gem 'turbo-rails'
 gem 'airbrake'
 
 gem 'jwt'
+gem 'ruby-openai', '~> 8.3'
 
 gem 'apollo_upload_server'
 gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
