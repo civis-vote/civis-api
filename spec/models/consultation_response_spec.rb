@@ -26,6 +26,41 @@ RSpec.describe ConsultationResponse do
     ActionDispatch::Http::UploadedFile.new(tempfile: tempfile, filename: 'voice.mp3', type: 'audio/mpeg')
   end
 
+  describe '.response_text_filter' do
+    let!(:text_response) do
+      ConsultationResponse.create!(user: user, consultation: consultation,
+                                   response_round: ResponseRound.create!(consultation: consultation),
+                                   visibility: :shared, response_text: 'Great initiative!')
+    end
+    let!(:blank_response) do
+      ConsultationResponse.create!(consultation: consultation,
+                                   response_round: ResponseRound.create!(consultation: consultation),
+                                   visibility: :shared)
+    end
+    let!(:whitespace_response) do
+      ConsultationResponse.create!(consultation: consultation,
+                                   response_round: ResponseRound.create!(consultation: consultation),
+                                   visibility: :shared, response_text: '<p>&nbsp;</p>')
+    end
+
+    it 'returns only responses with non-blank response text when true' do
+      result = described_class.response_text_filter(true)
+      expect(result).to include(text_response)
+      expect(result).not_to include(blank_response, whitespace_response)
+    end
+
+    it 'returns only responses without response text when false' do
+      result = described_class.response_text_filter(false)
+      expect(result).to include(blank_response, whitespace_response)
+      expect(result).not_to include(text_response)
+    end
+
+    it 'returns all responses when nil' do
+      result = described_class.response_text_filter(nil)
+      expect(result).to include(text_response, blank_response, whitespace_response)
+    end
+  end
+
   describe '#submit_voice_responses' do
     context 'with no voice responses' do
       it 'keeps the not_available transcription status' do
