@@ -76,4 +76,32 @@ RSpec.describe Consultation, type: :model do
       end
     end
   end
+
+  describe '#convert_to_rich_text' do
+    let(:consultation) { create_consultation }
+    let(:embed) { '<iframe width="100%" height="369" src="https://www.youtube.com/embed/ImHiAwyC96g" frameborder="0"></iframe>' }
+
+    it 'converts youtube watch links to iframes' do
+      text = '<p><a href="https://www.youtube.com/watch?v=ImHiAwyC96g">https://www.youtube.com/watch?v=ImHiAwyC96g</a></p>'
+
+      expect(consultation.send(:convert_to_rich_text, text)).to include(embed)
+    end
+
+    it 'converts youtu.be and shorts links to iframes' do
+      expect(consultation.send(:convert_to_rich_text, '<p><a href="https://youtu.be/ImHiAwyC96g?si=abc">link</a></p>')).to include(embed)
+      expect(consultation.send(:convert_to_rich_text, '<p><a href="https://www.youtube.com/shorts/ImHiAwyC96g">link</a></p>')).to include(embed)
+    end
+
+    it 'converts youtube thumbnail images to iframes' do
+      text = '<p><img src="https://img.youtube.com/vi/ImHiAwyC96g/0.jpg"></p>'
+
+      expect(consultation.send(:convert_to_rich_text, text)).to include(embed)
+    end
+
+    it 'leaves non-youtube links untouched' do
+      text = '<p><a href="https://example.com/article">read more</a></p>'
+
+      expect(consultation.send(:convert_to_rich_text, text)).to include('<a href="https://example.com/article">read more</a>')
+    end
+  end
 end
