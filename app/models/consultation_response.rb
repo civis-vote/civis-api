@@ -103,6 +103,15 @@ class ConsultationResponse < ApplicationRecord
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
+  scope :response_text_filter, lambda { |has_response_text|
+    return all if has_response_text.nil?
+
+    blank_markup = '^(<[^>]+>|&nbsp;|\s)*$'
+    with_text = joins(:rich_text_response_text).where.not("action_text_rich_texts.body ~ ?", blank_markup)
+
+    has_response_text ? with_text : where.not(id: with_text.select(:id))
+  }
+
   def self.acceptable_responses
     where(response_status: 'acceptable')
   end
