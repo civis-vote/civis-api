@@ -484,11 +484,15 @@ class Consultation < ApplicationRecord
                      '<div style="width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;"><div style="width: 100%; border: 1px solid #ececec;"></div></div>')
     # regex to replace action-text-attachement with image
     text = text.gsub(%r{<action-text-attachment[^>]*>|</action-text-attachment>|<figure[^>]*>|</figure>}, '')
-    # regex to replace youtube image link with iframe
+    # regex to replace youtube thumbnail image with iframe
     youtube_img_regex = %r{<img(?:\s+[\w-]+="[^"]*")*\s+src="https://img\.youtube\.com/vi/([\w-]+)/0\.jpg">}
-    text.gsub(youtube_img_regex) do |_match|
-      video_id = ::Regexp.last_match(1)
-      "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
-    end
+    # regex to replace youtube links with iframe (lexxy stores pasted urls as links)
+    youtube_link_regex = %r{<a[^>]+href="https?://(?:www\.|m\.)?(?:youtube\.com/(?:watch\?v=|shorts/|embed/)|youtu\.be/)([\w-]+)[^"]*"[^>]*>.*?</a>}i
+    text.gsub(youtube_img_regex) { |_match| youtube_embed_iframe(::Regexp.last_match(1)) }
+        .gsub(youtube_link_regex) { |_match| youtube_embed_iframe(::Regexp.last_match(1)) }
+  end
+
+  def youtube_embed_iframe(video_id)
+    "<iframe width=\"100%\" height=\"369\" src=\"https://www.youtube.com/embed/#{video_id}\" frameborder=\"0\"></iframe>"
   end
 end
