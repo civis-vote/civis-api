@@ -1,6 +1,10 @@
 module Mutations
   module ContactForm
     class Submit < Mutations::BaseMutation
+      include HostGuard
+
+      host_guard 'civis.vote', throttle: { limit: 5, period: 1.minute }
+
       type Types::Objects::ContactForm::SubmitResponse, null: false
 
       argument :contact_form, Types::Inputs::ContactForm::Submit, required: true
