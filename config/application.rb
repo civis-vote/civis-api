@@ -25,6 +25,7 @@ module CivisApi
     config.active_job.queue_adapter = :sidekiq
     config.active_storage.queues.analysis = :default
     config.active_storage.queues.purge = :default
+    config.active_storage.urls_expire_in = 24.hours
 
     config.autoload_paths << Rails.root.join("lib")
     config.eager_load_paths << Rails.root.join("lib")
