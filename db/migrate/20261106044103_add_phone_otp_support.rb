@@ -23,17 +23,26 @@ class AddPhoneOtpSupport < ActiveRecord::Migration[8.1]
 
   private
 
-  # Normalizes stored numbers to +<country_code><number> (+91 for 10-digit numbers)
-  # and clears duplicates, keeping the earliest user so phone login stays
-  # unambiguous.
+  # Normalizes stored numbers to +<country_code><number> (+91 for 10-digit
+  # numbers after stripping non-digits and leading zeros — same rules as
+  # User.normalize_phone) and clears duplicates, keeping the earliest user so
+  # phone login stays unambiguous.
   def normalize_phone_numbers
-    select_all("SELECT id, phone_number FROM users WHERE phone_number IS NOT NULL AND phone_number <> ''").each do |row|
-      digits = row['phone_number'].to_s.gsub(/\D/, '')
-      next if digits.blank?
+    execute "UPDATE users SET phone_number = NULL WHERE phone_number = ''"
 
-      digits = "91#{digits}" if digits.length == 10
-      execute "UPDATE users SET phone_number = '+#{digits}' WHERE id = #{row['id']}"
-    end
+    execute <<~SQL
+      UPDATE users
+      SET phone_number = '+' || CASE
+        WHEN length(clean.digits) = 10 THEN '91' || clean.digits
+        ELSE clean.digits
+      END
+      FROM (
+        SELECT id, regexp_replace(regexp_replace(phone_number, '\\D', '', 'g'), '^0+', '') AS digits
+        FROM users
+        WHERE phone_number IS NOT NULL AND phone_number <> ''
+      ) clean
+      WHERE users.id = clean.id AND clean.digits <> ''
+    SQL
 
     execute <<~SQL
       UPDATE users SET phone_number = NULL
