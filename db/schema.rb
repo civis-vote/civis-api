@@ -78,7 +78,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
 
   create_table "blog_categories", force: :cascade do |t|
     t.string "name", null: false
-    t.string "hex_code"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

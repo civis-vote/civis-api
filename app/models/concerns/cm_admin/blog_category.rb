@@ -14,14 +14,13 @@ module CmAdmin
 
           column :id
           column :name
-          column :hex_code
         end
 
         cm_show page_title: :name do
           tab :profile, '' do
             cm_section 'Blog Category details' do
               field :name
-              field :hex_code
+              field :icon, field_type: :image, display_if: ->(category) { category.icon.attached? }
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
@@ -33,14 +32,16 @@ module CmAdmin
         cm_new page_title: 'Add Blog Category', page_description: 'Enter all details to add Blog Category' do
           cm_section 'Details' do
             form_field :name
-            form_field :hex_code, helper_text: 'Hex colour for the category tag, e.g. #E57373'
+            form_field :icon, input_type: :single_file_upload,
+                              helper_text: 'Small icon shown next to the category name on blog cards'
           end
         end
 
         cm_edit page_title: 'Edit Blog Category', page_description: 'Enter all details to edit Blog Category' do
           cm_section 'Details' do
             form_field :name
-            form_field :hex_code, helper_text: 'Hex colour for the category tag, e.g. #E57373'
+            form_field :icon, input_type: :single_file_upload,
+                              helper_text: 'Small icon shown next to the category name on blog cards'
           end
         end
       end
