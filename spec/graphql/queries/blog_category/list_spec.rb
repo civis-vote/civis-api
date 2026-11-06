@@ -10,7 +10,7 @@ RSpec.describe Queries::BlogCategory::List, type: :graphql do
           data {
             id
             name
-            hexCode
+            icon { url }
           }
           paging {
             totalItems
