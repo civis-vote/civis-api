@@ -524,6 +524,8 @@ GEM
     raabro (1.5.0)
     racc (1.8.1)
     rack (3.2.8)
+    rack-attack (6.8.0)
+      rack (>= 1.0, < 4)
     rack-cors (2.0.2)
       rack (>= 2.0.0)
     rack-protection (2.2.0)
