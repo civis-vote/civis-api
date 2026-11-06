@@ -13,6 +13,7 @@ module Types
 					argument :resolution, String, required: false, default_value: nil
 				end
 				field :created_by,					Types::Objects::User::Base, "Author of the blog post", null: true
+				field :created_by_name,			String, "Full name of the author", null: true
 				field :published_at,					Types::Objects::DateTime, nil, null: true
 				field :created_at,					Types::Objects::DateTime, nil, null: false
 				field :updated_at,					Types::Objects::DateTime, nil, null: false
@@ -23,6 +24,10 @@ module Types
 
 				def featured_image(resolution:)
 					attachment_with_resolution(:featured_image, resolution)
+				end
+
+				def created_by_name
+					object.created_by_full_name
 				end
 			end
 		end

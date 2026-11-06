@@ -85,7 +85,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
 
   create_table "blog_posts", force: :cascade do |t|
     t.string "title", null: false
-    t.string "slug"
+    t.citext "slug"
     t.text "description"
     t.integer "status", default: 0, null: false
     t.datetime "published_at"
@@ -97,7 +97,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
     t.datetime "updated_at", null: false
     t.index ["blog_category_id"], name: "index_blog_posts_on_blog_category_id"
     t.index ["created_by_id"], name: "index_blog_posts_on_created_by_id"
-    t.index ["slug"], name: "index_blog_posts_on_slug"
+    t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
     t.index ["updated_by_id"], name: "index_blog_posts_on_updated_by_id"
   end
 

@@ -13,10 +13,10 @@ module Queries
 	    type Types::Objects::BlogPost::List, null: true
 
 	    def resolve(blog_category_filter:, year_filter:, search_filter:, per_page:, page:, sort:, sort_direction:)
-	    	scope = ::BlogPost.published.search(search_filter)
-	    	            .blog_category_filter(blog_category_filter).year_filter(year_filter)
-	    	            .sort_records(sort, sort_direction)
-	    	scope = scope.order(published_at: :desc) if sort.blank?
+	    	scope = ::BlogPost.published.includes(:blog_category, :created_by).with_attached_featured_image
+	    	            .search(search_filter)
+	    	                  .blog_category_filter(blog_category_filter).year_filter(year_filter)
+	    	scope = sort ? scope.sort_records(sort, sort_direction) : scope.order(published_at: :desc)
 	    	scope.list(per_page, page)
 	    end
 		end

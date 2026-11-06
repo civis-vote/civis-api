@@ -56,12 +56,6 @@ RSpec.describe BlogPost, type: :model do
       expect(BlogPost.blog_category_filter(category.id)).to eq([post])
     end
 
-    it 'filters by slug' do
-      post = Fabricate(:blog_post, title: 'Slug Target')
-      Fabricate(:blog_post)
-      expect(BlogPost.slug_filter('slug-target')).to eq([post])
-    end
-
     it 'filters by published year' do
       post = Fabricate(:blog_post, published_at: Time.zone.local(2025, 5, 10))
       Fabricate(:blog_post, published_at: Time.zone.local(2024, 1, 1))

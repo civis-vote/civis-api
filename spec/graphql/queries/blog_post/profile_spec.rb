@@ -12,6 +12,7 @@ RSpec.describe Queries::BlogPost::Profile, type: :graphql do
           slug
           description
           content
+          createdByName
           blogCategory {
             name
             hexCode
