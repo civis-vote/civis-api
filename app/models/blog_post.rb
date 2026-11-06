@@ -45,7 +45,7 @@ class BlogPost < ApplicationRecord
   end
 
   def publish
-    update(status: :published, published_at: Time.current)
+    update(status: :published, published_at: Time.current, archived_at: nil)
   end
 
   def archive
