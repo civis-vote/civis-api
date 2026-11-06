@@ -45,16 +45,23 @@ class BlogPost < ApplicationRecord
   end
 
   def publish
-    update(status: :published, published_at: Time.current, archived_at: nil)
+    update!(status: :published, published_at: Time.current, archived_at: nil)
   end
 
   def archive
-    update(status: :archived, archived_at: Time.current)
+    update!(status: :archived, archived_at: Time.current)
   end
 
   private
 
   def set_slug
-    self.slug = title.parameterize
+    base = title.parameterize
+    slug = base
+    counter = 2
+    while BlogPost.where(slug:).where.not(id:).exists?
+      slug = "#{base}-#{counter}"
+      counter += 1
+    end
+    self.slug = slug
   end
 end

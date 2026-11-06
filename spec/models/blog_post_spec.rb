@@ -31,6 +31,12 @@ RSpec.describe BlogPost, type: :model do
     expect(post.reload.slug).to eq('new-title')
   end
 
+  it 'appends a suffix when the generated slug collides' do
+    Fabricate(:blog_post, title: 'My Post')
+    post = Fabricate(:blog_post, title: 'My Post!')
+    expect(post.slug).to eq('my-post-2')
+  end
+
   it 'defaults to draft status' do
     expect(BlogPost.new.status).to eq('draft')
   end

@@ -73,7 +73,7 @@ module CmAdmin
     end
 
     def select_options_for_blog_category(_ = nil, _ = nil)
-      ::BlogCategory.pluck(:name, :id)
+      ::BlogCategory.order(:name).pluck(:name, :id)
     end
   end
 end
