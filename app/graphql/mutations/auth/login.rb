@@ -6,9 +6,19 @@ module Mutations
       argument :auth, Types::Inputs::Auth::Login, required: true
 
       def resolve(auth:)
-        user = ::User.find_or_create_by!(email: auth[:email])
+        email = auth[:email].to_s.strip.presence
+        phone = ::User.normalize_phone(auth[:phone_number])
+        raise BadRequest, "Email or phone number is required" if email.blank? && phone.blank?
 
-        user.create_otp_request
+        user = if email.present?
+                 ::User.find_or_create_by!(email: email)
+               else
+                 ::User.find_for_login(phone_number: phone) || ::User.create!(phone_number: phone)
+               end
+
+        otp_request = user.create_otp_request(delivery_channel: email.present? ? :email : :phone)
+        raise BadRequest, otp_request.errors.full_messages.to_sentence if otp_request.errors.any?
+
         true
       end
     end
