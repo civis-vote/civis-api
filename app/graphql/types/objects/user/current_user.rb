@@ -7,12 +7,13 @@ module Types
         field :created_at, Types::Objects::DateTime, nil,  null: false
         field :confirmed_at, Types::Objects::DateTime, nil,  null: true
         field :designation, String, nil, null: true
-        field :email, String, nil, null: false
+        field :email, String, nil, null: true
         field :last_name, String, nil, null: true
         field :notify_for_new_consultation, Boolean, nil, null: true
         field :newsletter_subscription, Boolean, nil, null: true
         field :organization, String, nil, null: true
         field :phone_number, String,  nil,  null: true
+        field :phone_verified, Boolean, nil, null: true
         field :preferred_themes, [Types::Objects::Theme], nil, null: true
         field :has_preferences, Boolean, nil, null: false
         field :is_verified, Boolean, nil, null: true
@@ -30,7 +31,7 @@ module Types
         end
 
         def is_verified
-          object.confirmed_at? if object
+          object.is_verified if object
         end
       end
     end

@@ -12,6 +12,7 @@ module Mutations
 
         ActiveRecord::Base.transaction do
           current_user.update! user_input
+          raise BadRequest, "Email and phone number are required to complete your profile" unless current_user.email? && current_user.phone_number?
         end
 
         current_user.save_attachment_with_base64(:profile_picture, profile_picture[:content], profile_picture[:filename]) if profile_picture.present?

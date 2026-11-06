@@ -64,4 +64,76 @@ RSpec.describe User, type: :model do
       expect(user.area_of_impact_response_counts).to eq(area_of_impact.id => 2)
     end
   end
+
+  describe 'phone number' do
+    it 'normalizes a 10-digit number with the default country code' do
+      phone_user = described_class.create!(phone_number: '9876501234', role: :citizen)
+      expect(phone_user.phone_number).to eq('+919876501234')
+    end
+
+    it 'keeps an already normalized number' do
+      phone_user = described_class.create!(phone_number: '+919876501234', role: :citizen)
+      expect(phone_user.phone_number).to eq('+919876501234')
+    end
+
+    it 'does not allow duplicate phone numbers' do
+      described_class.create!(phone_number: '+919876501234', role: :citizen)
+      duplicate = described_class.new(phone_number: '9876501234', role: :citizen)
+      expect(duplicate).not_to be_valid
+    end
+  end
+
+  describe 'contact verification reset' do
+    it 'clears confirmed_at when the email changes' do
+      user.update!(email: 'changed@example.com')
+      expect(user.confirmed_at).to be_nil
+    end
+
+    it 'clears phone_verified_at when the phone number changes' do
+      user.update_columns(phone_verified_at: Time.current)
+      user.update!(phone_number: '+919123456780')
+      expect(user.phone_verified_at).to be_nil
+    end
+  end
+
+  describe 'contact details validation' do
+    it 'is invalid without email and phone number' do
+      record = described_class.new(first_name: 'No', last_name: 'Contact', role: :citizen)
+      expect(record).not_to be_valid
+    end
+
+    it 'is valid with only a phone number and no email' do
+      record = described_class.new(phone_number: '+919876501234', role: :citizen)
+      expect(record).to be_valid
+    end
+  end
+
+  describe '.find_for_login' do
+    let!(:phone_user) { described_class.create!(phone_number: '+919876501234', role: :citizen) }
+
+    it 'finds by normalized phone number' do
+      expect(described_class.find_for_login(phone_number: '9876501234')).to eq(phone_user)
+    end
+
+    it 'finds by email' do
+      expect(described_class.find_for_login(email: user.email)).to eq(user)
+    end
+  end
+
+  describe '#verify_otp' do
+    it 'sets confirmed_at for email OTPs' do
+      unconfirmed = described_class.create!(email: Faker::Internet.unique.email, role: :citizen)
+      otp = unconfirmed.create_otp_request(delivery_channel: :email)
+      expect(unconfirmed.verify_otp(otp.otp.to_s)).to be true
+      expect(unconfirmed.reload.confirmed_at).to be_present
+    end
+
+    it 'sets phone_verified_at for phone OTPs' do
+      phone_user = described_class.create!(phone_number: '+919876501234', role: :citizen)
+      otp = phone_user.create_otp_request(delivery_channel: :phone)
+      expect(phone_user.verify_otp(otp.otp.to_s)).to be true
+      expect(phone_user.reload.phone_verified_at).to be_present
+      expect(phone_user.confirmed_at).to be_nil
+    end
+  end
 end
