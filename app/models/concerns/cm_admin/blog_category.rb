@@ -14,13 +14,16 @@ module CmAdmin
 
           column :id
           column :name
+          column :icon_name
+          column :hex_code
         end
 
         cm_show page_title: :name do
           tab :profile, '' do
             cm_section 'Blog Category details' do
               field :name
-              field :icon, field_type: :image, display_if: ->(category) { category.icon.attached? }
+              field :icon_name
+              field :hex_code
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
@@ -32,16 +35,20 @@ module CmAdmin
         cm_new page_title: 'Add Blog Category', page_description: 'Enter all details to add Blog Category' do
           cm_section 'Details' do
             form_field :name
-            form_field :icon, input_type: :single_file_upload,
-                              helper_text: 'Small icon shown next to the category name on blog cards'
+            form_field :icon_name, input_type: :string,
+                                   helper_text: 'Font Awesome icon class shown next to the category name, e.g. fas fa-tag'
+            form_field :hex_code, input_type: :string,
+                                  helper_text: 'Hex colour for the category tag, e.g. #E57373'
           end
         end
 
         cm_edit page_title: 'Edit Blog Category', page_description: 'Enter all details to edit Blog Category' do
           cm_section 'Details' do
             form_field :name
-            form_field :icon, input_type: :single_file_upload,
-                              helper_text: 'Small icon shown next to the category name on blog cards'
+            form_field :icon_name, input_type: :string,
+                                   helper_text: 'Font Awesome icon class shown next to the category name, e.g. fas fa-tag'
+            form_field :hex_code, input_type: :string,
+                                  helper_text: 'Hex colour for the category tag, e.g. #E57373'
           end
         end
       end

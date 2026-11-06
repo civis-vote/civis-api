@@ -15,7 +15,8 @@ RSpec.describe Queries::BlogPost::Profile, type: :graphql do
           createdByName
           blogCategory {
             name
-            icon { url }
+            iconName
+            hexCode
           }
           publishedAt
         }
