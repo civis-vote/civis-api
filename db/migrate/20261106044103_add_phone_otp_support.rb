@@ -44,6 +44,8 @@ class AddPhoneOtpSupport < ActiveRecord::Migration[8.1]
       WHERE users.id = clean.id AND clean.digits <> ''
     SQL
 
+    execute "UPDATE users SET phone_number = NULL WHERE phone_number IS NOT NULL AND phone_number !~ '^\\+\\d{11,15}$'"
+
     execute <<~SQL
       UPDATE users SET phone_number = NULL
       WHERE id IN (

@@ -20,6 +20,8 @@ class GupshupWhatsappDelivery
     send_message(phone_number:, template_id:, template_params: [otp.to_s, OTP_PURPOSE, otp.to_s, OTP_PURPOSE])
   end
 
+  private
+
   def send_message(phone_number:, template_id:, template_params:)
     uri = URI(GUPSHUP_API_URL)
     request = Net::HTTP::Post.new(uri)
@@ -32,7 +34,12 @@ class GupshupWhatsappDelivery
       'template' => { id: template_id, params: template_params }.to_json
     )
 
-    response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') { |http| http.request(request) }
+    response = Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
+      http.open_timeout = 5
+      http.write_timeout = 10
+      http.read_timeout = 10
+      http.request(request)
+    end
     raise "Gupshup WhatsApp delivery failed: #{response.code} - #{response.body}" unless response.is_a?(Net::HTTPSuccess)
 
     response

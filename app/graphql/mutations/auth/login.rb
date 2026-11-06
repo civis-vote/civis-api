@@ -8,12 +8,10 @@ module Mutations
       def resolve(auth:)
         email = auth[:email].to_s.strip.presence
         phone = ::User.normalize_phone(auth[:phone_number])
-        raise BadRequest, "Email or phone number is required" if email.blank? && phone.blank?
+        raise BadRequest, "Email or phone number is required" unless email || phone
 
-        identifier = email.present? ? { email: } : { phone_number: phone }
-        user = find_or_create_user(identifier)
-
-        otp_request = user.create_otp_request(delivery_channel: identifier.key?(:email) ? :email : :phone)
+        user = find_or_create_user(email ? { email: } : { phone_number: phone })
+        otp_request = user.create_otp_request(delivery_channel: email ? :email : :phone)
         raise BadRequest, otp_request.errors.full_messages.to_sentence if otp_request.errors.any?
 
         true

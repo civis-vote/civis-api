@@ -20,7 +20,7 @@ module Devise
       def success!
         if CmAdmin.config.auth_method == :otp
           otp_request = @user.create_otp_request(delivery_channel: OtpRequest.delivery_channel_for(identifier_value))
-          fail!(otp_request.errors.full_messages.to_sentence) if otp_request.errors.any?
+          return fail!(otp_request.errors.full_messages.to_sentence) if otp_request.errors.any?
         end
         redirect!("/sign_in_with_credentials?#{Rack::Utils.build_query(identifier: identifier_value)}")
       end

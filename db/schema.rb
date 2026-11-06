@@ -855,7 +855,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email"
+    t.citext "email"
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at", precision: nil

@@ -65,7 +65,7 @@ module Users
     end
 
     def sign_in_with_credentials
-      @identifier = params[:identifier].presence || params[:email]
+      @identifier = identifier_value
     end
 
     private
