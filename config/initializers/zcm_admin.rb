@@ -11,7 +11,7 @@ Rails.application.reloader.to_prepare do
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
     config.otp_delivery_channel = :phone_or_email
-    config.otp_delivery_provider = :gupshup
+    config.otp_delivery_provider = GupshupWhatsappDelivery.new
 
     config.sidebar = [
       {

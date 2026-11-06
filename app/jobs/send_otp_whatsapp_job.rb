@@ -5,6 +5,6 @@ class SendOtpWhatsappJob < ApplicationJob
     otp_request = OtpRequest.find_by(id: otp_request_id)
     return if otp_request.blank? || otp_request.user&.phone_number.blank?
 
-    CmAdmin::DeliveryProviders::Gupshup.new.deliver(user: otp_request.user, otp: otp_request.otp, template: :otp)
+    GupshupWhatsappDelivery.new.deliver(user: otp_request.user, otp: otp_request.otp, template: :otp)
   end
 end

@@ -5,8 +5,8 @@ RSpec.describe SendOtpWhatsappJob, type: :job do
 
   it 'delivers the OTP through the Gupshup provider' do
     otp_request = user.otp_requests.create!(otp: '123456', status: :created, delivery_channel: :phone)
-    provider = instance_double(CmAdmin::DeliveryProviders::Gupshup)
-    allow(CmAdmin::DeliveryProviders::Gupshup).to receive(:new).and_return(provider)
+    provider = instance_double(GupshupWhatsappDelivery)
+    allow(GupshupWhatsappDelivery).to receive(:new).and_return(provider)
     expect(provider).to receive(:deliver).with(user: user, otp: '123456', template: :otp)
 
     described_class.new.perform(otp_request.id)
