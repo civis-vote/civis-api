@@ -11,11 +11,15 @@ module Auth
       token
     end
 
-    def create_otp_request(status = :cancelled)
-      otp_requests.timed_out.update_all(status: :time_out, expired_at: DateTime.now)
-      otp_requests.active.update_all(status:, expired_at: DateTime.now)
+    def create_otp_request(status = :cancelled, delivery_channel: :email)
       otp = rand(100_000..999_999)
-      otp_requests.create!(otp:, status: :created)
+      otp_request = otp_requests.new(otp:, status: :created, delivery_channel:)
+      if otp_request.save
+        previous_requests = otp_requests.where.not(id: otp_request.id)
+        previous_requests.timed_out.update_all(status: :time_out, expired_at: DateTime.now)
+        previous_requests.active.update_all(status:, expired_at: DateTime.now)
+      end
+      otp_request
     end
 
     def verify_otp(otp)
@@ -24,8 +28,14 @@ module Auth
       return false unless active_otp.present? && active_otp.otp.to_s == otp
 
       active_otp.update!(status: :verified, verified_at: DateTime.now)
+      mark_channel_verified(active_otp.delivery_channel)
       otp_requests.active.update_all(status: :cancelled, expired_at: DateTime.now) if otp_requests.active.present?
       true
+    end
+
+    def mark_channel_verified(channel)
+      column = channel.to_s == 'phone' ? :phone_verified_at : :confirmed_at
+      update(column => Time.current) if self[column].blank?
     end
 
     def can_access_admin_panel?
