@@ -10,16 +10,21 @@ module Mutations
         phone = ::User.normalize_phone(auth[:phone_number])
         raise BadRequest, "Email or phone number is required" if email.blank? && phone.blank?
 
-        user = if email.present?
-                 ::User.find_or_create_by!(email: email)
-               else
-                 ::User.find_for_login(phone_number: phone) || ::User.create!(phone_number: phone)
-               end
+        identifier = email.present? ? { email: } : { phone_number: phone }
+        user = find_or_create_user(identifier)
 
-        otp_request = user.create_otp_request(delivery_channel: email.present? ? :email : :phone)
+        otp_request = user.create_otp_request(delivery_channel: identifier.key?(:email) ? :email : :phone)
         raise BadRequest, otp_request.errors.full_messages.to_sentence if otp_request.errors.any?
 
         true
+      end
+
+      private
+
+      def find_or_create_user(identifier)
+        ::User.find_or_create_by!(identifier)
+      rescue ActiveRecord::RecordNotUnique
+        ::User.find_or_create_by!(identifier)
       end
     end
   end

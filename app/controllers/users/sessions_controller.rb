@@ -75,8 +75,7 @@ module Users
     end
 
     def identifier_value
-      params[:identifier].presence || params[:email].presence ||
-        params[:phone_number].presence || params[:phone].presence
+      params[:identifier].presence || params[:email].presence
     end
   end
 end

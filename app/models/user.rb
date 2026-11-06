@@ -39,9 +39,8 @@ class User < ApplicationRecord
 
   before_validation :create_random_password, on: :create
   before_validation :set_cm_role, on: :create
-  before_validation :normalize_phone_number
-  before_validation :normalize_email
-  before_save :reset_channel_verification, if: -> { persisted? }
+  before_validation :normalize_contact_details
+  before_update :reset_channel_verification
 
   validate :password_complexity, on: :create
   validate :check_organisation_role_only_for_employee
@@ -176,7 +175,7 @@ class User < ApplicationRecord
   end
 
   def self.normalize_phone(value)
-    digits = value.to_s.gsub(/\D/, '')
+    digits = value.to_s.gsub(/\D/, '').sub(/\A0+/, '')
     return nil if digits.blank?
 
     digits = "91#{digits}" if digits.length == 10
@@ -187,10 +186,7 @@ class User < ApplicationRecord
     return find_by(email: email.to_s.strip) if email.present?
 
     phone = normalize_phone(phone_number)
-    return if phone.blank?
-
-    find_by(phone_number: phone) ||
-      where('phone_number LIKE ?', "%#{phone.gsub(/\D/, '')}").order(:id).first
+    find_by(phone_number: phone) if phone.present?
   end
 
   def create_account_method
@@ -368,13 +364,9 @@ class User < ApplicationRecord
 
   private
 
-  def normalize_phone_number
+  def normalize_contact_details
+    self.email = email.to_s.strip.presence
     self.phone_number = self.class.normalize_phone(phone_number)
-  end
-
-  def normalize_email
-    self.email = nil if email.blank?
-    self.email = email.strip if email.present?
   end
 
   def reset_channel_verification

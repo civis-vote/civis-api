@@ -18,16 +18,17 @@ module Devise
       end
 
       def success!
-        @user.create_otp_request(delivery_channel: OtpRequest.delivery_channel_for(identifier_value)) if CmAdmin.config.auth_method == :otp
+        if CmAdmin.config.auth_method == :otp
+          otp_request = @user.create_otp_request(delivery_channel: OtpRequest.delivery_channel_for(identifier_value))
+          fail!(otp_request.errors.full_messages.to_sentence) if otp_request.errors.any?
+        end
         redirect!("/sign_in_with_credentials?#{Rack::Utils.build_query(identifier: identifier_value)}")
       end
 
       private
 
       def identifier_value
-        params[:identifier].presence || params.dig(:user, :identifier).presence ||
-          params.dig(:user, :email).presence || params.dig(:user, :phone_number).presence ||
-          params[:email].presence || params[:phone_number].presence || params[:phone].presence
+        params[:identifier].presence || params[:email].presence || params.dig(:user, :email).presence
       end
     end
   end

@@ -15,8 +15,9 @@ module Auth
       otp = rand(100_000..999_999)
       otp_request = otp_requests.new(otp:, status: :created, delivery_channel:)
       if otp_request.save
-        otp_requests.where.not(id: otp_request.id).timed_out.update_all(status: :time_out, expired_at: DateTime.now)
-        otp_requests.where.not(id: otp_request.id).active.update_all(status:, expired_at: DateTime.now)
+        previous_requests = otp_requests.where.not(id: otp_request.id)
+        previous_requests.timed_out.update_all(status: :time_out, expired_at: DateTime.now)
+        previous_requests.active.update_all(status:, expired_at: DateTime.now)
       end
       otp_request
     end
@@ -33,11 +34,8 @@ module Auth
     end
 
     def mark_channel_verified(channel)
-      if channel.to_s == 'phone'
-        update(phone_verified_at: Time.current) if phone_verified_at.blank?
-      elsif confirmed_at.blank?
-        update(confirmed_at: Time.current)
-      end
+      column = channel.to_s == 'phone' ? :phone_verified_at : :confirmed_at
+      update(column => Time.current) if self[column].blank?
     end
 
     def can_access_admin_panel?

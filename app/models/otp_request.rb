@@ -15,21 +15,16 @@ class OtpRequest < ApplicationRecord
   private
 
   def validate_resend_limit
-    recent_requests = OtpRequest.where(user_id: user_id).where('created_at >= ?', 30.seconds.ago)
-    return if recent_requests.count < 5
+    return if OtpRequest.where(user_id:, created_at: 30.seconds.ago..).count < 5
 
     errors.add(:base, "You've reached the resend limit. Please wait 30 seconds before trying again.")
   end
 
   def deliver_otp
-    if delivery_channel == 'phone'
-      SendOtpWhatsappJob.perform_later(id)
-    else
-      send_otp_email
-    end
+    phone? ? SendOtpWhatsappJob.perform_later(id) : send_otp_email
   end
 
   def send_otp_email
-    SendOtpEmailJob.perform_later(user_id)
+    SendOtpEmailJob.perform_later(id)
   end
 end
