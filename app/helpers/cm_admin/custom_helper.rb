@@ -71,9 +71,5 @@ module CmAdmin
     def select_options_for_boolean(_ = nil, _ = nil)
       [['Yes', true], ['No', false]]
     end
-
-    def select_options_for_blog_category(_ = nil, _ = nil)
-      ::BlogCategory.pluck(:name, :id)
-    end
   end
 end
