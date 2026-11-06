@@ -7,7 +7,7 @@ SitemapGenerator::Sitemap.sitemaps_path = "sitemaps/"
 SitemapGenerator::Sitemap.create(include_root: true, include_index: true) do
   group(sitemaps_path: "sitemaps/", :filename => "consultations", compress: true) do
     Consultation.where(status: [:published, :expired]).find_each do |consultation|
-      add "/consultations/#{consultation.id}/read", priority: 0.9
+      add "/consultations/#{consultation.id}", priority: 0.9
     end
   end
 end
