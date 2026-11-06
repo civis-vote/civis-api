@@ -303,7 +303,7 @@ class Consultation < ApplicationRecord
   end
 
   def feedback_url
-    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}/read", query: nil }))
+    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}", query: nil }))
     feedback_url.to_s
   end
 
