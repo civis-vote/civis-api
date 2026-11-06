@@ -20,7 +20,7 @@ module Users
     end
 
     def validate_otp
-      user = User.find_by(email: params[:email])
+      user = find_user_by_identifier
       otp = params[:otp]
       if user.present? && user.verify_otp(otp)
         sign_in(user)
@@ -30,12 +30,12 @@ module Users
         redirect_to current_user&.cm_role&.default_redirect_path || '/cm_admin/users'
       else
         flash[:alert] = 'Invalid OTP'
-        redirect_back(fallback_location: sign_in_with_credentials_path(email: params[:email]))
+        redirect_back(fallback_location: sign_in_with_credentials_path(identifier: identifier_value))
       end
     end
 
     def validate_password
-      user = User.find_by(email: params[:email])
+      user = find_user_by_identifier
       password = params[:password]
       if user.present? && user.valid_password?(password)
         sign_in(user)
@@ -45,27 +45,37 @@ module Users
         redirect_to current_user&.cm_role&.default_redirect_path || '/cm_admin/users'
       else
         flash[:alert] = 'Invalid password'
-        redirect_back(fallback_location: sign_in_with_credentials_path(email: params[:email]))
+        redirect_back(fallback_location: sign_in_with_credentials_path(identifier: identifier_value))
       end
     end
 
     def resend_otp
-      user = User.find_by(email: params[:email])
+      user = find_user_by_identifier
       if user.present?
-        otp_request = user.create_otp_request
+        otp_request = user.create_otp_request(delivery_channel: OtpRequest.delivery_channel_for(identifier_value))
         if otp_request.errors.any?
           flash[:alert] = otp_request.errors.full_messages.join(', ')
         else
-          flash[:success] = 'OTP has been resent to your email.'
+          flash[:success] = 'OTP has been resent.'
         end
       else
         flash[:alert] = 'User not found.'
       end
-      redirect_back(fallback_location: sign_in_with_credentials_path(email: params[:email]))
+      redirect_back(fallback_location: sign_in_with_credentials_path(identifier: identifier_value))
     end
 
     def sign_in_with_credentials
-      @email = params[:email]
+      @identifier = params[:identifier].presence || params[:email]
+    end
+
+    private
+
+    def find_user_by_identifier
+      CmAdmin.config.user_lookup.call(identifier_value)
+    end
+
+    def identifier_value
+      params[:identifier].presence || params[:email].presence
     end
   end
 end

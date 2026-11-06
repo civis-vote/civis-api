@@ -3,23 +3,32 @@ module Devise
   module Strategies
     class CmAdminAuthenticatable < Authenticatable
       def valid?
-        params.dig(:user, :email).present?
+        request.post? && identifier_value.present?
       end
 
       def authenticate!
-        @user = User.find_by(email: params[:user][:email])
+        @user = CmAdmin.config.user_lookup.call(identifier_value)
         if @user&.disabled?
           fail!('Your account has been disabled. Please contact your administrator.')
         elsif @user&.can_access_admin_panel?
           success!
         else
-          fail!('This email doesn’t match our records. Please contact your admin for help.')
+          fail!("This account doesn't match our records. Please contact your admin for help.")
         end
       end
 
       def success!
-        @user.create_otp_request if CmAdmin.config.auth_method == :otp
-        redirect!("/sign_in_with_credentials?#{Rack::Utils.build_query(email: @user.email)}")
+        if CmAdmin.config.auth_method == :otp
+          otp_request = @user.create_otp_request(delivery_channel: OtpRequest.delivery_channel_for(identifier_value))
+          fail!(otp_request.errors.full_messages.to_sentence) if otp_request.errors.any?
+        end
+        redirect!("/sign_in_with_credentials?#{Rack::Utils.build_query(identifier: identifier_value)}")
+      end
+
+      private
+
+      def identifier_value
+        params[:identifier].presence || params[:email].presence || params.dig(:user, :email).presence
       end
     end
   end
