@@ -35,7 +35,7 @@ module Auth
 
     def mark_channel_verified(channel)
       column = channel.to_s == 'phone' ? :phone_verified_at : :confirmed_at
-      update(column => Time.current) if self[column].blank?
+      update_columns(column => Time.current, updated_at: Time.current) if self[column].blank?
     end
 
     def can_access_admin_panel?
