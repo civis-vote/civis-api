@@ -36,7 +36,8 @@ class BlogPost < ApplicationRecord
   scope :sort_records, lambda { |sort, sort_direction = "asc"|
     return nil if sort.blank?
 
-    order("#{sort} #{sort_direction}")
+    direction = sort_direction.presence || "asc"
+    order("#{sort} #{direction}, id asc")
   }
 
   def self.published_years

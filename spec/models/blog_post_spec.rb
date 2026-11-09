@@ -73,5 +73,13 @@ RSpec.describe BlogPost, type: :model do
       Fabricate(:blog_post, title: 'Something else entirely')
       expect(BlogPost.search('unique needle')).to eq([post])
     end
+
+    it 'uses a deterministic tiebreaker when sorting' do
+      published_at = Time.zone.local(2025, 5, 10)
+      first = Fabricate(:blog_post, published_at:)
+      second = Fabricate(:blog_post, published_at:)
+
+      expect(BlogPost.sort_records('published_at', 'desc')).to eq([first, second])
+    end
   end
 end
