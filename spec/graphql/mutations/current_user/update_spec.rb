@@ -92,17 +92,16 @@ RSpec.describe Mutations::CurrentUser::Update, type: :graphql do
     end
   end
 
-  describe 'mandatory email and phone number' do
+  describe 'optional contact details during update' do
     let(:variables) { { user: { firstName: 'Updated' } } }
     let(:user) do
       User.create!(first_name: 'Test', last_name: 'User', email: Faker::Internet.unique.email,
                    password: 'Password@123', role: :citizen, confirmed_at: Time.current)
     end
 
-    it 'fails when the user has no phone number' do
-      result
-      expect(result['errors']).not_to be_empty
-      expect(result['errors'].first['message']).to match(/Email and phone number are required/i)
+    it 'succeeds even when the user has no phone number' do
+      expect(result['errors']).to be_nil
+      expect(user.reload.first_name).to eq('Updated')
     end
 
     it 'succeeds when the phone number is added in the same update' do
