@@ -3,7 +3,7 @@ module Devise
   module Strategies
     class CmAdminAuthenticatable < Authenticatable
       def valid?
-        request.post? && identifier_value.present?
+        sign_in_identifier_request? && identifier_value.present?
       end
 
       def authenticate!
@@ -26,6 +26,15 @@ module Devise
       end
 
       private
+
+      def sign_in_identifier_request?
+        return false unless request.post?
+
+        path_params = request.path_parameters
+        return path_params[:controller] == 'users/sessions' && path_params[:action] == 'validate_email' if path_params.present?
+
+        request.path.delete_suffix('.json') == '/validate_email'
+      end
 
       def identifier_value
         params[:identifier].presence || params[:email].presence || params.dig(:user, :email).presence

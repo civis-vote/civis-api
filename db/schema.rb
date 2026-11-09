@@ -75,30 +75,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
-  create_table "blog_categories", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "blog_posts", force: :cascade do |t|
-    t.string "title", null: false
-    t.citext "slug"
-    t.text "description"
-    t.integer "status", default: 0, null: false
-    t.datetime "published_at"
-    t.datetime "archived_at"
-    t.bigint "blog_category_id"
-    t.bigint "created_by_id"
-    t.bigint "updated_by_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["blog_category_id"], name: "index_blog_posts_on_blog_category_id"
-    t.index ["created_by_id"], name: "index_blog_posts_on_created_by_id"
-    t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
-    t.index ["updated_by_id"], name: "index_blog_posts_on_updated_by_id"
-  end
-
   create_table "case_studies", force: :cascade do |t|
     t.string "name"
     t.string "ministry_name"
@@ -1028,9 +1004,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "api_keys", "users"
   add_foreign_key "api_tokens", "users"
-  add_foreign_key "blog_posts", "blog_categories"
-  add_foreign_key "blog_posts", "users", column: "created_by_id"
-  add_foreign_key "blog_posts", "users", column: "updated_by_id"
   add_foreign_key "case_studies", "themes"
   add_foreign_key "clause_feedbacks", "clauses"
   add_foreign_key "clause_feedbacks", "consultation_responses"
