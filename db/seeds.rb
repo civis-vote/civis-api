@@ -24,21 +24,39 @@ puts '---> Importing Point Scale'
 Rake::Task['import_records_from_csv:point_scale'].invoke('')
 Rake::Task['import_records_from_csv:point_scale'].reenable
 
-puts '---> Fabricating API Team'
-Fabricate(:user, email: 'mkv@commutatus.com', role: 'admin')
-Fabricate(:user, email: 'balaji@commutatus.com', role: 'admin')
+puts '---> Creating CmRoles'
+admin_role = CmRole.find_or_create_by!(name: 'Admin')
+CmRole.find_or_create_by!(name: 'Citizen')
+organisation_employee_role = CmRole.find_or_create_by!(name: User::ORGANISATION_EMPLOYEE_ROLE_NAME)
 
-puts '---> Fabricating 50 categories'
-progressbar = ProgressBar.create
-50.times do
-  Fabricate(:category)
-  progressbar.increment
+puts '---> Giving Access to admin'
+models = CmAdmin.config.included_models.map(&:to_s).freeze
+models.each do |model|
+  cm_model = CmAdmin::Model.find_by(name: model)
+  next if cm_model.blank?
+
+  available_actions = cm_model.available_actions.map(&:name)
+  available_actions.each do |action|
+    admin_role.cm_permissions.find_or_create_by(action_name: action, ar_model_name: model, scope_name: 'all')
+  end
 end
 
-puts '---> Fabricating 50 ministries'
+if admin_role.cm_permissions.none?
+  puts '!! Admin permissions were not created — cm-admin skips model registration during db:setup.'
+  puts '!! Run `bin/rails db:seed` to grant admin panel permissions.'
+end
+
+puts '---> Fabricating API Team'
+Fabricate(:user, email: 'mkv@commutatus.com', role: 'admin', cm_role: admin_role)
+Fabricate(:user, email: 'balaji@commutatus.com', role: 'admin', cm_role: admin_role)
+Fabricate(:user, email: 'brijesh@commutatus.com', role: 'admin', cm_role: admin_role)
+
+Current.user = User.where(role: 'admin').order(:id).first
+
+puts '---> Fabricating 50 departments'
 progressbar = ProgressBar.create
 50.times do
-  Fabricate(:ministry)
+  Fabricate(:department)
   progressbar.increment
 end
 
@@ -58,43 +76,44 @@ end
 
 puts '---> Publish some consultations'
 Consultation.where(status: :submitted).order('RANDOM()').limit(30).each do |consultation|
-	 consultation.publish
+  consultation.publish
 end
 
 puts '---> Reject some consultations'
 Consultation.where(status: :submitted).order('RANDOM()').limit(10).each do |consultation|
-	 consultation.reject
+  consultation.reject
 end
 
 puts '---> Expire some consultations'
 Consultation.where(status: :published).order('RANDOM()').limit(10).each do |consultation|
-	 consultation.expire
+  consultation.expire
 end
 
 puts '---> Responding to some consultations'
 Consultation.where(status: %i[published rejected]).each do |consultation|
-	 response_count = [0, 1, 2, 3, 4, 5].sample
-	 Fabricate.times(response_count, :response_round, consultation_id: consultation.id)
-	 begin
- 		 puts '---> Creating Response Round for consultations'
-  		Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id, response_round_id: consultation.response_rounds.last.id)
+  response_count = [0, 1, 2, 3, 4, 5].sample
+  Fabricate.times(response_count, :response_round, consultation_id: consultation.id)
+  begin
+    puts '---> Creating Response Round for consultations'
+    Fabricate.times(response_count, :consultation_response, consultation_id: consultation.id,
+                                                            response_round_id: consultation.response_rounds.last.id)
   rescue ActiveRecord::RecordInvalid => e
-  		puts "---> #{e.record.errors.full_messages.join('\n')}"
- 	end
+    puts "---> #{e.record.errors.full_messages.join('\n')}"
+  end
 end
 
 puts '---> Creating Question to consultation'
 Fabricate.times(10, :question)
 Question.all.each do |question|
-	 puts '---> Creating sub questions'
-	 Fabricate.times(4, :question, parent_id: question.id)
+  puts '---> Creating sub questions'
+  Fabricate.times(4, :question, parent_id: question.id)
 end
 
 puts '---> Creating Organisation and employees'
 Fabricate.times(5, :organisation)
 Organisation.all.each do |organisation|
-	 puts '---> Creating Employees'
-	 Fabricate.times(3, :user, role: :organisation_employee, organisation_id: organisation.id)
+  puts '---> Creating Employees'
+  Fabricate.times(3, :user, role: :organisation_employee, cm_role: organisation_employee_role, organisation_id: organisation.id)
 end
 
 puts '---> Creating Glossary Word'
@@ -197,5 +216,72 @@ CmPlatformSetting.find_or_create_by(
     Preserves the full intent of the original document
 
     Focus on identifying substantive policy changes, regulatory requirements, and significant modifications that stakeholders need to understand.
+  PROMPT
+end
+
+puts '---> Creating Draft Summariser AI Platform Setting'
+CmPlatformSetting.find_or_create_by(
+  slug: 'agent-draft-summariser-prompt'
+) do |setting|
+  setting.name = 'Agent Draft Summariser Prompt'
+  setting.description = 'AI prompt template for summarising consultation PDFs'
+  setting.value = <<~PROMPT
+    You create clear, engaging summaries of draft laws and policies for a general audience. The goal is to help people understand what is being proposed and encourage meaningful participation.
+
+    Write in simple, plain English. Avoid legal jargon and complex phrasing. Keep the tone neutral, but engaging and relatable. Do not express opinions or bias. Use short sentences and active voice.
+
+    Follow this updated structure strictly:
+
+    1. Opening Hook + What is this about? (1–2 lines)
+    - Clearly state the sector/issue and core objective.
+    - Make it human and relatable.
+    - Include a real-life hook, lived experience, or specific group affected.
+    - Answer: why should someone care right now? where does this show up in real life?
+
+    2. Why is it being introduced? (1 line)
+    - Focus on the problem.
+    - Answer: why now? why should I care? what changes in daily life?
+    - Avoid abstract or copied language.
+
+    3. Add Debate and Framing
+    - Include 2–3 neutral debate questions or tensions.
+    - No opinions, only framing.
+    - Use provocative but factual framing.
+    - Aim to spark curiosity and feedback.
+
+    4. Overview of Key Information
+    - Include: Stage, Feedback Status, Deadline, Sector/Topic, Ministry/Body, Type of document.
+    - Keep it clean, minimal, and scannable.
+
+    5. Stakeholder Mapping (optional)
+    - Include only if it adds clarity.
+    - Cover: who is affected (impact), who decides (power), who implements.
+
+    6. Key Proposals
+    For each clause:
+    - Add a short heading (max 8–10 words, plain English).
+    - Explain what is proposed in 2–4 lines.
+    - Use bullets where helpful.
+    - Add impact clearly but do not overuse the word "impact". Maintain flow.
+
+    7. Additional Resources
+    - Include 2–3 helpful links with one-line descriptions.
+
+    8. Call to Action
+    - Must be simple, specific, and low-effort.
+    - Link to personal stakes (money, safety, data, daily life).
+    - Use formats like polls, fill-in-the-blank, or simple prompts.
+    - Avoid vague or technical questions.
+
+    Other rules:
+    - Keep length between 500–700 words.
+    - Maintain neutrality and accuracy.
+    - Do not assume facts not in the draft.
+    - Use British English.
+    - Avoid long paragraphs.
+    - Prioritise clarity, readability, and engagement.
+    - Encourage participation without being persuasive.
+
+    The summary should feel like a clear, structured explainer that connects policy to real life and invites users to respond.
   PROMPT
 end

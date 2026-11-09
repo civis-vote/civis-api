@@ -1,13 +1,13 @@
 class AddResponseSummaryToConsultations < ActiveRecord::Migration[8.1]
   def change
-    create_table :response_summaries do |t|
+    create_table :response_summaries, if_not_exists: true do |t|
       t.references :consultation, null: false, foreign_key: true
       t.integer :total_responses, null: false, default: 0
 
       t.timestamps
     end
 
-    create_table :response_question_summaries do |t|
+    create_table :response_question_summaries, if_not_exists: true do |t|
       t.references :response_summary, null: false, foreign_key: true
       t.integer :question_id, null: false
       t.string :question_text, null: false
@@ -22,7 +22,7 @@ class AddResponseSummaryToConsultations < ActiveRecord::Migration[8.1]
       t.timestamps
     end
 
-    create_table :response_option_breakdowns do |t|
+    create_table :response_option_breakdowns, if_not_exists: true do |t|
       t.references :response_question_summary, null: false, foreign_key: true
       t.integer :option_id, null: false
       t.string :option_text, null: false

@@ -4,7 +4,7 @@ common: &defaults
 
   # key: Your Organization key for Scout APM. Found on the settings screen.
   # - Default: none
-  key: <%= Rails.application.credentials.scout[:agent_key] %>
+  key: <%= Rails.application.credentials.dig(:scout, :agent_key) %>
 
   # log_level: Verboseness of logs.
   # - Default: 'info'

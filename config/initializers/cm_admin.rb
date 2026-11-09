@@ -5,7 +5,7 @@ Rails.application.reloader.to_prepare do
     # config.authorized_roles = [:super_admin?]
     config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
-                              ResponseRound, Question, FileImport, FileExport, Respondent, TeamMember, Clause, Constant,
+                              ResponseRound, Question, CtFileImport, CtFileExport, Respondent, TeamMember, Clause, Constant,
                               CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog]
 
     config.project_name = Rails.configuration.x.project_settings.name
@@ -16,13 +16,7 @@ Rails.application.reloader.to_prepare do
         path: :cm_index_user_path
       },
       {
-        path: :cm_index_cm_role_path
-      },
-      {
         path: :cm_index_consultation_path
-      },
-      {
-        path: :cm_index_showcase_slide_path
       },
       {
         path: :cm_index_organisation_path
@@ -32,9 +26,6 @@ Rails.application.reloader.to_prepare do
       },
       {
         path: :cm_index_case_study_path
-      },
-      {
-        path: :cm_index_theme_path
       },
       {
         display_name: 'Glossary',
@@ -52,28 +43,46 @@ Rails.application.reloader.to_prepare do
         path: :cm_index_team_member_path
       },
       {
-        display_name: 'File Imports',
-        path: :cm_index_file_import_path
-      },
-      {
-        display_name: 'File Exports',
-        path: :cm_index_file_export_path
-      },
-      {
         display_name: 'Constants',
         path: :cm_index_constant_path
-      },
-      {
-        display_name: 'Platform Settings',
-        path: :cm_index_cm_platform_setting_path
       },
       {
         display_name: 'API Tokens',
         path: :cm_index_api_token_path
       },
       {
-        display_name: 'Cron Jobs',
-        path: :cm_index_cm_cron_job_path
+        display_name: 'Settings',
+        icon_name: 'fa-solid fa-gear',
+        children: [
+          {
+            display_name: 'Roles',
+            path: :cm_index_cm_role_path
+          },
+          {
+            display_name: 'Showcase Slides',
+            path: :cm_index_showcase_slide_path
+          },
+          {
+            display_name: 'Platform Settings',
+            path: :cm_index_cm_platform_setting_path
+          },
+          {
+            display_name: 'File Imports',
+            path: :cm_index_ct_file_import_path
+          },
+          {
+            display_name: 'File Exports',
+            path: :cm_index_ct_file_export_path
+          },
+          {
+            display_name: 'Cron Jobs',
+            path: :cm_index_cm_cron_job_path
+          },
+          {
+            display_name: 'Themes',
+            path: :cm_index_theme_path
+          }
+        ]
       }
     ]
   end

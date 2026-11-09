@@ -38,6 +38,13 @@ class Consultation < ApplicationRecord
   has_rich_text :odia_summary
   has_rich_text :marathi_summary
   has_rich_text :kannada_summary
+  has_rich_text :ai_summary
+
+  has_rich_text :english_response_summary
+  has_rich_text :hindi_response_summary
+  has_rich_text :marathi_response_summary
+  has_rich_text :odia_response_summary
+  has_rich_text :kannada_response_summary
 
   has_one_attached :consultation_logo
   has_one_attached :consultation_pdf
@@ -123,6 +130,12 @@ class Consultation < ApplicationRecord
     where(visibility: visibility)
   }
 
+  scope :consultation_status, lambda { |status|
+    return all unless status.present?
+
+    where(status: status)
+  }
+
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
   def notify_admins
@@ -160,6 +173,9 @@ class Consultation < ApplicationRecord
     expired!
     return unless responses.acceptable.size.positive?
 
+    self.feedback_submitted_at = DateTime.now unless feedback_submitted_at.present?
+    save!
+    ConsultationSummaryJob.perform_later(self) if english_response_summary.blank?
     feedback_report_email(consultation_feedback_email, officer_name, officer_designation) if consultation_feedback_email
     if consultation?
       if department.primary_contact.present?
@@ -311,6 +327,26 @@ class Consultation < ApplicationRecord
     convert_to_rich_text(kannada_summary.to_s)
   end
 
+  def english_response_summary_rich_text
+    convert_to_rich_text(english_response_summary.to_s)
+  end
+
+  def hindi_response_summary_rich_text
+    convert_to_rich_text(hindi_response_summary.to_s)
+  end
+
+  def odia_response_summary_rich_text
+    convert_to_rich_text(odia_response_summary.to_s)
+  end
+
+  def marathi_response_summary_rich_text
+    convert_to_rich_text(marathi_response_summary.to_s)
+  end
+
+  def kannada_response_summary_rich_text
+    convert_to_rich_text(kannada_response_summary.to_s)
+  end
+
   def response_url
     response_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}/summary",
                                                                                 query: "response_token=#{response_token}" }))
@@ -404,6 +440,10 @@ class Consultation < ApplicationRecord
     ExtractClausesJob.perform_later(id)
   end
 
+  def summarise_pdf
+    ConsultationPdfSummaryJob.perform_later(self)
+  end
+
   private
 
   def pdf_content_type
@@ -440,10 +480,10 @@ class Consultation < ApplicationRecord
   def convert_to_rich_text(text)
     match = '<action-text-attachment content="<div style=&quot;width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;&quot;><div style=&quot;width: 100%; border: 1px solid #ececec;&quot;></div></div>">☒</action-text-attachment>'
     # regex to replace action-text-attachement with divider
-    text.gsub!(match,
-               '<div style="width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;"><div style="width: 100%; border: 1px solid #ececec;"></div></div>')
+    text = text.gsub(match,
+                     '<div style="width: 100%; height: 15px; display: flex; align-items: center; margin: 5px 0; padding: 5px; transition: background-color 0.2s ease-in-out;"><div style="width: 100%; border: 1px solid #ececec;"></div></div>')
     # regex to replace action-text-attachement with image
-    text.gsub!(%r{<action-text-attachment[^>]*>|</action-text-attachment>|<figure[^>]*>|</figure>}, '')
+    text = text.gsub(%r{<action-text-attachment[^>]*>|</action-text-attachment>|<figure[^>]*>|</figure>}, '')
     # regex to replace youtube image link with iframe
     youtube_img_regex = %r{<img(?:\s+[\w-]+="[^"]*")*\s+src="https://img\.youtube\.com/vi/([\w-]+)/0\.jpg">}
     text.gsub(youtube_img_regex) do |_match|

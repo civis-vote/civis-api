@@ -77,12 +77,12 @@ end
 group :development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem 'listen'
-  gem 'web-console', '>= 3.3.0'
   gem 'rb-readline'
   gem 'rubocop', require: false
   gem 'rubocop-performance', require: false
   gem 'rubocop-rails', require: false
   gem 'ruby-progressbar'
+  gem 'web-console', '>= 3.3.0'
 end
 
 group :test do
@@ -108,11 +108,14 @@ gem 'airbrake'
 gem 'jwt'
 
 gem 'apollo_upload_server'
+gem 'money-rails'
 gem 'cm-admin', source: 'https://cm-gems.commutatus.com'
 gem 'cm-geocoder'
 gem 'positioning'
+gem 'redcarpet'
+gem 'ruby_llm'
+gem 'ruby_llm-schema'
+gem 'ruby-openai'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
-gem 'ruby-openai'
-
-gem "rack-attack", "~> 6.8"
+gem 'rack-attack', '~> 6.8'

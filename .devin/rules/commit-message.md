@@ -5,7 +5,7 @@ trigger: always_on
 # Commit Message Format
 
 When generating commit messages, follow the Conventional Commits specification:
-use the @web to read conventional commits guidelines (https://www.conventionalcommits.org/en/v1.0.0/#summary)
+fetch and read the Conventional Commits guidelines (https://www.conventionalcommits.org/en/v1.0.0/#summary)
 
 - Format: `type(scope): single line description`
 - Never add ``` block for commit message

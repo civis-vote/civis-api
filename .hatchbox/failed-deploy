@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+# Hatchbox CM Admin failed deploy script
+
+HATCHBOX_EVENT_TYPE=failed_deploy ruby "$(dirname "$0")/lib/hatchbox_notification.rb"

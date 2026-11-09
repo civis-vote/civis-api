@@ -12,6 +12,8 @@ module Types
         argument :profile_picture_file, Types::Inputs::Attachment, nil, required: false
         argument :notify_for_new_consultation, Boolean, nil, required: false
         argument :newsletter_subscription, Boolean, nil, required: false
+        argument :theme_ids, [Integer], nil, required: false
+        argument :area_of_impact_ids, [Integer], nil, required: false
       end
     end
   end
