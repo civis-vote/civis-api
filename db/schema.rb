@@ -934,7 +934,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.citext "email"
+    t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
     t.datetime "reset_password_sent_at", precision: nil
@@ -988,7 +988,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
     t.datetime "last_active_at"
     t.string "locale", default: "en"
     t.integer "status", default: 0, null: false
-    t.datetime "phone_verified_at"
     t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -997,7 +996,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
     t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
-    t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "(phone_number IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end

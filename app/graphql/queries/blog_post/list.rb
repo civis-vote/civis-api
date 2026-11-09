@@ -14,6 +14,7 @@ module Queries
 
       def resolve(blog_category_filter:, year_filter:, search_filter:, per_page:, page:, sort:, sort_direction:)
         scope = ::BlogPost.published.includes(:created_by, :blog_category).with_attached_featured_image
+                          .with_rich_text_content
                           .search(search_filter)
                           .blog_category_filter(blog_category_filter)
                           .year_filter(year_filter)
