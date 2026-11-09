@@ -118,4 +118,4 @@ gem 'ruby_llm'
 gem 'ruby_llm-schema'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
-gem "rack-attack", "~> 6.8"
+gem 'rack-attack', '~> 6.8'
