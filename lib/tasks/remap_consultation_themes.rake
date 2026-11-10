@@ -115,4 +115,38 @@ namespace :themes do
     puts "Legacy theme maps remaining: #{remaining.count}"
   end
 
+  # Consultations with NO theme at all (blank/unknown tag in the metadata
+  # export), mapped to their assigned theme (chosen from the title, 2026-11-10).
+  NO_THEME_TO_THEME_NAMES = {
+    1640 => "Energy", # Public Consultation on Draft SHANTI Rules (nuclear energy)
+    1641 => "Energy"  # SHANTI Rules and Regulations (nuclear energy)
+  }.freeze
+
+  desc "Assign themes to consultations that have no theme at all"
+  task assign_no_theme_consultations: :environment do
+    changed = 0
+    missing = 0
+
+    NO_THEME_TO_THEME_NAMES.each do |consultation_id, theme_name|
+      consultation = ::Consultation.find_by(id: consultation_id)
+      unless consultation
+        missing += 1
+        puts "  SKIP: consultation #{consultation_id} not found"
+        next
+      end
+
+      theme = ::Theme.find_or_create_by!(name: theme_name)
+      next if consultation.themes.pluck(:id) == [theme.id]
+
+      consultation.theme_maps.destroy_all
+      ::ThemeMap.create!(theme: theme, mappable: consultation)
+      changed += 1
+      puts "  #{consultation_id} -> #{theme_name}"
+    end
+
+    puts "Assigned themes to #{changed} consultations (#{NO_THEME_TO_THEME_NAMES.size - missing - changed} already correct)"
+    untagged = ::Consultation.left_joins(:theme_maps).where(theme_maps: { id: nil }).count
+    puts "Consultations with no theme at all: #{untagged}"
+  end
+
 end
