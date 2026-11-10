@@ -17,6 +17,7 @@ class GraphqlController < ApplicationController
     Current.ip_address = request.ip
     context = {
       current_user: current_user,
+      request: request
     }
     result = CivisApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
