@@ -6,6 +6,7 @@ module CmAdmin
       cm_admin do
         actions only: []
         icon_name 'fas fa-tags'
+        additional_permitted_fields [segment_ids: []]
 
         cm_index do
           page_title 'Themes'
@@ -21,6 +22,7 @@ module CmAdmin
             cm_section 'Theme details' do
               field :name
               field :cover_photo, field_type: :image
+              field :segment_names, label: 'Segments'
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
@@ -33,6 +35,8 @@ module CmAdmin
           cm_section 'Details' do
             form_field :name, input_type: :string
             form_field :cover_photo, input_type: :single_file_upload
+            form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
+                                     display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end
         end
 
@@ -40,6 +44,8 @@ module CmAdmin
           cm_section 'Details' do
             form_field :name, input_type: :string
             form_field :cover_photo, input_type: :single_file_upload
+            form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
+                                     display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
           end
         end
       end

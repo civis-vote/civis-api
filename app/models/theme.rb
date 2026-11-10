@@ -6,11 +6,17 @@ class Theme < ApplicationRecord
   include Paginator
   include CmAdmin::Theme
 
-  has_many :theme_maps, dependent: :destroy
+  has_many :departments
+  has_many :constant_maps, as: :mappable, dependent: :destroy
+  has_many :segments, -> { segment }, through: :constant_maps, source: :constant
 
   has_one_attached :cover_photo
 
   delegate :url, to: :cover_photo, prefix: true, allow_nil: true
+
+  def segment_names
+    segments.map(&:name).join(", ")
+  end
 
   def picture_url
     if cover_photo.attached?

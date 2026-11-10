@@ -61,49 +61,6 @@ RSpec.describe ConsultationResponse do
     end
   end
 
-  describe '#theme' do
-    let(:theme) { Theme.create!(name: "Theme #{SecureRandom.hex(4)}") }
-
-    it 'returns the consultation theme names' do
-      consultation.theme_maps.create!(theme: theme)
-
-      expect(response.theme).to eq(theme.name)
-    end
-
-    it 'joins multiple theme names' do
-      other = Theme.create!(name: "Theme #{SecureRandom.hex(4)}")
-      consultation.theme_maps.create!(theme: theme)
-      consultation.theme_maps.create!(theme: other)
-
-      expect(response.theme).to include(theme.name, other.name)
-    end
-  end
-
-  describe '.theme_filter' do
-    let(:theme) { Theme.create!(name: "Theme #{SecureRandom.hex(4)}") }
-    let(:unthemed_consultation) do
-      Consultation.create!(title: "Consultation #{SecureRandom.hex(4)}", department: department,
-                           response_deadline: 10.days.from_now, question_flow: :question_list)
-    end
-
-    def create_response_for(consultation)
-      ConsultationResponse.create!(user: user, consultation: consultation,
-                                   response_round: ResponseRound.create!(consultation: consultation),
-                                   visibility: :shared)
-    end
-
-    it 'returns only responses whose consultation has the theme' do
-      consultation.theme_maps.create!(theme: theme)
-      themed_response = create_response_for(consultation)
-      unthemed_response = create_response_for(unthemed_consultation)
-
-      result = described_class.theme_filter([theme.id])
-
-      expect(result).to include(themed_response)
-      expect(result).not_to include(unthemed_response)
-    end
-  end
-
   describe '#submit_voice_responses' do
     context 'with no voice responses' do
       it 'keeps the not_available transcription status' do

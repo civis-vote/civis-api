@@ -55,6 +55,7 @@ class Consultation < ApplicationRecord
   belongs_to :department
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User", optional: true
   belongs_to :organisation, optional: true
+  belongs_to :theme, optional: true
 
   has_many :responses, class_name: "ConsultationResponse"
   has_many :shared_responses, -> { shared }, class_name: "ConsultationResponse"
@@ -65,8 +66,6 @@ class Consultation < ApplicationRecord
   has_one :response_summary, dependent: :destroy
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
-  has_many :theme_maps, as: :mappable, dependent: :destroy
-  has_many :themes, through: :theme_maps
   has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
 
   validates_presence_of :response_deadline, :question_flow
@@ -80,6 +79,7 @@ class Consultation < ApplicationRecord
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
   delegate :name, to: :department, prefix: true, allow_nil: true
   delegate :count, to: :responses, prefix: true, allow_nil: true
+  delegate :name, to: :theme, prefix: true, allow_nil: true
   delegate :name, to: :organisation, prefix: true, allow_nil: true
 
   scope :status_filter, lambda { |status|
@@ -94,10 +94,10 @@ class Consultation < ApplicationRecord
     where(department_id: department_id)
   }
 
-  scope :theme_filter, lambda { |theme_ids|
-    return all unless theme_ids.present?
+  scope :theme_filter, lambda { |theme_id|
+    return all unless theme_id.present?
 
-    joins(:theme_maps).where(theme_maps: { theme_id: theme_ids }).distinct
+    where(theme_id: theme_id)
   }
 
   scope :area_of_impact_filter, lambda { |area_of_impact_ids|
@@ -146,10 +146,6 @@ class Consultation < ApplicationRecord
 
   def segment_names
     segments.map(&:name).join(", ")
-  end
-
-  def theme_names
-    themes.map(&:name).join(", ")
   end
 
   def area_of_impact_names
@@ -426,7 +422,6 @@ class Consultation < ApplicationRecord
     consultation.marathi_summary = marathi_summary
     consultation.kannada_summary = kannada_summary
     consultation.save!
-    consultation.theme_ids = theme_ids
     consultation.consultation_logo.attach(consultation_logo.blob)
 
     consultation.response_rounds.destroy_all

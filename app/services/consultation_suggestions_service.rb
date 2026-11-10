@@ -21,7 +21,7 @@ class ConsultationSuggestionsService
 
   def call(limit: 3)
     limit = limit.clamp(1, MAX_LIMIT)
-    candidates = candidate_pool.includes(:area_of_impacts, :themes).to_a
+    candidates = candidate_pool.includes(:area_of_impacts).to_a
     return popular_consultations(candidates.map(&:id), limit) if candidates.empty?
 
     scored = candidates.map { |consultation| [consultation, score_for(consultation)] }
@@ -51,7 +51,7 @@ class ConsultationSuggestionsService
     return 0 if source.nil?
 
     score = 0
-    score += SAME_THEME_SCORE if source.theme_ids.present? && (source.theme_ids & consultation.theme_ids).any?
+    score += SAME_THEME_SCORE if source.theme_id.present? && consultation.theme_id == source.theme_id
     score += SHARED_AREA_OF_IMPACT_SCORE * (consultation.area_of_impact_ids & source_area_of_impact_ids).size
     score += SAME_DEPARTMENT_SCORE if consultation.department_id == source.department_id
     score += FEATURED_SCORE if consultation.is_featured
@@ -60,13 +60,13 @@ class ConsultationSuggestionsService
 
   def preference_score(consultation)
     score = 0
-    score += PREFERRED_THEME_SCORE if (consultation.theme_ids & preferred_theme_ids).any?
+    score += PREFERRED_THEME_SCORE if consultation.theme_id.present? && preferred_theme_ids.include?(consultation.theme_id)
     score += PREFERRED_AREA_OF_IMPACT_SCORE * (consultation.area_of_impact_ids & preferred_area_of_impact_ids).size
     score
   end
 
   def history_score(consultation)
-    theme_points = consultation.theme_ids.sum { |theme_id| theme_response_counts[theme_id].to_i } * HISTORY_THEME_SCORE
+    theme_points = theme_response_counts[consultation.theme_id].to_i * HISTORY_THEME_SCORE
     department_points = department_response_counts[consultation.department_id].to_i * HISTORY_DEPARTMENT_SCORE
     area_of_impact_points = (consultation.area_of_impact_ids & area_of_impact_response_counts.keys).size * HISTORY_AREA_OF_IMPACT_SCORE
 

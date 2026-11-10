@@ -15,8 +15,6 @@ class Organisation < ApplicationRecord
   has_many :respondent_users, -> { distinct }, through: :respondents, source: :user
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
-  has_many :theme_maps, as: :mappable, dependent: :destroy
-  has_many :themes, through: :theme_maps
 
   belongs_to :created_by, foreign_key: "created_by_id", class_name: "User"
   validates_presence_of :created_by_id
@@ -47,10 +45,6 @@ class Organisation < ApplicationRecord
 
   def segment_names
     segments.map(&:name).join(", ")
-  end
-
-  def theme_names
-    themes.map(&:name).join(", ")
   end
 
   def deactivate

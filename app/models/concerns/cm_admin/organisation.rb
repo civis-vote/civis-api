@@ -6,7 +6,7 @@ module CmAdmin
       cm_admin do
         actions only: []
         icon_name 'fas fa-building'
-        additional_permitted_fields [segment_ids: [], theme_ids: []]
+        additional_permitted_fields [segment_ids: []]
         policy_scopes [{ scope_name: 'organisation_only', display_name: 'Organisation Only' }]
 
         cm_index do
@@ -31,7 +31,6 @@ module CmAdmin
               field :official_url, label: 'Organisation URL', field_type: :link
               field :logo, field_type: :image
               field :segment_names, label: 'Segments'
-              field :theme_names, label: 'Themes'
               field :created_by_full_name, label: 'Added By'
             end
             cm_section 'Log Details' do
@@ -72,7 +71,6 @@ module CmAdmin
             form_field :logo, input_type: :single_file_upload
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
-            form_field :theme_ids, input_type: :multi_select, helper_method: :select_options_for_theme, label: 'Themes'
           end
         end
 
@@ -84,7 +82,6 @@ module CmAdmin
             form_field :logo, input_type: :single_file_upload
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
-            form_field :theme_ids, input_type: :multi_select, helper_method: :select_options_for_theme, label: 'Themes'
           end
         end
       end

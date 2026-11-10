@@ -19,8 +19,6 @@ class Department < ApplicationRecord
   has_many :consultations
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
-  has_many :theme_maps, as: :mappable, dependent: :destroy
-  has_many :themes, through: :theme_maps
   has_many :department_contacts, dependent: :destroy
 
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
@@ -102,10 +100,6 @@ class Department < ApplicationRecord
 
   def segment_names
     segments.map(&:name).join(", ")
-  end
-
-  def theme_names
-    themes.map(&:name).join(", ")
   end
 
   def approve

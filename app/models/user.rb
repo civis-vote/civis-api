@@ -203,9 +203,9 @@ class User < ApplicationRecord
 
   def themes_participated_in
     responses
-      .joins(consultation: :theme_maps).group('theme_maps.theme_id')
+      .joins(:consultation).group('consultations.theme_id')
       .order('COUNT(consultation_responses.id) DESC')
-      .pluck('theme_maps.theme_id').compact
+      .pluck('consultations.theme_id').compact
       .then { |ids| Theme.where(id: ids).pluck(:name) }
       .join(', ')
   end
@@ -235,7 +235,7 @@ class User < ApplicationRecord
   end
 
   def theme_response_counts
-    responses.joins(consultation: :theme_maps).group('theme_maps.theme_id').count
+    responses.joins(:consultation).group('consultations.theme_id').count
   end
 
   def department_response_counts
