@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -66,13 +66,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
 
   create_table "api_tokens", force: :cascade do |t|
     t.string "token"
-    t.integer "status", default: 0
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "token_type", default: 0, null: false
     t.datetime "expires_at"
-    t.text "description"
+    t.string "name"
     t.index ["user_id"], name: "index_api_tokens_on_user_id"
   end
 
@@ -80,6 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "icon_name"
+    t.string "hex_code"
   end
 
   create_table "blog_posts", force: :cascade do |t|
@@ -310,6 +311,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
     t.string "string", default: "/cm_admin/users"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
+    t.boolean "is_catalyst_ai_enabled", default: false, null: false
+    t.index ["created_by_id"], name: "index_cm_roles_on_created_by_id"
+    t.index ["updated_by_id"], name: "index_cm_roles_on_updated_by_id"
   end
 
   create_table "cm_support_ticket_employees", force: :cascade do |t|
@@ -367,6 +373,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
     t.bigint "eventable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "recipient_type"
+    t.bigint "recipient_id"
+    t.string "original_link"
     t.index ["cm_service", "event_id", "event_type"], name: "idx_on_cm_service_event_id_event_type_a39dc27451"
     t.index ["cm_service"], name: "index_cm_webhook_events_on_cm_service"
     t.index ["created_at"], name: "index_cm_webhook_events_on_created_at"
@@ -375,6 +384,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
     t.index ["eventable_type", "eventable_id"], name: "index_cm_webhook_events_on_eventable"
     t.index ["host_service", "event_id", "event_type"], name: "idx_on_host_service_event_id_event_type_5ad8fb1d14"
     t.index ["host_service"], name: "index_cm_webhook_events_on_host_service"
+    t.index ["recipient_type", "recipient_id"], name: "index_cm_webhook_events_on_recipient_type_and_recipient_id"
     t.index ["status"], name: "index_cm_webhook_events_on_status"
     t.index ["uuid"], name: "index_cm_webhook_events_on_uuid", unique: true
   end
@@ -520,6 +530,75 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
     t.index ["department_id"], name: "index_consultations_on_department_id"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
     t.index ["theme_id"], name: "index_consultations_on_theme_id"
+  end
+
+  create_table "ct_bot_artifacts", force: :cascade do |t|
+    t.bigint "ct_bot_message_id", null: false
+    t.integer "kind", null: false
+    t.jsonb "payload", default: {}, null: false
+    t.jsonb "response"
+    t.datetime "closed_at"
+    t.string "tool_call_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ct_bot_message_id"], name: "index_ct_bot_artifacts_on_ct_bot_message_id"
+  end
+
+  create_table "ct_bot_conversations", force: :cascade do |t|
+    t.string "title"
+    t.bigint "user_id", null: false
+    t.decimal "total_cost_cents", precision: 20, scale: 8, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ct_bot_conversations_on_created_at", order: :desc
+    t.index ["updated_at"], name: "index_ct_bot_conversations_on_updated_at", order: :desc
+    t.index ["user_id"], name: "index_ct_bot_conversations_on_user_id"
+  end
+
+  create_table "ct_bot_messages", force: :cascade do |t|
+    t.bigint "ct_bot_conversation_id", null: false
+    t.integer "role", null: false
+    t.integer "status", default: 0, null: false
+    t.boolean "read", default: true, null: false
+    t.decimal "total_cost_cents", precision: 20, scale: 8, default: "0.0", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_ct_bot_messages_on_created_at", order: :desc
+    t.index ["ct_bot_conversation_id"], name: "index_ct_bot_messages_on_ct_bot_conversation_id"
+  end
+
+  create_table "ct_bot_transcriptions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "ct_bot_conversation_id"
+    t.bigint "ct_bot_message_id"
+    t.string "request_id"
+    t.integer "status", default: 0, null: false
+    t.text "text"
+    t.string "error_message"
+    t.decimal "total_cost_cents", precision: 20, scale: 8, default: "0.0", null: false
+    t.datetime "completed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ct_bot_conversation_id"], name: "index_ct_bot_transcriptions_on_ct_bot_conversation_id"
+    t.index ["ct_bot_message_id"], name: "index_ct_bot_transcriptions_on_ct_bot_message_id"
+    t.index ["user_id"], name: "index_ct_bot_transcriptions_on_user_id"
+  end
+
+  create_table "ct_cost_trackings", force: :cascade do |t|
+    t.string "trackable_type", null: false
+    t.bigint "trackable_id", null: false
+    t.string "provider"
+    t.string "model"
+    t.bigint "input_tokens"
+    t.bigint "output_tokens"
+    t.bigint "cache_read_tokens"
+    t.bigint "thinking_tokens"
+    t.decimal "total_cost_cents", precision: 20, scale: 8
+    t.jsonb "details", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["trackable_type", "trackable_id"], name: "index_ct_cost_trackings_on_trackable"
   end
 
   create_table "ct_file_exports", force: :cascade do |t|
@@ -967,6 +1046,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"
   add_foreign_key "cm_prompts", "users", column: "created_by_id"
   add_foreign_key "cm_prompts", "users", column: "updated_by_id"
+  add_foreign_key "cm_roles", "users", column: "created_by_id"
+  add_foreign_key "cm_roles", "users", column: "updated_by_id"
   add_foreign_key "cm_support_ticket_employees", "cm_support_tickets"
   add_foreign_key "cm_support_tickets", "users", column: "created_by_id"
   add_foreign_key "cm_support_tickets", "users", column: "updated_by_id"
@@ -984,6 +1065,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_103100) do
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "departments"
   add_foreign_key "consultations", "themes"
+  add_foreign_key "ct_bot_artifacts", "ct_bot_messages"
+  add_foreign_key "ct_bot_conversations", "users"
+  add_foreign_key "ct_bot_messages", "ct_bot_conversations"
+  add_foreign_key "ct_bot_transcriptions", "ct_bot_conversations"
+  add_foreign_key "ct_bot_transcriptions", "ct_bot_messages"
+  add_foreign_key "ct_bot_transcriptions", "users"
   add_foreign_key "department_contacts", "departments"
   add_foreign_key "game_actions", "point_events"
   add_foreign_key "game_actions", "users"
