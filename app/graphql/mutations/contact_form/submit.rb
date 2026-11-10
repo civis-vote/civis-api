@@ -3,7 +3,7 @@ module Mutations
     class Submit < Mutations::BaseMutation
       include HostGuard
 
-      host_guard 'civis.vote', throttle: { limit: 5, period: 1.minute }
+      host_guard 'civis.vote'
 
       type Types::Objects::ContactForm::SubmitResponse, null: false
 

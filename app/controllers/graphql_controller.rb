@@ -1,6 +1,14 @@
 class GraphqlController < ApplicationController
   before_action :authenticate!
 
+  CONTACT_FORM_FIELD = 'contactFormSubmit'.freeze
+
+  rate_limit to: 5, within: 1.minute,
+             by: -> { contact_form_submission? ? request.ip : "skip-#{request.uuid}" },
+             with: -> { render json: { error: 'Rate limit exceeded. Please try again later.' }, status: :too_many_requests },
+             name: 'contact_form',
+             only: :execute
+
   rescue_from Unauthorized do |e|
     render json: { error: 'Unauthorized', message: e.message }, status: :unauthorized
   end
@@ -21,23 +29,30 @@ class GraphqlController < ApplicationController
     }
     result = CivisApiSchema.execute(query, variables: variables, context: context, operation_name: operation_name)
     render json: result
-  rescue => e
+  rescue StandardError => e
     raise e unless Rails.env.development?
+
     handle_error_in_development e
   end
 
   def authenticate!
-    return current_user unless current_user  
-    return nil
+    return current_user unless current_user
+
+    nil
   end
 
   private
+
+  def contact_form_submission?
+    params[:query].to_s.match?(/\b#{CONTACT_FORM_FIELD}\b/)
+  end
 
   def current_user
     # find token. Check if valid.
     if request.headers["Authorization"]
       api_key = ApiKey.verify(request.headers["Authorization"])
       return false unless api_key.present?
+
       @current_user = api_key.user
       @current_user.update_last_activity unless @current_user.was_active_today?
       @current_user
