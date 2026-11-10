@@ -8,7 +8,7 @@ module CmAdmin
       cm_admin do
         actions only: []
         icon_name 'fas fa-suitcase'
-        additional_permitted_fields [segment_ids: []]
+        additional_permitted_fields [segment_ids: [], theme_ids: []]
         sort column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc'
         sort column: 'updated_at', display_name: 'Updated At'
         sort column: 'consultations_consultation_responses_count', display_name: 'Response Count'
@@ -88,6 +88,7 @@ module CmAdmin
               field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
               field :location_name, label: 'Location'
               field :segment_names, label: 'Segments'
+              field :theme_names, label: 'Themes'
               field :created_by_full_name, label: 'Created By'
               nested_form_field :department_contacts, label: 'Contacts' do
                 field :contact_type, field_type: :enum
@@ -122,6 +123,7 @@ module CmAdmin
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
+            form_field :theme_ids, input_type: :multi_select, helper_method: :select_options_for_theme, label: 'Themes'
             nested_form_field :department_contacts, label: 'Contacts' do
               form_field :contact_type, input_type: :single_select
               form_field :email
@@ -144,6 +146,7 @@ module CmAdmin
             form_field :location_id, input_type: :single_select, helper_method: :select_options_for_location
             form_field :segment_ids, input_type: :multi_select, helper_method: :select_options_for_segment,
                                      display_if: ->(_) { Current.user&.role?('super_admin') }, label: 'Segments'
+            form_field :theme_ids, input_type: :multi_select, helper_method: :select_options_for_theme, label: 'Themes'
             nested_form_field :department_contacts, label: 'Contacts' do
               form_field :contact_type, input_type: :single_select
               form_field :email
