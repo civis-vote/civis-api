@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -79,6 +79,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144456) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "icon_name"
+    t.string "hex_code"
   end
 
   create_table "blog_posts", force: :cascade do |t|
