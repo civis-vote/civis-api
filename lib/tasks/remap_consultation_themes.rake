@@ -1,32 +1,32 @@
 namespace :themes do
 
-  # Maps legacy theme names (pre-Civis list) to the current theme names.
-  # Composite legacy themes expand to multiple current themes.
+  # Legacy composite names that cannot be derived by splitting the name into
+  # current theme names (splitting "Healthcare, Women and Child Development,
+  # Sanitation, Accessibility" yields only "Accessibility", which is not the
+  # intended mapping).
   OLD_TO_NEW_THEME_NAMES = {
-    "Education" => ["Education"],
-    "Environment, Waste Management" => ["Environment"],
-    "Healthcare, Women and Child Development, Sanitation, Accessibility" => ["Health"],
-    "Agriculture, Rural Development" => ["Agriculture", "Rural Development"],
-    "Telecom, Internet, Media" => ["Telecom", "Internet", "Media"],
-    "Finance, Energy, Industry" => ["Finance", "Energy", "Industry"],
-    "Urban Settlements" => ["Urban Settlements"],
-    "Labour" => ["Labour"]
+    "Healthcare, Women and Child Development, Sanitation, Accessibility" => ["Health"]
   }.freeze
 
   desc "Remap consultation theme_maps from legacy theme names to the current theme list"
   task remap_consultation_themes: :environment do
     unmapped = Hash.new(0)
+    dropped = 0
     orphaned = 0
     remapped = 0
 
     ::ThemeMap.where(mappable_type: 'Consultation').find_each do |theme_map|
       old_theme = ::Theme.with_deleted.find_by(id: theme_map.theme_id)
       old_name = old_theme&.name || "<missing theme ##{theme_map.theme_id}>"
-      new_names = OLD_TO_NEW_THEME_NAMES[old_name] ||
-                  (::CIVIS_THEME_NAMES.include?(old_name) ? [old_name] : nil)
+      new_names = OLD_TO_NEW_THEME_NAMES[old_name] || split_to_theme_names(old_name)
 
-      if new_names.nil?
-        unmapped[old_name] += 1
+      if new_names.nil? || new_names.empty?
+        if old_name == "Others"
+          theme_map.destroy!
+          dropped += 1
+        else
+          unmapped[old_name] += 1
+        end
         next
       end
 
@@ -47,11 +47,25 @@ namespace :themes do
     end
 
     puts "Remapped #{remapped} consultation theme_maps"
+    puts "Dropped #{dropped} 'Others' theme_maps (not a real theme)"
     puts "Skipped #{orphaned} theme_maps whose consultation no longer exists"
     if unmapped.any?
       puts "Unmapped themes (reported, not changed):"
       unmapped.each { |name, count| puts "  #{name}: #{count} theme_maps" }
     end
+  end
+
+  # Derives current theme names by splitting a legacy composite name on
+  # commas / "and" and keeping only the parts that are actual themes,
+  # e.g. "Finance, Energy, Industry" => ["Finance", "Energy", "Industry"].
+  # Names that are already a single valid theme (e.g. "Youth and Sports")
+  # are returned as-is.
+  def split_to_theme_names(name)
+    return [name] if ::CIVIS_THEME_NAMES.include?(name)
+
+    parts = name.split(/\s*,\s*|\s+and\s+/i).map(&:strip).reject(&:empty?)
+    themes = parts.select { |part| ::CIVIS_THEME_NAMES.include?(part) }
+    themes.any? ? themes : nil
   end
 
   # Consultations tagged with the legacy "Others" theme, mapped to their
