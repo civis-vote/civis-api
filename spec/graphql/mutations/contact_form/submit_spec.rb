@@ -23,7 +23,9 @@ RSpec.describe Mutations::ContactForm::Submit, type: :graphql do
     }
   end
 
-  let(:context) { {} }
+  let(:context) do
+    { request: instance_double(ActionDispatch::Request, origin: 'https://www.civis.vote') }
+  end
 
   let(:result) do
     CivisApiSchema.execute(query, variables: variables, context: context)
@@ -71,11 +73,99 @@ RSpec.describe Mutations::ContactForm::Submit, type: :graphql do
       result = CivisApiSchema.execute(
         query,
         variables: { contactForm: { name: 'John Doe' } },
-        context: {}
+        context: context
       )
 
       expect(result.dig('data', 'contactFormSubmit')).to be_nil
       expect(result['errors']).not_to be_empty
+    end
+
+    it 'accepts submissions from the bare domain' do
+      expect(CmAdmin).to receive(:send_email).with(hash_including(to: 'info@civis.vote'))
+
+      submit_response = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'https://civis.vote') }
+      ).dig('data', 'contactFormSubmit')
+
+      expect(submit_response['success']).to be true
+    end
+
+    it 'accepts submissions from the api domain' do
+      expect(CmAdmin).to receive(:send_email).with(hash_including(to: 'info@civis.vote'))
+
+      submit_response = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'https://api.civis.vote') }
+      ).dig('data', 'contactFormSubmit')
+
+      expect(submit_response['success']).to be true
+    end
+
+    it 'accepts submissions from the staging api domain' do
+      expect(CmAdmin).to receive(:send_email).with(hash_including(to: 'info@civis.vote'))
+
+      submit_response = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'https://api-staging.civis.vote') }
+      ).dig('data', 'contactFormSubmit')
+
+      expect(submit_response['success']).to be true
+    end
+
+    it 'accepts submissions from any subdomain of an allowed domain' do
+      expect(CmAdmin).to receive(:send_email).with(hash_including(to: 'info@civis.vote'))
+
+      submit_response = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'https://dev.api.civis.vote') }
+      ).dig('data', 'contactFormSubmit')
+
+      expect(submit_response['success']).to be true
+    end
+
+    it 'rejects submissions from a disallowed origin' do
+      result = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'https://evil.example.com') }
+      )
+
+      expect(result.dig('data', 'contactFormSubmit')).to be_nil
+      expect(result['errors'].first['message']).to eq('Unauthorized: Invalid host')
+    end
+
+    it 'rejects submissions without an origin' do
+      result = CivisApiSchema.execute(query, variables: variables, context: {})
+
+      expect(result.dig('data', 'contactFormSubmit')).to be_nil
+      expect(result['errors'].first['message']).to eq('Unauthorized: Invalid host')
+    end
+
+    it 'rejects submissions from localhost' do
+      result = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'http://localhost:3000') }
+      )
+
+      expect(result.dig('data', 'contactFormSubmit')).to be_nil
+      expect(result['errors'].first['message']).to eq('Unauthorized: Invalid host')
+    end
+
+    it 'rejects submissions from a look-alike domain outside the allowed domain' do
+      result = CivisApiSchema.execute(
+        query,
+        variables: variables,
+        context: { request: instance_double(ActionDispatch::Request, origin: 'https://civis.vote.evil.com') }
+      )
+
+      expect(result.dig('data', 'contactFormSubmit')).to be_nil
+      expect(result['errors'].first['message']).to eq('Unauthorized: Invalid host')
     end
   end
 end
