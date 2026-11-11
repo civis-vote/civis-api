@@ -150,7 +150,7 @@ class UserMailer < ApplicationMailer
     xlsx.workbook.add_worksheet(name: 'Consultations') do |sheet|
       sheet.add_row ['Title', 'Url', 'Response Deadline', 'Ministry', 'Category', 'Status', 'Summary', 'Response Count', 'Featured', 'Reading Time', 'Created At', 'Consultation Page Link'], b: true
       consultations.each do |consultation|
-        sheet.add_row [consultation.title, consultation.url, consultation.response_deadline&.strftime('%d %b %Y %I:%M %p'), consultation.department.name, consultation.department.themes.map(&:name).join(', '), consultation.status, consultation.english_summary_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime('%d %b %Y'), consultation.feedback_url]
+        sheet.add_row [consultation.title, consultation.url, consultation.response_deadline&.strftime('%d %b %Y %I:%M %p'), consultation.department.name, consultation.themes.map(&:name).join(', '), consultation.status, consultation.english_summary_text, consultation.consultation_responses_count, consultation.is_featured, consultation.reading_time, consultation.created_at&.strftime('%d %b %Y'), consultation.feedback_url]
       end
       sheet.column_widths(*size_arr)
     end
