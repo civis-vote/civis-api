@@ -17,7 +17,7 @@ class GupshupWhatsappDelivery
     template_id = @templates[template.to_sym]
     raise 'No Gupshup template configured.' if template_id.blank?
 
-    send_message(phone_number:, template_id:, template_params: [otp.to_s, OTP_PURPOSE, otp.to_s, OTP_PURPOSE])
+    send_message(phone_number:, template_id:, template_params: [otp.to_s, OTP_PURPOSE, otp.to_s])
   end
 
   private
