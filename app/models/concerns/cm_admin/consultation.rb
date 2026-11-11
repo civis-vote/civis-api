@@ -7,7 +7,7 @@ module CmAdmin
     included do
       cm_admin do
         actions only: []
-        additional_permitted_fields [{ segment_ids: [], area_of_impact_ids: [] }]
+        additional_permitted_fields [{ segment_ids: [], area_of_impact_ids: [], theme_ids: [] }]
         icon_name 'fas fa-clipboard-list'
         policy_scopes [
           { scope_name: 'organisation_only', display_name: 'Organisation Only' }
@@ -24,7 +24,7 @@ module CmAdmin
           filter :status, :multi_select, active_by_default: true
           filter :response_deadline, :date, active_by_default: true
           filter :visibility, :multi_select, active_by_default: true
-          filter :theme_id, :multi_select, helper_method: :select_options_for_theme
+          filter :theme_ids, :multi_select, helper_method: :select_options_for_theme, filter_with: :theme_filter
           filter :review_type, :multi_select
           filter :created_by_id, :multi_select, helper_method: :select_options_for_admin_panel_user
           filter :area_of_impact_ids, :multi_select, helper_method: :select_options_for_area_of_impact,
@@ -106,7 +106,7 @@ module CmAdmin
           column :consultation_logo, field_type: :image, card_image: true
           column :department_name, header: 'Department'
           column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
-          column :theme_name, header: 'Theme'
+          column :theme_names, header: 'Themes'
           column :response_deadline, field_type: :date, format: '%d %b, %Y', card_footer: true
           column :created_at, field_type: :date, format: '%d %b, %Y'
           column :created_by_full_name, header: 'Created By'
@@ -196,7 +196,7 @@ module CmAdmin
               field :title_odia, label: 'Title in Odia'
               field :title_marathi, label: 'Title in Marathi'
               field :title_kannada, label: 'Title in Kannada'
-              field :theme_name, label: 'Theme'
+              field :theme_names, label: 'Themes'
               field :consultation_feedback_email
               field :officer_name, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
               field :officer_designation, display_if: ->(_) { !Current.user&.role?('organisation_employee') }
@@ -291,7 +291,7 @@ module CmAdmin
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
             form_field :title_kannada, input_type: :string
-            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
+            form_field :theme_ids, input_type: :multi_select, helper_method: :select_options_for_theme, label: 'Themes'
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') },
                                     html_attrs: { 'data-action': 'change->fields#show',
                                                   'data-cm-visible-id': 'organisation_id',
@@ -334,7 +334,7 @@ module CmAdmin
             form_field :title_odia, input_type: :string
             form_field :title_marathi, input_type: :string
             form_field :title_kannada, input_type: :string
-            form_field :theme_id, input_type: :single_select, helper_method: :select_options_for_theme
+            form_field :theme_ids, input_type: :multi_select, helper_method: :select_options_for_theme, label: 'Themes'
             form_field :visibility, input_type: :single_select, display_if: ->(_) { !Current.user&.role?('organisation_employee') },
                                     html_attrs: { 'data-action': 'change->fields#show',
                                                   'data-cm-visible-id': 'organisation_id',
