@@ -6,7 +6,8 @@ Rails.application.reloader.to_prepare do
     config.included_models = [Theme, CmRole, CmPermission, User, Wordindex, Profanity, CaseStudy,
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
                               ResponseRound, Question, CtFileImport, CtFileExport, Respondent, TeamMember, Clause, Constant,
-                              CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog]
+                              CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog,
+                              BlogPost, BlogCategory]
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
@@ -47,6 +48,20 @@ Rails.application.reloader.to_prepare do
       {
         display_name: 'Constants',
         path: :cm_index_constant_path
+      },
+      {
+        display_name: 'Blog',
+        icon_name: 'fas fa-newspaper',
+        children: [
+          {
+            display_name: 'Posts',
+            path: :cm_index_blog_post_path
+          },
+          {
+            display_name: 'Categories',
+            path: :cm_index_blog_category_path
+          }
+        ]
       },
       {
         display_name: 'API Tokens',
