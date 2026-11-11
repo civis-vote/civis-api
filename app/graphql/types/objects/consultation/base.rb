@@ -6,7 +6,7 @@ module Types
         field :id, Int, "ID of the consultation", null: false
         field :anonymous_responses, Types::Connections::ConsultationResponse, nil, null: true
         field :created_at, Types::Objects::DateTime, nil, null: false
-        field :created_by, Types::Objects::User::Base, nil, null: false
+        field :created_by, Types::Objects::User::Base, nil, null: true
         field :consultation_feedback_email, String, nil, null: true
         field :is_featured, Boolean, nil, null: true
         field :responded_on, Types::Objects::DateTime, nil, null: true do
@@ -52,7 +52,7 @@ module Types
         field :marathi_title, String, nil, null: true
         field :kannada_title, String, nil, null: true
         field :updated_at, Types::Objects::DateTime, nil, null: false
-        field :url, String, nil, null: false
+        field :url, String, nil, null: true
         field :responses_reading_times, Integer, "Reading times of all the responses in this consultation", null: false
         field :reading_time, Integer, "Reading time of this consultation summary", null: false
         field :visibility, Types::Enums::ConsultationVisibilityType, nil, null: false
