@@ -497,7 +497,7 @@ class UserMailer < ApplicationMailer
     @@postmark_client.deliver_with_template(
       from: @@from_email,
       to: user.email,
-      template_alias: 'otp-verification',
+      template_alias: 'civis_loginotp',
       template_model: template_model_base.merge!({ name: user.first_name,
         product_url: Rails.application.config.client_url[:host],
         otp: otp,
