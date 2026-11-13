@@ -24,9 +24,10 @@ RSpec.describe ConsultationSuggestionsService do
   def create_consultation(department:, theme: nil, deadline: 10.days.from_now, featured: false,
                           area_of_impacts: [], status: :published, visibility: :public_consultation)
     consultation = Consultation.create!(title: "Consultation #{SecureRandom.hex(4)}", department: department,
-                                        theme: theme, response_deadline: deadline, question_flow: :question_list,
+                                        response_deadline: deadline, question_flow: :question_list,
                                         is_featured: featured, status: status, visibility: visibility,
                                         published_at: 5.days.ago)
+    consultation.theme_maps.create!(theme: theme) if theme
     area_of_impacts.each { |aoi| consultation.constant_maps.create!(constant: aoi) }
     consultation
   end
@@ -99,6 +100,19 @@ RSpec.describe ConsultationSuggestionsService do
       result = described_class.new(user: user).call
 
       expect(result.index(preferred)).to be < result.index(history_only)
+    end
+
+    it 'matches a preferred theme held as a second theme on the consultation' do
+      user.preferred_theme_ids = [theme_b.id]
+
+      multi_theme = create_consultation(department: department_a)
+      multi_theme.theme_maps.create!(theme: theme_a)
+      multi_theme.theme_maps.create!(theme: theme_b)
+      other = create_consultation(department: department_b, theme: theme_a)
+
+      result = described_class.new(user: user).call
+
+      expect(result.index(multi_theme)).to be < result.index(other)
     end
 
     it 'scores each matching preferred area of impact' do

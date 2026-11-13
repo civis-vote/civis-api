@@ -98,7 +98,7 @@ class ConsultationResponse < ApplicationRecord
   scope :theme_filter, lambda { |theme_ids|
     return all unless theme_ids.present?
 
-    joins(:consultation).where(consultations: { theme_id: theme_ids })
+    joins(consultation: :theme_maps).where(theme_maps: { theme_id: theme_ids }).distinct
   }
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
@@ -281,7 +281,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def theme
-    consultation.department.theme&.name
+    consultation.themes.map(&:name).join(', ')
   end
 
   def submitted_by
