@@ -47,8 +47,8 @@ namespace :import_records_from_xlsx do
     # ------------------------------------------------------------------
     # Lookups
     # ------------------------------------------------------------------
-    theme_by_normalized = ::CIVIS_THEME_NAMES.index_by { |n| normalize(n) }
-    segment_by_normalized = ::CIVIS_SEGMENT_NAMES.index_by { |n| normalize(n) }
+    theme_by_normalized = ::Theme::CIVIS_THEME_NAMES.index_by { |n| normalize(n) }
+    segment_by_normalized = ::Constant::SEGMENT_NAMES.index_by { |n| normalize(n) }
 
     consultations = ::Consultation.where(id: rows.map { |r| r[:consultation_id] }).index_by(&:id)
     existing_themes = ::Theme.all.index_by(&:name)
@@ -75,8 +75,8 @@ namespace :import_records_from_xlsx do
     # ------------------------------------------------------------------
     # Plan
     # ------------------------------------------------------------------
-    themes_to_create = ::CIVIS_THEME_NAMES.reject { |n| existing_themes[n] }
-    segments_to_create = ::CIVIS_SEGMENT_NAMES.reject { |n| existing_segments[normalize(n)] }
+    themes_to_create = ::Theme::CIVIS_THEME_NAMES.reject { |n| existing_themes[n] }
+    segments_to_create = ::Constant::SEGMENT_NAMES.reject { |n| existing_segments[normalize(n)] }
 
     theme_map_changes = rows.sum do |r|
       cons = consultations[r[:consultation_id]]
@@ -107,7 +107,16 @@ namespace :import_records_from_xlsx do
       # Apply
       # ------------------------------------------------------------------
       ActiveRecord::Base.transaction do
-      themes_to_create.each { |n| existing_themes[n] = ::Theme.create!(name: n) }
+      themes_to_create.each do |n|
+        theme = ::Theme.with_deleted.find_by(name: n)
+        if theme
+          theme.restore
+          theme.update!(icon_name: ::Theme::CIVIS_THEMES[n]) if theme.icon_name.blank?
+        else
+          theme = ::Theme.create!(name: n, icon_name: ::Theme::CIVIS_THEMES[n])
+        end
+        existing_themes[n] = theme
+      end
       segments_to_create.each { |n| existing_segments[normalize(n)] = [::Constant.create!(name: n, constant_type: :segment)] }
 
       rows.each do |row|

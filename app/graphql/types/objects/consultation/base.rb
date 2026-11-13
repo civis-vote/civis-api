@@ -207,6 +207,10 @@ module Types
           object.clauses.order(:id)
         end
 
+        def themes
+          object.themes.active
+        end
+
         def enforce_private_response
           object.private_response?
         end
