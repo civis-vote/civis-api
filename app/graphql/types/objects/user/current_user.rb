@@ -25,6 +25,10 @@ module Types
           object.responses.sort_records(sort, sort_direction)
         end
 
+        def preferred_themes
+          object.preferred_themes.active
+        end
+
         def has_preferences
           object.has_preferences?
         end

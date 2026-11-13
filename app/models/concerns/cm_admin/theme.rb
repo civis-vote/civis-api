@@ -1,6 +1,7 @@
 module CmAdmin
   module Theme
     extend ActiveSupport::Concern
+    STATUS_TAG_COLORS = { active: 'cm-badge-green', disabled: 'cm-badge-red' }.freeze
 
     included do
       cm_admin do
@@ -14,7 +15,7 @@ module CmAdmin
 
           column :name
           column :icon_name
-          column :status
+          column :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
         end
 
         cm_show page_title: :name do
@@ -42,7 +43,7 @@ module CmAdmin
             cm_section 'Theme details' do
               field :name
               field :icon_name
-              field :status
+              field :status, field_type: :badge, badge_class: STATUS_TAG_COLORS
             end
             cm_section 'Log Details' do
               field :created_at, field_type: :date, format: '%d %b, %Y'
