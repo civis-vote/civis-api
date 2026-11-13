@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_10_130000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -907,6 +907,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_10_130000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
+    t.string "icon_name"
+    t.integer "status", default: 0, null: false
     t.index ["deleted_at"], name: "index_themes_on_deleted_at"
   end
 

@@ -36,7 +36,7 @@ namespace :themes do
         next
       end
 
-      new_themes = new_names.map { |name| ::Theme.find_or_create_by!(name: name) }
+      new_themes = new_names.map { |name| find_or_create_theme!(name) }
       next if new_themes.map(&:id) == [theme_map.theme_id]
 
       new_themes.each do |theme|
@@ -55,16 +55,26 @@ namespace :themes do
     end
   end
 
+  # Finds or creates a theme by name, restoring it if it was soft-deleted
+  # and backfilling the canonical icon when it doesn't have one yet.
+  def find_or_create_theme!(name)
+    theme = ::Theme.with_deleted.find_or_create_by!(name: name)
+    theme.restore if theme.deleted?
+    icon_name = ::Theme::CIVIS_THEMES[name]
+    theme.update!(icon_name: icon_name) if icon_name.present? && theme.icon_name.blank?
+    theme
+  end
+
   # Derives current theme names by splitting a legacy composite name on
   # commas / "and" and keeping only the parts that are actual themes,
   # e.g. "Finance, Energy, Industry" => ["Finance", "Energy", "Industry"].
   # Names that are already a single valid theme (e.g. "Youth and Sports")
   # are returned as-is.
   def split_to_theme_names(name)
-    return [name] if ::CIVIS_THEME_NAMES.include?(name)
+    return [name] if ::Theme::CIVIS_THEME_NAMES.include?(name)
 
     parts = name.split(/\s*,\s*|\s+and\s+/i).map(&:strip).reject(&:empty?)
-    themes = parts.select { |part| ::CIVIS_THEME_NAMES.include?(part) }
+    themes = parts.select { |part| ::Theme::CIVIS_THEME_NAMES.include?(part) }
     themes.any? ? themes : nil
   end
 
@@ -115,7 +125,7 @@ namespace :themes do
         next
       end
 
-      theme = ::Theme.find_or_create_by!(name: theme_name)
+      theme = find_or_create_theme!(theme_name)
       next if consultation.themes.pluck(:id) == [theme.id]
 
       consultation.theme_maps.destroy_all
@@ -125,7 +135,7 @@ namespace :themes do
     end
 
     puts "Assigned themes to #{changed} consultations (#{OTHERS_TO_THEME_NAMES.size - missing - changed} already correct)"
-    remaining = ::ThemeMap.joins(:theme).where(mappable_type: 'Consultation').where.not(themes: { name: ::CIVIS_THEME_NAMES })
+    remaining = ::ThemeMap.joins(:theme).where(mappable_type: 'Consultation').where.not(themes: { name: ::Theme::CIVIS_THEME_NAMES })
     puts "Legacy theme maps remaining: #{remaining.count}"
   end
 
@@ -149,7 +159,7 @@ namespace :themes do
         next
       end
 
-      theme = ::Theme.find_or_create_by!(name: theme_name)
+      theme = find_or_create_theme!(theme_name)
       next if consultation.themes.pluck(:id) == [theme.id]
 
       consultation.theme_maps.destroy_all
