@@ -299,7 +299,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def phone_number
-    user.present? && user.phone_number.present? ? user.phone_number : (self[:phone_number].presence || 'NA')
+    user.present? && user.phone_number.present? ? user.phone_number : (self[:phone_number].presence ? "+#{self[:phone_number]}" : 'NA')
   end
 
   def is_verified
