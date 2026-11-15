@@ -125,6 +125,14 @@ RSpec.describe ImportConsultationResponse do
         expect(importer.invalid_rows.first.line_number).to eq(2)
         expect(importer.invalid_rows.first.errors).to include('User has already submitted a response for this round')
       end
+
+      it 'imports nothing when any row fails (all-or-nothing)' do
+        importer = run_import([row_attrs('email' => existing_user.email, 'phone_number' => nil),
+                               row_attrs('import_key' => 'key-2', 'phone_number' => '9812345679')])
+
+        expect(importer.invalid_rows.size).to eq(1)
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
+      end
     end
   end
 end
