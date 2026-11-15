@@ -9,15 +9,21 @@ class ImportConsultationResponse
 
   def run!
     responses = []
+    seen_row_keys = {}
     CSV.parse(@file_content, headers: true, encoding: 'utf-8').each_with_index do |row, index|
       puts "Row number - #{index + 1}"
       Current.user = @file_import.added_by
       begin
         consultation_response = build_consultation_response(row)
+        if duplicate?(consultation_response, seen_row_keys)
+          puts "Skipping duplicate response on line #{index + 2}"
+          next
+        end
         if consultation_response.valid?
           consultation_response.validate_answers
           consultation_response.validate_html_tags
           responses << [index + 2, consultation_response]
+          seen_row_keys[dedup_key(consultation_response)] = true
         else
           @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: consultation_response.id,
                                             errors: consultation_response.errors.full_messages.join(', ') })
@@ -73,7 +79,7 @@ class ImportConsultationResponse
         other_option_answer = value unless answer.present?
       end
       answer_in_hash = { "answer": answer, "question_id": question_id }
-      answer_in_hash.merge!(other_option_answer: value, "is_other": 'true') if other_option_answer && question.supports_other
+      answer_in_hash.merge!(other_option_answer: value, is_other: 'true') if other_option_answer && question.supports_other
       answers << answer_in_hash
     end
     answers = nil if answers == []
@@ -88,6 +94,24 @@ class ImportConsultationResponse
   end
 
   private
+
+  def duplicate?(response, seen_row_keys)
+    key = dedup_key(response)
+    return false if key.nil?
+    return true if seen_row_keys.key?(key)
+
+    scope = ConsultationResponse.where(response_round_id: response.response_round_id)
+    if response[:phone_number].present?
+      scope.exists?(phone_number: response[:phone_number])
+    else
+      scope.exists?(email: response.email)
+    end
+  end
+
+  def dedup_key(response)
+    identifier = response[:phone_number].presence || response.email&.downcase
+    "#{response.response_round_id}:#{identifier}" if identifier
+  end
 
   def build_consultation_response(row)
     ::ConsultationResponse.new do |consultation_response|
