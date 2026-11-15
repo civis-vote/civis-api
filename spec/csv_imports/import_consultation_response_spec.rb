@@ -134,5 +134,31 @@ RSpec.describe ImportConsultationResponse do
         expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
       end
     end
+
+    context 'when a response for the same person already exists in the round' do
+      it 'skips the row instead of creating a duplicate' do
+        run_import([row_attrs])
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
+
+        importer = run_import([row_attrs])
+
+        expect(importer.invalid_rows).to be_empty
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
+      end
+
+      it 'skips a repeated row within the same file' do
+        importer = run_import([row_attrs, row_attrs])
+
+        expect(importer.invalid_rows).to be_empty
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
+      end
+
+      it 'imports all rows that share an import_key but differ by phone' do
+        importer = run_import([row_attrs, row_attrs('phone_number' => '9812345679')])
+
+        expect(importer.invalid_rows).to be_empty
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(2)
+      end
+    end
   end
 end
