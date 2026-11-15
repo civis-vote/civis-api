@@ -18,7 +18,7 @@ class ImportConsultationResponse
         consultation_response.first_name = sanitize_column_value(row['first_name'])
         consultation_response.last_name = sanitize_column_value(row['last_name'])
         consultation_response.email = sanitize_column_value(row['email'])
-        consultation_response.phone_number = sanitize_column_value(row['phone_number'])
+        consultation_response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
         consultation_response.response_language = sanitize_column_value(row['response_language'])
         if sanitize_column_value(row['responded_at']).present?
           consultation_response.responded_at = Date.parse(sanitize_column_value(row['responded_at']))
@@ -37,10 +37,10 @@ class ImportConsultationResponse
           consultation_response.save!
         else
           @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: consultation_response.id,
-                                            errors: consultation_response.errors.message })
+                                            errors: consultation_response.errors.full_messages.join(', ') })
         end
       rescue StandardError => e
-        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: { error: e.message } })
+        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: e.message })
       end
     end
   end
@@ -55,8 +55,10 @@ class ImportConsultationResponse
     response_rounds = consultation.response_rounds.order(:created_at)
     response_round_id = response_rounds.last.id
     questions = response_rounds.last.questions
-    email = hash['email']
-    user = User.find_by(email:)
+    email = hash['email'].to_s.strip.presence
+    phone_number = User.normalize_phone(hash['phone_number'])
+    user = User.find_by(email:) if email
+    user ||= User.find_by(phone_number:) if phone_number
 
     answers = []
 
