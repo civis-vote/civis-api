@@ -106,7 +106,7 @@ RSpec.describe ImportConsultationResponse do
       end
     end
 
-    context 'when a row fails validation' do
+    context 'when the matched user has already responded in the same round' do
       let!(:existing_user) do
         User.create!(first_name: 'Existing', last_name: 'User',
                      email: "existing-#{SecureRandom.hex(4)}@test.com",
@@ -118,12 +118,12 @@ RSpec.describe ImportConsultationResponse do
                                      response_round: response_round, visibility: :anonymous)
       end
 
-      it 'captures the real validation error instead of masking it' do
+      it 'reports the row as a duplicate response' do
         importer = run_import([row_attrs('email' => existing_user.email, 'phone_number' => nil)])
 
         expect(importer.invalid_rows.size).to eq(1)
         expect(importer.invalid_rows.first.line_number).to eq(2)
-        expect(importer.invalid_rows.first.errors).to include('User has already been taken')
+        expect(importer.invalid_rows.first.errors).to include('User has already submitted a response for this round')
       end
     end
   end

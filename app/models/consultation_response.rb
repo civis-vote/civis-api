@@ -41,7 +41,9 @@ class ConsultationResponse < ApplicationRecord
 
   belongs_to :user, optional: true
   belongs_to :consultation, counter_cache: true, optional: true
-  validates_uniqueness_of :user_id, scope: :response_round_id, unless: proc { |_user| user_id.blank? }
+  validates_uniqueness_of :user_id, scope: :response_round_id,
+                                    message: 'has already submitted a response for this round',
+                                    unless: proc { |_user| user_id.blank? }
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
