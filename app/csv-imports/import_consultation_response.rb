@@ -37,7 +37,7 @@ class ImportConsultationResponse
           consultation_response.save!
         else
           @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: consultation_response.id,
-                                            errors: consultation_response.errors.message })
+                                            errors: consultation_response.errors.full_messages.join(', ') })
         end
       rescue StandardError => e
         @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: { error: e.message } })
@@ -55,8 +55,10 @@ class ImportConsultationResponse
     response_rounds = consultation.response_rounds.order(:created_at)
     response_round_id = response_rounds.last.id
     questions = response_rounds.last.questions
-    email = hash['email']
-    user = User.find_by(email:)
+    email = hash['email'].to_s.strip.presence
+    phone_number = User.normalize_phone(hash['phone_number'])
+    user = User.find_by(email:) if email
+    user ||= User.find_by(phone_number:) if phone_number
 
     answers = []
 
