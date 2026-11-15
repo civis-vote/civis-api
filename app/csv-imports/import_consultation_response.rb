@@ -8,33 +8,16 @@ class ImportConsultationResponse
   end
 
   def run!
+    responses = []
     CSV.parse(@file_content, headers: true, encoding: 'utf-8').each_with_index do |row, index|
       puts "Row number - #{index + 1}"
       Current.user = @file_import.added_by
       begin
-        consultation_response = ::ConsultationResponse.new
-        consultation_response.import_key = sanitize_column_value(row['import_key'])
-        consultation_response.consultation_id = sanitize_column_value(row['consultation_id'])
-        consultation_response.first_name = sanitize_column_value(row['first_name'])
-        consultation_response.last_name = sanitize_column_value(row['last_name'])
-        consultation_response.email = sanitize_column_value(row['email'])
-        consultation_response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
-        consultation_response.response_language = sanitize_column_value(row['response_language'])
-        if sanitize_column_value(row['responded_at']).present?
-          consultation_response.responded_at = Date.parse(sanitize_column_value(row['responded_at']))
-        end
-        consultation_response.organisation_id = sanitize_column_value(row['organisation_id'])
-        consultation_response.visibility = sanitize_column_value(row['visibility'])
-        consultation_response.satisfaction_rating = sanitize_column_value(row['satisfaction_rating'])
-        consultation_response.response_text = sanitize_column_value(row['response_text'])
-        consultation_response.source = 'off_platform'
-        answer_hash = get_question_id_with_answers_hash(row.to_h.with_indifferent_access)
-        consultation_response.answers = answer_hash['answers']
-        consultation_response.response_round_id = answer_hash['response_round_id']
-        consultation_response.user_id = answer_hash['user_id']
-
+        consultation_response = build_consultation_response(row)
         if consultation_response.valid?
-          consultation_response.save!
+          consultation_response.validate_answers
+          consultation_response.validate_html_tags
+          responses << consultation_response
         else
           @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: consultation_response.id,
                                             errors: consultation_response.errors.full_messages.join(', ') })
@@ -43,6 +26,7 @@ class ImportConsultationResponse
         @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: e.message })
       end
     end
+    persist_all!(responses) if @invalid_rows.empty?
   end
 
   def non_question_id_headers
@@ -101,5 +85,39 @@ class ImportConsultationResponse
 
   def sanitize_column_value(value)
     value&.strip.presence
+  end
+
+  private
+
+  def build_consultation_response(row)
+    ::ConsultationResponse.new do |consultation_response|
+      consultation_response.import_key = sanitize_column_value(row['import_key'])
+      consultation_response.consultation_id = sanitize_column_value(row['consultation_id'])
+      consultation_response.first_name = sanitize_column_value(row['first_name'])
+      consultation_response.last_name = sanitize_column_value(row['last_name'])
+      consultation_response.email = sanitize_column_value(row['email'])
+      consultation_response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
+      consultation_response.response_language = sanitize_column_value(row['response_language'])
+      if sanitize_column_value(row['responded_at']).present?
+        consultation_response.responded_at = Date.parse(sanitize_column_value(row['responded_at']))
+      end
+      consultation_response.organisation_id = sanitize_column_value(row['organisation_id'])
+      consultation_response.visibility = sanitize_column_value(row['visibility'])
+      consultation_response.satisfaction_rating = sanitize_column_value(row['satisfaction_rating'])
+      consultation_response.response_text = sanitize_column_value(row['response_text'])
+      consultation_response.source = 'off_platform'
+      answer_hash = get_question_id_with_answers_hash(row.to_h.with_indifferent_access)
+      consultation_response.answers = answer_hash['answers']
+      consultation_response.response_round_id = answer_hash['response_round_id']
+      consultation_response.user_id = answer_hash['user_id']
+    end
+  end
+
+  def persist_all!(responses)
+    return if responses.empty?
+
+    ActiveRecord::Base.transaction { responses.each(&:save!) }
+  rescue StandardError => e
+    @invalid_rows << OpenStruct.new({ line_number: '', identifier: '', errors: e.message })
   end
 end
