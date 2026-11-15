@@ -18,7 +18,7 @@ class ImportConsultationResponse
         consultation_response.first_name = sanitize_column_value(row['first_name'])
         consultation_response.last_name = sanitize_column_value(row['last_name'])
         consultation_response.email = sanitize_column_value(row['email'])
-        consultation_response.phone_number = sanitize_column_value(row['phone_number'])
+        consultation_response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
         consultation_response.response_language = sanitize_column_value(row['response_language'])
         if sanitize_column_value(row['responded_at']).present?
           consultation_response.responded_at = Date.parse(sanitize_column_value(row['responded_at']))
@@ -40,7 +40,7 @@ class ImportConsultationResponse
                                             errors: consultation_response.errors.full_messages.join(', ') })
         end
       rescue StandardError => e
-        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: { error: e.message } })
+        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: e.message })
       end
     end
   end

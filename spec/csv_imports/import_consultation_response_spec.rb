@@ -66,6 +66,14 @@ RSpec.describe ImportConsultationResponse do
         expect(responses.count).to eq(2)
         expect(responses.pluck(:user_id).uniq).to eq([nil])
       end
+
+      it 'stores the phone number normalized with country code and exposes it' do
+        run_import([row_attrs])
+
+        response = ConsultationResponse.find_by(consultation: consultation)
+        expect(response[:phone_number]).to eq(919812345678)
+        expect(response.phone_number).to eq(919812345678)
+      end
     end
 
     context 'when the phone number belongs to an existing user' do

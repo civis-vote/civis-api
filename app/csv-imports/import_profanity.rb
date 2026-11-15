@@ -20,7 +20,7 @@ class ImportProfanity
           @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: profanity.id, errors: profanity.errors.full_messages.join(', ') })
         end
       rescue StandardError => e
-        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: { error: e.message } })
+        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: e.message })
       end
     end
   end
