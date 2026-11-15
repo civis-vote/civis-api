@@ -72,7 +72,7 @@ RSpec.describe ImportConsultationResponse do
 
         response = ConsultationResponse.find_by(consultation: consultation)
         expect(response[:phone_number]).to eq(919812345678)
-        expect(response.phone_number).to eq(919812345678)
+        expect(response.phone_number).to eq('+919812345678')
       end
     end
 

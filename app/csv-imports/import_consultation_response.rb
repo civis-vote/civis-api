@@ -17,7 +17,7 @@ class ImportConsultationResponse
         if consultation_response.valid?
           consultation_response.validate_answers
           consultation_response.validate_html_tags
-          responses << consultation_response
+          responses << [index + 2, consultation_response]
         else
           @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: consultation_response.id,
                                             errors: consultation_response.errors.full_messages.join(', ') })
@@ -30,8 +30,8 @@ class ImportConsultationResponse
   end
 
   def non_question_id_headers
-    %w[import_key consultation_id first_name last_name email phone_number responded_at organisation_id visibility
-       satisfaction_rating response_text]
+    %w[import_key consultation_id first_name last_name email phone_number responded_at response_language
+       organisation_id visibility satisfaction_rating response_text]
   end
 
   def get_question_id_with_answers_hash(hash)
@@ -116,8 +116,19 @@ class ImportConsultationResponse
   def persist_all!(responses)
     return if responses.empty?
 
-    ActiveRecord::Base.transaction { responses.each(&:save!) }
+    ActiveRecord::Base.transaction do
+      responses.each do |line_number, response|
+        begin
+          response.save!
+        rescue StandardError => e
+          @invalid_rows << OpenStruct.new({ line_number:, identifier: '', errors: e.message })
+          raise
+        end
+      end
+    end
   rescue StandardError => e
+    return if @invalid_rows.present?
+
     @invalid_rows << OpenStruct.new({ line_number: '', identifier: '', errors: e.message })
   end
 end
