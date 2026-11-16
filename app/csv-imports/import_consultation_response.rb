@@ -126,7 +126,7 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
       SANITIZED_COLUMNS.each { |column| response.public_send("#{column}=", sanitize_column_value(row[column])) }
       response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
       response.responded_at = parse_responded_at(row['responded_at'])
-      response.source = 'off_platform'
+      response.source = :off_platform
       response.assign_attributes(get_question_id_with_answers_hash(row.to_h.with_indifferent_access))
     end
   end
