@@ -28,29 +28,28 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
 
   private
 
-  # Two-pass: build and validate every row first so all failures are reported
-  # together, then save everything inside the transaction BaseImporter#run!
-  # opens (use_transaction?). Any invalid row means nothing is persisted.
+  # Every row is validated and saved inside the transaction BaseImporter#run!
+  # opens (use_transaction?); if any row failed, everything rolls back.
   def run_import
-    responses = []
     seen_row_keys = {}
     each_row do |raw_row, line_number|
       row = sanitize_row(raw_row)
       next if row.each_value.all?(&:blank?)
 
       @row_count += 1
-      collect_row(row, line_number, responses, seen_row_keys)
+      collect_row(row, line_number, seen_row_keys)
     end
-    persist_all!(responses) if invalid_rows.empty?
+    raise ActiveRecord::Rollback if invalid_rows.present?
   end
 
-  def collect_row(row, line_number, responses, seen_row_keys)
+  def collect_row(row, line_number, seen_row_keys)
     response = build_consultation_response(row)
     if duplicate?(response, seen_row_keys)
       puts "Skipping duplicate response on line #{line_number}"
       @success_count += 1
     elsif valid_response?(response)
-      responses << [line_number, response]
+      response.save!
+      @success_count += 1
       seen_row_keys[dedup_key(response)] = true
     else
       report_error(line_number, identifier_for(row), response.errors.full_messages.join(', '))
@@ -133,15 +132,5 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
 
   def parse_responded_at(value)
     Date.parse(sanitize_column_value(value)) if sanitize_column_value(value).present?
-  end
-
-  def persist_all!(responses)
-    responses.each do |line_number, response|
-      response.save!
-      @success_count += 1
-    rescue StandardError => e
-      report_error(line_number, '-', e.message)
-      raise ActiveRecord::Rollback
-    end
   end
 end
