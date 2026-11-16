@@ -381,7 +381,7 @@ class ConsultationResponse < ApplicationRecord
   def set_subjective_objective_response_count
     if response_round.questions.present?
       # question_type can be regarded as response types
-      response_types = response_round.questions.where(id: answers.map { |a| a["question_id"] }).pluck(:question_type)
+      response_types = response_round.questions.where(id: Array(answers).map { |a| a["question_id"] }).pluck(:question_type)
       self.subjective_answer_count = response_types.count("long_text")
       self.objective_answer_count = response_types.count - subjective_answer_count
     else

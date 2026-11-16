@@ -13,6 +13,8 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
   end
 
   def import_status
+    return :failed if row_count.zero?
+
     invalid_rows.empty? ? :success : :failed
   end
 
@@ -111,7 +113,7 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
     if response[:phone_number].present?
       scope.exists?(phone_number: response[:phone_number])
     else
-      scope.exists?(email: response.email)
+      scope.where('LOWER(email) = ?', response.email.downcase).exists?
     end
   end
 
