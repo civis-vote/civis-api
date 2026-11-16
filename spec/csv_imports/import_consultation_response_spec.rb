@@ -16,7 +16,7 @@ RSpec.describe ImportConsultationResponse do
   end
 
   def file_import_for(csv_content)
-    OpenStruct.new(import_file: OpenStruct.new(download: csv_content), added_by: admin)
+    Struct.new(:id, :import_file, :added_by).new(1, Struct.new(:download).new(csv_content), admin)
   end
 
   def build_csv(rows)
@@ -71,7 +71,7 @@ RSpec.describe ImportConsultationResponse do
         run_import([row_attrs])
 
         response = ConsultationResponse.find_by(consultation: consultation)
-        expect(response[:phone_number]).to eq(919812345678)
+        expect(response[:phone_number]).to eq(919_812_345_678)
         expect(response.phone_number).to eq('+919812345678')
       end
     end
