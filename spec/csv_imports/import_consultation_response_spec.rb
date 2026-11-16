@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe ImportConsultationResponse do
+  after { Current.reset }
+
   let(:department) do
     Department.create!(name: "Dept #{SecureRandom.hex(4)}", level: :national,
                        department_contacts_attributes: [{ contact_type: :primary, email: 'dept@test.com' }])
