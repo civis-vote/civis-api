@@ -1,0 +1,5 @@
+import_key,consultation_id,first_name,last_name,email,phone_number,responded_at,response_language,organisation_id,visibility,satisfaction_rating,response_text,QUESTION_LONG,QUESTION_CHECK
+14112026,CONSULTATION_ID,Asha,Kumari,,9920668374,11/11/2026,English,ORGANISATION_ID,anonymous,somewhat_satisfied,,Marriage,Option A
+14112026,CONSULTATION_ID,Rahul,Sharma,,9833326699,11/11/2026,Hindi,ORGANISATION_ID,anonymous,satisfied,,Child safety,"Option A, Option B"
+14112026,CONSULTATION_ID,Priya,Nair,,9812345000,12/11/2026,English,ORGANISATION_ID,anonymous,satisfied,"First line
+Second line",Yes,Option B

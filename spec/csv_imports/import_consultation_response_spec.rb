@@ -137,6 +137,18 @@ RSpec.describe ImportConsultationResponse do
       end
     end
 
+    context 'when a row has malformed data' do
+      it 'reports the error with the row line number and imports nothing' do
+        importer = run_import([row_attrs('responded_at' => 'not-a-date'),
+                               row_attrs('import_key' => 'key-2', 'phone_number' => '9812345679')])
+
+        expect(importer.invalid_rows.size).to eq(1)
+        expect(importer.invalid_rows.first.line_number).to eq(2)
+        expect(importer.invalid_rows.first.errors).to be_present
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(0)
+      end
+    end
+
     context 'when a response for the same person already exists in the round' do
       it 'skips the row instead of creating a duplicate' do
         run_import([row_attrs])
@@ -160,6 +172,63 @@ RSpec.describe ImportConsultationResponse do
 
         expect(importer.invalid_rows).to be_empty
         expect(ConsultationResponse.where(consultation: consultation).count).to eq(2)
+      end
+    end
+
+    context 'with a file shaped like the WhatsApp export' do
+      before { Current.user = admin }
+
+      let!(:long_text_question) do
+        Question.create!(response_round: response_round, question_text: 'Your thoughts?',
+                         question_type: :long_text, is_optional: true)
+      end
+      let!(:checkbox_question) do
+        Question.create!(response_round: response_round, question_text: 'Pick topics',
+                         question_type: :checkbox, is_optional: true,
+                         sub_questions_attributes: [{ question_text: 'Option A' }, { question_text: 'Option B' }])
+      end
+      let!(:organisation) { Fabricate(:organisation, created_by_id: admin.id) }
+
+      def whatsapp_csv
+        File.read(Rails.root.join('spec/fixtures/files/import_consultation_response_whatsapp.csv'))
+            .gsub('CONSULTATION_ID', consultation.id.to_s)
+            .gsub('QUESTION_LONG', long_text_question.id.to_s)
+            .gsub('QUESTION_CHECK', checkbox_question.id.to_s)
+            .gsub('ORGANISATION_ID', organisation.id.to_s)
+      end
+
+      def run_whatsapp_import
+        described_class.new(file_import: file_import_for(whatsapp_csv)).tap(&:run!)
+      end
+
+      it 'imports every row, parses answers, and normalizes phones' do
+        importer = run_whatsapp_import
+
+        expect(importer.invalid_rows).to be_empty
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(3)
+
+        response = ConsultationResponse.find_by(phone_number: 919920668374)
+        answers = JSON.parse(response.answers.to_json)
+        expect(answers).to include('question_id' => long_text_question.id.to_s, 'answer' => 'Marriage')
+        expect(response[:phone_number]).to eq(919920668374)
+      end
+
+      it 'maps multi-option checkbox cells to sub-question ids' do
+        run_whatsapp_import
+
+        response = ConsultationResponse.find_by(phone_number: 919833326699)
+        answers = JSON.parse(response.answers.to_json)
+        option_ids = checkbox_question.sub_questions.pluck(:id).map(&:to_s)
+        checkbox_answer = answers.find { |a| a['question_id'] == checkbox_question.id.to_s }
+        expect(checkbox_answer['answer']).to match_array(option_ids)
+      end
+
+      it 'skips every row on re-import' do
+        run_whatsapp_import
+        importer = run_whatsapp_import
+
+        expect(importer.invalid_rows).to be_empty
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(3)
       end
     end
   end
