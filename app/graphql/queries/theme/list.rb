@@ -10,7 +10,7 @@ module Queries
       type Types::Objects::ThemeList, null: true
 
       def resolve(per_page:, page:, sort:, sort_direction:)
-        ::Theme.sort_records(sort, sort_direction).list(per_page, page)
+        ::Theme.active.sort_records(sort, sort_direction).list(per_page, page)
       end
     end
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -520,7 +520,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
     t.boolean "show_discuss_section", default: true, null: false
     t.boolean "show_satisfaction_rating", default: true
     t.integer "question_flow", default: 0
-    t.bigint "theme_id"
     t.string "title_kannada"
     t.datetime "response_deadline"
     t.datetime "feedback_submitted_at"
@@ -529,7 +528,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["department_id"], name: "index_consultations_on_department_id"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
-    t.index ["theme_id"], name: "index_consultations_on_theme_id"
   end
 
   create_table "ct_bot_artifacts", force: :cascade do |t|
@@ -894,11 +892,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
     t.index ["status"], name: "index_team_members_on_status"
   end
 
+  create_table "theme_maps", force: :cascade do |t|
+    t.bigint "theme_id", null: false
+    t.string "mappable_type"
+    t.bigint "mappable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mappable_type", "mappable_id"], name: "index_theme_maps_on_mappable"
+    t.index ["theme_id", "mappable_type", "mappable_id"], name: "index_theme_maps_on_theme_and_mappable", unique: true
+  end
+
   create_table "themes", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
+    t.string "icon_name"
+    t.integer "status", default: 0, null: false
     t.index ["deleted_at"], name: "index_themes_on_deleted_at"
   end
 
@@ -1064,7 +1074,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
   add_foreign_key "consultation_responses", "response_rounds"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "departments"
-  add_foreign_key "consultations", "themes"
   add_foreign_key "ct_bot_artifacts", "ct_bot_messages"
   add_foreign_key "ct_bot_conversations", "users"
   add_foreign_key "ct_bot_messages", "ct_bot_conversations"
@@ -1089,6 +1098,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_06_144753) do
   add_foreign_key "response_summaries", "consultations"
   add_foreign_key "showcase_slides", "users", column: "created_by_id"
   add_foreign_key "showcase_slides", "users", column: "updated_by_id"
+  add_foreign_key "theme_maps", "themes"
   add_foreign_key "user_preferences", "users"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
