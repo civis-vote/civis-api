@@ -137,6 +137,18 @@ RSpec.describe ImportConsultationResponse do
       end
     end
 
+    context 'when a row has malformed data' do
+      it 'reports the error with the row line number and imports nothing' do
+        importer = run_import([row_attrs('responded_at' => 'not-a-date'),
+                               row_attrs('import_key' => 'key-2', 'phone_number' => '9812345679')])
+
+        expect(importer.invalid_rows.size).to eq(1)
+        expect(importer.invalid_rows.first.line_number).to eq(2)
+        expect(importer.invalid_rows.first.errors).to be_present
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(0)
+      end
+    end
+
     context 'when a response for the same person already exists in the round' do
       it 'skips the row instead of creating a duplicate' do
         run_import([row_attrs])
@@ -164,6 +176,8 @@ RSpec.describe ImportConsultationResponse do
     end
 
     context 'with a file shaped like the WhatsApp export' do
+      before { Current.user = admin }
+
       let!(:long_text_question) do
         Question.create!(response_round: response_round, question_text: 'Your thoughts?',
                          question_type: :long_text, is_optional: true)
