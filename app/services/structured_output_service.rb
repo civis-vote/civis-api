@@ -44,5 +44,32 @@ module StructuredOutputService
         }
       }
     end
+
+    def voice_transcription
+      {
+        type: 'json_schema',
+        name: 'voice_transcription',
+        strict: true,
+        schema: {
+          type: 'object',
+          properties: {
+            transcription: {
+              type: 'string',
+              description: 'The cleaned, verbatim transcribed text of the voice message'
+            },
+            detected_language: {
+              type: 'string',
+              description: 'The detected language of the speech (e.g. English, Hindi, Marathi, Odia, Kannada)'
+            },
+            is_proper_transcription: {
+              type: 'boolean',
+              description: 'True if the transcription is clear and proper, false if the audio is inaudible or unintelligible'
+            }
+          },
+          required: %w[transcription detected_language is_proper_transcription],
+          additionalProperties: false
+        }
+      }
+    end
   end
 end

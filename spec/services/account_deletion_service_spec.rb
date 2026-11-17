@@ -98,7 +98,7 @@ RSpec.describe AccountDeletionService do
     CmPlatformSetting.create!(name: "Setting #{SecureRandom.hex(4)}", slug: "setting_#{SecureRandom.hex(4)}", created_by: user)
   end
 
-  let!(:api_token) { user.api_tokens.create!(token_type: :access, token: SecureRandom.hex(16)) }
+  let!(:api_token) { user.api_tokens.create!(token_type: :access, token: SecureRandom.hex(16), name: 'Test Token') }
   let!(:otp_request) { OtpRequest.create!(user: user, otp: 123_456) }
   let!(:profile_picture) do
     user.profile_picture.attach(io: StringIO.new('avatar'), filename: 'avatar.png', content_type: 'image/png')

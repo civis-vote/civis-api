@@ -15,6 +15,7 @@ class UserMailer < ApplicationMailer
                                               product_url: Rails.application.config.client_url[:host]
                                             })
   end
+
   def notify_new_consultation_email_to_admin(user, consultation)
     @@postmark_client.deliver_with_template(from: @@from_email,
                                             to: user.email,
@@ -143,8 +144,8 @@ class UserMailer < ApplicationMailer
   def consultation_export_email_job(consultations, email)
     size_arr = []
     consultations.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir()}/consultations-sheet_#{Time.now.to_s}.xlsx"
-    file_name = "consultations-sheet_#{Time.now.to_s}.xlsx"
+    excel_file = "#{Dir.tmpdir}/consultations-sheet_#{Time.now}.xlsx"
+    file_name = "consultations-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook.add_worksheet(name: 'Consultations') do |sheet|
       sheet.add_row ['Title', 'Url', 'Response Deadline', 'Ministry', 'Category', 'Status', 'Summary', 'Response Count', 'Featured', 'Reading Time', 'Created At', 'Consultation Page Link'], b: true
@@ -161,7 +162,7 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name,
+                                              first_name: user.first_name
                                             },
                                             attachments: [{
                                               name: file_name,
@@ -171,11 +172,11 @@ class UserMailer < ApplicationMailer
                                             }])
   end
 
-  def 	consultation_responses_export_email_job(consultation_responses, email)
+  def	consultation_responses_export_email_job(consultation_responses, email)
     size_arr = []
     consultation_responses.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
-    file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
+    excel_file = "#{Dir.tmpdir}/consultation-responses-sheet_#{Time.now}.xlsx"
+    file_name = "consultations-responses-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     if consultation_responses.last.consultation.public_consultation?
       xlsx.workbook do |workbook|
@@ -198,19 +199,33 @@ class UserMailer < ApplicationMailer
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      end, consultation_response.user.present? && consultation_response.user.designation.present? ? consultation_response.user.designation : 'NA']
             answers = []
             question_ids.each do |id|
-              if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id })
-                answers << answer
-              else
-                answers << ''
-              end
+              answers << if consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
+                           answer
+                         else
+                           ''
+                         end
             end
-            answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',') : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
-            answers.each do | answer |
+            answers = answers.map do |k|
+              "#{if k['answer'].class == Array
+                   k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',')
+                 else
+                   k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer']
+                 end}#{if k.empty?
+                         ''
+                       else
+                         k.key?('is_other') && k['answer'].present? ? ',' : ' '
+                       end}#{if k.empty?
+                               ''
+                             else
+                               k.key?('is_other') ? k['other_option_answer'] : ''
+                             end}"
+            end
+            answers.each do |answer|
               row_data << answer
             end
             sheet.add_row row_data, style: wrap
           end
-          sheet.column_widths *size_arr
+          sheet.column_widths(*size_arr)
         end
       end
     else
@@ -238,19 +253,33 @@ class UserMailer < ApplicationMailer
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    end, consultation_response.user.present? && consultation_response.user.designation.present? ? consultation_response.user.designation : 'NA']
             answers = []
               question_ids.each do |id|
-                if (consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id } )
-                  answers << answer
-                else
-                  answers << ''
-                end
+                answers << if consultation_response.answers.present? && answer = consultation_response.answers.find { |ans| ans['question_id'].to_i == id }
+                             answer
+                           else
+                             ''
+                           end
               end
-              answers = answers.map { |k| "#{ k['answer'].class == Array ? k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',') : k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer'] }#{ k.empty? ? '' : (k.key?('is_other') && k['answer'].present?) ? ',' : ' ' }#{ k.empty? ? '' : k.key?('is_other') ? k['other_option_answer'] : '' }"}
-              answers.each do | answer |
+              answers = answers.map do |k|
+                "#{if k['answer'].class == Array
+                     k['answer'].map { |sub_question| Question.find(sub_question).question_text }.join(',')
+                   else
+                     k['answer'].class == Integer ? Question.find(k['answer']).question_text : k['answer']
+                   end}#{if k.empty?
+                           ''
+                         else
+                           k.key?('is_other') && k['answer'].present? ? ',' : ' '
+                         end}#{if k.empty?
+                                 ''
+                               else
+                                 k.key?('is_other') ? k['other_option_answer'] : ''
+                               end}"
+              end
+              answers.each do |answer|
                 row_data << answer
               end
               sheet.add_row row_data, style: wrap
             end
-            sheet.column_widths *size_arr
+            sheet.column_widths(*size_arr)
           end
         end
       end
@@ -264,7 +293,7 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name,
+                                              first_name: user.first_name
                                             },
                                             attachments: [{
                                               name: file_name,
@@ -277,8 +306,8 @@ class UserMailer < ApplicationMailer
   def user_export_email_job(users, email)
     size_arr = []
     users.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir()}/users-sheet_#{Time.now.to_s}.xlsx"
-    file_name = "users-sheet_#{Time.now.to_s}.xlsx"
+    excel_file = "#{Dir.tmpdir}/users-sheet_#{Time.now}.xlsx"
+    file_name = "users-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Users') do |sheet|
@@ -304,7 +333,7 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name,
+                                              first_name: user.first_name
                                             },
                                             attachments: [{
                                               name: file_name,
@@ -317,8 +346,8 @@ class UserMailer < ApplicationMailer
   def profanity_export_email_job(profanities, email)
     size_arr = []
     profanities.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir()}/profanities-sheet_#{Time.now.to_s}.xlsx"
-    file_name = "profanities-sheet_#{Time.now.to_s}.xlsx"
+    excel_file = "#{Dir.tmpdir}/profanities-sheet_#{Time.now}.xlsx"
+    file_name = "profanities-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Profanities') do |sheet|
@@ -338,7 +367,7 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name,
+                                              first_name: user.first_name
                                             },
                                             attachments: [{
                                               name: file_name,
@@ -351,8 +380,8 @@ class UserMailer < ApplicationMailer
   def wordindex_export_email_job(wordindices, email)
     size_arr = []
     wordindices.size.times { size_arr << 22 }
-    excel_file = "#{Dir.tmpdir()}/glossary-sheet_#{Time.now.to_s}.xlsx"
-    file_name = "glossary-sheet_#{Time.now.to_s}.xlsx"
+    excel_file = "#{Dir.tmpdir}/glossary-sheet_#{Time.now}.xlsx"
+    file_name = "glossary-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     xlsx.workbook do |workbook|
       workbook.add_worksheet(name: 'Glossary') do |sheet|
@@ -372,7 +401,7 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name,
+                                              first_name: user.first_name
                                             },
                                             attachments: [{
                                               name: file_name,
@@ -384,14 +413,14 @@ class UserMailer < ApplicationMailer
 
   def invite_organisation_employee(user, invitation_url)
     @@postmark_client.deliver_with_template(from: @@from_email,
-                                              to: user.email,
-                                              reply_to: 'support@civis.vote',
-                                              template_alias: 'organisation-user-invite',
-                                              template_model: {
-                                                first_name: user.first_name,
-                                                invitation_url: invitation_url,
-                                                unsubscribe_url: user.unsubscribe_url,
-                                              })
+                                            to: user.email,
+                                            reply_to: 'support@civis.vote',
+                                            template_alias: 'organisation-user-invite',
+                                            template_model: {
+                                              first_name: user.first_name,
+                                              invitation_url: invitation_url,
+                                              unsubscribe_url: user.unsubscribe_url
+                                            })
   end
 
   def invite_respondent(consultation, user, consultation_url)
@@ -405,14 +434,13 @@ class UserMailer < ApplicationMailer
                                               unsubscribe_url: user.unsubscribe_url,
                                               product_url: Rails.application.config.client_url[:host]
                                             })
-
   end
 
   def export_all_subjective_responses(email)
-    consultation_list = Consultation.includes(responses: {user: :city}, response_rounds: :questions)
+    consultation_list = Consultation.includes(responses: { user: :city }, response_rounds: :questions)
     question_ids = Question.where(question_type: 'long_text').pluck(:id)
-    excel_file = "#{Dir.tmpdir()}/consultation-responses-sheet_#{Time.now.to_s}.xlsx"
-    file_name = "consultations-responses-sheet_#{Time.now.to_s}.xlsx"
+    excel_file = "#{Dir.tmpdir}/consultation-responses-sheet_#{Time.now}.xlsx"
+    file_name = "consultations-responses-sheet_#{Time.now}.xlsx"
     xlsx = Axlsx::Package.new
     response_header = ['Consultation Title', 'Category', 'Consultation Response Text', 'Submitted By', 'Responder Email', 'City', 'Phone Number', 'Satisfication Rating', 'Visibility', 'Submitted At', 'Is Verified', 'Source', 'Organisation/Department', 'Designation']
     xlsx.workbook do |workbook|
@@ -448,7 +476,7 @@ class UserMailer < ApplicationMailer
                                             reply_to: 'support@civis.vote',
                                             template_alias: 'export-spotlight-search',
                                             template_model: {
-                                              first_name: user.first_name,
+                                              first_name: user.first_name
                                             },
                                             attachments: [{
                                               name: file_name,
@@ -459,7 +487,7 @@ class UserMailer < ApplicationMailer
   end
 
   def response_text(response, question_ids)
-    response.response_text.to_plain_text.presence || (response.answers && response.answers.detect { |an| question_ids.include? an['question_id'].to_i}&.dig('answer'))
+    response.response_text.to_plain_text.presence || (response.answers && response.answers.detect { |an| question_ids.include? an['question_id'].to_i }&.dig('answer'))
   end
 
   def send_otp(user)

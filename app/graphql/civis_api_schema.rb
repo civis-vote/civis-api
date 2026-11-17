@@ -52,6 +52,14 @@ class CivisApiSchema < GraphQL::Schema
                                 extensions: { code: err.code, sub_code: err.sub_code, message: err.message })
   end
 
+  # graphql-ruby stores a rescue_from handler's *return value* as the argument's
+  # value when validation fails during argument coercion (graphql-2.5.x/2.6.x) —
+  # so argument validators would leak ExecutionErrors into `resolve`. Re-raising
+  # routes them through the normal error path instead.
+  rescue_from GraphQL::Schema::Validator::ValidationFailedError do |err, _obj, _args, _ctx, _field|
+    raise err
+  end
+
   def self.unauthorized_object(error)
     raise Unauthorized, I18n.t("graphql.unauthorized", error_type: error.type.graphql_name)
   end

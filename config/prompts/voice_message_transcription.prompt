@@ -1,0 +1,36 @@
+<task>
+Transcribe the audio verbatim. It contains a response to a public consultation.
+</task>
+
+<rules>
+
+- Preserve every spoken word in its original order, including fillers, repetitions, stutters, false starts, self-corrections, and grammatical mistakes. Do not summarize, paraphrase, translate, correct, expand abbreviations, or add words.
+- Transcribe in the language actually spoken, using its native script: English in Latin, Hindi/Marathi in Devanagari (e.g., हाँ, not "haan"), Odia in Odia script (e.g., ହଁ, not "haan"), Kannada in Kannada script (e.g., ಹೌದು, not "haudu"), and other languages in their respective native scripts. Do not transliterate.
+- For mixed speech (e.g., Hinglish, Marathi-English, Odia-English, Kannada-English), preserve the language switches and write each word in the script of the language it was spoken in. Do not force the transcript into a single script and do not insert words from other languages.
+- Preserve names, policy references, schemes, ministries, laws, places, abbreviations, question numbers, and numbers as spoken. Write numbers as spoken words (e.g., "two hundred crore", "fifty percent"). Do not interpret, judge, or editorialize the speaker's views.
+- For unclear speech, including names, use [inaudible] once per continuous unclear section. Do not guess. If a name becomes clear later, replace its earlier [inaudible] markers and use consistent spelling throughout.
+- Use basic punctuation reflecting natural pauses. Return only the transcript, without commentary, language labels, headings, timestamps, speaker tags, quotation marks, Markdown, or JSON.
+- Use the context in <context> only to understand the speech. Follow the audio if it differs from the context, including when an unsupported language is spoken.
+- Before returning, check the entire transcript for verbatim wording, preserved disfluencies, correct scripts, and consistent names.
+
+</rules>
+
+<context>
+
+<consultation_topic>
+{{CONSULTATION_TOPIC}}
+</consultation_topic>
+
+<expected_language>
+{{RESPONSE_LANGUAGE}}
+</expected_language>
+
+<question>
+{{QUESTION_TEXT}}
+</question>
+
+<supported_languages>
+{{SUPPORTED_LANGUAGES}}
+</supported_languages>
+
+</context>

@@ -29,6 +29,9 @@ class User < ApplicationRecord
   has_many :votes, class_name: "ConsultationResponseVote"
   has_many :constant_maps, as: :mappable, dependent: :destroy
   has_many :segments, -> { segment }, through: :constant_maps, source: :constant
+  has_many :user_preferences, dependent: :destroy
+  has_many :preferred_themes, through: :user_preferences, source: :preferable, source_type: 'Theme'
+  has_many :area_of_impacts, -> { area_of_impact }, through: :user_preferences, source: :preferable, source_type: 'Constant'
   # has_many :responses
 
   belongs_to :organisation, counter_cache: true, optional: true
@@ -36,9 +39,15 @@ class User < ApplicationRecord
 
   before_validation :create_random_password, on: :create
   before_validation :set_cm_role, on: :create
+  before_validation :normalize_contact_details
+  before_update :reset_channel_verification
 
   validate :password_complexity, on: :create
   validate :check_organisation_role_only_for_employee
+  validate :email_or_phone_present
+
+  validates :phone_number, uniqueness: true, allow_blank: true
+  validates :phone_number, format: { with: /\A\+\d{11,15}\z/, message: 'must include the country code' }, allow_blank: true
 
   # enums
   enum :role, {
@@ -150,7 +159,34 @@ class User < ApplicationRecord
   end
 
   def is_verified
+    confirmed_at.present? || phone_verified_at.present?
+  end
+
+  def email_verified
     confirmed_at.present?
+  end
+
+  def phone_verified
+    phone_verified_at.present?
+  end
+
+  def email_required?
+    false
+  end
+
+  def self.normalize_phone(value)
+    digits = value.to_s.gsub(/\D/, '').sub(/\A0+/, '')
+    return nil if digits.blank?
+
+    digits = "91#{digits}" if digits.length == 10
+    "+#{digits}"
+  end
+
+  def self.find_for_login(email: nil, phone_number: nil)
+    return find_by(email: email.to_s.strip) if email.present?
+
+    phone = normalize_phone(phone_number)
+    find_by(phone_number: phone) if phone.present?
   end
 
   def create_account_method
@@ -180,6 +216,37 @@ class User < ApplicationRecord
       .order('COUNT(consultation_responses.id) DESC')
       .pluck('departments.name')
       .join(', ')
+  end
+
+  def has_preferences?
+    preferred_themes.exists? || area_of_impacts.exists?
+  end
+
+  def theme_ids=(ids)
+    return if ids.nil?
+
+    self.preferred_theme_ids = ::Theme.where(id: ids).ids
+  end
+
+  def area_of_impact_ids=(ids)
+    return if ids.nil?
+
+    super(::Constant.area_of_impact.where(id: ids).ids)
+  end
+
+  def theme_response_counts
+    responses.joins(:consultation).group('consultations.theme_id').count
+  end
+
+  def department_response_counts
+    responses.joins(:consultation).group('consultations.department_id').count
+  end
+
+  def area_of_impact_response_counts
+    responses.joins(consultation: :constant_maps)
+             .where(constant_maps: { constant_id: ::Constant.area_of_impact.select(:id) })
+             .group('constant_maps.constant_id')
+             .count
   end
 
   def update_last_activity
@@ -296,6 +363,20 @@ class User < ApplicationRecord
   end
 
   private
+
+  def normalize_contact_details
+    self.email = email.to_s.strip.presence
+    self.phone_number = self.class.normalize_phone(phone_number)
+  end
+
+  def reset_channel_verification
+    self.confirmed_at = nil if will_save_change_to_email?
+    self.phone_verified_at = nil if will_save_change_to_phone_number?
+  end
+
+  def email_or_phone_present
+    errors.add(:base, 'Email or phone number is required') if email.blank? && phone_number.blank?
+  end
 
   def set_cm_role
     self.notify_for_new_consultation = true if notify_for_new_consultation.blank?

@@ -3,6 +3,9 @@ module Types
     # Add root-level fields here.
     # They will be entry points for queries on your schema.
 
+    field :blog_category_list,                 resolver: Queries::BlogCategory::List
+    field :blog_post_list,                     resolver: Queries::BlogPost::List
+    field :blog_post_profile,                  resolver: Queries::BlogPost::Profile
     field :case_study_list,                    resolver: Queries::CaseStudy::List
     field :case_study_profile,                 resolver: Queries::CaseStudy::Profile
     field :theme_list,                         resolver: Queries::Theme::List
@@ -14,6 +17,7 @@ module Types
     field :consultation_response_venter_map,   resolver: Queries::ConsultationResponse::VenterMap
     field :consultation_profile,               resolver: Queries::Consultation::Profile
     field :consultation_response_summary,      resolver: Queries::Consultation::ResponseSummary
+    field :consultation_suggestions,           resolver: Queries::Consultation::Suggestions
     field :constant_list,                      resolver: Queries::Constant::List
     field :impact_stats,                       resolver: Queries::Stats::Impact
     field :location_list,                      resolver: Queries::Location::List

@@ -6,6 +6,5 @@ Fabricator(:user) do
   city_id   											{ Location.cities.order("RANDOM()").first.id }
   notify_for_new_consultation 		{ [true, false].sample }
   role														{ "citizen" }
-  phone_number										{ rand(10 ** 10) }
-  after_build											{ |user, transients| user.skip_confirmation_notification! }
+  phone_number										{ "+9198#{8.times.map { rand(10) }.join}" }
 end

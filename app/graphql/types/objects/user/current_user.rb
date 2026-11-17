@@ -2,16 +2,20 @@ module Types
   module Objects
     module User
       class CurrentUser < Base
+        field :area_of_impacts, [Types::Objects::Constant], nil, null: true
         field :callback_url, String, nil, null: true
         field :created_at, Types::Objects::DateTime, nil,  null: false
         field :confirmed_at, Types::Objects::DateTime, nil,  null: true
         field :designation, String, nil, null: true
-        field :email, String, nil, null: false
+        field :email, String, nil, null: true
         field :last_name, String, nil, null: true
         field :notify_for_new_consultation, Boolean, nil, null: true
         field :newsletter_subscription, Boolean, nil, null: true
         field :organization, String, nil, null: true
         field :phone_number, String,  nil,  null: true
+        field :phone_verified, Boolean, nil, null: true
+        field :preferred_themes, [Types::Objects::Theme], nil, null: true
+        field :has_preferences, Boolean, nil, null: false
         field :is_verified, Boolean, nil, null: true
         field :responses, Types::Connections::ConsultationResponse, nil, null: true do 
           argument :sort, Types::Enums::ConsultationResponseSorts, required: false, default_value: nil
@@ -22,8 +26,12 @@ module Types
           object.responses.sort_records(sort, sort_direction)
         end
 
+        def has_preferences
+          object.has_preferences?
+        end
+
         def is_verified
-          object.confirmed_at? if object
+          object.is_verified if object
         end
       end
     end

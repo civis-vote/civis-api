@@ -2,6 +2,8 @@ class ConsultationResponse < ApplicationRecord
   acts_as_paranoid
   has_paper_trail
 
+  SUPPORTED_LANGUAGES = %w[English Hindi Marathi Odia Kannada].freeze
+
   enum :visibility, {
     shared: 0,
     anonymous: 1
@@ -21,11 +23,12 @@ class ConsultationResponse < ApplicationRecord
     somewhat_satisfied
     satisfied
   ]
-  enum :response_language, {
-    english: "English",
-    hindi: "Hindi",
-    marathi: "Marathi",
-    odia: "Odia"
+  enum(:response_language, SUPPORTED_LANGUAGES.to_h { |lang| [lang.downcase.to_sym, lang] })
+  enum :transcription_status, {
+    not_available: 0,
+    pending: 1,
+    completed: 2,
+    failed: 3
   }
 
   include Paginator
@@ -38,7 +41,9 @@ class ConsultationResponse < ApplicationRecord
 
   belongs_to :user, optional: true
   belongs_to :consultation, counter_cache: true, optional: true
-  validates_uniqueness_of :user_id, scope: :response_round_id, unless: proc { |_user| user_id.blank? }
+  validates_uniqueness_of :user_id, scope: :response_round_id,
+                                    message: 'has already submitted a response for this round',
+                                    unless: proc { |_user| user_id.blank? }
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
@@ -55,6 +60,7 @@ class ConsultationResponse < ApplicationRecord
   before_commit :validate_answers
   before_commit :validate_answers, on: :create
   after_commit :notify_admin_if_profane, on: :create
+  after_commit :enqueue_language_inference, on: :create, if: -> { response_language.blank? }
   before_commit :check_if_consultation_expired?, :set_subjective_objective_response_count, on: :create
 
   store_accessor :meta, :approved_by_id, :rejected_by_id, :approved_at, :rejected_at
@@ -99,6 +105,15 @@ class ConsultationResponse < ApplicationRecord
 
   scope :organisation_only, -> { where(organisation_id: Current.user&.organisation_id) }
 
+  scope :response_text_filter, lambda { |has_response_text|
+    return all if has_response_text.nil?
+
+    blank_markup = '^(<[^>]+>|&nbsp;|\s)*$'
+    with_text = joins(:rich_text_response_text).where.not("action_text_rich_texts.body ~ ?", blank_markup)
+
+    has_response_text ? with_text : where.not(id: with_text.select(:id))
+  }
+
   def self.acceptable_responses
     where(response_status: 'acceptable')
   end
@@ -140,9 +155,64 @@ class ConsultationResponse < ApplicationRecord
       voice_messages.attach(io: file, filename: file.original_filename)
       save!
       attachment = voice_messages.last
-      updated_response << { question_id:, attachment_id: attachment.id }
+      updated_response << { question_id:, attachment_id: attachment.id, transcription: nil }
     end
-    update!(voice_responses: updated_response)
+    if updated_response.any?
+      update_columns(voice_responses: updated_response, transcription_status: 1, transcription_errors: [], updated_at: Time.current)
+    else
+      update!(voice_responses: updated_response)
+    end
+  end
+
+  def enqueue_voice_transcriptions
+    Array(voice_responses).each do |entry|
+      TranscribeVoiceMessageJob.perform_later(id, entry['attachment_id'])
+    end
+  end
+
+  def self.build_for_submission(attributes, consultation:, user:)
+    response_round = consultation.response_rounds.order(:created_at).last
+
+    new(attributes).tap do |response|
+      response.user = user
+      response.response_round = response_round
+      response.link_private_consultation!(consultation:, user:, response_round:)
+      raise IncompleteEntity, "Response already submitted by User" if exists?(user:, response_round:)
+    end
+  end
+
+  def link_private_consultation!(consultation:, user:, response_round:)
+    return unless consultation.private_consultation?
+
+    if consultation.private_response? && visibility == "shared"
+      raise GraphQL::ExecutionError, "Private response is enforced, response visibility can't be shared"
+    end
+
+    self.respondent = ::Respondent.find_by(user:, response_round:)
+  end
+
+  def submit(voice_responses:, clause_feedbacks:)
+    transaction do
+      save!
+      submit_voice_responses(voice_responses)
+      submit_clause_feedbacks(clause_feedbacks)
+    end
+    self
+  end
+
+  def submit_clause_feedbacks(feedbacks)
+    return if feedbacks.blank?
+
+    clause_ids = ::Clause.where(consultation_id:).pluck(:id)
+    feedbacks.each do |feedback|
+      next unless clause_ids.include?(feedback[:clause_id])
+
+      clause_feedbacks.create!(
+        clause_id: feedback[:clause_id],
+        feedback_comment: feedback[:feedback_comment],
+        feedback_reason: feedback[:feedback_reason]
+      )
+    end
   end
 
   def update_reading_time
@@ -229,7 +299,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def phone_number
-    user.present? && user.phone_number.present? ? user.phone_number : 'NA'
+    user.present? && user.phone_number.present? ? user.phone_number : (self[:phone_number].presence ? "+#{self[:phone_number]}" : 'NA')
   end
 
   def is_verified
@@ -254,6 +324,11 @@ class ConsultationResponse < ApplicationRecord
 
     response_round.questions.each do |question|
       answer_data = (answers.find { |ans| ans['question_id'].to_i == question.id } if answers.present?)
+
+      if answer_data.blank? && question.accept_voice_message? && voice_responses.present?
+        voice_entry = voice_responses.find { |entry| entry['question_id'].to_i == question.id || entry[:question_id].to_i == question.id }
+        answer_data = { 'question_id' => question.id.to_s, 'answer' => voice_entry['transcription'] } if voice_entry&.dig('transcription')
+      end
 
       formatted_answer = if answer_data.present?
                            answer_text = if answer_data['answer'].is_a?(Array)
@@ -316,6 +391,10 @@ class ConsultationResponse < ApplicationRecord
   end
 
   private
+
+  def enqueue_language_inference
+    InferResponseLanguageJob.perform_later(self)
+  end
 
   def validate_selected_options_limit
     questions = response_round.questions

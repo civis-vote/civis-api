@@ -18,10 +18,10 @@ class ImportWordindex
         if wordindex.valid?
           wordindex.save!
         else
-          @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: wordindex.id, errors: wordindex.errors.message })
+          @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: wordindex.id, errors: wordindex.errors.full_messages.join(', ') })
         end
       rescue StandardError => e
-        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: { error: e.message } })
+        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: e.message })
       end
     end
   end

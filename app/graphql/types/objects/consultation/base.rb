@@ -6,7 +6,7 @@ module Types
         field :id, Int, "ID of the consultation", null: false
         field :anonymous_responses, Types::Connections::ConsultationResponse, nil, null: true
         field :created_at, Types::Objects::DateTime, nil, null: false
-        field :created_by, Types::Objects::User::Base, nil, null: false
+        field :created_by, Types::Objects::User::Base, nil, null: true
         field :consultation_feedback_email, String, nil, null: true
         field :is_featured, Boolean, nil, null: true
         field :responded_on, Types::Objects::DateTime, nil, null: true do
@@ -52,7 +52,7 @@ module Types
         field :marathi_title, String, nil, null: true
         field :kannada_title, String, nil, null: true
         field :updated_at, Types::Objects::DateTime, nil, null: false
-        field :url, String, nil, null: false
+        field :url, String, nil, null: true
         field :responses_reading_times, Integer, "Reading times of all the responses in this consultation", null: false
         field :reading_time, Integer, "Reading time of this consultation summary", null: false
         field :visibility, Types::Enums::ConsultationVisibilityType, nil, null: false
@@ -62,8 +62,11 @@ module Types
         field :odia_summary, String, nil, null: true
         field :marathi_summary, String, nil, null: true
         field :kannada_summary, String, nil, null: true
-        field :summary_hindi, String, nil, null: true
-        field :page, String, nil, null: true
+        field :english_response_summary, String, nil, null: true
+        field :hindi_response_summary, String, nil, null: true
+        field :odia_response_summary, String, nil, null: true
+        field :marathi_response_summary, String, nil, null: true
+        field :kannada_response_summary, String, nil, null: true
         field :consultation_partner_responses, [Types::Objects::ConsultationPartnerResponse::Base], nil, null: true
         field :area_of_impacts, [Types::Objects::Constant], nil, null: true
         field :clauses, [Types::Objects::Clause], nil, null: true
@@ -91,14 +94,6 @@ module Types
 
         def consultation_pdf
           attachment_with_resolution(:consultation_pdf, nil)
-        end
-
-        def page
-          nil
-        end
-
-        def summary_hindi
-          nil
         end
 
         def hindi_title
@@ -145,6 +140,36 @@ module Types
           return unless object.kannada_summary.to_s.present?
 
           object.kannada_summary_rich_text
+        end
+
+        def english_response_summary
+          return unless object.english_response_summary.to_s.present?
+
+          object.english_response_summary_rich_text
+        end
+
+        def hindi_response_summary
+          return unless object.hindi_response_summary.to_s.present?
+
+          object.hindi_response_summary_rich_text
+        end
+
+        def odia_response_summary
+          return unless object.odia_response_summary.to_s.present?
+
+          object.odia_response_summary_rich_text
+        end
+
+        def marathi_response_summary
+          return unless object.marathi_response_summary.to_s.present?
+
+          object.marathi_response_summary_rich_text
+        end
+
+        def kannada_response_summary
+          return unless object.kannada_response_summary.to_s.present?
+
+          object.kannada_response_summary_rich_text
         end
 
         def shared_responses(sort:, sort_direction:)

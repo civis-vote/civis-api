@@ -24,21 +24,39 @@ puts '---> Importing Point Scale'
 Rake::Task['import_records_from_csv:point_scale'].invoke('')
 Rake::Task['import_records_from_csv:point_scale'].reenable
 
-puts '---> Fabricating API Team'
-Fabricate(:user, email: 'mkv@commutatus.com', role: 'admin')
-Fabricate(:user, email: 'balaji@commutatus.com', role: 'admin')
+puts '---> Creating CmRoles'
+admin_role = CmRole.find_or_create_by!(name: 'Admin')
+CmRole.find_or_create_by!(name: 'Citizen')
+organisation_employee_role = CmRole.find_or_create_by!(name: User::ORGANISATION_EMPLOYEE_ROLE_NAME)
 
-puts '---> Fabricating 50 categories'
-progressbar = ProgressBar.create
-50.times do
-  Fabricate(:category)
-  progressbar.increment
+puts '---> Giving Access to admin'
+models = CmAdmin.config.included_models.map(&:to_s).freeze
+models.each do |model|
+  cm_model = CmAdmin::Model.find_by(name: model)
+  next if cm_model.blank?
+
+  available_actions = cm_model.available_actions.map(&:name)
+  available_actions.each do |action|
+    admin_role.cm_permissions.find_or_create_by(action_name: action, ar_model_name: model, scope_name: 'all')
+  end
 end
 
-puts '---> Fabricating 50 ministries'
+if admin_role.cm_permissions.none?
+  puts '!! Admin permissions were not created — cm-admin skips model registration during db:setup.'
+  puts '!! Run `bin/rails db:seed` to grant admin panel permissions.'
+end
+
+puts '---> Fabricating API Team'
+Fabricate(:user, email: 'mkv@commutatus.com', role: 'admin', cm_role: admin_role)
+Fabricate(:user, email: 'balaji@commutatus.com', role: 'admin', cm_role: admin_role)
+Fabricate(:user, email: 'brijesh@commutatus.com', role: 'admin', cm_role: admin_role)
+
+Current.user = User.where(role: 'admin').order(:id).first
+
+puts '---> Fabricating 50 departments'
 progressbar = ProgressBar.create
 50.times do
-  Fabricate(:ministry)
+  Fabricate(:department)
   progressbar.increment
 end
 
@@ -95,7 +113,7 @@ puts '---> Creating Organisation and employees'
 Fabricate.times(5, :organisation)
 Organisation.all.each do |organisation|
   puts '---> Creating Employees'
-  Fabricate.times(3, :user, role: :organisation_employee, organisation_id: organisation.id)
+  Fabricate.times(3, :user, role: :organisation_employee, cm_role: organisation_employee_role, organisation_id: organisation.id)
 end
 
 puts '---> Creating Glossary Word'

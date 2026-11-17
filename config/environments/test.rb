@@ -40,6 +40,9 @@ Rails.application.configure do
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
 
+  config.client_url = { host: "localhost", port: 3000, protocol: :http }
+  config.client_v2_url = { host: "localhost", port: 3001, protocol: :http }
+
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 

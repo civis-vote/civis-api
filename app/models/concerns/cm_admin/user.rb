@@ -23,7 +23,6 @@ module CmAdmin
           filter :state_id, :multi_select, helper_method: :select_options_for_state, filter_with: :state_filter, active_by_default: true
           filter :created_at, :date, placeholder: 'Created at'
           filter :updated_at, :date, placeholder: 'Updated at'
-
           column :full_name
           column :email
           column :cm_role_name, header: 'Role', field_type: :badge, badge_class: CM_ROLE_TAG_CLASS
@@ -110,8 +109,8 @@ module CmAdmin
               cm_section 'Contact and Identity' do
                 field :email
                 field :phone_number
-                field :is_verified, field_type: :boolean, label: 'Email verified'
-                field :is_verified, field_type: :boolean, label: 'Phone verified'
+                field :email_verified, field_type: :boolean, label: 'Email verified'
+                field :phone_verified, field_type: :boolean, label: 'Phone verified'
               end
             end
 
@@ -152,6 +151,7 @@ module CmAdmin
           cm_section 'Details', dynamic_fields: lambda { |_user, associated_record|
             default_role_id = associated_record.is_a?(Organisation) ? ::CmRole.find_by(name: ::User::ORGANISATION_EMPLOYEE_ROLE_NAME)&.id : nil
             form_field :email, input_type: :string
+            form_field :phone_number, input_type: :phone
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
@@ -165,6 +165,7 @@ module CmAdmin
         cm_edit page_title: 'Edit User', page_description: 'Enter all details to edit User' do
           cm_section 'Details' do
             form_field :email, input_type: :string
+            form_field :phone_number, input_type: :phone
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
