@@ -235,7 +235,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def validate_html_tags
-    return response_text.body.blank?
+    return true if response_text.body.blank?
     return true if response_text.body.to_html !~ %r{(?!</?ol>|</?p>|<a\s+([^>]+)>((?:.(?!</a>))*.)</a>|</?a>)</?[^>]*>}
 
     raise IncompleteEntity, "Certain HTML attributes are not permitted."
