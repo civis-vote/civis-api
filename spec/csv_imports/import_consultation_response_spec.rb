@@ -150,21 +150,24 @@ RSpec.describe ImportConsultationResponse do
     end
 
     context 'when a response for the same person already exists in the round' do
-      it 'skips the row instead of creating a duplicate' do
+      it 'reports the row instead of creating a duplicate' do
         run_import([row_attrs])
         expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
 
         importer = run_import([row_attrs])
 
-        expect(importer.invalid_rows).to be_empty
+        expect(importer.invalid_rows.size).to eq(1)
+        expect(importer.invalid_rows.first.errors).to include('Response already submitted for this round')
         expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
       end
 
-      it 'skips a repeated row within the same file' do
+      it 'reports a repeated row within the same file' do
         importer = run_import([row_attrs, row_attrs])
 
-        expect(importer.invalid_rows).to be_empty
-        expect(ConsultationResponse.where(consultation: consultation).count).to eq(1)
+        expect(importer.invalid_rows.size).to eq(1)
+        expect(importer.invalid_rows.first.line_number).to eq(3)
+        expect(importer.invalid_rows.first.errors).to include('Response already submitted for this round')
+        expect(ConsultationResponse.where(consultation: consultation).count).to eq(0)
       end
 
       it 'imports all rows that share an import_key but differ by phone' do
@@ -223,11 +226,11 @@ RSpec.describe ImportConsultationResponse do
         expect(checkbox_answer['answer']).to match_array(option_ids)
       end
 
-      it 'skips every row on re-import' do
+      it 'reports every row on re-import' do
         run_whatsapp_import
         importer = run_whatsapp_import
 
-        expect(importer.invalid_rows).to be_empty
+        expect(importer.invalid_rows.size).to eq(3)
         expect(ConsultationResponse.where(consultation: consultation).count).to eq(3)
       end
     end
