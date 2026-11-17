@@ -32,21 +32,26 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
   # Every row is validated and saved inside the transaction BaseImporter#run!
   # opens (use_transaction?); if any row failed, everything rolls back.
   def run_import
+    seen_row_keys = {}
     each_row do |raw_row, line_number|
       row = sanitize_row(raw_row)
       next if row.each_value.all?(&:blank?)
 
       @row_count += 1
-      collect_row(row, line_number)
+      collect_row(row, line_number, seen_row_keys)
     end
     raise ActiveRecord::Rollback if invalid_rows.present?
   end
 
-  def collect_row(row, line_number)
+  def collect_row(row, line_number, seen_row_keys)
     response = build_consultation_response(row)
-    if valid_response?(response)
+    if duplicate?(response, seen_row_keys)
+      puts "Skipping duplicate response on line #{line_number}"
+      @success_count += 1
+    elsif valid_response?(response)
       response.save!
       @success_count += 1
+      seen_row_keys[dedup_key(response)] = true
     else
       report_error(line_number, identifier_for(row), response.errors.full_messages.join(', '))
     end
@@ -101,6 +106,24 @@ class ImportConsultationResponse < CmAdmin::BaseImporter
     end
   rescue StandardError
     [nil, value]
+  end
+
+  def duplicate?(response, seen_row_keys)
+    key = dedup_key(response)
+    return false if key.nil?
+    return true if seen_row_keys.key?(key)
+
+    scope = ConsultationResponse.where(response_round_id: response.response_round_id)
+    if response[:phone_number].present?
+      scope.exists?(phone_number: response[:phone_number])
+    else
+      scope.where('LOWER(email) = ?', response.email.downcase).exists?
+    end
+  end
+
+  def dedup_key(response)
+    identifier = response[:phone_number].presence || response.email&.downcase
+    "#{response.response_round_id}:#{identifier}" if identifier
   end
 
   def build_consultation_response(row)
