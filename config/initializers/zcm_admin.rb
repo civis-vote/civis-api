@@ -1,4 +1,6 @@
 Rails.application.reloader.to_prepare do
+  CmWebhookEvent.include(HostWebhookEventHandler)
+
   CmAdmin.configure do |config|
     # Sets the default layout to be used for admin
     config.layout = 'admin'
@@ -7,10 +9,12 @@ Rails.application.reloader.to_prepare do
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
                               ResponseRound, Question, CtFileImport, CtFileExport, Respondent, TeamMember, Clause, Constant,
                               CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog,
-                              BlogPost, BlogCategory]
+                              BlogPost, BlogCategory, CmEmailLog, CmWebhookEvent]
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
+    config.enable_email_logging = true
+    config.enable_webhook_processing = true
     config.otp_delivery_channel = :phone_or_email
     config.otp_delivery_provider = GupshupWhatsappDelivery.new
 
@@ -94,6 +98,16 @@ Rails.application.reloader.to_prepare do
           {
             display_name: 'Cron Jobs',
             path: :cm_index_cm_cron_job_path
+          },
+          {
+            display_name: 'Email Logs',
+            icon_name: 'fa-solid fa-envelope',
+            path: :cm_index_cm_email_log_path
+          },
+          {
+            display_name: 'Webhook Events',
+            icon_name: 'fa-solid fa-plug',
+            path: :cm_index_cm_webhook_event_path
           },
           {
             display_name: 'Themes',
