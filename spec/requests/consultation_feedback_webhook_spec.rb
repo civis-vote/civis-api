@@ -92,4 +92,66 @@ RSpec.describe 'Postmark consultation feedback webhook', type: :request do
 
     expect(event.reload).to be_processed
   end
+
+  describe 'legacy /admin/consultations/feedback_webhook path' do
+    it 'logs a CmWebhookEvent and processes consultation timestamps without basic auth' do
+      expect do
+        post '/admin/consultations/feedback_webhook',
+             params: { 'RecordType' => 'Delivery', 'MessageID' => 'message-123',
+                       'Recipient' => 'officer@gov.in', 'DeliveredAt' => '2026-10-21T10:00:00Z' },
+             as: :json
+      end.to change(CmWebhookEvent, :count).by(1)
+
+      expect(response).to have_http_status(:ok)
+
+      CmWebhookEvent.last.process!
+      expect(consultation.reload.feedback_email_delivered_at).to eq('2026-10-21T10:00:00Z')
+    end
+
+    it 'accepts valid basic auth credentials' do
+      post '/admin/consultations/feedback_webhook',
+           params: { 'RecordType' => 'Delivery', 'MessageID' => 'message-123',
+                     'Recipient' => 'officer@gov.in', 'DeliveredAt' => '2026-10-21T10:00:00Z' },
+           headers: auth_headers, as: :json
+
+      expect(response).to have_http_status(:ok)
+    end
+
+    it 'rejects invalid basic auth credentials' do
+      bad_headers = { 'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Basic.encode_credentials('bad', 'creds') }
+
+      post '/admin/consultations/feedback_webhook',
+           params: { 'RecordType' => 'Delivery', 'MessageID' => 'message-123' },
+           headers: bad_headers, as: :json
+
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
+  describe 'email log linkage' do
+    let!(:email_log) do
+      CmEmailLog.create!(message_id: 'message-123',
+                         to: [{ 'email' => 'officer@gov.in', 'status' => 'processed' }],
+                         record: consultation,
+                         module_name: 'Consultation',
+                         status: :processing)
+    end
+
+    it 'links the event to the CmEmailLog and updates the recipient status' do
+      post '/admin/consultations/feedback_webhook',
+           params: { 'RecordType' => 'Delivery', 'MessageID' => 'message-123',
+                     'Recipient' => 'officer@gov.in', 'DeliveredAt' => '2026-10-21T10:00:00Z' },
+           as: :json
+
+      expect(response).to have_http_status(:ok)
+      expect(CmWebhookEvent.last.eventable).to eq(email_log)
+
+      CmWebhookEvent.last.process!
+
+      email_log.reload
+      expect(email_log.recipients.first.status).to eq('delivered')
+      expect(email_log.status).to eq('success')
+      expect(consultation.reload.feedback_email_delivered_at).to eq('2026-10-21T10:00:00Z')
+    end
+  end
 end

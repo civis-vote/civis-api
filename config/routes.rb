@@ -32,6 +32,7 @@ Rails.application.routes.draw do
   get 'users/auth/failure' => 'oauth#failure'
   post '/graphql', to: 'graphql#execute'
   post 'resend/create', to: 'resend#create'
+  post 'admin/consultations/feedback_webhook', to: 'admin/consultations_feedback_webhook#receive'
   get 'users/edit_invite', to: 'users#edit_invite'
   post 'users/accepte_invite', to: 'users#accepte_invite'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
