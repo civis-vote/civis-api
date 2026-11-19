@@ -1,3 +1,15 @@
+# CmAdmin::Model#initialize reads column_names at boot; a registered model whose
+# table is not migrated yet must not crash the whole app — skip it with a warning.
+module CmAdminModelInitGuard
+  def initialize_pending_model(entity)
+    super
+  rescue ActiveRecord::StatementInvalid => e
+    Rails.logger.warn("CmAdmin: skipped admin registration for #{entity}: #{e.message}")
+  end
+end
+
+CmAdmin.singleton_class.prepend(CmAdminModelInitGuard)
+
 Rails.application.reloader.to_prepare do
   CmAdmin.configure do |config|
     # Sets the default layout to be used for admin
