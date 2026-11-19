@@ -47,6 +47,10 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = true
 
+  # Trackable models stamp created_by_id/updated_by_id from Current.user;
+  # reset it so a rolled-back user's id cannot leak into the next example.
+  config.before { Current.reset }
+
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 
