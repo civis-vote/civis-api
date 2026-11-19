@@ -1,158 +1,124 @@
-class ImportConsultationResponse
-  attr_accessor :invalid_rows, :file_path
+class ImportConsultationResponse < CmAdmin::BaseImporter
+  required_headers :consultation_id
 
-  def initialize(file_import:)
-    @file_import = file_import
-    @file_content = @file_import.import_file.download
-    @invalid_rows = []
+  NON_QUESTION_ID_HEADERS = %w[import_key consultation_id first_name last_name email phone_number
+                               responded_at response_language organisation_id visibility
+                               satisfaction_rating response_text].freeze
+
+  SANITIZED_COLUMNS = %w[import_key consultation_id first_name last_name email response_language
+                         organisation_id visibility satisfaction_rating response_text].freeze
+
+  def self.use_transaction?
+    true
   end
 
-  def run!
-    responses = []
-    seen_row_keys = {}
-    CSV.parse(@file_content, headers: true, encoding: 'utf-8').each_with_index do |row, index|
-      puts "Row number - #{index + 1}"
-      Current.user = @file_import.added_by
-      begin
-        consultation_response = build_consultation_response(row)
-        if duplicate?(consultation_response, seen_row_keys)
-          puts "Skipping duplicate response on line #{index + 2}"
-          next
-        end
-        if consultation_response.valid?
-          consultation_response.validate_answers
-          consultation_response.validate_html_tags
-          responses << [index + 2, consultation_response]
-          seen_row_keys[dedup_key(consultation_response)] = true
-        else
-          @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: consultation_response.id,
-                                            errors: consultation_response.errors.full_messages.join(', ') })
-        end
-      rescue StandardError => e
-        @invalid_rows << OpenStruct.new({ line_number: index + 2, identifier: "", errors: e.message })
-      end
-    end
-    persist_all!(responses) if @invalid_rows.empty?
-  end
+  def import_status
+    return :failed if row_count.zero?
 
-  def non_question_id_headers
-    %w[import_key consultation_id first_name last_name email phone_number responded_at response_language
-       organisation_id visibility satisfaction_rating response_text]
+    invalid_rows.empty? ? :success : :failed
   end
 
   def get_question_id_with_answers_hash(hash)
-    consultation = Consultation.find(hash['consultation_id'])
-    response_rounds = consultation.response_rounds.order(:created_at)
-    response_round_id = response_rounds.last.id
-    questions = response_rounds.last.questions
-    email = hash['email'].to_s.strip.presence
-    phone_number = User.normalize_phone(hash['phone_number'])
-    user = User.find_by(email:) if email
-    user ||= User.find_by(phone_number:) if phone_number
-
-    answers = []
-
-    response_hash = {}.with_indifferent_access
-
-    hash.each do |key, value|
-      next unless non_question_id_headers.exclude?(key) && value.present?
-
-      question_id = key.to_i
-      question = questions.find_by(id: question_id)
-      next unless question.present?
-
-      question_id = question.id.to_s
-      question_type = question.question_type
-      sub_questions = question.sub_questions
-      if question_type == 'long_text'
-        answer = value
-      elsif question_type == 'checkbox'
-        begin
-          answer = value.split(',').map { |mc_ans| sub_questions.find_by(question_text: mc_ans.strip).id.to_s }
-        rescue StandardError
-          other_option_answer = value
-        end
-      else
-        answer = nil
-        answer = sub_questions.find_by(question_text: value) if value.present?
-        answer = answer.id if answer.present?
-        other_option_answer = value unless answer.present?
-      end
-      answer_in_hash = { "answer": answer, "question_id": question_id }
-      answer_in_hash.merge!(other_option_answer: value, is_other: 'true') if other_option_answer && question.supports_other
-      answers << answer_in_hash
-    end
-    answers = nil if answers == []
-    response_hash['answers'] = answers
-    response_hash['response_round_id'] = response_round_id
-    response_hash['user_id'] = user.id if user
-    response_hash
-  end
-
-  def sanitize_column_value(value)
-    value&.strip.presence
+    response_round = latest_response_round(hash['consultation_id'])
+    {
+      'answers' => hash.filter_map { |key, value| build_answer(response_round.questions, key, value) }.presence,
+      'response_round_id' => response_round.id,
+      'user_id' => find_user(hash)&.id
+    }.with_indifferent_access
   end
 
   private
 
-  def duplicate?(response, seen_row_keys)
-    key = dedup_key(response)
-    return false if key.nil?
-    return true if seen_row_keys.key?(key)
+  # Every row is validated and saved inside the transaction BaseImporter#run!
+  # opens (use_transaction?); if any row failed, everything rolls back.
+  def run_import
+    each_row do |raw_row, line_number|
+      row = sanitize_row(raw_row)
+      next if row.each_value.all?(&:blank?)
 
-    scope = ConsultationResponse.where(response_round_id: response.response_round_id)
-    if response[:phone_number].present?
-      scope.exists?(phone_number: response[:phone_number])
-    else
-      scope.exists?(email: response.email)
+      @row_count += 1
+      collect_row(row, line_number)
     end
+    raise ActiveRecord::Rollback if invalid_rows.present?
   end
 
-  def dedup_key(response)
-    identifier = response[:phone_number].presence || response.email&.downcase
-    "#{response.response_round_id}:#{identifier}" if identifier
+  def collect_row(row, line_number)
+    response = build_consultation_response(row)
+    if valid_response?(response)
+      response.save!
+      @success_count += 1
+    else
+      report_error(line_number, identifier_for(row), response.errors.full_messages.join(', '))
+    end
+  rescue StandardError => e
+    report_error(line_number, identifier_for(row), e.message)
+  end
+
+  def valid_response?(response)
+    return false unless response.valid?
+
+    response.validate_answers
+    response.validate_html_tags
+    true
+  end
+
+  def identifier_for(row)
+    row['import_key'].presence || row['phone_number'].presence || row['email'].presence || '-'
+  end
+
+  def latest_response_round(consultation_id)
+    @response_rounds ||= {}
+    @response_rounds[consultation_id] ||= Consultation.find(consultation_id).response_rounds.order(:created_at).last
+  end
+
+  def find_user(hash)
+    email = hash['email'].to_s.strip.presence
+    phone_number = User.normalize_phone(hash['phone_number'])
+    (User.find_by(email:) if email) || (User.find_by(phone_number:) if phone_number)
+  end
+
+  def build_answer(questions, key, value)
+    return if NON_QUESTION_ID_HEADERS.include?(key) || value.blank?
+
+    question = questions.find { |q| q.id == key.to_i }
+    return unless question
+
+    answer, other_option = extract_answer(question, value)
+    answer_hash = { answer:, question_id: question.id.to_s }
+    answer_hash.merge!(other_option_answer: value, is_other: 'true') if other_option && question.supports_other
+    answer_hash
+  end
+
+  def extract_answer(question, value)
+    case question.question_type
+    when 'long_text'
+      [value, nil]
+    when 'checkbox'
+      [value.split(',').map { |option| question.sub_questions.find { |sq| sq.question_text == option.strip }.id.to_s }, nil]
+    else
+      sub_question = question.sub_questions.find { |sq| sq.question_text == value }
+      [sub_question&.id, (value unless sub_question)]
+    end
+  rescue StandardError
+    [nil, value]
   end
 
   def build_consultation_response(row)
-    ::ConsultationResponse.new do |consultation_response|
-      consultation_response.import_key = sanitize_column_value(row['import_key'])
-      consultation_response.consultation_id = sanitize_column_value(row['consultation_id'])
-      consultation_response.first_name = sanitize_column_value(row['first_name'])
-      consultation_response.last_name = sanitize_column_value(row['last_name'])
-      consultation_response.email = sanitize_column_value(row['email'])
-      consultation_response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
-      consultation_response.response_language = sanitize_column_value(row['response_language'])
-      if sanitize_column_value(row['responded_at']).present?
-        consultation_response.responded_at = Date.parse(sanitize_column_value(row['responded_at']))
-      end
-      consultation_response.organisation_id = sanitize_column_value(row['organisation_id'])
-      consultation_response.visibility = sanitize_column_value(row['visibility'])
-      consultation_response.satisfaction_rating = sanitize_column_value(row['satisfaction_rating'])
-      consultation_response.response_text = sanitize_column_value(row['response_text'])
-      consultation_response.source = 'off_platform'
-      answer_hash = get_question_id_with_answers_hash(row.to_h.with_indifferent_access)
-      consultation_response.answers = answer_hash['answers']
-      consultation_response.response_round_id = answer_hash['response_round_id']
-      consultation_response.user_id = answer_hash['user_id']
+    ::ConsultationResponse.new do |response|
+      SANITIZED_COLUMNS.each { |column| response.public_send("#{column}=", sanitize_column_value(row[column])) }
+      response.phone_number = User.normalize_phone(row['phone_number'])&.delete('+')
+      response.responded_at = parse_responded_at(row['responded_at'])
+      response.source = :off_platform
+      response.assign_attributes(get_question_id_with_answers_hash(row.to_h.with_indifferent_access))
     end
   end
 
-  def persist_all!(responses)
-    return if responses.empty?
+  def parse_responded_at(value)
+    sanitized = sanitize_column_value(value)
+    return if sanitized.blank?
 
-    ActiveRecord::Base.transaction do
-      responses.each do |line_number, response|
-        begin
-          response.save!
-        rescue StandardError => e
-          @invalid_rows << OpenStruct.new({ line_number:, identifier: '', errors: e.message })
-          raise
-        end
-      end
-    end
-  rescue StandardError => e
-    return if @invalid_rows.present?
-
-    @invalid_rows << OpenStruct.new({ line_number: '', identifier: '', errors: e.message })
+    Date.strptime(sanitized, '%d/%m/%Y')
+  rescue Date::Error
+    Date.parse(sanitized)
   end
 end

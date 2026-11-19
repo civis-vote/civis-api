@@ -4,7 +4,7 @@ module Queries
       description "Get a list of consultations"
       argument :featured_filter, Boolean, required: false, default_value: nil
       argument :department_filter, Int, required: false, default_value: nil
-      argument :theme_filter, Int, required: false, default_value: nil
+      argument :theme_filter, [Int], required: false, default_value: nil
       argument :page, Int, required: false, default_value: 1
       argument :per_page, Int, required: false, default_value: 20
       argument :sort, Types::Enums::ConsultationSorts, required: false, default_value: nil

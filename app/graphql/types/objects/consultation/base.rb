@@ -19,7 +19,7 @@ module Types
         end
         field :consultation_pdf, Types::Objects::AttachmentType, nil, null: true
         field :department, Types::Objects::Department, nil, null: false
-        field :theme, Types::Objects::Theme, nil, null: true
+        field :themes, [Types::Objects::Theme], nil, null: true
         field :consultation_responses_count, Integer, nil, null: false
         field :published_at, Types::Objects::DateTime, nil, null: true
         field :feedback_submitted_at, Types::Objects::DateTime, "Time when the feedback report was submitted.", null: true
@@ -205,6 +205,10 @@ module Types
 
         def clauses
           object.clauses.order(:id)
+        end
+
+        def themes
+          object.themes.active
         end
 
         def enforce_private_response
