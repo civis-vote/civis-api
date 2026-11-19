@@ -6,13 +6,14 @@ class Location < ApplicationRecord
 	has_many :children, class_name: "Location", foreign_key: "parent_id"
   belongs_to :parent, class_name: "Location", optional: true
 
-  enum :location_type, [:city, :state]
+  enum :location_type, [:city, :state, :district]
 
   validates :name, :location_type,  presence: true
 
   scope :alphabetical, -> { order(name: :asc) }
   scope :cities, -> { where(location_type: :city) }
   scope :states, -> { where(location_type: :state) }
+  scope :districts, -> { where(location_type: :district) }
   
   scope :location_type_filter, lambda { |location_type, is_international_city|
     return nil unless location_type.present? 
