@@ -44,6 +44,8 @@ class ConsultationResponse < ApplicationRecord
   validates_uniqueness_of :user_id, scope: :response_round_id,
                                     message: 'has already submitted a response for this round',
                                     unless: proc { |_user| user_id.blank? }
+  validate :response_not_already_submitted, on: :create,
+                                           if: -> { self[:phone_number].present? || email.present? }
   belongs_to :template, class_name: "ConsultationResponse", optional: true, counter_cache: :templates_count
   has_many :template_children, class_name: "ConsultationResponse", foreign_key: "template_id"
   has_many :up_votes, -> { up }, class_name: "ConsultationResponseVote"
@@ -233,7 +235,7 @@ class ConsultationResponse < ApplicationRecord
   end
 
   def validate_html_tags
-    return response_text.body.blank?
+    return true if response_text.body.blank?
     return true if response_text.body.to_html !~ %r{(?!</?ol>|</?p>|<a\s+([^>]+)>((?:.(?!</a>))*.)</a>|</?a>)</?[^>]*>}
 
     raise IncompleteEntity, "Certain HTML attributes are not permitted."
@@ -381,7 +383,7 @@ class ConsultationResponse < ApplicationRecord
   def set_subjective_objective_response_count
     if response_round.questions.present?
       # question_type can be regarded as response types
-      response_types = response_round.questions.where(id: answers.map { |a| a["question_id"] }).pluck(:question_type)
+      response_types = response_round.questions.where(id: Array(answers).map { |a| a["question_id"] }).pluck(:question_type)
       self.subjective_answer_count = response_types.count("long_text")
       self.objective_answer_count = response_types.count - subjective_answer_count
     else
@@ -394,6 +396,16 @@ class ConsultationResponse < ApplicationRecord
 
   def enqueue_language_inference
     InferResponseLanguageJob.perform_later(self)
+  end
+
+  def response_not_already_submitted
+    scope = self.class.where(response_round_id: response_round_id)
+    exists = if self[:phone_number].present?
+               scope.exists?(phone_number: self[:phone_number])
+             else
+               scope.where('LOWER(email) = ?', email.downcase).exists?
+             end
+    errors.add(:base, 'Response already submitted for this round') if exists
   end
 
   def validate_selected_options_limit
