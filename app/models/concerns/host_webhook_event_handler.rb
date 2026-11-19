@@ -16,9 +16,9 @@ module HostWebhookEventHandler
     when 'Delivery'
       consultation.update_columns(feedback_email_delivered_at: payload['DeliveredAt'])
     when 'Open'
-      consultation.update_columns(feedback_email_opened_at: Time.current)
+      consultation.update_columns(feedback_email_opened_at: payload['ReceivedAt'] || Time.current)
     when 'Click'
-      consultation.update_columns(feedback_email_clicked_at: Time.current)
+      consultation.update_columns(feedback_email_clicked_at: payload['ReceivedAt'] || Time.current)
     end
   end
 end
