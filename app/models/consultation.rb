@@ -68,6 +68,7 @@ class Consultation < ApplicationRecord
   has_many :theme_maps, as: :mappable, dependent: :destroy
   has_many :themes, through: :theme_maps
   has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
+  has_many :blog_posts, dependent: :nullify
 
   validates_presence_of :response_deadline, :question_flow
 

@@ -1,6 +1,7 @@
 ---
 trigger: glob
-globs: app/models/**/*
+globs:
+  - "**/app/models/**/*"
 ---
 
 # Validations

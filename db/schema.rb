@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_050324) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -95,7 +95,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "consultation_id"
     t.index ["blog_category_id"], name: "index_blog_posts_on_blog_category_id"
+    t.index ["consultation_id"], name: "index_blog_posts_on_consultation_id"
     t.index ["created_by_id"], name: "index_blog_posts_on_created_by_id"
     t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
     t.index ["updated_by_id"], name: "index_blog_posts_on_updated_by_id"
@@ -1233,6 +1235,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "api_tokens", "users"
   add_foreign_key "blog_posts", "blog_categories"
+  add_foreign_key "blog_posts", "consultations"
   add_foreign_key "blog_posts", "users", column: "created_by_id"
   add_foreign_key "blog_posts", "users", column: "updated_by_id"
   add_foreign_key "case_studies", "themes"
