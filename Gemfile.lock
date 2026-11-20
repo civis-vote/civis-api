@@ -867,7 +867,7 @@ DEPENDENCIES
   rubocop
   rubocop-performance
   rubocop-rails
-  ruby-openai
+  ruby-openai (~> 8.3)
   ruby-progressbar
   ruby-vips (>= 2.2.1)
   ruby_llm
