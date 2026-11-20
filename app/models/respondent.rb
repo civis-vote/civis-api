@@ -105,9 +105,10 @@ class Respondent < ApplicationRecord
     end
 
     def create_user_record(email, confirmed_at, current_user)
-      user_record = User.invite!({ email: email, skip_invitation: true, invitation_sent_at: confirmed_at,
+      user_record = User.invite!({ email: email, skip_invitation: true,
                                    confirmed_at: confirmed_at, cm_role_id: ::CmRole.find_by(name: 'Citizen')&.id },
                                  current_user)
+      user_record.invitation_sent_at = confirmed_at
       @raw_token = user_record.raw_invitation_token
       User.find_by(email: email.strip)
     end

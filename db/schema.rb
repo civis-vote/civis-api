@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -716,6 +716,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
   end
 
+  create_table "devise_invitations", force: :cascade do |t|
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.datetime "superseded_at"
+    t.string "superseded_reason"
+    t.datetime "revoked_at"
+    t.datetime "resource_created_at"
+    t.json "invite_key", default: {}, null: false
+    t.string "invite_key_digest", null: false
+    t.string "invitable_type"
+    t.bigint "invitable_id"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invitable_type", "invitable_id"], name: "index_devise_invitations_on_invitable"
+    t.index ["invitable_type", "invite_key_digest"], name: "index_devise_invitations_on_type_and_invite_key"
+    t.index ["invitation_token"], name: "index_devise_invitations_on_invitation_token", unique: true
+    t.index ["invited_by_type", "invited_by_id"], name: "index_devise_invitations_on_invited_by"
+  end
+
   create_table "game_actions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "action"
@@ -1044,8 +1067,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.index ["owner_type", "owner_id"], name: "index_ruby_llm_usages_on_owner_type_and_owner_id"
     t.index ["status"], name: "index_ruby_llm_usages_on_status"
     t.index ["workflow_id"], name: "index_ruby_llm_usages_on_workflow_id"
-    t.check_constraint "operation::text = ANY (ARRAY['chat'::character varying, 'embedding'::character varying, 'moderation'::character varying, 'image'::character varying, 'speech'::character varying, 'transcription'::character varying, 'ocr'::character varying, 'rerank'::character varying, 'judgment'::character varying, 'video'::character varying, 'research'::character varying, 'code_execution'::character varying]::text[])"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'succeeded'::character varying, 'failed'::character varying, 'cancelled'::character varying]::text[])"
+    t.check_constraint "operation::text = ANY (ARRAY['chat'::character varying::text, 'embedding'::character varying::text, 'moderation'::character varying::text, 'image'::character varying::text, 'speech'::character varying::text, 'transcription'::character varying::text, 'ocr'::character varying::text, 'rerank'::character varying::text, 'judgment'::character varying::text, 'video'::character varying::text, 'research'::character varying::text, 'code_execution'::character varying::text])"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'succeeded'::character varying::text, 'failed'::character varying::text, 'cancelled'::character varying::text])"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -1165,13 +1188,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.string "callback_url"
     t.string "designation"
     t.bigint "organisation_id"
-    t.string "invitation_token"
-    t.datetime "invitation_created_at", precision: nil
-    t.datetime "invitation_sent_at", precision: nil
-    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
-    t.string "invited_by_type"
-    t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.integer "referring_consultation_id"
     t.bigint "cm_role_id"
@@ -1184,10 +1201,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "(phone_number IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
