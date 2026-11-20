@@ -11,9 +11,11 @@ class BlogPost < ApplicationRecord
   has_rich_text :content
 
   belongs_to :blog_category
+  belongs_to :consultation, optional: true
 
   validates :title, presence: true, uniqueness: { case_sensitive: false }
   validates :slug, uniqueness: true, allow_nil: true
+  validate :consultation_cannot_be_reassigned, if: :will_save_change_to_consultation_id?
 
   before_save :set_slug, if: :will_save_change_to_title?
 
@@ -54,6 +56,13 @@ class BlogPost < ApplicationRecord
   end
 
   private
+
+  def consultation_cannot_be_reassigned
+    previous = consultation_id_in_database
+    return unless previous.present? && consultation_id.present? && previous != consultation_id
+
+    errors.add(:consultation_id, 'is already linked to another consultation')
+  end
 
   def set_slug
     base = title.parameterize
