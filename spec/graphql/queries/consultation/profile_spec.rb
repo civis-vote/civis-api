@@ -21,6 +21,12 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
           feedbackSubmittedAt
           acknowledgedAt
           policyReleasedAt
+          blogPosts {
+            id
+            title
+            slug
+            description
+          }
         }
       }
     GQL
@@ -44,6 +50,22 @@ RSpec.describe Queries::Consultation::Profile, type: :graphql do
       expect(profile['feedbackSubmittedAt']).to be_nil
       expect(profile['acknowledgedAt']).to be_nil
       expect(profile['policyReleasedAt']).to be_nil
+    end
+  end
+
+  describe 'blog posts' do
+    it 'returns only published blogs associated with the consultation, latest first' do
+      older = Fabricate(:blog_post, status: :published, published_at: 3.days.ago)
+      newer = Fabricate(:blog_post, status: :published, published_at: 1.day.ago)
+      draft = Fabricate(:blog_post, status: :draft, published_at: nil)
+      consultation.blog_posts.push(older, newer, draft)
+
+      titles = profile['blogPosts'].map { |post| post['title'] }
+      expect(titles).to eq([newer.title, older.title])
+    end
+
+    it 'returns an empty array when no blogs are associated' do
+      expect(profile['blogPosts']).to eq([])
     end
   end
 end

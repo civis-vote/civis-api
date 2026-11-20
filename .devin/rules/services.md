@@ -1,6 +1,7 @@
 ---
 trigger: glob
-globs: app/services/**/*.rb
+globs:
+  - "**/app/services/**/*.rb"
 ---
 
 # Service Object Guidelines
