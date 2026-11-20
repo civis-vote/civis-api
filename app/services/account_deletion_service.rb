@@ -68,7 +68,7 @@ class AccountDeletionService
     Respondent.where(user_id: user.id).delete_all
     UserCount.where(user_id: user.id).delete_all
     CtPageView.where(owner: user).delete_all if defined?(::CtPageView)
-    User.where(invited_by_type: 'User', invited_by_id: user.id).update_all(invited_by_id: nil, invited_by_type: nil)
+    DeviseInvitable::Invitation.where(invited_by_type: 'User', invited_by_id: user.id).update_all(invited_by_id: nil, invited_by_type: nil)
   end
 
   def nullify_creator_references
