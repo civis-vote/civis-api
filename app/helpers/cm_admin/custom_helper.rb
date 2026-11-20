@@ -19,7 +19,7 @@ module CmAdmin
     end
 
     def select_options_for_theme(_ = nil, _ = nil)
-      ::Theme.pluck(:name, :id)
+      ::Theme.active.pluck(:name, :id)
     end
 
     def select_options_for_location(_ = nil, _ = nil)
