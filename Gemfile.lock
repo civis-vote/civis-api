@@ -706,8 +706,6 @@ GEM
       marcel (>= 1.0, < 3)
       schematist (~> 1.1)
       zeitwerk (~> 2)
-    ruby_llm-schema (1.0.0)
-      schematist (~> 1.0)
     rubyzip (3.7.0)
     schematist (1.1.0)
     scout_apm (6.4.0)
@@ -873,7 +871,7 @@ DEPENDENCIES
   ruby-progressbar
   ruby-vips (>= 2.2.1)
   ruby_llm
-  ruby_llm-schema
+  schematist
   scout_apm
   selenium-webdriver
   sidekiq
