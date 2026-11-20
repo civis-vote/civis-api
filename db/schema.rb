@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
   enable_extension "btree_gist"
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
   enable_extension "uuid-ossp"
 
   create_table "action_text_rich_texts", force: :cascade do |t|

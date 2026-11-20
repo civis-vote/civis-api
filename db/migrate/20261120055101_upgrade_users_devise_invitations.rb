@@ -46,7 +46,8 @@ class UpgradeUsersDeviseInvitations < ActiveRecord::Migration[8.1]
 
     # Copy the legacy per-model invitation data. The invite_key_digest must
     # match DeviseInvitable::Invitation.digest_for('User', email: <email>),
-    # i.e. SHA-256 of "User\0email\0<email>".
+    # i.e. SHA-256 of "User\0email\0<email>". PostgreSQL cannot store NUL
+    # bytes in UTF-8 text, so the digest input is built as bytea.
     execute <<~SQL
       INSERT INTO devise_invitations (
         invitation_token,
@@ -70,7 +71,15 @@ class UpgradeUsersDeviseInvitations < ActiveRecord::Migration[8.1]
         invitation_accepted_at,
         invitation_created_at,
         json_build_object('email', email),
-        encode(digest('User' || E'\\x00' || 'email' || E'\\x00' || email, 'sha256'), 'hex'),
+        encode(
+          digest(
+            convert_to('User', 'UTF8') || decode('00', 'hex') ||
+            convert_to('email', 'UTF8') || decode('00', 'hex') ||
+            convert_to(email, 'UTF8'),
+            'sha256'
+          ),
+          'hex'
+        ),
         'User',
         id,
         invited_by_type,
