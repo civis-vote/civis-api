@@ -1,72 +1,101 @@
-require 'digest'
-
 class UpgradeUsersDeviseInvitations < ActiveRecord::Migration[8.1]
-  OLD_INVITATION_COLUMNS = %i[
-    invitation_token invitation_created_at invitation_sent_at
-    invitation_accepted_at invited_by_id invited_by_type
-  ].freeze
-
   def up
-    create_devise_invitations_table unless table_exists?(:devise_invitations)
+    execute 'CREATE EXTENSION IF NOT EXISTS pgcrypto'
 
-    resource_class = Class.new(ActiveRecord::Base) do
-      self.table_name = 'users'
-      self.inheritance_column = :_type_disabled
-    end
-    invitation_class = Class.new(ActiveRecord::Base) do
-      self.table_name = 'devise_invitations'
-    end
-
-    resource_class.where.not(invitation_created_at: nil).find_each do |resource|
-      invite_key = resource.attributes.slice("email")
-      digest_components = invite_key.map { |key, value| [key.to_s, value.to_s] }.sort.flatten
-      invitation_class.create!(
-        invitation_token: resource.invitation_token,
-        invitation_created_at: resource.invitation_created_at,
-        invitation_sent_at: resource.invitation_sent_at,
-        invitation_accepted_at: resource.invitation_accepted_at,
-        resource_created_at: resource.invitation_created_at,
-        invite_key: invite_key,
-        invite_key_digest: Digest::SHA256.hexdigest((['User'] + digest_components).join("\0")),
-        invitable_type: 'User',
-        invitable_id: resource.id,
-        invited_by_type: resource.invited_by_type,
-        invited_by_id: resource.invited_by_id,
-        created_at: resource.invitation_created_at,
-        updated_at: resource.invitation_accepted_at || resource.invitation_sent_at || resource.invitation_created_at
+    execute <<~SQL
+      CREATE TABLE IF NOT EXISTS devise_invitations (
+        id bigserial PRIMARY KEY,
+        invitation_token character varying,
+        invitation_created_at timestamp(6) without time zone,
+        invitation_sent_at timestamp(6) without time zone,
+        invitation_accepted_at timestamp(6) without time zone,
+        superseded_at timestamp(6) without time zone,
+        superseded_reason character varying,
+        revoked_at timestamp(6) without time zone,
+        resource_created_at timestamp(6) without time zone,
+        invite_key json NOT NULL DEFAULT '{}'::json,
+        invite_key_digest character varying NOT NULL,
+        invitable_type character varying,
+        invitable_id bigint,
+        invited_by_type character varying,
+        invited_by_id bigint,
+        created_at timestamp(6) without time zone NOT NULL,
+        updated_at timestamp(6) without time zone NOT NULL
       )
-    end
+    SQL
 
-    OLD_INVITATION_COLUMNS.each do |column|
-      remove_column :users, column if column_exists?(:users, column)
-    end
+    execute <<~SQL
+      CREATE INDEX IF NOT EXISTS index_devise_invitations_on_invitable
+        ON devise_invitations (invitable_type, invitable_id)
+    SQL
+
+    execute <<~SQL
+      CREATE UNIQUE INDEX IF NOT EXISTS index_devise_invitations_on_invitation_token
+        ON devise_invitations (invitation_token)
+    SQL
+
+    execute <<~SQL
+      CREATE INDEX IF NOT EXISTS index_devise_invitations_on_invited_by
+        ON devise_invitations (invited_by_type, invited_by_id)
+    SQL
+
+    execute <<~SQL
+      CREATE INDEX IF NOT EXISTS index_devise_invitations_on_type_and_invite_key
+        ON devise_invitations (invitable_type, invite_key_digest)
+    SQL
+
+    # Copy the legacy per-model invitation data. The invite_key_digest must
+    # match DeviseInvitable::Invitation.digest_for('User', email: <email>),
+    # i.e. SHA-256 of "User\0email\0<email>".
+    execute <<~SQL
+      INSERT INTO devise_invitations (
+        invitation_token,
+        invitation_created_at,
+        invitation_sent_at,
+        invitation_accepted_at,
+        resource_created_at,
+        invite_key,
+        invite_key_digest,
+        invitable_type,
+        invitable_id,
+        invited_by_type,
+        invited_by_id,
+        created_at,
+        updated_at
+      )
+      SELECT
+        invitation_token,
+        invitation_created_at,
+        invitation_sent_at,
+        invitation_accepted_at,
+        invitation_created_at,
+        json_build_object('email', email),
+        encode(digest('User' || E'\\x00' || 'email' || E'\\x00' || email, 'sha256'), 'hex'),
+        'User',
+        id,
+        invited_by_type,
+        invited_by_id,
+        invitation_created_at,
+        COALESCE(invitation_accepted_at, invitation_sent_at, invitation_created_at)
+      FROM users
+      WHERE invitation_created_at IS NOT NULL
+    SQL
+
+    # invitation_limit and invitations_count describe inviters rather than
+    # individual invitations, so they stay on users.
+    execute <<~SQL
+      ALTER TABLE users
+        DROP COLUMN IF EXISTS invitation_token,
+        DROP COLUMN IF EXISTS invitation_created_at,
+        DROP COLUMN IF EXISTS invitation_sent_at,
+        DROP COLUMN IF EXISTS invitation_accepted_at,
+        DROP COLUMN IF EXISTS invited_by_id,
+        DROP COLUMN IF EXISTS invited_by_type
+    SQL
   end
 
   def down
     raise ActiveRecord::IrreversibleMigration,
       'Multiple invitation records cannot be losslessly moved back onto users'
   end
-
-  private
-
-    def create_devise_invitations_table
-      create_table :devise_invitations do |t|
-        t.string :invitation_token
-        t.datetime :invitation_created_at
-        t.datetime :invitation_sent_at
-        t.datetime :invitation_accepted_at
-        t.datetime :superseded_at
-        t.string :superseded_reason
-        t.datetime :revoked_at
-        t.datetime :resource_created_at
-        t.json :invite_key, null: false, default: {}
-        t.string :invite_key_digest, null: false
-        t.references :invitable, polymorphic: true
-        t.references :invited_by, polymorphic: true
-        t.timestamps
-      end
-      add_index :devise_invitations, :invitation_token, unique: true
-      add_index :devise_invitations, [:invitable_type, :invite_key_digest],
-        name: 'index_devise_invitations_on_type_and_invite_key'
-    end
 end
