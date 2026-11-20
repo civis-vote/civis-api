@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.4.13'
+ruby '4.0.10'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 8.1.3'
 # Use postgresql as the database for Active Record
@@ -115,7 +115,8 @@ gem 'cm-geocoder'
 gem 'positioning'
 gem 'redcarpet'
 gem 'ruby_llm'
-gem 'ruby_llm-schema'
+gem 'schematist'
+gem 'ruby-openai'
 gem 'sprockets-rails'
 gem 'stimulus-rails'
 gem 'rack-attack', '~> 6.8'

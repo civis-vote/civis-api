@@ -1,8 +1,8 @@
 class CivisApiSchema < GraphQL::Schema
-  use GraphQL::Schema::Visibility
-
   mutation(Types::MutationType)
   query(Types::QueryType)
+
+  use GraphQL::Schema::Visibility
 
   trace_with GraphQL::Tracing::ScoutTrace, set_transaction_name: true
 

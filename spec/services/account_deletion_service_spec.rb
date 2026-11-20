@@ -219,12 +219,17 @@ RSpec.describe AccountDeletionService do
 
     it 'nullifies invited_by references on users invited by the deleted user' do
       invited_user = create_user(city: city)
-      invited_user.update_columns(invited_by_type: 'User', invited_by_id: user.id)
+      invitation = DeviseInvitable::Invitation.create!(
+        invitable: invited_user,
+        invited_by: user,
+        invite_key: { 'email' => invited_user.email },
+        invitation_created_at: Time.current
+      )
 
       service.call
 
-      expect(invited_user.reload.invited_by_id).to be_nil
-      expect(invited_user.reload.invited_by_type).to be_nil
+      expect(invitation.reload.invited_by_id).to be_nil
+      expect(invitation.reload.invited_by_type).to be_nil
     end
 
     it 'nullifies created_by references on content kept in the system' do
