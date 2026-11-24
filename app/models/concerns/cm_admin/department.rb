@@ -45,14 +45,15 @@ module CmAdmin
 
         cm_show page_title: :name do
           bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
-                      success_message: ->(success) { "Successfully Deleted #{success.size} Departments." },
+                      success_message: ->(success) { { body: "Successfully Deleted #{success.size} Departments." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to delete #{errors.size} Departments.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to delete #{errors.size} Departments.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/departments/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Delete', description: 'Are you sure you want to Delete selected Departments.',
                                              confirmation_text: 'Confirm' } do |id|
@@ -60,14 +61,15 @@ module CmAdmin
           end
 
           bulk_action name: 'duplicate', display_name: 'Duplicate', icon_name: 'fa-solid fa-clone', display_type: :modal,
-                      success_message: ->(success) { "Successfully duplicated #{success.size} Departments." },
+                      success_message: ->(success) { { body: "Successfully duplicated #{success.size} Departments." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to duplicate #{errors.size} Departments.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to duplicate #{errors.size} Departments.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/departments/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Duplicate Department', description: 'Are you sure you want to Duplicate selected Departments',
                                              confirmation_text: 'Confirm' } do |id|
