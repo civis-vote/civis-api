@@ -279,6 +279,11 @@ GEM
       tzinfo
     event_stream_parser (1.0.0)
     fabrication (2.28.0)
+    factory_bot (6.6.0)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.1)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
     faker (2.21.0)
       i18n (>= 1.8.11, < 2)
     faraday (2.15.1)
@@ -803,6 +808,7 @@ DEPENDENCIES
   devise
   devise_invitable
   fabrication
+  factory_bot_rails
   faker
   google-cloud-storage
   graphiql-rails
