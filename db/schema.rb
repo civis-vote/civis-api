@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   enable_extension "btree_gist"
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
   enable_extension "uuid-ossp"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -95,7 +96,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "consultation_id"
     t.index ["blog_category_id"], name: "index_blog_posts_on_blog_category_id"
+    t.index ["consultation_id"], name: "index_blog_posts_on_consultation_id"
     t.index ["created_by_id"], name: "index_blog_posts_on_created_by_id"
     t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
     t.index ["updated_by_id"], name: "index_blog_posts_on_updated_by_id"
@@ -575,7 +578,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.boolean "show_discuss_section", default: true, null: false
     t.boolean "show_satisfaction_rating", default: true
     t.integer "question_flow", default: 0
-    t.bigint "theme_id"
     t.string "title_kannada"
     t.datetime "response_deadline"
     t.datetime "feedback_submitted_at"
@@ -584,7 +586,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.index ["deleted_at"], name: "index_consultations_on_deleted_at"
     t.index ["department_id"], name: "index_consultations_on_department_id"
     t.index ["feedback_email_message_id"], name: "index_consultations_on_feedback_email_message_id"
-    t.index ["theme_id"], name: "index_consultations_on_theme_id"
   end
 
   create_table "ct_bot_artifacts", force: :cascade do |t|
@@ -762,6 +763,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.string "name_marathi"
     t.string "name_kannada"
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
+  end
+
+  create_table "devise_invitations", force: :cascade do |t|
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.datetime "superseded_at"
+    t.string "superseded_reason"
+    t.datetime "revoked_at"
+    t.datetime "resource_created_at"
+    t.json "invite_key", default: {}, null: false
+    t.string "invite_key_digest", null: false
+    t.string "invitable_type"
+    t.bigint "invitable_id"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invitable_type", "invitable_id"], name: "index_devise_invitations_on_invitable"
+    t.index ["invitable_type", "invite_key_digest"], name: "index_devise_invitations_on_type_and_invite_key"
+    t.index ["invitation_token"], name: "index_devise_invitations_on_invitation_token", unique: true
+    t.index ["invited_by_type", "invited_by_id"], name: "index_devise_invitations_on_invited_by"
   end
 
   create_table "game_actions", force: :cascade do |t|
@@ -1134,11 +1158,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.index ["status"], name: "index_team_members_on_status"
   end
 
+  create_table "theme_maps", force: :cascade do |t|
+    t.bigint "theme_id", null: false
+    t.string "mappable_type"
+    t.bigint "mappable_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["mappable_type", "mappable_id"], name: "index_theme_maps_on_mappable"
+    t.index ["theme_id", "mappable_type", "mappable_id"], name: "index_theme_maps_on_theme_and_mappable", unique: true
+  end
+
   create_table "themes", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "deleted_at", precision: nil
+    t.string "icon_name"
+    t.integer "status", default: 0, null: false
     t.index ["deleted_at"], name: "index_themes_on_deleted_at"
   end
 
@@ -1213,13 +1249,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.string "callback_url"
     t.string "designation"
     t.bigint "organisation_id"
-    t.string "invitation_token"
-    t.datetime "invitation_created_at", precision: nil
-    t.datetime "invitation_sent_at", precision: nil
-    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
-    t.string "invited_by_type"
-    t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.integer "referring_consultation_id"
     t.bigint "cm_role_id"
@@ -1232,10 +1262,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "(phone_number IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -1271,6 +1298,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "api_tokens", "users"
   add_foreign_key "blog_posts", "blog_categories"
+  add_foreign_key "blog_posts", "consultations"
   add_foreign_key "blog_posts", "users", column: "created_by_id"
   add_foreign_key "blog_posts", "users", column: "updated_by_id"
   add_foreign_key "case_studies", "themes"
@@ -1309,7 +1337,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   add_foreign_key "consultation_responses", "response_rounds"
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "departments"
-  add_foreign_key "consultations", "themes"
   add_foreign_key "ct_bot_artifacts", "ct_bot_messages"
   add_foreign_key "ct_bot_conversations", "ruby_llm_models"
   add_foreign_key "ct_bot_conversations", "users"
@@ -1335,6 +1362,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   add_foreign_key "response_summaries", "consultations"
   add_foreign_key "showcase_slides", "users", column: "created_by_id"
   add_foreign_key "showcase_slides", "users", column: "updated_by_id"
+  add_foreign_key "theme_maps", "themes"
   add_foreign_key "user_preferences", "users"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"

@@ -19,7 +19,7 @@ module CmAdmin
     end
 
     def select_options_for_theme(_ = nil, _ = nil)
-      ::Theme.pluck(:name, :id)
+      ::Theme.active.pluck(:name, :id)
     end
 
     def select_options_for_location(_ = nil, _ = nil)
@@ -74,6 +74,10 @@ module CmAdmin
 
     def select_options_for_blog_category(_ = nil, _ = nil)
       ::BlogCategory.order(:name).pluck(:name, :id)
+    end
+
+    def select_options_for_blog_post(record = nil, _ = nil)
+      ::BlogPost.where(consultation_id: [nil, record&.id]).order(:title).pluck(:title, :id)
     end
   end
 end

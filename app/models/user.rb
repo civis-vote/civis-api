@@ -16,7 +16,8 @@ class User < ApplicationRecord
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable, :cm_admin_authenticatable,
-         :recoverable, :rememberable, :validatable, :omniauthable, :invitable
+         :recoverable, :rememberable, :validatable, :omniauthable, :invitable,
+         create_resource_on_invitation: true
 
   belongs_to :city, class_name: "Location", foreign_key: "city_id", optional: true
   has_many :otp_requests, dependent: :destroy
@@ -203,9 +204,9 @@ class User < ApplicationRecord
 
   def themes_participated_in
     responses
-      .joins(:consultation).group('consultations.theme_id')
+      .joins(consultation: :theme_maps).group('theme_maps.theme_id')
       .order('COUNT(consultation_responses.id) DESC')
-      .pluck('consultations.theme_id').compact
+      .pluck('theme_maps.theme_id').compact
       .then { |ids| Theme.where(id: ids).pluck(:name) }
       .join(', ')
   end
@@ -235,7 +236,7 @@ class User < ApplicationRecord
   end
 
   def theme_response_counts
-    responses.joins(:consultation).group('consultations.theme_id').count
+    responses.joins(consultation: :theme_maps).group('theme_maps.theme_id').count
   end
 
   def department_response_counts
@@ -324,9 +325,10 @@ class User < ApplicationRecord
     emails = params[:email].split(",")
     emails.each do |email|
       user = ::User.invite!(
-        { email: email, organisation_id: params[:organisation_id], skip_invitation: true, invitation_sent_at: DateTime.now, confirmed_at: DateTime.now,
+        { email: email, organisation_id: params[:organisation_id], skip_invitation: true, confirmed_at: DateTime.now,
           role: "organisation_employee", status: params[:active] == false ? :disabled : :active }, current_user
       )
+      user.invitation_sent_at = DateTime.now
       raw_token = user.raw_invitation_token
       user_record = ::User.find_by(email: email.strip)
       unless user_record.active?

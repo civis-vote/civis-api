@@ -18,9 +18,10 @@ RSpec.describe User, type: :model do
 
   def create_consultation(theme: nil, area_of_impacts: [])
     consultation = Consultation.create!(title: "Consultation #{SecureRandom.hex(4)}", department: department,
-                                        theme: theme, response_deadline: 10.days.from_now,
+                                        response_deadline: 10.days.from_now,
                                         question_flow: :question_list, status: :published,
                                         visibility: :public_consultation, published_at: 5.days.ago)
+    consultation.theme_maps.create!(theme: theme) if theme
     area_of_impacts.each { |aoi| consultation.constant_maps.create!(constant: aoi) }
     consultation
   end
