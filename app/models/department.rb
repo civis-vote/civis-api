@@ -67,6 +67,14 @@ class Department < ApplicationRecord
     where(name: names)
   }
 
+  scope :sort_by_responses_count, lambda { |direction|
+    dir = direction.to_s.downcase == 'desc' ? 'DESC' : 'ASC'
+    order(Arel.sql("(SELECT COALESCE(SUM(consultations.consultation_responses_count), 0)
+                    FROM consultations
+                    WHERE consultations.department_id = departments.id
+                      AND consultations.deleted_at IS NULL) #{dir}"))
+  }
+
 
   def picture_url
     if logo.attached?

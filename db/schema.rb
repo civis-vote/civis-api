@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -241,6 +241,54 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.datetime "updated_at", null: false
     t.index ["notifiable_type", "notifiable_id"], name: "index_cm_notifiables_on_notifiable"
     t.index ["notification_type"], name: "index_cm_notifiables_on_notification_type"
+  end
+
+  create_table "cm_oauth_clients", force: :cascade do |t|
+    t.string "client_id", null: false
+    t.string "client_name"
+    t.jsonb "redirect_uris", default: [], null: false
+    t.datetime "metadata_fetched_at"
+    t.datetime "metadata_expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_cm_oauth_clients_on_client_id", unique: true
+  end
+
+  create_table "cm_oauth_grants", force: :cascade do |t|
+    t.bigint "cm_oauth_client_id", null: false
+    t.bigint "user_id", null: false
+    t.string "code_digest", null: false
+    t.string "redirect_uri", null: false
+    t.string "code_challenge", null: false
+    t.string "resource", null: false
+    t.string "scope"
+    t.datetime "expires_at", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cm_oauth_client_id"], name: "index_cm_oauth_grants_on_cm_oauth_client_id"
+    t.index ["code_digest"], name: "index_cm_oauth_grants_on_code_digest", unique: true
+    t.index ["user_id"], name: "index_cm_oauth_grants_on_user_id"
+  end
+
+  create_table "cm_oauth_tokens", force: :cascade do |t|
+    t.bigint "cm_oauth_client_id", null: false
+    t.bigint "cm_oauth_grant_id", null: false
+    t.bigint "user_id", null: false
+    t.string "access_token_digest", null: false
+    t.string "refresh_token_digest", null: false
+    t.string "resource", null: false
+    t.string "scope"
+    t.datetime "access_expires_at", null: false
+    t.datetime "refresh_expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["access_token_digest"], name: "index_cm_oauth_tokens_on_access_token_digest", unique: true
+    t.index ["cm_oauth_client_id"], name: "index_cm_oauth_tokens_on_cm_oauth_client_id"
+    t.index ["cm_oauth_grant_id"], name: "index_cm_oauth_tokens_on_cm_oauth_grant_id"
+    t.index ["refresh_token_digest"], name: "index_cm_oauth_tokens_on_refresh_token_digest", unique: true
+    t.index ["user_id"], name: "index_cm_oauth_tokens_on_user_id"
   end
 
   create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
@@ -1044,8 +1092,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
     t.index ["owner_type", "owner_id"], name: "index_ruby_llm_usages_on_owner_type_and_owner_id"
     t.index ["status"], name: "index_ruby_llm_usages_on_status"
     t.index ["workflow_id"], name: "index_ruby_llm_usages_on_workflow_id"
-    t.check_constraint "operation::text = ANY (ARRAY['chat'::character varying, 'embedding'::character varying, 'moderation'::character varying, 'image'::character varying, 'speech'::character varying, 'transcription'::character varying, 'ocr'::character varying, 'rerank'::character varying, 'judgment'::character varying, 'video'::character varying, 'research'::character varying, 'code_execution'::character varying]::text[])"
-    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying, 'succeeded'::character varying, 'failed'::character varying, 'cancelled'::character varying]::text[])"
+    t.check_constraint "operation::text = ANY (ARRAY['chat'::character varying::text, 'embedding'::character varying::text, 'moderation'::character varying::text, 'image'::character varying::text, 'speech'::character varying::text, 'transcription'::character varying::text, 'ocr'::character varying::text, 'rerank'::character varying::text, 'judgment'::character varying::text, 'video'::character varying::text, 'research'::character varying::text, 'code_execution'::character varying::text])"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'succeeded'::character varying::text, 'failed'::character varying::text, 'cancelled'::character varying::text])"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -1233,6 +1281,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_19_122360) do
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
   add_foreign_key "cm_email_logs", "users", column: "triggered_by_id"
   add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
+  add_foreign_key "cm_oauth_grants", "cm_oauth_clients"
+  add_foreign_key "cm_oauth_grants", "users", on_delete: :cascade
+  add_foreign_key "cm_oauth_tokens", "cm_oauth_clients"
+  add_foreign_key "cm_oauth_tokens", "cm_oauth_grants", on_delete: :cascade
+  add_foreign_key "cm_oauth_tokens", "users", on_delete: :cascade
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"

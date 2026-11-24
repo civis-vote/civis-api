@@ -11,7 +11,8 @@ module CmAdmin
         additional_permitted_fields [segment_ids: []]
         sort column: 'created_at', display_name: 'Created At', default: true, default_direction: 'desc'
         sort column: 'updated_at', display_name: 'Updated At'
-        sort column: 'consultations_consultation_responses_count', display_name: 'Response Count'
+        sort column: 'consultations_consultation_responses_count', display_name: 'Response Count',
+             sort_with: :sort_by_responses_count
 
         cm_index do
           page_title 'Departments'

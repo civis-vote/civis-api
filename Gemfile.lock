@@ -1,7 +1,7 @@
 GEM
   remote: https://cm-gems.commutatus.com/
   specs:
-    cm-admin (9.4.0)
+    cm-admin (9.5.6)
       ar_lazy_preload (>= 2.1)
       blueprinter
       caxlsx_rails
@@ -239,7 +239,7 @@ GEM
       concurrent-ruby (~> 1.0)
       dry-core (~> 1.1)
       zeitwerk (~> 2.6)
-    dry-schema (1.16.0)
+    dry-schema (1.17.0)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 1.0, >= 1.0.1)
       dry-core (~> 1.1)
@@ -526,7 +526,7 @@ GEM
       activesupport (>= 3.0.0)
     raabro (1.5.0)
     racc (1.8.1)
-    rack (3.2.8)
+    rack (3.2.9)
     rack-attack (6.8.0)
       rack (>= 1.0, < 4)
     rack-cors (2.0.2)
@@ -753,7 +753,7 @@ GEM
     unicode-display_width (2.6.0)
     uri (1.1.2)
     useragent (0.16.11)
-    view_component (4.24.0)
+    view_component (4.25.0)
       actionview (>= 7.1.0)
       activesupport (>= 7.1.0)
       prism (>= 1.0)
