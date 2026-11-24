@@ -157,14 +157,15 @@ module CmAdmin
           end
 
           bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
-                      success_message: ->(success) { "Successfully Deleted #{success.size} Consultations." },
+                      success_message: ->(success) { { body: "Successfully Deleted #{success.size} Consultations." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to delete #{errors.size} consultations.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to delete #{errors.size} consultations.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/consultations/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Delete', description: 'Are you sure you want to Delete selected Consultations.',
                                              confirmation_text: 'Confirm' } do |id|
@@ -172,14 +173,15 @@ module CmAdmin
           end
 
           bulk_action name: 'duplicate', display_name: 'Duplicate', icon_name: 'fa-solid fa-clone', display_type: :modal,
-                      success_message: ->(success) { "Successfully duplicated #{success.size} Consultations." },
+                      success_message: ->(success) { { body: "Successfully duplicated #{success.size} Consultations." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to duplicate #{errors.size} Consultations.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to duplicate #{errors.size} Consultations.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/consultations/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Duplicate Consultation', description: 'Are you sure you want to Duplicate selected Consultations',
                                              confirmation_text: 'Confirm' } do |id|
