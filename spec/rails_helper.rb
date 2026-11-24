@@ -72,6 +72,16 @@ RSpec.configure do |config|
     end
   end
 
+  # Sidekiq::Cron registers schedules in Redis, which the test suite does not run.
+  # CmCronJob#schedule_job fires on every save, so stub the registry instead of needing
+  # a Redis connection in CI.
+  config.before(:suite) do
+    Sidekiq::Cron::Job.singleton_class.class_eval do
+      def find(_name) = nil
+      def create(*) = true
+    end
+  end
+
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
 
