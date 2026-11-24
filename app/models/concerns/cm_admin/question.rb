@@ -99,7 +99,7 @@ module CmAdmin
                 form_field :question_text_odia, input_type: :string
                 form_field :question_text_marathi, input_type: :string
                 form_field :question_text_kannada, input_type: :string
-                form_field :conditional_question_id, input_type: :single_select
+                form_field :conditional_question_id, input_type: :single_select, helper_method: :selected_conditional_option
               end
             end
           end
