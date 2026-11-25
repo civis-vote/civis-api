@@ -208,6 +208,10 @@ module Types
           object.clauses.order(:id)
         end
 
+        def blog_posts
+          object.blog_posts.published.order(published_at: :desc)
+        end
+
         def themes
           object.themes.active
         end
