@@ -71,6 +71,7 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'fabrication'
   gem 'faker'
+  gem 'factory_bot_rails'
   gem 'rspec-rails'
 end
 
@@ -106,6 +107,7 @@ gem 'turbo-rails'
 gem 'airbrake'
 
 gem 'jwt'
+gem 'ruby-openai', '~> 8.3'
 
 gem 'apollo_upload_server'
 gem 'money-rails'

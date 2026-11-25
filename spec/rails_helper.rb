@@ -8,6 +8,8 @@ abort("The Rails environment is running in production mode!") if Rails.env.produ
 # that will avoid rails generators crashing because migrations haven't been run yet
 # return unless Rails.env.test?
 require 'rspec/rails'
+# cm-admin helpers and matchers for every request spec. Build its CSS first: bin/rails test:prepare.
+require 'cm_admin/testing/rspec'
 require 'fabrication'
 # Add additional requires below this line. Rails is not loaded until this point!
 
@@ -33,6 +35,17 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+# Mirror the app's Authentication concern: admin requests run with Current.user set to the
+# signed-in user, and several models stamp created_by and points from it while records are built.
+# Included below, after the gem's own configure block, so this cm_admin_sign_in takes precedence.
+module CmAdminCurrentUserExtension
+  def cm_admin_sign_in(*args, **options)
+    user = super
+    Current.user = user
+    user
+  end
+end
+
 RSpec.configure do |config|
   # Use the test queue adapter so jobs are enqueued but not executed (avoids Redis dependency)
   ActiveJob::Base.queue_adapter = :test
@@ -50,6 +63,24 @@ RSpec.configure do |config|
   # Trackable models stamp created_by_id/updated_by_id from Current.user;
   # reset it so a rolled-back user's id cannot leak into the next example.
   config.before { Current.reset }
+
+  # Scorable concerns record point events on user and response creation, and look the
+  # points up in PointScale — the rows the point_scale.csv seed provides in development.
+  config.before(:suite) do
+    PointScale.actions.keys.each do |action|
+      PointScale.find_or_create_by!(action:, upper_limit: 1_000_000) { |scale| scale.points = 1.0 }
+    end
+  end
+
+  # Sidekiq::Cron registers schedules in Redis, which the test suite does not run.
+  # CmCronJob#schedule_job fires on every save, so stub the registry instead of needing
+  # a Redis connection in CI.
+  config.before(:suite) do
+    Sidekiq::Cron::Job.singleton_class.class_eval do
+      def find(_name) = nil
+      def create(*) = true
+    end
+  end
 
   # You can uncomment this line to turn off ActiveRecord support entirely.
   # config.use_active_record = false
@@ -75,4 +106,9 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.include FactoryBot::Syntax::Methods
+  config.include ActiveSupport::Testing::TimeHelpers
+
+  config.include CmAdminCurrentUserExtension, type: :request
 end
