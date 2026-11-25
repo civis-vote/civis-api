@@ -1114,6 +1114,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
     t.bigint "theme_id", null: false
     t.string "mappable_type"
     t.bigint "mappable_id"
+    t.bigint "created_by_id"
+    t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["mappable_type", "mappable_id"], name: "index_theme_maps_on_mappable"
@@ -1310,6 +1312,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
   add_foreign_key "showcase_slides", "users", column: "created_by_id"
   add_foreign_key "showcase_slides", "users", column: "updated_by_id"
   add_foreign_key "theme_maps", "themes"
+  add_foreign_key "theme_maps", "users", column: "created_by_id"
+  add_foreign_key "theme_maps", "users", column: "updated_by_id"
   add_foreign_key "user_preferences", "users"
   add_foreign_key "users", "cm_roles"
   add_foreign_key "users", "organisations"
