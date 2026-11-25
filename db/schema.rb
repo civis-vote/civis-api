@@ -1118,8 +1118,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
     t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_theme_maps_on_created_by_id"
     t.index ["mappable_type", "mappable_id"], name: "index_theme_maps_on_mappable"
     t.index ["theme_id", "mappable_type", "mappable_id"], name: "index_theme_maps_on_theme_and_mappable", unique: true
+    t.index ["updated_by_id"], name: "index_theme_maps_on_updated_by_id"
   end
 
   create_table "themes", force: :cascade do |t|

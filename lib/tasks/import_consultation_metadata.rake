@@ -107,38 +107,38 @@ namespace :import_records_from_xlsx do
       # Apply
       # ------------------------------------------------------------------
       ActiveRecord::Base.transaction do
-      themes_to_create.each do |n|
-        theme = ::Theme.with_deleted.find_by(name: n)
-        if theme
-          theme.restore
-          theme.update!(icon_name: ::Theme::CIVIS_THEMES[n]) if theme.icon_name.blank?
-        else
-          theme = ::Theme.create!(name: n, icon_name: ::Theme::CIVIS_THEMES[n])
+        themes_to_create.each do |n|
+          theme = ::Theme.with_deleted.find_by(name: n)
+          if theme
+            theme.restore
+            theme.update!(icon_name: ::Theme::CIVIS_THEMES[n]) if theme.icon_name.blank?
+          else
+            theme = ::Theme.create!(name: n, icon_name: ::Theme::CIVIS_THEMES[n])
+          end
+          existing_themes[n] = theme
         end
-        existing_themes[n] = theme
-      end
-      segments_to_create.each { |n| existing_segments[normalize(n)] = [::Constant.create!(name: n, constant_type: :segment)] }
+        segments_to_create.each { |n| existing_segments[normalize(n)] = [::Constant.create!(name: n, constant_type: :segment)] }
 
-      rows.each do |row|
-        cons = consultations[row[:consultation_id]]
-        next unless cons
+        rows.each do |row|
+          cons = consultations[row[:consultation_id]]
+          next unless cons
 
-        # Themes
-        desired_themes = row[:theme_names].filter_map { |n| existing_themes[theme_by_normalized[normalize(n)]] }
-        cons.theme_maps.where.not(theme_id: desired_themes.map(&:id)).destroy_all
-        desired_themes.each do |theme|
-          ::ThemeMap.find_or_create_by!(theme: theme, mappable: cons)
+          # Themes
+          desired_themes = row[:theme_names].filter_map { |n| existing_themes[theme_by_normalized[normalize(n)]] }
+          cons.theme_maps.where.not(theme_id: desired_themes.map(&:id)).destroy_all
+          desired_themes.each do |theme|
+            ::ThemeMap.find_or_create_by!(theme: theme, mappable: cons)
+          end
+
+          # Segments
+          desired_segments = row[:segment_names].filter_map { |n| existing_segments[normalize(n)]&.first }
+          cons.constant_maps.joins(:constant)
+              .where(constants: { constant_type: :segment })
+              .where.not(constant_id: desired_segments.map(&:id)).destroy_all
+          desired_segments.each do |segment|
+            ::ConstantMap.find_or_create_by!(constant: segment, mappable: cons)
+          end
         end
-
-        # Segments
-        desired_segments = row[:segment_names].filter_map { |n| existing_segments[normalize(n)]&.first }
-        cons.constant_maps.joins(:constant)
-            .where(constants: { constant_type: :segment })
-            .where.not(constant_id: desired_segments.map(&:id)).destroy_all
-        desired_segments.each do |segment|
-          ::ConstantMap.find_or_create_by!(constant: segment, mappable: cons)
-        end
-      end
       end
 
       puts "IMPORT COMPLETE"
