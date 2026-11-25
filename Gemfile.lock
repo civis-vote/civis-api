@@ -1,7 +1,7 @@
 GEM
   remote: https://cm-gems.commutatus.com/
   specs:
-    cm-admin (9.4.1)
+    cm-admin (9.5.6)
       ar_lazy_preload (>= 2.1)
       blueprinter
       caxlsx_rails
@@ -286,6 +286,11 @@ GEM
       tzinfo
     event_stream_parser (1.0.2)
     fabrication (3.0.0)
+    factory_bot (6.6.0)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.5.1)
+      factory_bot (~> 6.5)
+      railties (>= 6.1.0)
     faker (3.8.0)
       i18n (>= 1.8.11, < 2)
     faraday (2.15.1)
@@ -829,6 +834,7 @@ DEPENDENCIES
   devise
   devise_invitable
   fabrication
+  factory_bot_rails
   faker
   google-cloud-storage
   graphiql-rails

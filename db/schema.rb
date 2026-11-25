@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
@@ -244,6 +244,54 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
     t.datetime "updated_at", null: false
     t.index ["notifiable_type", "notifiable_id"], name: "index_cm_notifiables_on_notifiable"
     t.index ["notification_type"], name: "index_cm_notifiables_on_notification_type"
+  end
+
+  create_table "cm_oauth_clients", force: :cascade do |t|
+    t.string "client_id", null: false
+    t.string "client_name"
+    t.jsonb "redirect_uris", default: [], null: false
+    t.datetime "metadata_fetched_at"
+    t.datetime "metadata_expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_cm_oauth_clients_on_client_id", unique: true
+  end
+
+  create_table "cm_oauth_grants", force: :cascade do |t|
+    t.bigint "cm_oauth_client_id", null: false
+    t.bigint "user_id", null: false
+    t.string "code_digest", null: false
+    t.string "redirect_uri", null: false
+    t.string "code_challenge", null: false
+    t.string "resource", null: false
+    t.string "scope"
+    t.datetime "expires_at", null: false
+    t.datetime "used_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cm_oauth_client_id"], name: "index_cm_oauth_grants_on_cm_oauth_client_id"
+    t.index ["code_digest"], name: "index_cm_oauth_grants_on_code_digest", unique: true
+    t.index ["user_id"], name: "index_cm_oauth_grants_on_user_id"
+  end
+
+  create_table "cm_oauth_tokens", force: :cascade do |t|
+    t.bigint "cm_oauth_client_id", null: false
+    t.bigint "cm_oauth_grant_id", null: false
+    t.bigint "user_id", null: false
+    t.string "access_token_digest", null: false
+    t.string "refresh_token_digest", null: false
+    t.string "resource", null: false
+    t.string "scope"
+    t.datetime "access_expires_at", null: false
+    t.datetime "refresh_expires_at", null: false
+    t.datetime "revoked_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["access_token_digest"], name: "index_cm_oauth_tokens_on_access_token_digest", unique: true
+    t.index ["cm_oauth_client_id"], name: "index_cm_oauth_tokens_on_cm_oauth_client_id"
+    t.index ["cm_oauth_grant_id"], name: "index_cm_oauth_tokens_on_cm_oauth_grant_id"
+    t.index ["refresh_token_digest"], name: "index_cm_oauth_tokens_on_refresh_token_digest", unique: true
+    t.index ["user_id"], name: "index_cm_oauth_tokens_on_user_id"
   end
 
   create_table "cm_page_builder_rails_page_components", force: :cascade do |t|
@@ -1251,6 +1299,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
   add_foreign_key "cm_cron_job_logs", "cm_cron_jobs", column: "cron_job_id"
   add_foreign_key "cm_email_logs", "users", column: "triggered_by_id"
   add_foreign_key "cm_geo_ip_networks", "cm_geo_ip_locations"
+  add_foreign_key "cm_oauth_grants", "cm_oauth_clients"
+  add_foreign_key "cm_oauth_grants", "users", on_delete: :cascade
+  add_foreign_key "cm_oauth_tokens", "cm_oauth_clients"
+  add_foreign_key "cm_oauth_tokens", "cm_oauth_grants", on_delete: :cascade
+  add_foreign_key "cm_oauth_tokens", "users", on_delete: :cascade
   add_foreign_key "cm_page_builder_rails_page_components", "cm_page_builder_rails_pages", column: "page_id"
   add_foreign_key "cm_permissions", "cm_roles"
   add_foreign_key "cm_platform_settings", "constants", column: "category_id"
