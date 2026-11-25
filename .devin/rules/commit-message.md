@@ -1,6 +1,5 @@
 ---
-trigger: model_decision
-description: "Conventional Commits format for git commit messages. Apply when writing or revising a commit message, running git commit, or amending a commit."
+trigger: always_on
 ---
 
 # Commit Message Format
