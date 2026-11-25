@@ -15,6 +15,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
   enable_extension "btree_gist"
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
   enable_extension "uuid-ossp"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -766,6 +767,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
   end
 
+  create_table "devise_invitations", force: :cascade do |t|
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.datetime "superseded_at"
+    t.string "superseded_reason"
+    t.datetime "revoked_at"
+    t.datetime "resource_created_at"
+    t.json "invite_key", default: {}, null: false
+    t.string "invite_key_digest", null: false
+    t.string "invitable_type"
+    t.bigint "invitable_id"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invitable_type", "invitable_id"], name: "index_devise_invitations_on_invitable"
+    t.index ["invitable_type", "invite_key_digest"], name: "index_devise_invitations_on_type_and_invite_key"
+    t.index ["invitation_token"], name: "index_devise_invitations_on_invitation_token", unique: true
+    t.index ["invited_by_type", "invited_by_id"], name: "index_devise_invitations_on_invited_by"
+  end
+
   create_table "game_actions", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "action"
@@ -1215,13 +1239,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.string "callback_url"
     t.string "designation"
     t.bigint "organisation_id"
-    t.string "invitation_token"
-    t.datetime "invitation_created_at", precision: nil
-    t.datetime "invitation_sent_at", precision: nil
-    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
-    t.string "invited_by_type"
-    t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.integer "referring_consultation_id"
     t.bigint "cm_role_id"
@@ -1234,10 +1252,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_24_094341) do
     t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "(phone_number IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true

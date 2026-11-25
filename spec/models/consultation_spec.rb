@@ -127,4 +127,117 @@ RSpec.describe Consultation, type: :model do
       expect(post.reload.consultation_id).to be_nil
     end
   end
+
+  describe '#publish' do
+    # Publish scores the creator, so a created_by must exist (its city may be nil).
+    let(:creator) do
+      User.create!(first_name: 'Creator', last_name: 'User', email: Faker::Internet.unique.email,
+                   password: 'Password@123', role: :citizen, confirmed_at: Time.current)
+    end
+
+    before { Current.user = creator }
+    after { Current.reset }
+
+    it 'marks the consultation published with a timestamp' do
+      consultation = create_consultation
+
+      consultation.publish
+
+      expect(consultation.reload).to be_published
+      expect(consultation.published_at).to be_present
+    end
+
+    it 'keeps the original published_at when republishing' do
+      consultation = create_consultation
+      consultation.publish
+      original = consultation.reload.published_at
+
+      consultation.publish
+
+      expect(consultation.reload.published_at).to be_within(1.minute).of(original)
+    end
+
+    it 'invites the respondents of a private consultation' do
+      consultation = create_consultation(visibility: :private_consultation,
+                                         organisation: Organisation.create!(name: "Org #{SecureRandom.hex(4)}"))
+      respondent_user = User.create!(first_name: 'Invited', last_name: 'User',
+                                     email: Faker::Internet.unique.email, password: 'Password@123',
+                                     role: :citizen, confirmed_at: Time.current)
+      Respondent.create!(user: respondent_user, response_round: consultation.response_rounds.first)
+
+      expect { consultation.publish }
+        .to have_enqueued_job(InviteRespondentJob).with(consultation, respondent_user, String)
+    end
+  end
+
+  describe '#extend_deadline' do
+    let(:creator) do
+      User.create!(first_name: 'Creator', last_name: 'User', email: Faker::Internet.unique.email,
+                   password: 'Password@123', role: :citizen, confirmed_at: Time.current)
+    end
+
+    before { Current.user = creator }
+    after { Current.reset }
+
+    it 'moves the deadline and republishes an expired consultation' do
+      consultation = create_consultation
+      consultation.publish
+      consultation.update_column(:response_deadline, 1.day.ago)
+      consultation.expire
+      new_deadline = 5.days.from_now
+
+      consultation.extend_deadline(new_deadline)
+
+      expect(consultation.reload.response_deadline).to be_within(1.minute).of(new_deadline)
+      expect(consultation).to be_published
+    end
+  end
+
+  describe '#compute_response_summary' do
+    let(:consultation) { create_consultation }
+
+    let(:support_question) do
+      consultation.response_rounds.last.questions.create!(
+        question_text: 'Do you support this policy?', question_type: :multiple_choice,
+        is_optional: false, sub_questions_attributes: [{ question_text: 'Yes' }, { question_text: 'No' }]
+      )
+    end
+
+    def respond_with(user, answer:)
+      ConsultationResponse.create!(user: user, consultation: consultation,
+                                   response_round: consultation.response_rounds.last,
+                                   visibility: :shared, response_status: :acceptable,
+                                   answers: [{ 'question_id' => support_question.id.to_s, 'answer' => answer }])
+    end
+
+    it 'aggregates option counts and percentages across acceptable responses' do
+      yes_option = support_question.sub_questions.first
+      respond_with(User.create!(first_name: 'One', last_name: 'User', email: Faker::Internet.unique.email,
+                                password: 'Password@123', role: :citizen, confirmed_at: Time.current),
+                   answer: [yes_option.id])
+      respond_with(User.create!(first_name: 'Two', last_name: 'User', email: Faker::Internet.unique.email,
+                                password: 'Password@123', role: :citizen, confirmed_at: Time.current),
+                   answer: [yes_option.id])
+
+      consultation.compute_response_summary
+
+      summary = consultation.reload.response_summary
+      question_summary = summary.question_summaries.find_by(question_id: support_question.id)
+      yes_breakdown = question_summary.option_breakdowns.find_by(option_id: yes_option.id)
+
+      expect(summary.total_responses).to eq(2)
+      expect(question_summary.total_responses).to eq(2)
+      expect(yes_breakdown.selection_count).to eq(2)
+      expect(yes_breakdown.percentage).to eq(100.0)
+    end
+
+    it 'replaces a stale summary when recomputed' do
+      consultation.compute_response_summary
+      stale_id = consultation.reload.response_summary.id
+
+      consultation.compute_response_summary
+
+      expect(consultation.reload.response_summary.id).not_to eq(stale_id)
+    end
+  end
 end

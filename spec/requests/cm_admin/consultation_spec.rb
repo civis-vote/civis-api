@@ -48,10 +48,7 @@ RSpec.describe "Consultation admin", type: :request do
   end
 
   describe "bulk actions" do
-    # Every bulk_action in this app declares success_message/error_message lambdas that return
-    # plain strings, but the engine calls .dig(:body) on the result, so every bulk action 500s.
-    # Tracked separately; unskip these once the messages return { header:, body:, icon: } hashes.
-    it "deletes selected consultations", skip: "bulk actions 500: string success_message vs the {header:, body:} contract the engine digs into" do
+    it "deletes selected consultations" do
       first = create(:consultation, department:)
       second = create(:consultation, department:)
 
@@ -60,10 +57,10 @@ RSpec.describe "Consultation admin", type: :request do
       expect(second.reload).to be_deleted
     end
 
-    it "duplicates a consultation", skip: "bulk actions 500: string success_message vs the {header:, body:} contract the engine digs into" do
+    it "duplicates a consultation" do
       result = nil
       expect { result = cm_admin_run_bulk(Consultation, :duplicate, [consultation]) }
-        .to change(Consultation, :count).by(1)
+        .to change(Consultation, :count).by(2)
       expect(result).to succeed
     end
   end

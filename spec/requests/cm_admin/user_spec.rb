@@ -38,9 +38,7 @@ RSpec.describe "User admin", type: :request do
   end
 
   describe "bulk actions" do
-    # change_role declares a string success_message, but the engine calls .dig(:body) on it, so
-    # every bulk action 500s. Tracked separately; unskip once the messages return hashes.
-    it "changes the role of selected users", skip: "bulk actions 500: string success_message vs the {header:, body:} contract the engine digs into" do
+    it "changes the role of selected users" do
       moderator_role = create(:cm_role, name: "Moderator")
 
       expect(cm_admin_run_bulk(User, :change_role, [user], params: { cm_role_id: moderator_role.id })).to succeed
