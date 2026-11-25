@@ -76,4 +76,55 @@ RSpec.describe Consultation, type: :model do
       end
     end
   end
+
+  describe '#blog_posts' do
+    it 'links multiple blog posts to a consultation' do
+      consultation = create_consultation
+      post1 = Fabricate(:blog_post)
+      post2 = Fabricate(:blog_post)
+
+      consultation.update!(blog_post_ids: [post1.id, post2.id])
+
+      expect(consultation.blog_posts).to match_array([post1, post2])
+      expect(post1.reload.consultation).to eq(consultation)
+    end
+
+    it 'removes a linked blog post when it is unassigned' do
+      consultation = create_consultation
+      post = Fabricate(:blog_post, consultation: consultation)
+
+      consultation.update!(blog_post_ids: [])
+
+      expect(consultation.blog_posts.reload).to be_empty
+      expect(post.reload.consultation_id).to be_nil
+    end
+
+    it 'rejects reassigning a blog post that is already linked to another consultation' do
+      consultation = create_consultation
+      other = create_consultation
+      post = Fabricate(:blog_post, consultation: consultation)
+
+      expect { other.update!(blog_post_ids: [post.id]) }.to raise_error(ActiveRecord::RecordNotSaved)
+      expect(post.reload.consultation).to eq(consultation)
+    end
+
+    it 'allows reassigning a blog post after it is unlinked' do
+      consultation = create_consultation
+      other = create_consultation
+      post = Fabricate(:blog_post, consultation: consultation)
+
+      consultation.update!(blog_post_ids: [])
+      other.update!(blog_post_ids: [post.id])
+      expect(post.reload.consultation).to eq(other)
+    end
+
+    it 'nullifies blog posts when the consultation is destroyed' do
+      consultation = create_consultation
+      post = Fabricate(:blog_post, consultation: consultation)
+
+      consultation.destroy
+
+      expect(post.reload.consultation_id).to be_nil
+    end
+  end
 end

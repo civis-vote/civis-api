@@ -54,28 +54,30 @@ module CmAdmin
           end
 
           bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
-                      success_message: ->(success) { "Successfully Deleted #{success.size} users." },
+                      success_message: ->(success) { { body: "Successfully Deleted #{success.size} users." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to delete #{errors.size} users.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to delete #{errors.size} users.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/users/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Delete', description: 'Are you sure you want to Delete selected Users', confirmation_text: 'Confirm' } do |id|
             ::User.find(id).destroy
           end
 
           bulk_action name: 'change_role', display_name: 'Change Role', icon_name: 'fa-solid fa-users-gear', display_type: :form_modal,
-                      success_message: ->(success) { "Successfully Updated Role for #{success.size} users." },
+                      success_message: ->(success) { { body: "Successfully Updated Role for #{success.size} users." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to update role for #{errors.size} users.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to update role for #{errors.size} users.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/users/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Change Role', confirmation_text: 'Confirm' } do
             form do
