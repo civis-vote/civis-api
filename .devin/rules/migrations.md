@@ -1,7 +1,6 @@
 ---
 trigger: glob
-globs:
-  - "**/db/migrate/**/*"
+globs: db/migrate/**/*
 ---
 
 # Migrations

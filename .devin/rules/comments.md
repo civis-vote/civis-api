@@ -1,10 +1,6 @@
 ---
 trigger: glob
-globs:
-  - "**/*.rb"
-  - "**/*.rake"
-  - "**/Rakefile"
-  - "**/Gemfile"
+globs: **/*.rb, **/*.rake, Rakefile, Gemfile
 ---
 
 # Comment Style

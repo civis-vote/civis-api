@@ -1,7 +1,6 @@
 ---
 trigger: glob
-globs:
-  - "**/app/models/concerns/cm_admin/**/*"
+globs: app/models/concerns/cm_admin/**/*
 ---
 
 # CM Admin DSL Guidelines

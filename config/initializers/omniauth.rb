@@ -1,4 +1,4 @@
-require Rails.root.join("app/omniauth_strategies/google_oauth2_with_pkce")
+require Rails.root.join("config/omniauth_strategies/google_oauth2_with_pkce")
 
 Rails.application.config.middleware.use OmniAuth::Builder do
 	provider :google_oauth2_with_pkce, Rails.application.credentials.dig(:omniauth, :google, :client_id), Rails.application.credentials.dig(:omniauth, :google, :client_secret)

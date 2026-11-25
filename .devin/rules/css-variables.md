@@ -1,9 +1,6 @@
 ---
 trigger: glob
-globs:
-  - "**/*.scss"
-  - "**/*.css"
-  - "**/*.sass"
+globs: **/*.scss, **/*.css, **/*.sass
 ---
 
 # CSS/SCSS Variables Rule

@@ -11,7 +11,11 @@ RSpec.describe Mutations::Auth::AcceptInvite, type: :graphql do
     Consultation.create!(title: 'Test Consultation', department: department,
                          response_deadline: 10.days.from_now, question_flow: :question_list)
   end
-  let(:invited_user) { User.invite!(email: Faker::Internet.unique.email, skip_invitation: true) }
+  let(:invited_user) do
+    user = User.invite!(email: Faker::Internet.unique.email, skip_invitation: true)
+    user.invitation_sent_at = Time.current
+    user
+  end
   let(:invitation_token) { invited_user.raw_invitation_token }
 
   let(:query) do

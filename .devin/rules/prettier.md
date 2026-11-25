@@ -1,13 +1,6 @@
 ---
 trigger: glob
-globs:
-  - "**/*.js"
-  - "**/*.jsx"
-  - "**/*.ts"
-  - "**/*.tsx"
-  - "**/*.css"
-  - "**/*.scss"
-  - "**/*.json"
+globs: **/*.js, **/*.jsx, **/*.ts, **/*.tsx, **/*.css, **/*.scss, **/*.json
 ---
 
 # JavaScript & CSS Code Style

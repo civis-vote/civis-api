@@ -1,7 +1,6 @@
 ---
 trigger: glob
-globs:
-  - "**/app/jobs/**/*"
+globs: app/jobs/**/*
 ---
 
 # Job Guidelines

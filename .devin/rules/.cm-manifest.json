@@ -1,5 +1,5 @@
 {
-  "commit": "4493140f22d6df9c1a21dbfd70cbc9eb566f0f58",
+  "commit": "7fb10fcac953c40a63ed296da18e9405bec9229a",
   "platform": "rails",
   "managed_rules": [
     "active-record.md",
