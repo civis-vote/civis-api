@@ -95,7 +95,9 @@ module CmAdmin
                         path: ':id/summarise_pdf', icon_name: 'fa-solid fa-magic',
                         display_type: :button,
                         display_if: ->(consultation) { consultation.consultation_pdf.attached? },
-                        success_message: ->(_) { { header: 'Summarisation Started', body: 'AI summarisation is in progress. Please refresh in a few minutes to see the summary.' } } do
+                        success_message: lambda { |_|
+                          { header: 'Summarisation Started', body: 'AI summarisation is in progress. Please refresh in a few minutes to see the summary.' }
+                        } do
             consultation = ::Consultation.find(params[:id])
             consultation.summarise_pdf
             consultation

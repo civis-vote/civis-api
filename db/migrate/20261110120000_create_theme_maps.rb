@@ -4,6 +4,8 @@ class CreateThemeMaps < ActiveRecord::Migration[8.1]
       t.bigint :theme_id, null: false
       t.string :mappable_type
       t.bigint :mappable_id
+      t.references :created_by, foreign_key: { to_table: :users }
+      t.references :updated_by, foreign_key: { to_table: :users }
       t.timestamps
     end
 
