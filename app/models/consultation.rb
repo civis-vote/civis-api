@@ -68,6 +68,7 @@ class Consultation < ApplicationRecord
   has_many :theme_maps, as: :mappable, dependent: :destroy
   has_many :themes, through: :theme_maps
   has_many :area_of_impacts, -> { area_of_impact }, through: :constant_maps, source: :constant
+  has_many :blog_posts, dependent: :nullify
 
   validates_presence_of :response_deadline, :question_flow
 
@@ -307,7 +308,7 @@ class Consultation < ApplicationRecord
   end
 
   def feedback_url
-    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}/read", query: nil }))
+    feedback_url = URI::HTTP.build(Rails.application.config.client_url.merge!({ path: "/consultations/#{id}", query: nil }))
     feedback_url.to_s
   end
 

@@ -18,6 +18,10 @@ RSpec.describe Queries::BlogPost::Profile, type: :graphql do
             iconName
             hexCode
           }
+          consultation {
+            id
+            title
+          }
           publishedAt
         }
       }
@@ -36,6 +40,30 @@ RSpec.describe Queries::BlogPost::Profile, type: :graphql do
         expect(fetched['id'].to_i).to eq(post.id)
         expect(fetched['slug']).to eq(post.slug)
         expect(fetched['content']).to be_present
+      end
+
+      context 'and the post is linked to a consultation' do
+        let(:department) do
+          Department.create!(name: "Dept #{SecureRandom.hex(4)}", level: :national,
+                             department_contacts_attributes: [{ contact_type: :primary, email: 'dept@test.com' }])
+        end
+        let(:consultation) do
+          Consultation.create!(title: "Consultation #{SecureRandom.hex(4)}", department: department,
+                               response_deadline: 10.days.from_now, question_flow: :question_list,
+                               published_at: 5.days.ago)
+        end
+        let(:post) { Fabricate(:blog_post, status: :published, consultation: consultation) }
+
+        it 'returns the associated consultation' do
+          expect(fetched['consultation']['id'].to_i).to eq(consultation.id)
+          expect(fetched['consultation']['title']).to eq(consultation.title)
+        end
+      end
+
+      context 'and the post is not linked to a consultation' do
+        it 'returns nil for consultation' do
+          expect(fetched['consultation']).to be_nil
+        end
       end
     end
 

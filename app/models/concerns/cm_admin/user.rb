@@ -54,28 +54,30 @@ module CmAdmin
           end
 
           bulk_action name: 'delete', display_name: 'Delete', icon_name: 'fa-solid fa-square-xmark', display_type: :modal,
-                      success_message: ->(success) { "Successfully Deleted #{success.size} users." },
+                      success_message: ->(success) { { body: "Successfully Deleted #{success.size} users." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to delete #{errors.size} users.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to delete #{errors.size} users.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/users/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Delete', description: 'Are you sure you want to Delete selected Users', confirmation_text: 'Confirm' } do |id|
             ::User.find(id).destroy
           end
 
           bulk_action name: 'change_role', display_name: 'Change Role', icon_name: 'fa-solid fa-users-gear', display_type: :form_modal,
-                      success_message: ->(success) { "Successfully Updated Role for #{success.size} users." },
+                      success_message: ->(success) { { body: "Successfully Updated Role for #{success.size} users." } },
                       error_message: lambda { |errors|
-                        "<p class='mb-0'>Failed to update role for #{errors.size} users.</p>
+                        { body:
+                          "<p class='mb-0'>Failed to update role for #{errors.size} users.</p>
                         <ul>
                           #{errors.map do |error|
                             "<li><a href='/cm_admin/users/#{error.failed_id}' target='_blank'>#{error.row_identifier}</a> #{error.error_message}</li>"
                           end.join}
-                        </ul>"
+                        </ul>" }
                       },
                       modal_configuration: { title: 'Change Role', confirmation_text: 'Confirm' } do
             form do
@@ -109,8 +111,8 @@ module CmAdmin
               cm_section 'Contact and Identity' do
                 field :email
                 field :phone_number
-                field :is_verified, field_type: :boolean, label: 'Email verified'
-                field :is_verified, field_type: :boolean, label: 'Phone verified'
+                field :email_verified, field_type: :boolean, label: 'Email verified'
+                field :phone_verified, field_type: :boolean, label: 'Phone verified'
               end
             end
 
@@ -151,6 +153,7 @@ module CmAdmin
           cm_section 'Details', dynamic_fields: lambda { |_user, associated_record|
             default_role_id = associated_record.is_a?(Organisation) ? ::CmRole.find_by(name: ::User::ORGANISATION_EMPLOYEE_ROLE_NAME)&.id : nil
             form_field :email, input_type: :string
+            form_field :phone_number, input_type: :phone
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,
@@ -164,6 +167,7 @@ module CmAdmin
         cm_edit page_title: 'Edit User', page_description: 'Enter all details to edit User' do
           cm_section 'Details' do
             form_field :email, input_type: :string
+            form_field :phone_number, input_type: :phone
             form_field :first_name, input_type: :string
             form_field :last_name, input_type: :string
             form_field :cm_role_id, input_type: :single_select, helper_method: :select_options_for_assignable_cm_role,

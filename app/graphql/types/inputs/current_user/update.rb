@@ -5,6 +5,7 @@ module Types
         graphql_name "CurrentUserUpdateInput"
         argument :city_id, Integer, nil, required: false
         argument :designation, String, nil, required: false
+        argument :email, String, nil, required: false
         argument :first_name, String, nil, required: false
         argument :last_name, String, nil, required: false
         argument :organization, String, nil, required: false

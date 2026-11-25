@@ -10,6 +10,9 @@ module Mutations
         user_input = user.to_h
         profile_picture = user_input.delete(:profile_picture_file)
 
+        # TODO: Enforce email AND phone_number presence on profile completion once
+        # user import finishes and clients have collected phone numbers for a while.
+        # Until then, phone is optional here and completeness is enforced in the UI.
         ActiveRecord::Base.transaction do
           current_user.update! user_input
         end

@@ -8,7 +8,8 @@ RSpec.describe Mutations::CurrentUser::Update, type: :graphql do
   let(:segment) { Constant.create!(name: "Segment #{SecureRandom.hex(4)}", constant_type: :segment) }
   let(:user) do
     User.create!(first_name: 'Test', last_name: 'User', email: Faker::Internet.unique.email,
-                 password: 'Password@123', role: :citizen, confirmed_at: Time.current)
+                 password: 'Password@123', role: :citizen, confirmed_at: Time.current,
+                 phone_number: "+9198#{8.times.map { rand(10) }.join}")
   end
 
   let(:query) do
@@ -88,6 +89,32 @@ RSpec.describe Mutations::CurrentUser::Update, type: :graphql do
     it 'clears preferences and returns hasPreferences false' do
       expect(response_data['hasPreferences']).to be false
       expect(user.reload.preferred_theme_ids).to be_empty
+    end
+  end
+
+  describe 'optional contact details during update' do
+    let(:variables) { { user: { firstName: 'Updated' } } }
+    let(:user) do
+      User.create!(first_name: 'Test', last_name: 'User', email: Faker::Internet.unique.email,
+                   password: 'Password@123', role: :citizen, confirmed_at: Time.current)
+    end
+
+    it 'succeeds even when the user has no phone number' do
+      expect(result['errors']).to be_nil
+      expect(user.reload.first_name).to eq('Updated')
+    end
+
+    it 'succeeds when the phone number is added in the same update' do
+      variables[:user] = { phoneNumber: '9876543210' }
+      expect(result['errors']).to be_nil
+      expect(user.reload.phone_number).to eq('+919876543210')
+    end
+
+    it 'succeeds when the missing email is added in the same update' do
+      user.update_columns(email: nil, phone_number: '+918812345678')
+      variables[:user] = { email: 'new-email@example.com' }
+      expect(result['errors']).to be_nil
+      expect(user.reload.email).to eq('new-email@example.com')
     end
   end
 

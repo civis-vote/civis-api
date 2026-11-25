@@ -10,11 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_055101) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "btree_gist"
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pgcrypto"
   enable_extension "uuid-ossp"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
@@ -95,7 +96,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "consultation_id"
     t.index ["blog_category_id"], name: "index_blog_posts_on_blog_category_id"
+    t.index ["consultation_id"], name: "index_blog_posts_on_consultation_id"
     t.index ["created_by_id"], name: "index_blog_posts_on_created_by_id"
     t.index ["slug"], name: "index_blog_posts_on_slug", unique: true
     t.index ["updated_by_id"], name: "index_blog_posts_on_updated_by_id"
@@ -316,6 +319,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.boolean "is_catalyst_ai_enabled", default: false, null: false
     t.index ["created_by_id"], name: "index_cm_roles_on_created_by_id"
     t.index ["updated_by_id"], name: "index_cm_roles_on_updated_by_id"
+  end
+
+  create_table "cm_roles_ct_user_groups", id: false, force: :cascade do |t|
+    t.bigint "cm_role_id", null: false
+    t.bigint "ct_user_group_id", null: false
+    t.index ["cm_role_id", "ct_user_group_id"], name: "idx_on_cm_role_id_ct_user_group_id_56ab3af0b3", unique: true
+    t.index ["ct_user_group_id", "cm_role_id"], name: "idx_on_ct_user_group_id_cm_role_id_79c8596ba4"
   end
 
   create_table "cm_support_ticket_employees", force: :cascade do |t|
@@ -548,20 +558,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.decimal "total_cost_cents", precision: 20, scale: 8, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "ruby_llm_model_id"
+    t.boolean "cancelled", default: false, null: false
+    t.string "claim_token"
+    t.datetime "claimed_until"
+    t.index ["claimed_until"], name: "index_ct_bot_conversations_on_claimed_until", where: "(claim_token IS NOT NULL)"
     t.index ["created_at"], name: "index_ct_bot_conversations_on_created_at", order: :desc
+    t.index ["ruby_llm_model_id"], name: "index_ct_bot_conversations_on_ruby_llm_model_id"
     t.index ["updated_at"], name: "index_ct_bot_conversations_on_updated_at", order: :desc
     t.index ["user_id"], name: "index_ct_bot_conversations_on_user_id"
   end
 
   create_table "ct_bot_messages", force: :cascade do |t|
     t.bigint "ct_bot_conversation_id", null: false
-    t.integer "role", null: false
+    t.string "role", null: false
     t.integer "status", default: 0, null: false
     t.boolean "read", default: true, null: false
     t.decimal "total_cost_cents", precision: 20, scale: 8, default: "0.0", null: false
     t.datetime "completed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "cache_until_here", default: false, null: false
+    t.string "cache_ttl"
+    t.text "thinking_text"
+    t.text "thinking_signature"
+    t.jsonb "citations"
+    t.jsonb "server_tool_calls"
+    t.jsonb "raw_content"
+    t.jsonb "raw_reasoning"
+    t.string "phase"
+    t.text "continuation"
+    t.string "finish_reason"
     t.index ["created_at"], name: "index_ct_bot_messages_on_created_at", order: :desc
     t.index ["ct_bot_conversation_id"], name: "index_ct_bot_messages_on_ct_bot_conversation_id"
   end
@@ -581,22 +608,6 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.index ["ct_bot_conversation_id"], name: "index_ct_bot_transcriptions_on_ct_bot_conversation_id"
     t.index ["ct_bot_message_id"], name: "index_ct_bot_transcriptions_on_ct_bot_message_id"
     t.index ["user_id"], name: "index_ct_bot_transcriptions_on_user_id"
-  end
-
-  create_table "ct_cost_trackings", force: :cascade do |t|
-    t.string "trackable_type", null: false
-    t.bigint "trackable_id", null: false
-    t.string "provider"
-    t.string "model"
-    t.bigint "input_tokens"
-    t.bigint "output_tokens"
-    t.bigint "cache_read_tokens"
-    t.bigint "thinking_tokens"
-    t.decimal "total_cost_cents", precision: 20, scale: 8
-    t.jsonb "details", default: {}
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["trackable_type", "trackable_id"], name: "index_ct_cost_trackings_on_trackable"
   end
 
   create_table "ct_file_exports", force: :cascade do |t|
@@ -633,6 +644,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.index ["added_by_type", "added_by_id"], name: "index_file_imports_on_added_by"
   end
 
+  create_table "ct_form_drafts", force: :cascade do |t|
+    t.string "owner_type", null: false
+    t.bigint "owner_id", null: false
+    t.string "form_id", null: false
+    t.string "ar_model_name", null: false
+    t.string "ar_action_name", null: false
+    t.string "record_id", default: "new", null: false
+    t.jsonb "data", default: {}
+    t.jsonb "attachments", default: {}
+    t.integer "step_index"
+    t.datetime "expiry_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["form_id"], name: "index_ct_form_drafts_on_form_id", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_ct_form_drafts_on_owner"
+  end
+
   create_table "ct_page_views", force: :cascade do |t|
     t.string "owner_type", null: false
     t.bigint "owner_id", null: false
@@ -652,6 +680,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.index ["associated_ar_model_name"], name: "index_ct_page_views_on_associated_ar_model_name"
     t.index ["owner_type", "owner_id", "ar_model_name", "associated_ar_model_name"], name: "index_ct_page_views_on_unique_default", unique: true, where: "(is_default = true)"
     t.index ["owner_type", "owner_id"], name: "index_ct_page_views_on_owner"
+  end
+
+  create_table "ct_user_groups", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_ct_user_groups_on_name", unique: true
   end
 
   create_table "department_contacts", force: :cascade do |t|
@@ -680,6 +715,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.string "name_marathi"
     t.string "name_kannada"
     t.index ["deleted_at"], name: "index_departments_on_deleted_at"
+  end
+
+  create_table "devise_invitations", force: :cascade do |t|
+    t.string "invitation_token"
+    t.datetime "invitation_created_at"
+    t.datetime "invitation_sent_at"
+    t.datetime "invitation_accepted_at"
+    t.datetime "superseded_at"
+    t.string "superseded_reason"
+    t.datetime "revoked_at"
+    t.datetime "resource_created_at"
+    t.json "invite_key", default: {}, null: false
+    t.string "invite_key_digest", null: false
+    t.string "invitable_type"
+    t.bigint "invitable_id"
+    t.string "invited_by_type"
+    t.bigint "invited_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["invitable_type", "invitable_id"], name: "index_devise_invitations_on_invitable"
+    t.index ["invitable_type", "invite_key_digest"], name: "index_devise_invitations_on_type_and_invite_key"
+    t.index ["invitation_token"], name: "index_devise_invitations_on_invitation_token", unique: true
+    t.index ["invited_by_type", "invited_by_id"], name: "index_devise_invitations_on_invited_by"
   end
 
   create_table "game_actions", force: :cascade do |t|
@@ -854,6 +912,166 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.index ["consultation_id"], name: "index_response_summaries_on_consultation_id"
   end
 
+  create_table "ruby_llm_batches", force: :cascade do |t|
+    t.string "provider_batch_id", null: false
+    t.string "provider", null: false
+    t.string "status", null: false
+    t.string "raw_status"
+    t.boolean "completed", default: false, null: false
+    t.string "chat_type"
+    t.string "batch_protocol"
+    t.jsonb "chat_ids", default: []
+    t.jsonb "request_counts"
+    t.jsonb "reported_cost"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider", "provider_batch_id"], name: "index_ruby_llm_batches_on_provider_and_provider_batch_id", unique: true
+    t.index ["status"], name: "index_ruby_llm_batches_on_status"
+  end
+
+  create_table "ruby_llm_chat_files", force: :cascade do |t|
+    t.string "chat_type", null: false
+    t.bigint "chat_id", null: false
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.string "path", null: false
+    t.string "content_type"
+    t.bigint "byte_size"
+    t.string "digest"
+    t.text "text"
+    t.string "read_digest"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_type", "chat_id", "path"], name: "index_ruby_llm_chat_files_on_chat_type_and_chat_id_and_path"
+    t.index ["owner_type", "owner_id"], name: "index_ruby_llm_chat_files_on_owner_type_and_owner_id"
+  end
+
+  create_table "ruby_llm_mcp_credentials", force: :cascade do |t|
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.string "key", null: false
+    t.text "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["key"], name: "index_ruby_llm_mcp_credentials_on_key", unique: true
+    t.index ["owner_type", "owner_id"], name: "index_ruby_llm_mcp_credentials_on_owner"
+  end
+
+  create_table "ruby_llm_models", force: :cascade do |t|
+    t.string "model_id", null: false
+    t.string "name", null: false
+    t.string "provider", null: false
+    t.string "family"
+    t.datetime "model_created_at"
+    t.integer "context_window"
+    t.integer "max_output_tokens"
+    t.date "knowledge_cutoff"
+    t.datetime "unlisted_at"
+    t.jsonb "modalities", default: {}
+    t.jsonb "capabilities", default: []
+    t.jsonb "pricing", default: {}
+    t.jsonb "metadata", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["capabilities"], name: "index_ruby_llm_models_on_capabilities", using: :gin
+    t.index ["family"], name: "index_ruby_llm_models_on_family"
+    t.index ["modalities"], name: "index_ruby_llm_models_on_modalities", using: :gin
+    t.index ["provider", "model_id"], name: "index_ruby_llm_models_on_provider_and_model_id", unique: true
+    t.index ["provider"], name: "index_ruby_llm_models_on_provider"
+  end
+
+  create_table "ruby_llm_provider_files", force: :cascade do |t|
+    t.string "blob_key", null: false
+    t.string "provider", null: false
+    t.string "account", null: false
+    t.text "file_id", null: false
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["blob_key", "provider", "account"], name: "index_ruby_llm_provider_files_uniqueness", unique: true
+  end
+
+  create_table "ruby_llm_queued_messages", force: :cascade do |t|
+    t.string "chat_type", null: false
+    t.bigint "chat_id", null: false
+    t.string "sender_type"
+    t.bigint "sender_id"
+    t.text "content"
+    t.boolean "steer", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_type", "chat_id"], name: "index_ruby_llm_queued_messages_on_chat_type_and_chat_id"
+    t.index ["sender_type", "sender_id"], name: "index_ruby_llm_queued_messages_on_sender_type_and_sender_id"
+  end
+
+  create_table "ruby_llm_tool_calls", force: :cascade do |t|
+    t.string "message_type", null: false
+    t.bigint "message_id", null: false
+    t.string "result_type"
+    t.bigint "result_id"
+    t.string "tool_call_id", null: false
+    t.string "provider_call_id"
+    t.string "namespace"
+    t.string "name", null: false
+    t.text "thought_signature"
+    t.string "approval"
+    t.boolean "remote", default: false, null: false
+    t.datetime "claimed_until"
+    t.jsonb "arguments", default: {}
+    t.jsonb "mcp_state"
+    t.jsonb "mcp_result"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_type", "message_id"], name: "index_ruby_llm_tool_calls_on_message_type_and_message_id"
+    t.index ["name"], name: "index_ruby_llm_tool_calls_on_name"
+    t.index ["result_type", "result_id"], name: "index_ruby_llm_tool_calls_on_result_type_and_result_id"
+    t.index ["tool_call_id"], name: "index_ruby_llm_tool_calls_on_tool_call_id", unique: true
+  end
+
+  create_table "ruby_llm_usages", force: :cascade do |t|
+    t.string "chat_type"
+    t.bigint "chat_id"
+    t.string "message_type"
+    t.bigint "message_id"
+    t.string "owner_type"
+    t.bigint "owner_id"
+    t.string "operation", null: false
+    t.string "provider", null: false
+    t.string "model", null: false
+    t.string "status", null: false
+    t.integer "input_tokens"
+    t.integer "output_tokens"
+    t.integer "cache_read_tokens"
+    t.integer "cache_write_tokens"
+    t.integer "thinking_tokens"
+    t.integer "characters"
+    t.decimal "audio_seconds", precision: 16, scale: 6
+    t.integer "search_units"
+    t.jsonb "server_tool_use"
+    t.decimal "input_cost", precision: 16, scale: 10
+    t.decimal "output_cost", precision: 16, scale: 10
+    t.decimal "cache_read_cost", precision: 16, scale: 10
+    t.decimal "cache_write_cost", precision: 16, scale: 10
+    t.decimal "thinking_cost", precision: 16, scale: 10
+    t.decimal "characters_cost", precision: 16, scale: 10
+    t.decimal "audio_seconds_cost", precision: 16, scale: 10
+    t.decimal "search_units_cost", precision: 16, scale: 10
+    t.decimal "total_cost", precision: 16, scale: 10
+    t.string "workflow_id"
+    t.string "workflow_name"
+    t.string "workflow_step_id"
+    t.string "workflow_step_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_type", "chat_id"], name: "index_ruby_llm_usages_on_chat_type_and_chat_id"
+    t.index ["message_type", "message_id"], name: "index_ruby_llm_usages_on_message_type_and_message_id"
+    t.index ["owner_type", "owner_id"], name: "index_ruby_llm_usages_on_owner_type_and_owner_id"
+    t.index ["status"], name: "index_ruby_llm_usages_on_status"
+    t.index ["workflow_id"], name: "index_ruby_llm_usages_on_workflow_id"
+    t.check_constraint "operation::text = ANY (ARRAY['chat'::character varying::text, 'embedding'::character varying::text, 'moderation'::character varying::text, 'image'::character varying::text, 'speech'::character varying::text, 'transcription'::character varying::text, 'ocr'::character varying::text, 'rerank'::character varying::text, 'judgment'::character varying::text, 'video'::character varying::text, 'research'::character varying::text, 'code_execution'::character varying::text])"
+    t.check_constraint "status::text = ANY (ARRAY['pending'::character varying::text, 'succeeded'::character varying::text, 'failed'::character varying::text, 'cancelled'::character varying::text])"
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.string "session_id", null: false
     t.text "data"
@@ -983,13 +1201,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.string "callback_url"
     t.string "designation"
     t.bigint "organisation_id"
-    t.string "invitation_token"
-    t.datetime "invitation_created_at", precision: nil
-    t.datetime "invitation_sent_at", precision: nil
-    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
-    t.string "invited_by_type"
-    t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
     t.integer "referring_consultation_id"
     t.bigint "cm_role_id"
@@ -1002,10 +1214,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
     t.index ["cm_role_id"], name: "index_users_on_cm_role_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
     t.index ["invitations_count"], name: "index_users_on_invitations_count"
-    t.index ["invited_by_id"], name: "index_users_on_invited_by_id"
-    t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by_type_and_invited_by_id"
     t.index ["organisation_id"], name: "index_users_on_organisation_id"
     t.index ["phone_number"], name: "index_users_on_phone_number", unique: true, where: "(phone_number IS NOT NULL)"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -1041,6 +1250,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
   add_foreign_key "api_keys", "users"
   add_foreign_key "api_tokens", "users"
   add_foreign_key "blog_posts", "blog_categories"
+  add_foreign_key "blog_posts", "consultations"
   add_foreign_key "blog_posts", "users", column: "created_by_id"
   add_foreign_key "blog_posts", "users", column: "updated_by_id"
   add_foreign_key "case_studies", "themes"
@@ -1075,6 +1285,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_13_121000) do
   add_foreign_key "consultation_responses", "users"
   add_foreign_key "consultations", "departments"
   add_foreign_key "ct_bot_artifacts", "ct_bot_messages"
+  add_foreign_key "ct_bot_conversations", "ruby_llm_models"
   add_foreign_key "ct_bot_conversations", "users"
   add_foreign_key "ct_bot_messages", "ct_bot_conversations"
   add_foreign_key "ct_bot_transcriptions", "ct_bot_conversations"

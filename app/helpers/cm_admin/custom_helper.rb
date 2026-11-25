@@ -75,5 +75,9 @@ module CmAdmin
     def select_options_for_blog_category(_ = nil, _ = nil)
       ::BlogCategory.order(:name).pluck(:name, :id)
     end
+
+    def select_options_for_blog_post(record = nil, _ = nil)
+      ::BlogPost.where(consultation_id: [nil, record&.id]).order(:title).pluck(:title, :id)
+    end
   end
 end

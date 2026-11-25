@@ -7,10 +7,12 @@ Rails.application.reloader.to_prepare do
                               ConsultationResponse, Department, Organisation, Consultation, GlossaryWordConsultationMapping,
                               ResponseRound, Question, CtFileImport, CtFileExport, Respondent, TeamMember, Clause, Constant,
                               CmPlatformSetting, ApiToken, ShowcaseSlide, CmPrompt, CmCronJob, CmCronJobLog,
-                              BlogPost, BlogCategory]
+                              BlogPost, BlogCategory, Location]
 
     config.project_name = Rails.configuration.x.project_settings.name
     config.enable_tracking = true
+    config.otp_delivery_channel = :phone_or_email
+    config.otp_delivery_provider = GupshupWhatsappDelivery.new
 
     config.sidebar = [
       {
@@ -72,6 +74,10 @@ Rails.application.reloader.to_prepare do
           {
             display_name: 'Roles',
             path: :cm_index_cm_role_path
+          },
+          {
+            display_name: 'Locations',
+            path: :cm_index_location_path
           },
           {
             display_name: 'Showcase Slides',

@@ -9,6 +9,7 @@ module Types
         field :description,	String, "Short excerpt shown on blog cards", null: true
         field :content,	String, "HTML content of the blog post", null: true
         field :blog_category,	Types::Objects::BlogCategory::Base, nil, null: true
+        field :consultation,	Types::Objects::Consultation::Base, "Consultation this blog post is associated with", null: true
         field :featured_image,	Types::Objects::AttachmentType, nil, null: true do
           argument :resolution, String, required: false, default_value: nil
         end
