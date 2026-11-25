@@ -330,7 +330,7 @@ module CmAdmin
             form_field :area_of_impact_ids, input_type: :multi_select,
                                             helper_method: :select_options_for_area_of_impact, label: 'Area of Impact'
             form_field :blog_post_ids, input_type: :multi_select,
-                                       helper_method: :select_options_for_blog_post, label: 'Blogs', placeholder: 'Select blogs'
+                                       helper_method: :select_options_for_blog_post, label: 'Associated Blogs', placeholder: 'Select blogs'
           end
           cm_section 'Summary' do
             form_field :english_summary, input_type: :rich_text
@@ -375,7 +375,7 @@ module CmAdmin
             form_field :area_of_impact_ids, input_type: :multi_select,
                                             helper_method: :select_options_for_area_of_impact, label: 'Area of Impact'
             form_field :blog_post_ids, input_type: :multi_select,
-                                       helper_method: :select_options_for_blog_post, label: 'Blogs', placeholder: 'Select blogs'
+                                       helper_method: :select_options_for_blog_post, label: 'Associated Blogs', placeholder: 'Select blogs'
           end
           cm_section 'Summary' do
             form_field :ai_summary, input_type: :rich_text
